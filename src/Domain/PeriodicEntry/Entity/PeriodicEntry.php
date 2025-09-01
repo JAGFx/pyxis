@@ -121,10 +121,6 @@ class PeriodicEntry
         $amount = 0.0;
 
         foreach ($this->getBudgets() as $budget) {
-            if (!$budget->getEnable()) {
-                continue;
-            }
-
             $amount += $this->getAmountFor($budget);
         }
 
@@ -133,6 +129,10 @@ class PeriodicEntry
 
     public function getAmountFor(Budget $budgetTarget): float
     {
+        if (false === $budgetTarget->getEnable()) {
+            return 0.0;
+        }
+
         /** @var ?Budget $budget */
         $budget = $this->budgets->findFirst(fn (int $k, Budget $budget): bool => $budget === $budgetTarget); // @phpstan-ignore-line
 
