@@ -121,7 +121,13 @@ class PeriodicEntry
         $amount = 0.0;
 
         foreach ($this->getBudgets() as $budget) {
-            $amount += $this->getAmountFor($budget);
+            $budgetAmount = $this->getAmountFor($budget);
+
+            if ($budgetAmount <= 0.0) {
+                continue;
+            }
+
+            $amount += $budgetAmount;
         }
 
         return $amount;

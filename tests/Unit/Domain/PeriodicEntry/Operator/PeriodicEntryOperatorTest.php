@@ -6,10 +6,10 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
+use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
 use App\Domain\PeriodicEntry\Operator\PeriodicEntryOperator;
 use DateTimeImmutable;
-use LogicException;
 use PHPUnit\Framework\TestCase;
 
 class PeriodicEntryOperatorTest extends TestCase
@@ -38,7 +38,7 @@ class PeriodicEntryOperatorTest extends TestCase
             ->setLastExecutionDate($executionDate)
         ;
 
-        $this->expectException(LogicException::class);
+        $this->expectException(PeriodicEntrySplitBudgetException::class);
         $this->expectExceptionMessage('A periodic entry has already been executed.');
 
         $this->entryManagerMock
@@ -88,6 +88,42 @@ class PeriodicEntryOperatorTest extends TestCase
                 ->setAmount(200)
             )
             ->addBudget((new Budget())
+                ->setName('Budget')
+                ->setAmount(200)
+            )
+        ;
+
+        $this->entryManagerMock
+            ->expects(self::exactly(2))
+            ->method('create');
+
+        $this->periodicEntryManagerMock
+            ->expects(self::once())
+            ->method('update');
+
+        $this->generatePeriodicEntryOperator()
+            ->addSplitForBudgets($periodicEntry);
+
+        self::assertNotNull($periodicEntry->getLastExecutionDate());
+    }
+
+    public function testSplitForecastMustCreateAllEntriesExceptDisabledBudgets(): void
+    {
+        $periodicEntry = (new PeriodicEntry())
+            ->setLastExecutionDate(null)
+            ->setAmount(200)
+            ->setName('Spent')
+            ->setAccount(new Account())
+            ->addBudget((new Budget())
+                ->setName('Budget')
+                ->setAmount(200)
+            )
+            ->addBudget((new Budget())
+                ->setName('Budget')
+                ->setAmount(200)
+            )
+            ->addBudget((new Budget())
+                ->setEnable(false)
                 ->setName('Budget')
                 ->setAmount(200)
             )

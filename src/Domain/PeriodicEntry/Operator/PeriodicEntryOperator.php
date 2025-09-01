@@ -6,9 +6,10 @@ use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\Entry\Model\EntryKindEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
+use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
+use DateMalformedStringException;
 use DateTimeImmutable;
-use LogicException;
 
 class PeriodicEntryOperator
 {
@@ -18,6 +19,10 @@ class PeriodicEntryOperator
     ) {
     }
 
+    /**
+     * @throws DateMalformedStringException
+     * @throws PeriodicEntrySplitBudgetException
+     */
     public function addSplitForBudgets(PeriodicEntry $periodicEntry, ?DateTimeImmutable $date = null): void
     {
         $date ??= new DateTimeImmutable();
@@ -28,7 +33,7 @@ class PeriodicEntryOperator
             && $periodicEntry->getLastExecutionDate() >= $firstDateOfCurrentMonth
             && $periodicEntry->getLastExecutionDate() <= $lastDateOfCurrentMonth
         ) {
-            throw new LogicException('A periodic entry has already been executed.');
+            throw new PeriodicEntrySplitBudgetException('A periodic entry has already been executed.');
         }
 
         if ($periodicEntry->isSpent()) {
@@ -42,7 +47,12 @@ class PeriodicEntryOperator
         } else {
             foreach ($periodicEntry->getBudgets() as $budget) {
                 $amount = $periodicEntry->getAmountFor($budget);
-                $entry  = new Entry()
+
+                if ($amount <= 0.0) {
+                    continue;
+                }
+
+                $entry = new Entry()
                     ->setAmount($amount)
                     ->setBudget($budget)
                     ->setKind(EntryKindEnum::BALANCING)
