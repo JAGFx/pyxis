@@ -35,12 +35,6 @@ class Budget
     private float $amount;
 
     /**
-     * @var array<string>|null
-     */
-    #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true)]
-    private ?array $historic = []; // TODO: Check if it still useful
-
-    /**
      * @var Collection<int, PeriodicEntry>
      */
     #[ORM\ManyToMany(targetEntity: PeriodicEntry::class, mappedBy: 'budgets', fetch: 'EXTRA_LAZY')]
@@ -92,24 +86,6 @@ class Budget
         $this->amount = round($amount, 2);
 
         return $this;
-    }
-
-    /**
-     * @param array<string>|null $historic
-     */
-    public function setHistoric(?array $historic): Budget
-    {
-        $this->historic = $historic;
-
-        return $this;
-    }
-
-    /**
-     * @return array<string>|null
-     */
-    public function getHistoric(): ?array
-    {
-        return $this->historic;
     }
 
     /**

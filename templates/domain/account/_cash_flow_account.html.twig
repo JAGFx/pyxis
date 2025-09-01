@@ -1,7 +1,7 @@
 {% import 'shared/_currency.macro.html.twig' as currency %}
 
 <span class="me-2" data-bs-toggle="tooltip" data-bs-title="Balance" data-bs-placement="bottom">
-    <small>{{ currency.amount(amountBalance.total, true) }}</small>
+    {{ currency.amount(amountBalance.total, true) }}
 </span>
 
 <div class="d-flex justify-content-between align-items-center flex-wrap w-100">
