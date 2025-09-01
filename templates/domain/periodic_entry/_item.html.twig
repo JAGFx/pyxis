@@ -2,32 +2,34 @@
 
 <li class="list-group-item d-flex justify-content-center align-items-center py-3">
     <div class="d-flex justify-content-center align-items-start w-100 flex-column">
-        {{ periodicEntry.name }}
-        <div>
-            <span class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="{{ periodicEntry.type.humanize }}" data-bs-placement="bottom">
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <span>{{ periodicEntry.name }}</span>
+            <span class="me-2">{{ currency.amount(periodicEntry.totalAmount, true) }}</span>
+        </div>
+        <div class="d-flex justify-content-start align-items-center flex-wrap w-100 text-white-50">
+            <small class="me-2" data-bs-toggle="tooltip" data-bs-title="Type" data-bs-placement="bottom">
                 {% if periodicEntry.isForecast %}
                     <i class="fa-solid fa-shield-halved text-warning"></i>
                 {% else %}
                     <i class="fa-solid fa-leaf text-primary"></i>
                 {% endif %}
-            </span>
-            <span class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="{{ periodicEntry.account.name }}" data-bs-placement="bottom">
+                <span>{{ periodicEntry.type.humanize }}</span>
+            </small>
+            <small class="me-2" data-bs-toggle="tooltip" data-bs-title="Compte" data-bs-placement="bottom">
                 <i class="fa-solid fa-building-columns"></i>
-            </span>
-            <span class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="Date d'execution" data-bs-placement="bottom">
+                <span>{{ periodicEntry.account.name }}</span>
+            </small>
+            <small class="me-2" data-bs-toggle="tooltip" data-bs-title="Date d'execution" data-bs-placement="bottom">
                 <i class="fa-solid fa-calendar-day"></i>
                 <small>{{ periodicEntry.executionDate | format_datetime(pattern='d MMM', locale=app.request.locale) }}</small>
-            </span>
+            </small>
             {% if periodicEntry.isForecast %}
-                <span class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="Nombre de budget(s) actif" data-bs-placement="bottom">
+                <small class="me-2" data-bs-toggle="tooltip" data-bs-title="Nombre de budget(s) actif" data-bs-placement="bottom">
                     <i class="fa-solid fa-coins"></i>
                     <small>{{ periodicEntry.countBudgets }}</small>
-                </span>
+                </small>
             {% endif %}
         </div>
-    </div>
-    <div class="w-50 me-3 text-end">
-        {{ currency.amount(periodicEntry.totalAmount, true) }}
     </div>
     <div class="position-absolute" style="right: 0">
         <div class="dropstart">

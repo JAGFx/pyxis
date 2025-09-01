@@ -3,27 +3,41 @@
 <turbo-frame id="entry_list_item_{{ entry.id }}">
     <li class="list-group-item d-flex justify-content-center align-items-center py-3">
         <div class="d-flex justify-content-center align-items-start w-100 flex-column">
-            {{ entry.name }}
-            <div>
-                <span class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="{{ entry.type.humanize }}" data-bs-placement="bottom">
-                    {% if entry.isForecast %}
-                        <i class="fa-solid fa-shield-halved text-warning"></i>
-                    {% else %}
-                        <i class="fa-solid fa-leaf text-primary"></i>
-                    {% endif %}
-                </span>
-                <span class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="{{ entry.account.name }}" data-bs-placement="bottom">
-                    <i class="fa-solid fa-building-columns"></i>
-                </span>
-                <span class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="Date de création" data-bs-placement="bottom">
-                    <i class="fa-regular fa-calendar-check me-2"></i>
-                    <small>{{ entry.createdAt | format_datetime(timeFormat='short', locale=app.request.locale) }}</small>
-                </span>
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <span>{{ entry.name }}</span>
+                <span class="me-2">{{ currency.amount(entry.amount, true) }}</span>
             </div>
-        </div>
-        <div class="w-50 me-3 text-end">
-            {{ currency.amount(entry.amount, true) }}
-        </div>
+            <small class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="Date de valeur" data-bs-placement="bottom">
+                <i class="fa-solid fa-calendar-day"></i>
+                <span>{{ entry.createdAt | format_datetime(timeFormat='short', locale=app.request.locale) }}</span>
+            </small>
+            <div class="d-flex justify-content-start align-items-center flex-wrap w-100 text-white-50">
+                <div class="d-flex align-items-center me-2">
+                    <small data-bs-toggle="tooltip" data-bs-title="Type" data-bs-placement="bottom">
+                        {% if entry.isForecast %}
+                            <i class="fa-solid fa-shield-halved text-warning"></i>
+                        {% else %}
+                            <i class="fa-solid fa-leaf text-primary"></i>
+                        {% endif %}
+                        <span>{{ entry.type.humanize }}</span>
+                    </small>
+                </div>
+                <div class="d-flex align-items-center me-2">
+                    <small data-bs-toggle="tooltip" data-bs-title="Compte" data-bs-placement="bottom">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <span>{{ entry.account.name }}</span>
+                    </small>
+                </div>
+                {% if entry.isForecast %}
+                    <div class="d-flex align-items-center me-2" data-bs-toggle="tooltip" data-bs-title="Budget" data-bs-placement="bottom">
+                        <small>
+                            <i class="fa-solid fa-piggy-bank"></i>
+                            <span>{{ entry.budget.name }}</span>
+                        </small>
+                    </div>
+                {% endif %}
+            </div>
+
         {% if not entry.isABalancing %}
             <div class="position-absolute" style="right: 0">
                 <div class="dropstart">

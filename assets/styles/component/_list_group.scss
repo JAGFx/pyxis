@@ -1,9 +1,13 @@
 @import "../abstract/mixins";
 
 .bugr .list-group {
-  @include background-acrylic;
+  background: transparent;
 
   .list-group-item {
-    background-color: transparent;
+    @include background-acrylic;
+
+    border-radius: $border-radius;
+    margin-bottom: 0.1rem;
+    margin-top: 0.1rem;
   }
 }

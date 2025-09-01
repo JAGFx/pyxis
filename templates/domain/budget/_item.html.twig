@@ -13,13 +13,13 @@
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 {% if budget.hasNegativeCashFlow %}
-                    <span class="me-2 text-danger" data-bs-toggle="tooltip" data-bs-title="Dépassement">
-                        <small>{{ budget.cashFlow | currency }}</small>
+                    <span class="me-2 text-danger" data-bs-toggle="tooltip" data-bs-title="Dépassement sur N-1">
+                        <small>{{ currency.amount(budget.cashFlow) }}</small>
                     </span>
                 {% endif %}
                 {% if budget.hasPositiveCashFlow %}
-                    <span class="me-2 text-success" data-bs-toggle="tooltip" data-bs-title="Surplus">
-                        <small>{{ budget.cashFlow | currency }}</small>
+                    <span class="me-2 text-success" data-bs-toggle="tooltip" data-bs-title="Surplus sur N-1">
+                        <small>{{ currency.amount(budget.cashFlow) }}</small>
                     </span>
                 {% endif %}
             </div>
