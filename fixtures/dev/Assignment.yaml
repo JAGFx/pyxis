@@ -1,15 +1,5 @@
 App\Domain\Assignment\Entity\Assignment:
-    assignment_a1:
-      name: 'Affectation A1'
-      amount: 500.00
-      account: '@account_a'
-
-    assignment_a2:
-      name: 'Affectation A2'
-      amount: 300.00
-      account: '@account_a'
-
     assignment_ldds1:
-      name: 'Affectation LDDS1'
-      amount: 800.00
+      name: 'Epargne de précaution'
+      amount: 1600
       account: '@account_ldds'

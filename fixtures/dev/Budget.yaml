@@ -24,6 +24,11 @@ App\Domain\Budget\Entity\Budget:
     name: 'Budget current year'
     amount: 1000
 
+  budget_initial:
+    name: 'Budget initial value'
+    amount: 0
+    readOnly: true
+
 App\Domain\Budget\Entity\HistoryBudget:
   history_budget_over:
     date: <dateTimeImmutable('first day previous year')>
@@ -33,7 +38,7 @@ App\Domain\Budget\Entity\HistoryBudget:
 
   history_budget_full:
     date: <dateTimeImmutable('first day previous year')>
-    relativeProgress: 200
+    relativeProgress: 100
     amount: 200
     budget: '@budget_full'
 

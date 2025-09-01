@@ -1,25 +1,27 @@
 {% import 'shared/_currency.macro.html.twig' as currency %}
 
 {% for cashFlow in cashFlows %}
-    <li class="list-group-item d-flex justify-content-between align-items-center ms-2 ">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
         <div class="me-2"><small>{{ currency.amount(cashFlow.cashFlow, true) }}</small></div>
         <div><small>{{ cashFlow.account.name }}</small></div>
-        <div class="position-absolute" style="right: -1rem">
-            <div class="dropstart">
-                <button type="button" class="btn dropdown-toggle text-secondary border-0" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                    {% if budget.positiveCashFlow or budget.negativeCashFlow %}
-                        <li><a class="dropdown-item" data-turbo="true"
-                               href="{{ path('front_budget_balancing', {
-                                   'budgetId': budget.id,
-                                   'accountId': cashFlow.account.id,
-                               }) }}">Équilibrer</a></li>
-                    {% endif %}
-                </ul>
+        {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::MANAGE'), budget)  %}
+            <div class="position-absolute" style="right: -1rem">
+                <div class="dropstart">
+                    <button type="button" class="btn dropdown-toggle text-secondary border-0" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        {% if budget.positiveCashFlow or budget.negativeCashFlow %}
+                            <li><a class="dropdown-item" data-turbo="true"
+                                   href="{{ path('front_budget_balancing', {
+                                       'budgetId': budget.id,
+                                       'accountId': cashFlow.account.id,
+                                   }) }}">Équilibrer</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
-        </div>
+        {% endif %}
     </li>
 {% endfor %}

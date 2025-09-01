@@ -1,9 +1,9 @@
 App\Domain\Entry\Entity\Entry:
-  entry_spent_{1..50}:
-    name: <name()>
-    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
-    amount: <randomFloat(2, -500, 500)>
-    account: ' @account_a'
+#  entry_spent_{1..50}:
+#    name: <name()>
+#    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
+#    amount: <randomFloat(2, -500, 500)>
+#    account: ' @account_a'
 
 #  entry_{51..100}:
 #    name: <name()>
@@ -12,23 +12,45 @@ App\Domain\Entry\Entity\Entry:
 #    type: 'type-forecast'
 #    budget: '@budget_<numberBetween(1, 5)>'
 
-  entry_budget_over:
-    name: <name()>
+  entry_initial_spent_account_a:
+    name: Initial entry spent
     createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
+    amount: 5000
+    account: ' @account_a'
+    kind: 'balancing'
+
+  entry_initial_budget_account_a:
+    name: Initial entry budget
+    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
+    amount: 2000
+    account: ' @account_a'
+    budget: '@budget_initial'
+    kind: 'balancing'
+
+  entry_initial_spent_ldds:
+    name: Initial entry LDDS
+    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
+    amount: 2600
+    account: ' @account_ldds'
+    kind: 'balancing'
+
+  entry_budget_over:
+    name: Entry budget over
+    createdAt: <immutableDateTimeBetween('-1 year -6 month', '-1 year')>
     amount: -500
     budget: '@budget_over'
     account: ' @account_a'
 
   entry_budget_full_spent:
-    name: <name()>
-    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
+    name: Entry budget full
+    createdAt: <immutableDateTimeBetween('-1 year -6 month', '-1 year')>
     amount: -200
     budget: '@budget_full'
     account: ' @account_a'
 
   entry_budget_full_forecast:
     name: <name()>
-    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
+    createdAt: <immutableDateTimeBetween('-1 year -6 month', '-1 year')>
     amount: 200
     budget: '@budget_full'
     account: ' @account_a'
@@ -36,27 +58,33 @@ App\Domain\Entry\Entity\Entry:
   entry_budget_current_year_{1..7}:
     name: <name()>
     createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
-    amount: -100
-    budget: '@budget_current_year'
+    amount: <randomFloat(2, -150, 300)>
     account: ' @account_a'
 
-  entry_budget_current_year_past_{1..3}:
-    name: <name()>
-    createdAt: <immutableDateTimeBetween('-1 year -6 month', '-1 year')>
-    amount: -100
-    budget: '@budget_current_year'
-    account: ' @account_a'
-
-  entry_budget_current_year_past_positive_{1..10}:
-    name: <name()>
-    createdAt: <immutableDateTimeBetween('-1 year -6 month', '-1 year')>
-    amount: 200
-    budget: '@budget_current_year'
-    account: ' @account_a'
-
-  entry_budget_current_year_past_forecast_{1..15}:
+  entry_budget_current_year_forecast_{1..7}:
     name: <name()>
     createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
     amount: <randomFloat(2, 65, 200)>
     budget: '@budget_current_year'
     account: ' @account_a'
+#
+#  entry_budget_current_year_past_{1..3}:
+#    name: <name()>
+#    createdAt: <immutableDateTimeBetween('-1 year -6 month', '-1 year')>
+#    amount: -100
+#    budget: '@budget_current_year'
+#    account: ' @account_a'
+#
+#  entry_budget_current_year_past_positive_{1..10}:
+#    name: <name()>
+#    createdAt: <immutableDateTimeBetween('-1 year -6 month', '-1 year')>
+#    amount: 200
+#    budget: '@budget_current_year'
+#    account: ' @account_a'
+#
+#  entry_budget_current_year_past_forecast_{1..15}:
+#    name: <name()>
+#    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
+#    amount: <randomFloat(2, 65, 200)>
+#    budget: '@budget_current_year'
+#    account: ' @account_a'

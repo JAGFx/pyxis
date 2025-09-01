@@ -3,25 +3,35 @@
 <li class="list-group-item d-flex justify-content-between w-100 align-items-center py-3 {{ not budget.enable ? 'list-group-item-secondary' : '' }}">
     <div class="d-flex flex-column w-100">
         <div class="d-flex justify-content-between w-100">
-            <div class="d-flex justify-content-center align-items-start w-100 flex-column">
+            <div>
                 {{ budget.name }}
-                <a data-turbo="true" href="{{ path('front_budget_cash_flow_by_account', {'id': budget.id}) }}" class="link-offse&é&&&&&&&&&&&&&&t-3 link-dotted text-white-50" data-bs-toggle="tooltip" data-bs-title="Voir la balance par compte">
-                    {% if budget.hasNegativeCashFlow %}
-                        <span class="me-2 text-danger" data-bs-toggle="tooltip" data-bs-title="Dépassement">
-                            <i class="fa-solid fa-circle-exclamation"></i>
-                            <small>{{ budget.cashFlow | currency }}</small>
-                        </span>
-                    {% endif %}
-                    {% if budget.hasPositiveCashFlow %}
-                        <span class="me-2 text-success" data-bs-toggle="tooltip" data-bs-title="Surplus">
-                            <i class="fa-solid fa-piggy-bank"></i>
-                            <small>{{ budget.cashFlow | currency }}</small>
-                        </span>
-                    {% endif %}
-                </a>
             </div>
             <div class="w-50 me-3 text-end {{ not budget.enable ? 'text-decoration-line-through' : '' }}">
                 {{ currency.amount(budget.amount, true, not budget.enable) }}
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                {% if budget.hasNegativeCashFlow %}
+                    <span class="me-2 text-danger" data-bs-toggle="tooltip" data-bs-title="Dépassement">
+                        <small>{{ budget.cashFlow | currency }}</small>
+                    </span>
+                {% endif %}
+                {% if budget.hasPositiveCashFlow %}
+                    <span class="me-2 text-success" data-bs-toggle="tooltip" data-bs-title="Surplus">
+                        <small>{{ budget.cashFlow | currency }}</small>
+                    </span>
+                {% endif %}
+            </div>
+            <div>
+                {% if budget.hasNegativeCashFlow or  budget.hasPositiveCashFlow%}
+                    <a data-turbo="true" href="{{ path('front_budget_cash_flow_by_account', {'id': budget.id}) }}" class="link-offset-3 text-decoration-none text-white-50 me-2">
+                        <small>
+                            <span>Voir la répartition</span>
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </small>
+                    </a>
+                {% endif %}
             </div>
         </div>
         <ul class="m-0 p-0 space-y-2">
