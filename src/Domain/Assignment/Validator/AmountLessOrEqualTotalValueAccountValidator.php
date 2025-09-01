@@ -3,8 +3,9 @@
 namespace App\Domain\Assignment\Validator;
 
 use App\Domain\Assignment\Entity\Assignment;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Model\EntrySearchCommand;
+use App\Shared\Operator\EntryOperator;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -12,10 +13,14 @@ use Symfony\Component\Validator\ConstraintValidator;
 class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
 {
     public function __construct(
-        private readonly EntryManager $entryManager,
+        private readonly EntryOperator $entryOperator,
     ) {
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof AmountLessOrEqualTotalValueAccount) {
@@ -26,13 +31,12 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
             return;
         }
 
-        $entrySearchCommand = new EntrySearchCommand($value->getAccount());
-        $entryBalance       = $this->entryManager->balance($entrySearchCommand);
+        $amountBalance = $this->entryOperator->getAmountBalance($value->getAccount());
 
-        if ($value->getAmount() > $entryBalance->getTotal()) {
+        if ($value->getAmount() > $amountBalance->getTotal()) {
             $this->context
                 ->buildViolation($constraint->message)
-                ->setParameter('{{ total }}', number_format($entryBalance->getTotal(), 2, ',', ' '))
+                ->setParameter('{{ total }}', number_format($amountBalance->getTotal(), 2, ',', ' '))
                 ->setInvalidValue($value->getAmount())
                 ->atPath('amount')
                 ->addViolation();

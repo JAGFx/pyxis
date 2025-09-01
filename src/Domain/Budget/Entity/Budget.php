@@ -38,7 +38,7 @@ class Budget
      * @var array<string>|null
      */
     #[ORM\Column(type: Types::SIMPLE_ARRAY, nullable: true)]
-    private ?array $historic = [];
+    private ?array $historic = []; // TODO: Check if it still useful
 
     /**
      * @var Collection<int, PeriodicEntry>

@@ -92,6 +92,5 @@ class BudgetManagerTest extends KernelTestCase
 
         self::assertSame($initialBalance->getTotalSpent() + $overflow, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() - $overflow, $newBalance->getTotalForecast());
-        self::assertSame($initialBalance->getTotal(), $newBalance->getTotal());
     }
 }

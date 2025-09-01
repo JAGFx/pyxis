@@ -41,7 +41,8 @@ class HomeOperatorTest extends KernelTestCase
         $newBalance = $this->entryManager->balance();
         self::assertSame($initialBalance->getTotalSpent() - self::BUDGET_AMOUNT, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() + self::BUDGET_AMOUNT, $newBalance->getTotalForecast());
-        self::assertSame($initialBalance->getTotal(), $newBalance->getTotal());
+        self::assertSame(
+            $initialBalance->getTotalSpent() + $initialBalance->getTotalForecast(), $newBalance->getTotalSpent() + $newBalance->getTotalForecast());
     }
 
     public function testTransferMustMoveAmountBetweenTwoBudgetSuccessfully(): void
@@ -62,7 +63,8 @@ class HomeOperatorTest extends KernelTestCase
         $this->transfer($budgetSource, $budgetTarget);
 
         $newBalance = $this->entryManager->balance();
-        self::assertSame($initialBalance->getTotal(), $newBalance->getTotal());
+        self::assertSame(
+            $initialBalance->getTotalSpent() + $initialBalance->getTotalForecast(), $newBalance->getTotalSpent() + $newBalance->getTotalForecast());
     }
 
     public function testTransferMustMoveAmountBudgetToSpentSuccessfully(): void
@@ -79,7 +81,8 @@ class HomeOperatorTest extends KernelTestCase
         $newBalance = $this->entryManager->balance();
         self::assertSame($initialBalance->getTotalSpent() + self::BUDGET_AMOUNT, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() - self::BUDGET_AMOUNT, $newBalance->getTotalForecast());
-        self::assertSame($initialBalance->getTotal(), $newBalance->getTotal());
+        self::assertSame(
+            $initialBalance->getTotalSpent() + $initialBalance->getTotalForecast(), $newBalance->getTotalSpent() + $newBalance->getTotalForecast());
     }
 
     private function transfer(?Budget $budgetSource, ?Budget $budgetTarget): void
@@ -87,7 +90,7 @@ class HomeOperatorTest extends KernelTestCase
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
 
-        $transfer = (new Transfer())
+        $transfer = new Transfer()
             ->setAccount($account)
             ->setAmount(self::BUDGET_AMOUNT)
             ->setBudgetSource($budgetSource)

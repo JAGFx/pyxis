@@ -32,7 +32,7 @@ class EntryManager
         $spentAmount    = Statistics::sumOf($spentAmount, 'sum');
         $forecastAmount = Statistics::sumOf($forecastAmount, 'sum');
 
-        return new EntryBalance($spentAmount + $forecastAmount, $spentAmount, $forecastAmount);
+        return new EntryBalance($spentAmount, $forecastAmount);
     }
 
     public function create(Entry $entry): void

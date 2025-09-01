@@ -5,6 +5,9 @@ namespace App\Domain\Entry\Controller\Front;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Model\TurboResponseTraits;
+use App\Shared\Operator\EntryOperator;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,14 +20,19 @@ class EntryController extends AbstractController
 
     public function __construct(
         private readonly EntryManager $entryManager,
+        private readonly EntryOperator $entryOperator,
     ) {
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     #[Route('/balance', name: 'front_entry_balance', methods: Request::METHOD_GET)]
     public function balance(Request $request): Response
     {
         return $this->renderTurboStream($request, 'domain/entry/turbo/success.stream.balance.html.twig', [
-            'entryBalance' => $this->entryManager->balance(),
+            'amountBalance' => $this->entryOperator->getAmountBalance(),
         ]);
     }
 

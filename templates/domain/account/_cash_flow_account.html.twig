@@ -1,7 +1,7 @@
 {% import 'shared/_currency.macro.html.twig' as currency %}
 
 <span class="me-2" data-bs-toggle="tooltip" data-bs-title="Balance" data-bs-placement="bottom">
-    <small>{{ currency.amount(entryBalance.totalSpent + entryBalance.totalForecast, true) }}</small>
+    <small>{{ currency.amount(amountBalance.total, true) }}</small>
 </span>
 
 <div class="d-flex justify-content-between align-items-center flex-wrap w-100">
@@ -9,7 +9,7 @@
         <small class="text-muted">Dépense</small>
         <span class="text-primary" data-bs-toggle="tooltip" data-bs-title="Dépense" data-bs-placement="bottom">
             <i class="fa-solid fa-leaf text-primary"></i>
-            <small>{{ currency.amount(entryBalance.totalSpent, false) }}</small>
+            <small>{{ currency.amount(amountBalance.totalSpent, false) }}</small>
         </span>
     </div>
 
@@ -17,16 +17,16 @@
         <small class="text-muted">Provision</small>
         <span class="text-warning" data-bs-toggle="tooltip" data-bs-title="Provision" data-bs-placement="bottom">
             <i class="fa-solid fa-shield-halved text-warning"></i>
-            <small>{{ currency.amount(entryBalance.totalForecast, false) }}</small>
+            <small>{{ currency.amount(amountBalance.totalForecast, false) }}</small>
         </span>
     </div>
 
-    {% if assignmentBalance > 0 %}
+    {% if amountBalance.assignments > 0 %}
         <div class="d-flex flex-column">
             <small class="text-muted">Affectation</small>
             <span class="" data-bs-toggle="tooltip" data-bs-title="Affectation" data-bs-placement="bottom">
                 <i class="fa-solid fa-solid fa-circle-dollar-to-slot"></i>
-                <small>{{ currency.amount(assignmentBalance, false) }}</small>
+                <small>{{ currency.amount(amountBalance.assignments, false) }}</small>
             </span>
         </div>
     {% endif %}

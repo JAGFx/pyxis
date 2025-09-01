@@ -7,7 +7,7 @@
         : class
     %}
 
-    <span class="{{ color == 'true' ? class : '' }}">{{ amount | currency}}</span>
+    <span class="{{ color == 'true' ? class : '' }}">{{ amount | currency(false) }}</span>
 {% endmacro %}
 
 {% macro progress(amount, status, color = 'true') %}

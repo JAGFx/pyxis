@@ -4,18 +4,12 @@ namespace App\Domain\Account\Manager;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Assignment\Entity\Assignment;
 
 class AccountManager
 {
     public function __construct(
         private readonly AccountRepository $repository,
     ) {
-    }
-
-    public function getBalanceAssignments(Account $account): float
-    {
-        return array_sum(array_map(fn (Assignment $assignment): float => $assignment->getAmount(), $account->getAssignments()->toArray()));
     }
 
     /**

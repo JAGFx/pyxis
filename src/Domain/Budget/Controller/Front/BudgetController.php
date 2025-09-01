@@ -10,9 +10,11 @@ use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Model\Search\BudgetSearchCommand;
 use App\Domain\Budget\Operator\BudgetOperator;
 use App\Domain\Budget\Security\BudgetVoter;
-use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Model\TurboResponseTraits;
+use App\Shared\Operator\EntryOperator;
 use App\Shared\Utils\YearRange;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,9 +29,9 @@ class BudgetController extends AbstractController
 
     public function __construct(
         private readonly BudgetManager $budgetManager,
-        private readonly EntryManager $entryManager,
         private readonly BudgetOperator $budgetOperator,
         private readonly HistoryBudgetManager $historyBudgetManager,
+        private readonly EntryOperator $entryOperator,
     ) {
     }
 
@@ -82,6 +84,10 @@ class BudgetController extends AbstractController
         );
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     #[Route('/{budgetId}/balancing/accounts/{accountId}', name: 'front_budget_balancing', methods: [Request::METHOD_GET])]
     #[IsGranted(BudgetVoter::MANAGE, 'budget')]
     public function balancing(
@@ -97,8 +103,8 @@ class BudgetController extends AbstractController
             $request,
             'domain/budget/turbo/success.stream.balancing.html.twig',
             [
-                'budget'       => $budget,
-                'entryBalance' => $this->entryManager->balance(),
+                'budget'        => $budget,
+                'amountBalance' => $this->entryOperator->getAmountBalance(),
             ]
         );
     }

@@ -6,9 +6,10 @@ namespace App\Domain\Account\Controller\Front;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Model\EntrySearchCommand;
 use App\Shared\Model\TurboResponseTraits;
+use App\Shared\Operator\EntryOperator;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +22,7 @@ class AccountController extends AbstractController
 
     public function __construct(
         private readonly AccountManager $accountManager,
-        private readonly EntryManager $entryManager,
+        private readonly EntryOperator $entryOperator,
     ) {
     }
 
@@ -44,19 +45,21 @@ class AccountController extends AbstractController
         );
     }
 
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
     #[Route('/{id}/cash-flow', name: 'front_account_cash_flow', methods: [Request::METHOD_GET])]
     public function cashFlow(Request $request, Account $account): Response
     {
-        $entrySearchCommand = new EntrySearchCommand($account);
-        $entryBalance       = $this->entryManager->balance($entrySearchCommand);
+        $amountBalance = $this->entryOperator->getAmountBalance($account);
 
         return $this->renderTurboStream(
             $request,
             'domain/account/turbo/success.stream.cash_flow_account.html.twig',
             [
-                'account'           => $account,
-                'entryBalance'      => $entryBalance,
-                'assignmentBalance' => $this->accountManager->getBalanceAssignments($account),
+                'account'       => $account,
+                'amountBalance' => $amountBalance,
             ]
         );
     }

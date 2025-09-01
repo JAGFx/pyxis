@@ -4,7 +4,7 @@
     <div class="card-body p-0 position-relative">
         <div class="text-center my-2 position-relative">
             <small class="text-white-50">Balance</small>
-            <h3 class="m-0 fs-1">{{ currency.amount(entryBalance.total, false) }}</h3>
+            <h3 class="m-0 fs-1">{{ currency.amount(amountBalance.total, false) }}</h3>
         </div>
         <div class="d-flex justify-content-center align-items-center bg-dark bg-opacity-10 py-2">
             <div class="d-flex justify-content-start align-items-center flex-column w-100">
@@ -12,7 +12,7 @@
                     <i class="fa-solid fa-leaf"></i>
                     Dépense
                 </small>
-                <span>{{ currency.amount(entryBalance.totalSpent, false) }}</span>
+                <span>{{ currency.amount(amountBalance.totalSpent, false) }}</span>
             </div>
             <div>
                 <a href="{{ path('home_transfer') }}" class="btn rounded-circle bg-white bg-opacity-25 d-flex justify-content-center align-items-center p-2">
@@ -24,7 +24,7 @@
                     <i class="fa-solid fa-shield-halved"></i>
                     Provision
                 </small>
-                <span class="text-white">{{ currency.amount(entryBalance.totalForecast, false) }}</span>
+                <span class="text-white">{{ currency.amount(amountBalance.totalForecast, false) }}</span>
             </div>
         </div>
     </div>

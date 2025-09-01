@@ -14,14 +14,14 @@ App\Domain\Entry\Entity\Entry:
 
   entry_initial_spent_account_a:
     name: Initial entry spent
-    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
+    createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
     amount: 5000
     account: ' @account_a'
     kind: 'balancing'
 
   entry_initial_budget_account_a:
     name: Initial entry budget
-    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
+    createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
     amount: 2000
     account: ' @account_a'
     budget: '@budget_initial'
@@ -29,7 +29,7 @@ App\Domain\Entry\Entity\Entry:
 
   entry_initial_spent_ldds:
     name: Initial entry LDDS
-    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
+    createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
     amount: 2600
     account: ' @account_ldds'
     kind: 'balancing'
@@ -57,14 +57,14 @@ App\Domain\Entry\Entity\Entry:
 
   entry_budget_current_year_{1..7}:
     name: <name()>
-    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
-    amount: <randomFloat(2, -150, 300)>
+    createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
+    amount: <randomFloat(2, -150, 150)>
     account: ' @account_a'
 
   entry_budget_current_year_forecast_{1..7}:
     name: <name()>
-    createdAt: <immutableDateTimeBetween('-5 hour', 'now')>
-    amount: <randomFloat(2, 65, 200)>
+    createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
+    amount: <randomFloat(2, -150, 150)>
     budget: '@budget_current_year'
     account: ' @account_a'
 #

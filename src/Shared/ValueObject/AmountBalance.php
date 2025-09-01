@@ -1,13 +1,20 @@
 <?php
 
-namespace App\Domain\Entry\ValueObject;
+namespace App\Shared\ValueObject;
 
-class EntryBalance
+class AmountBalance
 {
     public function __construct(
+        private readonly float $total,
         private readonly float $totalSpent,
         private readonly float $totalForecast,
+        private readonly float $assignments,
     ) {
+    }
+
+    public function getTotal(): float
+    {
+        return $this->total;
     }
 
     public function getTotalSpent(): float
@@ -18,5 +25,10 @@ class EntryBalance
     public function getTotalForecast(): float
     {
         return $this->totalForecast;
+    }
+
+    public function getAssignments(): float
+    {
+        return $this->assignments;
     }
 }
