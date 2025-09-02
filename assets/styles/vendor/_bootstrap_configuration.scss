@@ -15,6 +15,7 @@ $progress-bg: color.adjust($dark, $lightness: 5%);
 $enable-caret: false;
 $list-group-border-width: 0;
 $list-group-color: $color-white;
+$list-group-item-padding-y: 0.8rem;
 $card-border-width: 0;
 $secondary: $color-white-dark-45;
 $toast-border-width: 0;
@@ -53,14 +54,14 @@ $pagination-focus-color: $color-white;
   @include background-acrylic;
 }
 
-.list-group-item {
-  background-color: inherit !important;
-}
-
 .text-accent-3 {
   color: $color-accent-3;
 }
 
 .list-group-item-secondary {
   color: $secondary !important;
+}
+
+.list-group-item-acrylic {
+  @include background-acrylic;
 }

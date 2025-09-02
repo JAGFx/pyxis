@@ -1,7 +1,7 @@
 {% import 'shared/_currency.macro.html.twig' as currency %}
 
 <turbo-frame id="entry_list_item_{{ entry.id }}">
-    <li class="list-group-item d-flex justify-content-center align-items-center py-2">
+    <li class="list-group-item list-group-item-acrylic d-flex justify-content-center align-items-center">
         <div class="d-flex justify-content-center align-items-start w-100 flex-column">
             <div class="d-flex justify-content-between align-items-center w-100">
                 <span>{{ entry.name }}</span>
@@ -16,10 +16,11 @@
                     <small data-bs-toggle="tooltip" data-bs-title="Type" data-bs-placement="bottom">
                         {% if entry.isForecast %}
                             <i class="fa-solid fa-shield-halved text-warning"></i>
+                            <span class="text-warning">{{ entry.type.humanize }}</span>
                         {% else %}
                             <i class="fa-solid fa-leaf text-primary"></i>
+                            <span class="text-primary">{{ entry.type.humanize }}</span>
                         {% endif %}
-                        <span>{{ entry.type.humanize }}</span>
                     </small>
                 </div>
                 <div class="d-flex align-items-center me-2">

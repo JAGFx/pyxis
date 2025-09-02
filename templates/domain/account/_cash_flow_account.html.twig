@@ -4,8 +4,8 @@
     {{ currency.amount(amountBalance.total, true) }}
 </span>
 
-<div class="d-flex justify-content-between align-items-center flex-wrap w-100">
-    <div class="d-flex flex-column">
+<div class="d-flex justify-content-between align-items-center w-100">
+    <div class="d-flex flex-column w-100">
         <small class="text-muted">Dépense</small>
         <span class="text-primary" data-bs-toggle="tooltip" data-bs-title="Dépense" data-bs-placement="bottom">
             <i class="fa-solid fa-leaf text-primary"></i>
@@ -13,7 +13,7 @@
         </span>
     </div>
 
-    <div class="d-flex flex-column">
+    <div class="d-flex flex-column w-100">
         <small class="text-muted">Provision</small>
         <span class="text-warning" data-bs-toggle="tooltip" data-bs-title="Provision" data-bs-placement="bottom">
             <i class="fa-solid fa-shield-halved text-warning"></i>
@@ -22,12 +22,16 @@
     </div>
 
     {% if amountBalance.assignments > 0 %}
-        <div class="d-flex flex-column">
+        <div class="d-flex flex-column w-100">
             <small class="text-muted">Affectation</small>
             <span class="" data-bs-toggle="tooltip" data-bs-title="Affectation" data-bs-placement="bottom">
                 <i class="fa-solid fa-solid fa-circle-dollar-to-slot"></i>
                 <small>{{ currency.amount(amountBalance.assignments, false) }}</small>
             </span>
+        </div>
+    {% else %}
+        <div class="d-flex flex-column w-100">
+            &nbsp;
         </div>
     {% endif %}
 </div>

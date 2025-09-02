@@ -1,7 +1,7 @@
 {% import 'shared/_currency.macro.html.twig' as currency %}
 
 {% for cashFlow in cashFlows %}
-    <li class="list-group-item d-flex justify-content-between align-items-center">
+    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
         <div class="me-2"><small>{{ currency.amount(cashFlow.cashFlow, true) }}</small></div>
         <div><small>{{ cashFlow.account.name }}</small></div>
         {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::MANAGE'), budget)  %}

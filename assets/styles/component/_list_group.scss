@@ -4,10 +4,8 @@
   background: transparent;
 
   .list-group-item {
-    @include background-acrylic;
-
     border-radius: $border-radius;
-    margin-bottom: 0.1rem;
-    margin-top: 0.1rem;
+    margin-bottom: 0.2rem;
+    margin-top: 0.2rem;
   }
 }
