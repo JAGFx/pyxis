@@ -5,7 +5,6 @@ namespace App\Domain\Entry\Repository;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Model\EntrySearchCommand;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -58,13 +57,22 @@ class EntryRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this
             ->createQueryBuilder('e')
-            ->orderBy('e.createdAt', Criteria::DESC);
+        ;
 
         if (!is_null($command->getStartDate()) && !is_null($command->getEndDate())) {
             $queryBuilder
                 ->andWhere('e.createdAt BETWEEN :startDate AND :endDate')
                 ->setParameter('startDate', $command->getStartDate()->format('Y-m-d'))
                 ->setParameter('endDate', $command->getEndDate()->format('Y-m-d'));
+        }
+
+        switch ($command->getOrderBy()) {
+            case 'createdAt':
+                $queryBuilder->orderBy('e.createdAt', $command->getOrderDirection()->value);
+                break;
+            default:
+                $queryBuilder->orderBy('a.id', $command->getOrderDirection()->value);
+                break;
         }
 
         return $queryBuilder;

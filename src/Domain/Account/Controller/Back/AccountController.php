@@ -5,6 +5,7 @@ namespace App\Domain\Account\Controller\Back;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountType;
 use App\Domain\Account\Manager\AccountManager;
+use App\Domain\Account\Model\AccountSearchCommand;
 use App\Shared\Model\ControllerActionEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,8 @@ class AccountController extends AbstractController
     #[Route(name: 'back_account_account_list', methods: Request::METHOD_GET)]
     public function index(): Response
     {
-        $accounts = $this->accountManager->getAccounts();
+        $accountSearchCommand = new AccountSearchCommand()->setOrderBy('name');
+        $accounts             = $this->accountManager->getAccounts($accountSearchCommand);
 
         return $this->render('domain/account/index.html.twig', ['accounts' => $accounts]);
     }

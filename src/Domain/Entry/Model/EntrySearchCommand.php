@@ -3,13 +3,16 @@
 namespace App\Domain\Entry\Model;
 
 use App\Domain\Account\Entity\Account;
+use App\Infrastructure\KnpPaginator\Model\OrderableInterface;
+use App\Infrastructure\KnpPaginator\Model\OrderableTrait;
 use App\Infrastructure\KnpPaginator\Model\PaginableTrait;
 use App\Infrastructure\KnpPaginator\Model\PaginationInterface;
 use DateTimeImmutable;
 
-class EntrySearchCommand implements PaginationInterface
+class EntrySearchCommand implements PaginationInterface, OrderableInterface
 {
     use PaginableTrait;
+    use OrderableTrait;
 
     public function __construct(
         private ?Account $account = null,

@@ -24,11 +24,12 @@ class AssignmentType extends AbstractType
             ->add('account', EntityType::class, [
                 'class'        => Account::class,
                 'choice_label' => 'name',
+                'label'        => 'Compte',
                 'row_attr'     => [
                     'class' => 'form-floating',
                 ],
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
-                    $accountSearchCommand = new AccountSearchCommand(true);
+                    $accountSearchCommand = new AccountSearchCommand(true)->setOrderBy('name');
 
                     return $repository->getAccountsQueryBuilder($accountSearchCommand);
                 },

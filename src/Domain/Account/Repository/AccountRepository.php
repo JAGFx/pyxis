@@ -27,6 +27,15 @@ class AccountRepository extends ServiceEntityRepository
                 ->setParameter('enable', $command->getEnable());
         }
 
+        switch ($command->getOrderBy()) {
+            case 'name':
+                $queryBuilder->orderBy('a.name', $command->getOrderDirection()->value);
+                break;
+            default:
+                $queryBuilder->orderBy('a.id', $command->getOrderDirection()->value);
+                break;
+        }
+
         return $queryBuilder;
     }
 

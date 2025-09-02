@@ -2,8 +2,13 @@
 
 namespace App\Domain\Account\Model;
 
-class AccountSearchCommand
+use App\Infrastructure\KnpPaginator\Model\OrderableInterface;
+use App\Infrastructure\KnpPaginator\Model\OrderableTrait;
+
+class AccountSearchCommand implements OrderableInterface
 {
+    use OrderableTrait;
+
     public function __construct(
         private ?bool $enable = true,
     ) {

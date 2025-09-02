@@ -28,7 +28,7 @@ class EntryType extends AbstractType
                     'class' => 'form-floating',
                 ],
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
-                    $accountSearchCommand = new AccountSearchCommand(true);
+                    $accountSearchCommand = new AccountSearchCommand(true)->setOrderBy('name');
 
                     return $repository->getAccountsQueryBuilder($accountSearchCommand);
                 },

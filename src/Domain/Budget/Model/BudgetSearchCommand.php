@@ -2,8 +2,13 @@
 
 namespace App\Domain\Budget\Model;
 
-class BudgetSearchCommand
+use App\Infrastructure\KnpPaginator\Model\OrderableInterface;
+use App\Infrastructure\KnpPaginator\Model\OrderableTrait;
+
+class BudgetSearchCommand implements OrderableInterface
 {
+    use OrderableTrait;
+
     public function __construct(
         private ?int $year = null,
         private ?bool $showCredits = null,

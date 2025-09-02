@@ -46,6 +46,15 @@ class BudgetRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('b.enable = TRUE');
         }
 
+        switch ($command->getOrderBy()) {
+            case 'name':
+                $queryBuilder->orderBy('b.name', $command->getOrderDirection()->value);
+                break;
+            default:
+                $queryBuilder->orderBy('b.id', $command->getOrderDirection()->value);
+                break;
+        }
+
         return $queryBuilder;
     }
 

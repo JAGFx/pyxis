@@ -69,6 +69,15 @@ class PeriodicEntryRepository extends ServiceEntityRepository
             ;
         }
 
+        switch ($command->getOrderBy()) {
+            case 'name':
+                $queryBuilder->orderBy('p.name', $command->getOrderDirection()->value);
+                break;
+            default:
+                $queryBuilder->orderBy('p.id', $command->getOrderDirection()->value);
+                break;
+        }
+
         return $queryBuilder;
     }
 }

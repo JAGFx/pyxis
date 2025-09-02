@@ -3,9 +3,13 @@
 namespace App\Domain\Assignment\Model;
 
 use App\Domain\Account\Entity\Account;
+use App\Infrastructure\KnpPaginator\Model\OrderableInterface;
+use App\Infrastructure\KnpPaginator\Model\OrderableTrait;
 
-class AssignmentSearchCommand
+class AssignmentSearchCommand implements OrderableInterface
 {
+    use OrderableTrait;
+
     public function __construct(
         private ?Account $account = null,
         private ?bool $enable = true,

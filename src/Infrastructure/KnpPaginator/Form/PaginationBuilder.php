@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\KnpPaginator\Model;
+namespace App\Infrastructure\KnpPaginator\Form;
 
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;

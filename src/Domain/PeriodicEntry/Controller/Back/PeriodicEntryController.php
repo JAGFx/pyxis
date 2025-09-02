@@ -5,6 +5,7 @@ namespace App\Domain\PeriodicEntry\Controller\Back;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntryType;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
+use App\Domain\PeriodicEntry\Model\PeriodicEntrySearchCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,8 +25,10 @@ class PeriodicEntryController extends AbstractController
     #[Route(name: 'back_periodicentry_list', methods: Request::METHOD_GET)]
     public function list(): Response
     {
+        $periodicEntrySearchCommand = new PeriodicEntrySearchCommand()->setOrderBy('name');
+
         return $this->render('domain/periodic_entry/index.html.twig', [
-            'periodicEntries' => $this->periodicEntryManager->getPeriodicEntries(),
+            'periodicEntries' => $this->periodicEntryManager->getPeriodicEntries($periodicEntrySearchCommand),
         ]);
     }
 

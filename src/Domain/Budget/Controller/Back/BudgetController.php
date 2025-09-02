@@ -26,7 +26,7 @@ class BudgetController extends AbstractController
     #[Route('/', name: 'back_budget_budget_list', methods: Request::METHOD_GET)]
     public function list(Request $request): Response
     {
-        $budgetSearchCommand = new BudgetSearchCommand();
+        $budgetSearchCommand = new BudgetSearchCommand()->setOrderBy('name');
 
         $this
             ->createForm(BudgetSearchType::class, $budgetSearchCommand)

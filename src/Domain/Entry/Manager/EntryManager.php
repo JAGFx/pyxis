@@ -64,22 +64,6 @@ class EntryManager
     }
 
     /**
-     * @return Entry[]
-     */
-    public function getEntries(?EntrySearchCommand $command = null): array
-    {
-        $command ??= new EntrySearchCommand();
-
-        /** @var Entry[] $result */
-        $result = $this->entryRepository
-            ->getEntriesQueryBuilder($command)
-            ->getQuery()
-            ->getResult();
-
-        return $result;
-    }
-
-    /**
      * @return PaginationInterface<int, Entry>
      */
     public function getPaginated(?EntrySearchCommand $command = null): PaginationInterface

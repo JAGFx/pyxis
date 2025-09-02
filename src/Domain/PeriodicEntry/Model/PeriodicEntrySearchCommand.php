@@ -3,9 +3,13 @@
 namespace App\Domain\PeriodicEntry\Model;
 
 use App\Domain\Entry\Model\EntryTypeEnum;
+use App\Infrastructure\KnpPaginator\Model\OrderableInterface;
+use App\Infrastructure\KnpPaginator\Model\OrderableTrait;
 
-class PeriodicEntrySearchCommand
+class PeriodicEntrySearchCommand implements OrderableInterface
 {
+    use OrderableTrait;
+
     public function __construct(
         private ?EntryTypeEnum $entryTypeEnum = null,
     ) {
