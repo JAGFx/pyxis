@@ -31,7 +31,7 @@ class ApplyPeriodicEntryCommand
         $symfonyStyle = new SymfonyStyle($input, $output);
 
         try {
-            $periodicEntries = $this->periodicEntryManager->search();
+            $periodicEntries = $this->periodicEntryManager->getPeriodicEntries();
 
             foreach ($periodicEntries as $periodicEntry) {
                 try {

@@ -3,7 +3,7 @@
 namespace App\Domain\PeriodicEntry\Manager;
 
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchCommand;
+use App\Domain\PeriodicEntry\Model\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
 
 class PeriodicEntryManager
@@ -29,13 +29,13 @@ class PeriodicEntryManager
     }
 
     /** @return PeriodicEntry[] */
-    public function search(?PeriodicEntrySearchCommand $command = null): array
+    public function getPeriodicEntries(?PeriodicEntrySearchCommand $command = null): array
     {
         $command ??= new PeriodicEntrySearchCommand();
 
         /** @var PeriodicEntry[] $periodicEntries */
         $periodicEntries = $this->periodicEntryRepository
-            ->search($command)
+            ->getPeriodicEntriesQueryBuilder($command)
             ->getQuery()
             ->getResult();
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Budget\Model\Search;
+namespace App\Domain\Budget\Model;
 
 use App\Domain\Budget\Entity\Budget;
 

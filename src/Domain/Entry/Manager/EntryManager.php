@@ -66,13 +66,13 @@ class EntryManager
     /**
      * @return Entry[]
      */
-    public function search(?EntrySearchCommand $command = null): array
+    public function getEntries(?EntrySearchCommand $command = null): array
     {
         $command ??= new EntrySearchCommand();
 
         /** @var Entry[] $result */
         $result = $this->entryRepository
-            ->getEntryQueryBuilder($command)
+            ->getEntriesQueryBuilder($command)
             ->getQuery()
             ->getResult();
 
@@ -88,7 +88,7 @@ class EntryManager
 
         /** @var PaginationInterface<int, Entry> $pagination */
         $pagination = $this->paginator->paginate(
-            $this->entryRepository->getEntryQueryBuilder($command),
+            $this->entryRepository->getEntriesQueryBuilder($command),
             $command->getPage(),
             $command->getPageSize()
         );

@@ -27,7 +27,7 @@ class AccountController extends AbstractController
         return $this->render('domain/account/index.html.twig', ['accounts' => $accounts]);
     }
 
-    #[Route(name: 'back_account_new', methods: [Request::METHOD_POST, Request::METHOD_GET])]
+    #[Route('/create', name: 'back_account_new', methods: [Request::METHOD_POST, Request::METHOD_GET])]
     public function create(Request $request): Response
     {
         return $this->handleForm(ControllerActionEnum::CREATE, $request);

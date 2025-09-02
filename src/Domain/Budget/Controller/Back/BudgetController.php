@@ -6,7 +6,7 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Form\BudgetType;
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Model\Search\BudgetSearchCommand;
+use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Shared\Model\ControllerActionEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +33,7 @@ class BudgetController extends AbstractController
             ->submit($request->query->all());
 
         return $this->render('domain/budget/index.html.twig', [
-            'budgets' => $this->budgetManager->search($budgetSearchCommand),
+            'budgets' => $this->budgetManager->getBudgets($budgetSearchCommand),
         ]);
     }
 

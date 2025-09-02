@@ -25,7 +25,7 @@ class PeriodicEntryController extends AbstractController
     public function list(): Response
     {
         return $this->render('domain/periodic_entry/index.html.twig', [
-            'periodicEntries' => $this->periodicEntryManager->search(),
+            'periodicEntries' => $this->periodicEntryManager->getPeriodicEntries(),
         ]);
     }
 

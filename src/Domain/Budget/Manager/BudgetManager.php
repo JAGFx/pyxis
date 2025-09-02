@@ -4,7 +4,7 @@ namespace App\Domain\Budget\Manager;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Model\Search\BudgetSearchCommand;
+use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Domain\Entry\Entity\Entry;
@@ -41,13 +41,13 @@ readonly class BudgetManager
     /**
      * @return Budget[]
      */
-    public function search(?BudgetSearchCommand $command = null): array
+    public function getBudgets(?BudgetSearchCommand $command = null): array
     {
         $command ??= new BudgetSearchCommand();
 
         /** @var Budget[] $result */
         $result = $this->budgetRepository
-            ->search($command)
+            ->getBudgetsQueryBuilder($command)
             ->getQuery()
             ->getResult();
 
@@ -57,13 +57,13 @@ readonly class BudgetManager
     /**
      * @return BudgetValueObject[]
      */
-    public function searchValueObject(?BudgetSearchCommand $command = null): array
+    public function getBudgetValuesObject(?BudgetSearchCommand $command = null): array
     {
         $command ??= new BudgetSearchCommand();
 
         /** @var BudgetValueObject[] $result */
         $result = $this->budgetRepository
-            ->searchValueObject($command)
+            ->getBudgetValueObjectsQueryBuilder($command)
             ->getQuery()
             ->getResult();
 

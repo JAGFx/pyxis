@@ -3,8 +3,8 @@
 namespace App\Domain\Budget\Manager;
 
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Model\Search\BudgetSearchCommand;
-use App\Domain\Budget\Model\Search\HistoryBudgetSearchCommand;
+use App\Domain\Budget\Model\BudgetSearchCommand;
+use App\Domain\Budget\Model\HistoryBudgetSearchCommand;
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
 
 class HistoryBudgetManager
@@ -44,7 +44,7 @@ class HistoryBudgetManager
     {
         /** @var HistoryBudget[] $histories */
         $histories = $this->repository
-            ->search($command)
+            ->getHistoryBudgetsQueryBuilder($command)
             ->getQuery()
             ->getResult();
 

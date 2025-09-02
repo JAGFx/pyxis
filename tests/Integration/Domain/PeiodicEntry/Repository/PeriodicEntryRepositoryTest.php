@@ -4,8 +4,8 @@ namespace App\Tests\Integration\Domain\PeiodicEntry\Repository;
 
 use App\Domain\Entry\Model\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
+use App\Domain\PeriodicEntry\Model\PeriodicEntrySearchCommand;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
@@ -48,7 +48,7 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
 
     public function testGetPeriodicEntriesVosIsRightClass(): void
     {
-        $periodicEntries = $this->periodicEntryManager->search();
+        $periodicEntries = $this->periodicEntryManager->getPeriodicEntries();
 
         foreach ($periodicEntries as $periodicEntry) {
             self::assertInstanceOf(PeriodicEntry::class, $periodicEntry);
@@ -57,7 +57,7 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
 
     public function testPeriodicEntriesSpentIsRight(): void
     {
-        $periodicEntriesSpent = $this->periodicEntryManager->search(
+        $periodicEntriesSpent = $this->periodicEntryManager->getPeriodicEntries(
             new PeriodicEntrySearchCommand(EntryTypeEnum::TYPE_SPENT)
         );
 
@@ -73,7 +73,7 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
 
     public function testPeriodicEntriesForecastIsRight(): void
     {
-        $periodicEntriesSpent = $this->periodicEntryManager->search(
+        $periodicEntriesSpent = $this->periodicEntryManager->getPeriodicEntries(
             new PeriodicEntrySearchCommand(EntryTypeEnum::TYPE_FORECAST)
         );
 

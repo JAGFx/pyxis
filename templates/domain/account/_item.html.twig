@@ -25,10 +25,12 @@
                     <a class="dropdown-item" href="{{ path('back_account_edit', {'id': account.id}) }}">Modifier</a>
                 </li>
                 {% if account.enable %}
-                    <li>
-                        <a class="dropdown-item" data-turbo="true"
-                           href="{{ path('front_account_toggle', {'id': account.id}) }}">Désactiver</a>
-                    </li>
+                    {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::DISABLE'), account) %}
+                        <li>
+                            <a class="dropdown-item" data-turbo="true"
+                               href="{{ path('front_account_toggle', {'id': account.id}) }}">Désactiver</a>
+                        </li>
+                    {% endif %}
                 {% else %}
                     <li>
                         <a class="dropdown-item" data-turbo="true"

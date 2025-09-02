@@ -35,7 +35,7 @@ class HistoryBudgetOperatorTest extends TestCase
     {
         $this->budgetManagerMock
             ->expects($this->once())
-            ->method('searchValueObject')
+            ->method('getBudgetValuesObject')
             ->willReturn([
                 new BudgetValueObject(1, '#1', 20, true, 20),
                 new BudgetValueObject(2, '#2', 20, true, 20),
@@ -64,7 +64,7 @@ class HistoryBudgetOperatorTest extends TestCase
     {
         $this->budgetManagerMock
             ->expects($this->once())
-            ->method('searchValueObject')
+            ->method('getBudgetValuesObject')
             ->willReturn([
                 new BudgetValueObject(1, '#1', 20, true, 20),
                 new BudgetValueObject(2, '#2', 20, true, 20),

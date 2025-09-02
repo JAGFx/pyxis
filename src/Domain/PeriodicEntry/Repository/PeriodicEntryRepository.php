@@ -4,7 +4,7 @@ namespace App\Domain\PeriodicEntry\Repository;
 
 use App\Domain\Entry\Model\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchCommand;
+use App\Domain\PeriodicEntry\Model\PeriodicEntrySearchCommand;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -48,7 +48,7 @@ class PeriodicEntryRepository extends ServiceEntityRepository
         return $this;
     }
 
-    public function search(?PeriodicEntrySearchCommand $command = null): QueryBuilder
+    public function getPeriodicEntriesQueryBuilder(?PeriodicEntrySearchCommand $command = null): QueryBuilder
     {
         $command ??= new PeriodicEntrySearchCommand();
 

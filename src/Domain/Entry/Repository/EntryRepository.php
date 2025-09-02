@@ -54,7 +54,7 @@ class EntryRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
-    public function getEntryQueryBuilder(EntrySearchCommand $command): QueryBuilder
+    public function getEntriesQueryBuilder(EntrySearchCommand $command): QueryBuilder
     {
         $queryBuilder = $this
             ->createQueryBuilder('e')

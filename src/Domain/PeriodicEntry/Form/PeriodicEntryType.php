@@ -6,7 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Model\AccountSearchCommand;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Model\Search\BudgetSearchCommand;
+use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use Doctrine\ORM\QueryBuilder;
@@ -60,7 +60,7 @@ class PeriodicEntryType extends AbstractType
                 'query_builder' => static function (BudgetRepository $budgetRepository): QueryBuilder {
                     $budgetSearchCommand = new BudgetSearchCommand(enabled: true);
 
-                    return $budgetRepository->search($budgetSearchCommand);
+                    return $budgetRepository->getBudgetsQueryBuilder($budgetSearchCommand);
                 },
                 'row_attr' => [
                     'class' => 'form-floating',

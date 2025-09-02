@@ -3,8 +3,8 @@
 namespace App\Domain\Budget\Repository;
 
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Model\Search\BudgetSearchCommand;
-use App\Domain\Budget\Model\Search\HistoryBudgetSearchCommand;
+use App\Domain\Budget\Model\BudgetSearchCommand;
+use App\Domain\Budget\Model\HistoryBudgetSearchCommand;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -28,7 +28,7 @@ class HistoryBudgetRepository extends ServiceEntityRepository
             ->orderBy('year', 'DESC');
     }
 
-    public function search(BudgetSearchCommand|HistoryBudgetSearchCommand $command): QueryBuilder
+    public function getHistoryBudgetsQueryBuilder(BudgetSearchCommand|HistoryBudgetSearchCommand $command): QueryBuilder
     {
         $qb = $this->createQueryBuilder('hb');
 

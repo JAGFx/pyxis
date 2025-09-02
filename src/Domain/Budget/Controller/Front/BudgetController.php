@@ -7,7 +7,7 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetBalanceSearchType;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Model\Search\BudgetSearchCommand;
+use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Budget\Operator\BudgetOperator;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Shared\Model\TurboResponseTraits;
@@ -51,7 +51,7 @@ class BudgetController extends AbstractController
             ->handleRequest($request);
 
         $values = (YearRange::current() === $budgetSearchCommand->getYear())
-            ? $this->budgetManager->searchValueObject($budgetSearchCommand)
+            ? $this->budgetManager->getBudgetValuesObject($budgetSearchCommand)
             : $this->historyBudgetManager->getHistories($budgetSearchCommand);
 
         return $this->renderTurboStream(

@@ -3,7 +3,7 @@
 namespace App\Domain\Assignment\Repository;
 
 use App\Domain\Assignment\Entity\Assignment;
-use App\Domain\Assignment\Form\AssignmentSearchType;
+use App\Domain\Assignment\Model\AssignmentSearchCommand;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,11 +18,11 @@ class AssignmentRepository extends ServiceEntityRepository
         parent::__construct($registry, Assignment::class);
     }
 
-    public function balance(AssignmentSearchType $command): QueryBuilder
+    public function getAssignmentsQueryBuilder(AssignmentSearchCommand $command): QueryBuilder
     {
         $queryBuilder = $this
             ->createQueryBuilder('a')
-            ->select('SUM(a.amount) as sum');
+        ;
 
         if (!is_null($command->getAccount())) {
             $queryBuilder
@@ -31,6 +31,13 @@ class AssignmentRepository extends ServiceEntityRepository
         }
 
         return $queryBuilder;
+    }
+
+    public function balanceQueryBuilder(AssignmentSearchCommand $command): QueryBuilder
+    {
+        return $this
+            ->getAssignmentsQueryBuilder($command)
+            ->select('SUM(a.amount) as sum');
     }
 
     public function create(Assignment $entity): self

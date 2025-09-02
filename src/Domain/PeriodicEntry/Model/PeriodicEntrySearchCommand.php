@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\PeriodicEntry\Form;
+namespace App\Domain\PeriodicEntry\Model;
 
 use App\Domain\Entry\Model\EntryTypeEnum;
 

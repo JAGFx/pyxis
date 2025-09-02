@@ -3,7 +3,7 @@
 namespace App\Domain\Budget\Repository;
 
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Model\Search\BudgetSearchCommand;
+use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Entry\Model\EntryKindEnum;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -32,7 +32,7 @@ class BudgetRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    public function search(BudgetSearchCommand $command): QueryBuilder
+    public function getBudgetsQueryBuilder(BudgetSearchCommand $command): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('b')
             ->orderBy('b.name');
@@ -49,7 +49,7 @@ class BudgetRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
-    public function searchValueObject(BudgetSearchCommand $command): QueryBuilder
+    public function getBudgetValueObjectsQueryBuilder(BudgetSearchCommand $command): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('b')
             ->select(
