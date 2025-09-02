@@ -25,14 +25,14 @@
     {% endblock %}
 </head>
 <body data-turbo="false" class="bugr d-flex">
-
-    <main class="container p-3">
+    <main class="container p-3 d-flex flex-column">
         {% include 'shared/toast/_container.html.twig' %}
         {% include 'shared/_radial_menu.html.twig' %}
 
         <turbo-frame id="entry_balance" src="{{ path('front_entry_balance') }}"></turbo-frame>
-
-        {% block body %}{% endblock %}
+        <div class="overflow-auto mt-2 h-100">
+            {% block body %}{% endblock %}
+        </div>
     </main>
 </body>
 </html>
