@@ -1,45 +1,175 @@
-#name: Create release
-#
-#on:
-#  push:
-#    tags:
-#      - 'v*'
-#
-#jobs:
-#  ci:
+name: Production Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-cd
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Run CI Pipeline
+    uses: ./.github/workflows/ci.yaml
+
+  build-production-php:
+    name: Build PHP Production Image
+    runs-on: ubuntu-latest
+    needs: [ ci ]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup PHP and Composer
+        uses: shivammathur/setup-php@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install Composer Dependencies
+        run: composer install --no-dev --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Install Node.js dependencies
+        run: npm ci --no-progress --silent
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Remove dev dependencies
+        run: npm ci --no-progress --silent --production
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:buildx-stable-1
+
+      - name: Extract tag version
+        id: tag
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "version=${TAG_NAME}" >> $GITHUB_OUTPUT
+          echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
+      - name: Extract metadata
+        id: meta
+        run: |
+          echo "tags=ghcr.io/jagfx/pyxis-php:latest,ghcr.io/jagfx/pyxis-php:${{ steps.tag.outputs.version }}" >> $GITHUB_OUTPUT
+
+      - name: Build and Publish PHP
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/php/Dockerfile
+          push: true
+          target: prod
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: |
+            type=gha
+            type=registry,ref=ghcr.io/jagfx/pyxis-php:latest
+            type=registry,ref=ghcr.io/jagfx/pyxis-php:${{ steps.tag.outputs.version }}
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+          build-args: |
+            VERSION=${{ steps.tag.outputs.version }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+
+  build-production-nginx:
+    name: Build Nginx Production Image
+    runs-on: ubuntu-latest
+    needs: [ ci ]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:buildx-stable-1
+
+      - name: Extract tag version
+        id: tag
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "version=${TAG_NAME}" >> $GITHUB_OUTPUT
+          echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
+      - name: Extract metadata
+        id: meta
+        run: |
+          echo "tags=ghcr.io/jagfx/pyxis-nginx:latest,ghcr.io/jagfx/pyxis-nginx:${{ steps.tag.outputs.version }}" >> $GITHUB_OUTPUT
+
+      - name: Build and Publish Nginx
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/nginx/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: |
+            type=gha
+            type=registry,ref=ghcr.io/jagfx/pyxis-nginx:latest
+            type=registry,ref=ghcr.io/jagfx/pyxis-nginx:${{ steps.tag.outputs.version }}
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+          build-args: |
+            VERSION=${{ steps.tag.outputs.version }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+
+  # Déploiement (optionnel)
+#  deploy:
+#    name: Deploy to Production
+#    runs-on: ubuntu-latest
+#    needs: [ build-production ]
+#    if: success()
+#    environment: production  # Protection avec environnement GitHub
 #    steps:
-#      - uses: actions/checkout@v3
-#      - name: Run CI
-#        uses: ./.github/workflows/ci.yaml
+#      - name: Extract tag version
+#        id: tag
+#        run: |
+#          TAG_NAME=${GITHUB_REF#refs/tags/}
+#          echo "version=${TAG_NAME}" >> $GITHUB_OUTPUT
 #
-#  release:
-#    name: Create and push docker image
-#    runs-on: ghcr.io/jagfx/bugr2:ci
-#    needs: [ ci ]
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 2
-#      - name: Install vendors
-#        run: composer install --no-dev --no-progress -o -n --no-scripts
-#      - name: Install npm
-#        run: npm i -p
-#        env:
-#          NODE_ENV: production
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v2
-#      - name: Login to GitHub Container Registry
-#        uses: docker/login-action@v2
-#        with:
-#          registry: ghcr.io
-#          username: ${{ github.actor }}
-#          password: ${{ secrets.GITHUB_TOKEN }}
-#      - name: Build and push
-#        uses: docker/bake-action@v2
-#        with:
-#          context: .
-#          file: ./docker/php/Dockerfile
-#          push: true
-#          target: prod
-#          tags: ghcr.io/jagfx/bugr2:latest
+#      - name: Deploy notification
+#        run: |
+#          echo "🚀 Ready to deploy version ${{ steps.tag.outputs.version }}"
+#          echo "🐳 Image: ghcr.io/jagfx/pyxis-php:${{ steps.tag.outputs.version }}"
+
+      # Ici tu peux ajouter tes étapes de déploiement :
+      # - Mise à jour Kubernetes
+      # - Docker Compose
+      # - SSH vers serveur
+      # - Etc.

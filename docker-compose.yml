@@ -1,8 +1,15 @@
 services:
+  # To test production build
+#  php:
+#    image: ghcr.io/jagfx/pyxis-php:latest
+#    networks:
+#      - app_network
+
   php:
     image: pyxis-php:latest
     build:
-      context: ./docker/php
+      context: .
+      dockerfile: ./docker/php/Dockerfile
       target: dev
     environment:
       XDEBUG_MODE: debug,coverage
@@ -18,10 +25,17 @@ services:
     networks:
       - app_network
 
+  # To test production build
+#  nginx:
+#    image: ghcr.io/jagfx/pyxis-nginx:latest
+#    networks:
+#      - app_network
+
   nginx:
     image: pyxis-nginx:latest
     build:
-      context: ./docker/nginx
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
     volumes:
       - ./:/var/www/symfony/
     ports:
@@ -30,7 +44,7 @@ services:
       - app_network
 
   db:
-    image: mysql:8
+    image: mysql:8.2
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: noPassword

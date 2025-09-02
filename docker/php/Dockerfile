@@ -1,39 +1,65 @@
-FROM php:8.4-fpm AS base
+FROM php:8.4-fpm-alpine AS base
 
 LABEL org.opencontainers.image.source=https://github.com/JAGFx/bugr2
 LABEL org.opencontainers.image.licenses=MIT
 
-COPY php.ini /usr/local/etc/php/conf.d/docker-php-config.ini
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/docker-php-config.ini
 
-RUN apt update -y \
-    && apt upgrade -y \
-    && apt full-upgrade -y \
-    && apt dist-upgrade -y \
-    && apt autoremove -y \
-    && apt install zip unzip libzip-dev libicu-dev -y
+RUN apk add --no-cache \
+    icu-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install zip pdo pdo_mysql opcache intl
 
-RUN pecl install apcu
+RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS \
+    && pecl install apcu \
+    && docker-php-ext-enable apcu \
+    && apk del $PHPIZE_DEPS \
+    && pecl clear-cache \
+    && apk del .build-dependencies
 
-RUN docker-php-ext-install zip pdo pdo_mysql opcache intl \
-    && docker-php-ext-enable apcu
+RUN rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/pear
 
-COPY conf.d/error_reporting.ini /usr/local/etc/php/conf.d/error_reporting.ini
-COPY conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
-
-WORKDIR /var/www/symfony
+COPY docker/php/conf.d/error_reporting.ini /usr/local/etc/php/conf.d/error_reporting.ini
+COPY docker/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+EXPOSE 9000
 
 FROM base AS dev
 
-RUN pecl install xdebug
-RUN docker-php-ext-enable xdebug
+RUN apk add --update linux-headers \
+    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && pecl clear-cache \
+    && apk del .build-dependencies \
+    && rm -rf /var/cache/apk/* \
+    && rm -rf /tmp/pear
+COPY docker/php/conf.d/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 RUN curl -L https://cs.symfony.com/download/php-cs-fixer-v3.phar -o php-cs-fixer \
     && chmod a+x php-cs-fixer \
     && mv php-cs-fixer /usr/local/bin/php-cs-fixer
-
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-COPY conf.d/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+WORKDIR /var/www/symfony
 
 FROM base AS prod
 
-COPY . /var/www/symfony
+RUN addgroup -g 1000 symfony \
+    && adduser -u 1000 -G symfony -s /bin/sh -D symfony
+
+COPY --chown=symfony:symfony . /var/www/symfony
+RUN chmod -R 755 /var/www/symfony/var/ \
+    && chown -R symfony:symfony /var/www/symfony/var/ \
+    && rm -rf /var/www/symfony/var/cache/dev \
+    && rm -rf /var/www/symfony/var/cache/test \
+    && rm -rf /var/www/symfony/var/log/* \
+    && mkdir -p /var/www/symfony/var/log \
+    && chown -R symfony:symfony /var/www/symfony/var/
+
+RUN rm -f /usr/local/etc/php/conf.d/error_reporting.ini
+USER symfony
+
+WORKDIR /var/www/symfony

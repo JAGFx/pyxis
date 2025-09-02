@@ -25,7 +25,7 @@
     "dev-server": "encore dev-server",
     "dev": "encore dev",
     "watch": "encore dev --watch",
-    "build": "encore production --progress",
+    "build": "encore production",
     "lint": "npm run lint:stylelint",
     "lint:stylelint": "npx stylelint 'assets/styles/**/*.scss' --fix --color"
   },
