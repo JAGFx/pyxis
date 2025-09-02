@@ -6,6 +6,7 @@ namespace App\Domain\Account\Controller\Front;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Manager\AccountManager;
+use App\Domain\Account\Security\AccountVoter;
 use App\Shared\Model\TurboResponseTraits;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
@@ -29,6 +30,10 @@ class AccountController extends AbstractController
     #[Route('/{id}/toggle', name: 'front_account_toggle', methods: [Request::METHOD_GET])]
     public function toggle(Request $request, Account $account): Response
     {
+        if ($account->isEnable()) {
+            $this->denyAccessUnlessGranted(AccountVoter::DISABLE, $account);
+        }
+
         $this->accountManager->toggle($account);
 
         $message = 'Compte ';

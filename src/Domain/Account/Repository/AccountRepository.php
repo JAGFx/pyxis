@@ -3,7 +3,9 @@
 namespace App\Domain\Account\Repository;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Model\AccountSearchCommand;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,6 +16,18 @@ class AccountRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Account::class);
+    }
+
+    public function getAccountsQueryBuilder(AccountSearchCommand $command): QueryBuilder
+    {
+        $queryBuilder = $this->createQueryBuilder('a');
+        if (null !== $command->getEnable()) {
+            $queryBuilder
+                ->andWhere('a.enable = :enable')
+                ->setParameter('enable', $command->getEnable());
+        }
+
+        return $queryBuilder;
     }
 
     public function create(Account $account): self

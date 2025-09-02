@@ -3,8 +3,11 @@
 namespace App\Domain\Entry\Form;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Model\AccountSearchCommand;
+use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\Entry;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -24,6 +27,11 @@ class EntryType extends AbstractType
                 'row_attr'     => [
                     'class' => 'form-floating',
                 ],
+                'query_builder' => function (AccountRepository $repository): QueryBuilder {
+                    $accountSearchCommand = new AccountSearchCommand(true);
+
+                    return $repository->getAccountsQueryBuilder($accountSearchCommand);
+                },
             ])
             ->add('name', TextType::class, [
                 'label'    => 'Intitulé',

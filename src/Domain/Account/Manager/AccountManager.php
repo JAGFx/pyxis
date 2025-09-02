@@ -3,6 +3,7 @@
 namespace App\Domain\Account\Manager;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Model\AccountSearchCommand;
 use App\Domain\Account\Repository\AccountRepository;
 
 class AccountManager
@@ -15,10 +16,14 @@ class AccountManager
     /**
      * @return Account[]
      */
-    public function getAccounts(): array
+    public function getAccounts(?AccountSearchCommand $command = null): array
     {
         /** @var Account[] $accounts */
-        $accounts = $this->repository->findAll();
+        $accounts = $this->repository
+            ->getAccountsQueryBuilder($command ?? new AccountSearchCommand())
+            ->getQuery()
+            ->getResult()
+        ;
 
         return $accounts;
     }

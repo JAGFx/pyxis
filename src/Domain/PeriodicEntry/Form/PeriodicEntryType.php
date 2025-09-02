@@ -3,6 +3,8 @@
 namespace App\Domain\PeriodicEntry\Form;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Model\AccountSearchCommand;
+use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Model\Search\BudgetSearchCommand;
 use App\Domain\Budget\Repository\BudgetRepository;
@@ -28,6 +30,11 @@ class PeriodicEntryType extends AbstractType
                 'row_attr'     => [
                     'class' => 'form-floating',
                 ],
+                'query_builder' => function (AccountRepository $repository): QueryBuilder {
+                    $accountSearchCommand = new AccountSearchCommand(true);
+
+                    return $repository->getAccountsQueryBuilder($accountSearchCommand);
+                },
             ])
             ->add('name', TextType::class, [
                 'label'    => 'Nom',

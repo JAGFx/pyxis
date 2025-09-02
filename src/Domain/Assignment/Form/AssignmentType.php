@@ -3,7 +3,10 @@
 namespace App\Domain\Assignment\Form;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Model\AccountSearchCommand;
+use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Assignment\Entity\Assignment;
+use Doctrine\ORM\QueryBuilder;
 use Override;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -24,6 +27,11 @@ class AssignmentType extends AbstractType
                 'row_attr'     => [
                     'class' => 'form-floating',
                 ],
+                'query_builder' => function (AccountRepository $repository): QueryBuilder {
+                    $accountSearchCommand = new AccountSearchCommand(true);
+
+                    return $repository->getAccountsQueryBuilder($accountSearchCommand);
+                },
             ])
             ->add('name', TextType::class, [
                 'label'    => 'Nom',
