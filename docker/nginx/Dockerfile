@@ -12,6 +12,12 @@ RUN addgroup -g 1000 symfony \
     && adduser -u 1000 -G symfony -s /bin/sh -D symfony
 
 COPY --chown=symfony:symfony . /var/www/symfony
-USER symfony
+RUN chmod -R 755 /var/www/symfony/var/ \
+    && chown -R symfony:symfony /var/www/symfony/var/ \
+    && rm -rf /var/www/symfony/var/cache/dev \
+    && rm -rf /var/www/symfony/var/cache/test \
+    && rm -rf /var/www/symfony/var/log/* \
+    && mkdir -p /var/www/symfony/var/log \
+    && chown -R symfony:symfony /var/www/symfony/var/
 
 WORKDIR /var/www/symfony
