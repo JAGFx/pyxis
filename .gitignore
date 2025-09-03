@@ -24,6 +24,7 @@ yarn-error.log
 
 data/export/*
 !data/export/.gitkeep
+data/dumps
 ###> phpunit/phpunit ###
 /phpunit.xml
 /.phpunit.cache/

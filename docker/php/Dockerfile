@@ -1,6 +1,6 @@
 FROM php:8.4-fpm-alpine AS base
 
-LABEL org.opencontainers.image.source=https://github.com/JAGFx/bugr2
+LABEL org.opencontainers.image.source=https://github.com/JAGFx/pyxis
 LABEL org.opencontainers.image.licenses=MIT
 
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/docker-php-config.ini

@@ -51,6 +51,7 @@ services:
       MYSQL_DATABASE: bugr
     volumes:
       - db-data:/var/lib/mysql
+      - ./data/dumps:/dumps
     ports:
       - "3306:3306"
     networks:
