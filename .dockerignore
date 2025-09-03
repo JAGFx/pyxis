@@ -24,6 +24,5 @@ assets/
 bin/php
 data/
 fixtures/
-migrations/
 node_modules/
 tests/
