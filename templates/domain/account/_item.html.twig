@@ -1,43 +1,39 @@
-<li class="list-group-item list-group-item-acrylic d-flex justify-content-center align-items-center {{ not account.enable ? 'list-group-item-secondary' : '' }}">
-    <div class="d-flex flex-column w-100">
-        <div class="d-flex justify-content-between w-100">
-            <div class="d-flex justify-content-center align-items-start w-100 flex-column">
-                <div class="d-flex justify-content-between align-items-center w-100">
-                    {{ account.name }}
-                    <a data-turbo="true" href="{{ path('front_account_cash_flow', {'id': account.id}) }}" class="link-offset-3 text-decoration-none text-white-50 me-2">
-                        <small>
-                            <span>Voir la répartition</span>
-                            <i class="fa-solid fa-scale-balanced"></i>
-                        </small>
-                    </a>
+<div class="position-relative">
+    <li class="list-group-item list-group-item-acrylic d-flex justify-content-center align-items-center {{ not account.enable ? 'list-group-item-secondary' : '' }}">
+        <div class="d-flex flex-column w-100">
+            <div class="d-flex justify-content-between w-100">
+                <div class="d-flex justify-content-center align-items-start w-100 flex-column">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        {{ account.name }}
+                        <a data-turbo="true" href="{{ path('front_account_cash_flow', {'id': account.id}) }}" class="link-offset-3 text-decoration-none text-white-50 me-2">
+                            <small>
+                                <span>Voir la répartition</span>
+                                <i class="fa-solid fa-scale-balanced"></i>
+                            </small>
+                        </a>
+                    </div>
+                    <turbo-frame id="account_list_item__cash_flow_by_account_{{ account.id }}" class="d-flex flex-wrap w-100"></turbo-frame>
                 </div>
-                <turbo-frame id="account_list_item__cash_flow_by_account_{{ account.id }}" class="d-flex flex-wrap w-100"></turbo-frame>
             </div>
         </div>
-    </div>
-    <div class="position-absolute" style="right: 0">
-        <div class="dropstart">
-            <button type="button" class="btn dropdown-toggle text-secondary border-0" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fa-solid fa-ellipsis-vertical"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark">
+    </li>
+    <twig:ItemDropdown>
+        <li>
+            <a class="dropdown-item" href="{{ path('back_account_edit', {'id': account.id}) }}">Modifier</a>
+        </li>
+        {% if account.enable %}
+            {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::DISABLE'), account) %}
                 <li>
-                    <a class="dropdown-item" href="{{ path('back_account_edit', {'id': account.id}) }}">Modifier</a>
+                    <a class="dropdown-item" data-turbo="true"
+                       href="{{ path('front_account_toggle', {'id': account.id}) }}">Désactiver</a>
                 </li>
-                {% if account.enable %}
-                    {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::DISABLE'), account) %}
-                        <li>
-                            <a class="dropdown-item" data-turbo="true"
-                               href="{{ path('front_account_toggle', {'id': account.id}) }}">Désactiver</a>
-                        </li>
-                    {% endif %}
-                {% else %}
-                    <li>
-                        <a class="dropdown-item" data-turbo="true"
-                           href="{{ path('front_account_toggle', {'id': account.id}) }}">Activer</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</li>
+            {% endif %}
+        {% else %}
+            <li>
+                <a class="dropdown-item" data-turbo="true"
+                   href="{{ path('front_account_toggle', {'id': account.id}) }}">Activer</a>
+            </li>
+        {% endif %}
+    </twig:ItemDropdown>
+</div>
+

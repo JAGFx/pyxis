@@ -1,34 +1,28 @@
 {% import 'shared/_currency.macro.html.twig' as currency %}
 
 <turbo-frame id="assignment_list_item_{{ assignment.id }}">
-    <li class="list-group-item list-group-item-acrylic d-flex justify-content-center align-items-center">
-        <div class="d-flex justify-content-center align-items-start w-100 flex-column">
-            {{ assignment.name }}
-            <div>
-                <small class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="Compte" data-bs-placement="bottom">
-                    <i class="fa-solid fa-building-columns"></i>
-                    <span>{{ assignment.account.name }}</span>
-                </small>
+    <div class="position-relative">
+        <li class="list-group-item list-group-item-acrylic d-flex justify-content-center align-items-center">
+            <div class="d-flex justify-content-center align-items-start w-100 flex-column">
+                {{ assignment.name }}
+                <div>
+                    <small class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="Compte" data-bs-placement="bottom">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <span>{{ assignment.account.name }}</span>
+                    </small>
+                </div>
             </div>
-        </div>
-        <div class="w-50 me-3 text-end">
-            {{ currency.amount(assignment.amount, true) }}
-        </div>
-        <div class="position-absolute" style="right: 0">
-            <div class="dropstart">
-                <button type="button" class="btn dropdown-toggle text-secondary border-0" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                    <li>
-                        <a class="dropdown-item" href="{{ path('back_assignment_edit', {'id': assignment.id}) }}">Modifier</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" data-turbo="true" href="{{ path('front_assignment_remove', {'id': assignment.id}) }}">Supprimer</a>
-                    </li>
-                </ul>
+            <div class="w-50 me-3 text-end">
+                {{ currency.amount(assignment.amount, true) }}
             </div>
-        </div>
-    </li>
+        </li>
+        <twig:ItemDropdown>
+            <li>
+                <a class="dropdown-item" href="{{ path('back_assignment_edit', {'id': assignment.id}) }}">Modifier</a>
+            </li>
+            <li>
+                <a class="dropdown-item" data-turbo="true" href="{{ path('front_assignment_remove', {'id': assignment.id}) }}">Supprimer</a>
+            </li>
+        </twig:ItemDropdown>
+    </div>
 </turbo-frame>

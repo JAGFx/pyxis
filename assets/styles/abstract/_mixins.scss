@@ -20,10 +20,15 @@
   }
 }
 
-@mixin background-acrylic() {
+@mixin background-acrylic($z-index: auto) {
   background: $color-black-transparent-10 !important;
   border: 0;
   box-shadow: rgb(37 43 54 / 3%) 10px 10px 10px;
+
+  @if $z-index != auto {
+    position: relative;
+    z-index: $z-index;
+  }
 
   @supports (backdrop-filter: blur(30px)) {
     backdrop-filter: blur(30px);

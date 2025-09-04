@@ -1,0 +1,5 @@
+twig_component:
+    anonymous_template_directory: 'shared/components/'
+    defaults:
+        # Namespace & directory for components
+        App\Shared\Twig\Components\: 'shared/components/'

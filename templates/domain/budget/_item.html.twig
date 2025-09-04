@@ -1,64 +1,58 @@
 {% import 'shared/_currency.macro.html.twig' as currency %}
 
-<li class="list-group-item list-group-item-acrylic d-flex justify-content-between w-100 align-items-center {{ not budget.enable ? 'list-group-item-secondary' : '' }}">
-    <div class="d-flex flex-column w-100">
-        <div class="d-flex justify-content-between w-100">
-            <div>
-                {{ budget.name }}
+<div class="position-relative">
+    <li class="list-group-item list-group-item-acrylic d-flex justify-content-between w-100 align-items-center {{ not budget.enable ? 'list-group-item-secondary' : '' }}">
+        <div class="d-flex flex-column w-100">
+            <div class="d-flex justify-content-between w-100">
+                <div>
+                    {{ budget.name }}
+                </div>
+                <div class="w-50 me-3 text-end {{ not budget.enable ? 'text-decoration-line-through' : '' }}">
+                    {{ currency.amount(budget.amount, true, not budget.enable) }}
+                </div>
             </div>
-            <div class="w-50 me-3 text-end {{ not budget.enable ? 'text-decoration-line-through' : '' }}">
-                {{ currency.amount(budget.amount, true, not budget.enable) }}
-            </div>
-        </div>
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                {% if budget.hasNegativeCashFlow %}
-                    <span class="me-2 text-danger" data-bs-toggle="tooltip" data-bs-title="Dépassement sur N-1">
-                        <small>{{ currency.amount(budget.cashFlow) }}</small>
-                    </span>
-                {% endif %}
-                {% if budget.hasPositiveCashFlow %}
-                    <span class="me-2 text-success" data-bs-toggle="tooltip" data-bs-title="Surplus sur N-1">
-                        <small>{{ currency.amount(budget.cashFlow) }}</small>
-                    </span>
-                {% endif %}
-            </div>
-            <div>
-                {% if budget.hasNegativeCashFlow or  budget.hasPositiveCashFlow%}
-                    <a data-turbo="true" href="{{ path('front_budget_cash_flow_by_account', {'id': budget.id}) }}" class="link-offset-3 text-decoration-none text-white-50 me-2">
-                        <small>
-                            <span>Voir la répartition</span>
-                            <i class="fa-solid fa-scale-balanced"></i>
-                        </small>
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-        <ul class="m-0 p-0 space-y-2">
-            <turbo-frame id="budget_list_item__cash_flow_by_account_{{ budget.id }}"></turbo-frame>
-        </ul>
-    </div>
-    {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::MANAGE'), budget) %}
-        <div class="position-absolute" style="right: 0; top: 0.7rem;">
-            <div class="dropstart">
-                <button type="button" class="btn dropdown-toggle text-secondary border-0" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                    <li><a class="dropdown-item" href="{{ path('back_budget_edit', {'id': budget.id}) }}">Modifier</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    {% if budget.enable %}
-                        <li><a class="dropdown-item" data-turbo="true"
-                               href="{{ path('front_budget_toggle', {'id': budget.id}) }}">Désactiver</a></li>
-                    {% else %}
-                        <li><a class="dropdown-item" data-turbo="true"
-                               href="{{ path('front_budget_toggle', {'id': budget.id}) }}">Activer</a></li>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    {% if budget.hasNegativeCashFlow %}
+                        <span class="me-2 text-danger" data-bs-toggle="tooltip" data-bs-title="Dépassement sur N-1">
+                            <small>{{ currency.amount(budget.cashFlow) }}</small>
+                        </span>
                     {% endif %}
-                </ul>
+                    {% if budget.hasPositiveCashFlow %}
+                        <span class="me-2 text-success" data-bs-toggle="tooltip" data-bs-title="Surplus sur N-1">
+                            <small>{{ currency.amount(budget.cashFlow) }}</small>
+                        </span>
+                    {% endif %}
+                </div>
+                <div>
+                    {% if budget.hasNegativeCashFlow or  budget.hasPositiveCashFlow%}
+                        <a data-turbo="true" href="{{ path('front_budget_cash_flow_by_account', {'id': budget.id}) }}" class="link-offset-3 text-decoration-none text-white-50 me-2">
+                            <small>
+                                <span>Voir la répartition</span>
+                                <i class="fa-solid fa-scale-balanced"></i>
+                            </small>
+                        </a>
+                    {% endif %}
+                </div>
             </div>
+            <ul class="m-0 p-0 space-y-2">
+                <turbo-frame id="budget_list_item__cash_flow_by_account_{{ budget.id }}"></turbo-frame>
+            </ul>
         </div>
+    </li>
+    {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::MANAGE'), budget) %}
+        <twig:ItemDropdown>
+            <li><a class="dropdown-item" href="{{ path('back_budget_edit', {'id': budget.id}) }}">Modifier</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            {% if budget.enable %}
+                <li><a class="dropdown-item" data-turbo="true"
+                       href="{{ path('front_budget_toggle', {'id': budget.id}) }}">Désactiver</a></li>
+            {% else %}
+                <li><a class="dropdown-item" data-turbo="true"
+                       href="{{ path('front_budget_toggle', {'id': budget.id}) }}">Activer</a></li>
+            {% endif %}
+        </twig:ItemDropdown>
     {% endif %}
-</li>
+</div>
