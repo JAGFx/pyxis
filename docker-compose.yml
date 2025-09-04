@@ -25,12 +25,6 @@ services:
     networks:
       - app_network
 
-  # To test production build
-#  nginx:
-#    image: ghcr.io/jagfx/pyxis-nginx:latest
-#    networks:
-#      - app_network
-
   nginx:
     image: pyxis-nginx:latest
     build:
