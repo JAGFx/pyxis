@@ -1,0 +1,30 @@
+<div
+    {{ attributes.defaults(stimulus_controller('overlay')) }}
+        class="fixed w-full h-full bg-acrylic top-0 left-0 p-2 flex z-50 overlay__backdrop overlay--closed"
+>
+    <div class="flex flex-auto flex-col justify-between overlay__content">
+        {% block header %}
+            <div class="flex flex-col space-y-2 my-8 flex-none">
+                <div class="flex justify-center items-center space-x-4">
+                    <div class="flex items-center justify-center bg-gradient-primary rounded-full w-16 h-16 p-2">
+                        <img src="{{ asset('img/logo2.png') }}" alt="logo" class="w-auto">
+                    </div>
+                    <h1 class="text-4xl uppercase font-light">Pyxis</h1>
+                </div>
+                <p class="text-center text-muted italic text-sm">- Fluidifiez l'inerte, dynamisez l'acquis -</p>
+            </div>
+        {% endblock %}
+        <div class="flex-auto flex items-center">
+            {% block content %}{% endblock %}
+        </div>
+        {% block footer %}
+            <div class="flex-none flex justify-center items-center">
+                <div class="px-8 py-4 gap-4">
+                    <div class="w-12 h-12 bg-white/15 text-white/50 rounded-full p-2 flex justify-center items-center" {{ stimulus_action('overlay', 'close', 'click') }}>
+                        <i class="fa-solid fa-xmark text-1xl"></i>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    </div>
+</div>

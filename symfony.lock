@@ -417,6 +417,15 @@
             "webpack.config.js"
         ]
     },
+    "tales-from-a-dev/twig-tailwind-extra": {
+        "version": "0.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.2",
+            "ref": "7243ab070ed66198eb82c026684e9b9773e7b64a"
+        }
+    },
     "theofidry/alice-data-fixtures": {
         "version": "1.6",
         "recipe": {

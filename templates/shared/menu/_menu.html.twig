@@ -1,0 +1,55 @@
+<menu class="sticky bottom-0 bg-gradient-purple2 text-white p-4 flex justify-between items-center shadow-lg rounded-t-3xl">
+    <a class="flex-auto space-x-2 flex items-center w-full">
+        <div class="w-8 h-8 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <span>Chercher</span>
+    </a>
+    <li class="flex-none relative w-16">
+        <twig:Overlay:Trigger target="overlay">
+            <div class="flex items-center justify-center bg-gradient-primary rounded-full w-16 h-16 p-2 -translate-y-16 shadow-lg absolute">
+                <img src="{{ asset('img/logo2.png') }}" alt="logo" class="w-auto">
+            </div>
+        </twig:Overlay:Trigger>
+        <twig:Overlay:Overlay id="overlay">
+            <div class="px-8 py-4 grid grid-cols-3 gap-4 w-full">
+                {% include 'shared/menu/_overlay_item.html.twig' with {
+                    'actionUrl': path('home'),
+                    'icon': 'fa-solid fa-chart-line',
+                    'label': 'Statistiques'
+                } only %}
+                {% include 'shared/menu/_overlay_item.html.twig' with {
+                    'actionUrl': path('back_account_account_list', {enabled: true}),
+                    'icon': 'fa-solid fa-bank',
+                    'label': 'Comptes'
+                } only %}
+                {% include 'shared/menu/_overlay_item.html.twig' with {
+                    'actionUrl': path('back_budget_budget_list', {enabled: true}),
+                    'icon': 'fa-solid fa-piggy-bank',
+                    'label': 'Budget'
+                } only %}
+                {% include 'shared/menu/_overlay_item.html.twig' with {
+                    'actionUrl': path('back_entries_list'),
+                    'icon': 'fa-solid fa-cash-register',
+                    'label': 'Entrées'
+                } only %}
+                {% include 'shared/menu/_overlay_item.html.twig' with {
+                    'actionUrl': path('back_periodicentry_list'),
+                    'icon': 'fa-solid fa-file-invoice fa-regular fa-clock',
+                    'label': 'Entrées périodique'
+                } only %}
+                {% include 'shared/menu/_overlay_item.html.twig' with {
+                    'actionUrl': path('back_assignment_list'),
+                    'icon': 'fa-solid fa-circle-dollar-to-slot',
+                    'label': 'Affectations'
+                } only %}
+            </div>
+        </twig:Overlay:Overlay>
+    </li>
+    <a class="flex-auto space-x-2 flex items-center justify-end w-full">
+        <span>Ajouter</span>
+        <div class="w-8 h-8 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+    </a>
+</menu>

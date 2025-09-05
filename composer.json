@@ -113,6 +113,7 @@
     "symfony/phpunit-bridge": "^7.3",
     "symfony/stopwatch": "7.3.*",
     "symfony/web-profiler-bundle": "7.3.*",
+    "tales-from-a-dev/twig-tailwind-extra": "^0.5.0",
     "zenstruck/foundry": "^v1.38"
   }
 }

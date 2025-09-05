@@ -1,0 +1,17 @@
+{% set card = cva({
+    'base': 'rounded-lg p-2',
+    'variants': {
+        'color': {
+            'primary': 'bg-gradient-primary text-white',
+        },
+    },
+    'defaultVariants': {
+        'color': 'primary',
+    },
+}) %}
+
+{% set color = color|default('primary') %}
+
+<div class="{{ card.apply({color}, attributes.render('class')) | tailwind_merge }}">
+    {% block content %}{% endblock %}
+</div>

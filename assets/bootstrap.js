@@ -1,5 +1,6 @@
 import {startStimulusApp} from '@symfony/stimulus-bridge';
-import RadialMenu from "./controllers/radial_menu_controller";
+import Overlay from "./controllers/components/overlay/overlay";
+import OverlayTrigger from "./controllers/components/overlay/overlay-trigger";
 
 // Registers Stimulus controllers from controllers.json and in the controllers/ directory
 export const app = startStimulusApp(require.context(
@@ -9,4 +10,5 @@ export const app = startStimulusApp(require.context(
 ));
 
 // register any custom, 3rd party controllers here
-app.register('radial_menu', RadialMenu);
+app.register('overlay', Overlay);
+app.register('overlay-trigger', OverlayTrigger);
