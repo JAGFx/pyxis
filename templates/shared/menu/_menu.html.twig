@@ -3,17 +3,17 @@
         <div class="w-8 h-8 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
             <i class="fa-solid fa-magnifying-glass"></i>
         </div>
-        <span>{{ 'menu.main.search' | trans(domain: 'navigation') }}</span>
+        <span>{{ 'actions.search' | trans(domain: 'interface') }}</span>
     </a>
     <li class="flex-none w-16">
-        <twig:Overlay:Trigger target="overlay">
+        <twig:Overlay:TriggerClick target="overlay">
             <div class="flex items-center justify-center bg-gradient-primary rounded-full w-16 h-16 p-2 -translate-y-16 shadow-lg absolute">
                 <img src="{{ asset('img/logo2.png') }}" alt="logo" class="w-auto">
             </div>
-        </twig:Overlay:Trigger>
+        </twig:Overlay:TriggerClick>
     </li>
     <a class="flex-auto space-x-2 flex items-center justify-end w-full">
-        <span>{{ 'menu.main.create' | trans(domain: 'navigation') }}</span>
+        <span>{{ 'actions.create' | trans(domain: 'interface') }}</span>
         <div class="w-8 h-8 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
         </div>
@@ -21,7 +21,7 @@
 </menu>
 
 <twig:Overlay:Overlay id="overlay">
-    <div class="px-8 py-4 grid grid-cols-3 gap-4 w-full">
+    <div class="px-8 py-4 flex flex-wrap gap-8 justify-center w-full">
         {% include 'shared/menu/_overlay_item.html.twig' with {
             'actionUrl': path('home'),
             'icon': icons.statistics,

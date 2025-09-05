@@ -11,6 +11,9 @@ twig:
       entries: 'fa-solid fa-cash-register'
       periodic_entries: 'fa-solid fa-file-invoice fa-regular fa-clock'
       assignments: 'fa-solid fa-circle-dollar-to-slot'
+      edit: 'fa-solid fa-pen-clip'
+      disable: 'fa-solid fa-toggle-off'
+      enable: 'fa-solid fa-toggle-on'
 
 when@test:
   twig:

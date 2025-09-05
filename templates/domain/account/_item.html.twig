@@ -1,35 +1,49 @@
-<twig:Liste:Item>
-    <div class="flex justify-between items-center">
-        <span>{{ account.name }}</span>
-        <a data-turbo="true" href="{{ path('front_account_cash_flow', {'id': account.id}) }}" class="text-muted flex items-center">
-            <small>
-                <span>{{ 'account.list.actions.see_cash_flows' | trans }}</span>
-                <i class="fa-solid fa-scale-balanced"></i>
-            </small>
-        </a>
-    </div>
+<twig:Overlay:TriggerLongPress target="account_list_item__cash_flow_by_account_{{ account.id }}">
+    <twig:Liste:Item>
+        <div class="flex justify-between items-center">
+            <span class="{{ account.enable ? '' : 'line-through text-muted' }}">{{ account.name }}</span>
+            <a data-turbo="true" href="{{ path('front_account_cash_flow', {'id': account.id}) }}" class="text-muted flex items-center">
+                <small>
+                    <span>{{ 'account.list.actions.see_cash_flows' | trans }}</span>
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </small>
+            </a>
+        </div>
 
-    <twig:block name="detail">
-        <turbo-frame id="account_list_item__cash_flow_by_account_{{ account.id }}" class="space-y-2"></turbo-frame>
+        <twig:block name="detail">
+            <turbo-frame id="account_list_item__cash_flow_by_account_{{ account.id }}" class="space-y-2"></turbo-frame>
+        </twig:block>
+    </twig:Liste:Item>
+</twig:Overlay:TriggerLongPress>
+
+<twig:Overlay:Overlay id="account_list_item__cash_flow_by_account_{{ account.id }}">
+    <twig:block name="sub_header">
+        <h3 class="text-xl text-center p-2">{{ account.name }}</h3>
     </twig:block>
-</twig:Liste:Item>
+    <div class="px-8 py-4 flex flex-wrap gap-8 justify-center w-full">
+        {% include 'shared/menu/_overlay_item.html.twig' with {
+            'actionUrl': path('back_account_edit', {'id': account.id}),
+            'icon': icons.edit,
+            'label': 'actions.edit' | trans(domain: 'interface')
+        } only %}
 
-{#    <twig:ItemDropdown>#}
-{#        <li>#}
-{#            <a class="dropdown-item" href="{{ path('back_account_edit', {'id': account.id}) }}">Modifier</a>#}
-{#        </li>#}
-{#        {% if account.enable %}#}
-{#            {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::DISABLE'), account) %}#}
-{#                <li>#}
-{#                    <a class="dropdown-item" data-turbo="true"#}
-{#                       href="{{ path('front_account_toggle', {'id': account.id}) }}">Désactiver</a>#}
-{#                </li>#}
-{#            {% endif %}#}
-{#        {% else %}#}
-{#            <li>#}
-{#                <a class="dropdown-item" data-turbo="true"#}
-{#                   href="{{ path('front_account_toggle', {'id': account.id}) }}">Activer</a>#}
-{#            </li>#}
-{#        {% endif %}#}
-{#    </twig:ItemDropdown>#}
+        {% if account.enable %}
+            {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::DISABLE'), account) %}
+                {% include 'shared/menu/_overlay_item.html.twig' with {
+                    'actionUrl': path('front_account_toggle', {'id': account.id}),
+                    'icon': icons.disable,
+                    'label': 'actions.disabled' | trans(domain: 'interface'),
+                    'asTurbo': true
+                } only %}
+            {% endif %}
+        {% else %}
+            {% include 'shared/menu/_overlay_item.html.twig' with {
+                'actionUrl': path('front_account_toggle', {'id': account.id}) ,
+                'icon': icons.enable,
+                'label': 'actions.enable' | trans(domain: 'interface'),
+                'asTurbo': true
+            } only %}
+        {% endif %}
+    </div>
+</twig:Overlay:Overlay>
 

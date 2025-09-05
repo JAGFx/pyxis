@@ -1,0 +1,5 @@
+{% set target = target | default('') %}
+
+<div {{ stimulus_controller('overlay-trigger-click') }} {{ stimulus_action('overlay-trigger-click', 'triggerOpen', 'click', {target: target}) }}>
+    {% block content %}{% endblock %}
+</div>
