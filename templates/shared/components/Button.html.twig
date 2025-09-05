@@ -1,0 +1,26 @@
+{% set buttonCva = cva({
+    'base': 'rounded-lg p-2 block',
+    'variants': {
+        'color': {
+            'primary': 'bg-gradient-primary text-white',
+            'acrylic': 'bg-acrylic text-white',
+            'transparent-25': 'bg-white/25 text-white',
+        },
+        'shape': {
+            'default': '',
+            'rounded-full': 'rounded-full aspect-square p-0 flex items-center justify-center',
+        },
+    },
+    'defaultVariants': {
+        'color': 'primary',
+        'shape': 'default',
+    },
+}) %}
+
+{% set node = node | default('button') %}
+{% set color = color | default('primary') %}
+{% set shape = shape | default('default') %}
+
+<{{ node }} class="{{ buttonCva.apply({color, shape}, attributes.render('class')) | tailwind_merge }}">
+    {% block content %}{% endblock %}
+</{{ node }}>

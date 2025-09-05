@@ -6,7 +6,8 @@
  */
 
 // any CSS you import will output into a single css file (bugr.scss in this case)
-import './styles/bugr.scss';
+// import './styles/bugr.scss';
+import './styles/bugr.css';
 
 // start the Stimulus application
 import '@popperjs/core/dist/esm/index'

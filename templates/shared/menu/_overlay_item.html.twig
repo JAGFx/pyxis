@@ -1,0 +1,12 @@
+{% set actionUrl = actionUrl | default('#')  %}
+{% set icon = icon | default('')  %}
+{% set label = label | default('')  %}
+
+<div class="flex justify-center">
+    <a href="{{ actionUrl }}" class="aspect-square w-20 h-auto rounded-lg p-2 flex flex-col justify-start items-center text-center space-y-2">
+        <div class="w-12 h-12 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
+            <i class="{{ icon }} text-2xl"></i>
+        </div>
+        <small>{{ label }}</small>
+    </a>
+</div>
