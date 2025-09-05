@@ -1,0 +1,26 @@
+{% set title = title | default('') %}
+{% set icon = icon | default('') %}
+{% set value = value | default('') %}
+{% set color = color | default('default') %}
+
+{% set metricOverviewItemCva = cva({
+    'base': '',
+    'variants': {
+        'color': {
+            'primary': 'text-primary',
+            'secondary': 'text-secondary',
+            'default': 'text-white',
+        },
+    },
+    'defaultVariants': {
+        'color': 'default',
+    },
+}) %}
+
+<div class="flex flex-col flex-auto w-full">
+    <small class="text-muted">{{ title }}</small>
+    <span class="{{ metricOverviewItemCva.apply({color}) }}" data-bs-toggle="tooltip" data-bs-title="{{ title }}" data-bs-placement="bottom">
+        <i class="{{ icon }} text-sm"></i>
+        <small>{{ value }}</small>
+    </span>
+</div>
