@@ -25,7 +25,7 @@
     --color-purple2: #341539;
     --color-white-600: #eee8d5;
     --color-red: #ea7059;
-    --color-green: #0f0;
+    --color-success: #0f0;
 
     --background-image-main: url("../images/bg.png");
 
@@ -42,13 +42,13 @@
         background:
                 linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
                 var(--background-image-main) no-repeat center center;
-        @apply bg-cover bg-center bg-no-repeat;
+        @apply bg-cover bg-center bg-no-repeat bg-fixed;
     }
 }
 
 @layer components {
     .overlay--open.overlay__backdrop {
-        @apply opacity-100;
+        @apply opacity-100 z-50;
         transition:
             opacity 300ms ease-in-out
     }

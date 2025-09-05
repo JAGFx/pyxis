@@ -25,11 +25,13 @@
     {% endblock %}
 </head>
 <body data-turbo="false" class="bugr d-flex">
-    <main class="">
+    <main class="min-h-lvh flex flex-col">
 {#        {% include 'shared/toast/_container.html.twig' %}#}
-        <turbo-frame id="entry_balance" src="{{ path('front_entry_balance') }}"></turbo-frame>
+        <turbo-frame id="entry_balance" src="{{ path('front_entry_balance') }}" class="flex-none"></turbo-frame>
 
-        <div style="height: 50rem;">DD</div>
+        <div class="flex-auto px-2 space-y-2">
+            {% block body %}{% endblock %}
+        </div>
 
         {% include 'shared/menu/_menu.html.twig' only %}
     </main>

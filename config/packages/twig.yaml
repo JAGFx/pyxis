@@ -1,6 +1,16 @@
 twig:
   default_path: '%kernel.project_dir%/templates'
   form_themes: [ 'bootstrap_5_layout.html.twig' ]
+  globals:
+    icons:
+      spent: 'fa-solid fa-leaf'
+      forecast: 'fa-solid fa-shield-halved'
+      statistics: 'fa-solid fa-chart-line'
+      account: 'fa-solid fa-bank'
+      budget: 'fa-solid fa-piggy-bank'
+      entries: 'fa-solid fa-cash-register'
+      periodic_entries: 'fa-solid fa-file-invoice fa-regular fa-clock'
+      assignments: 'fa-solid fa-circle-dollar-to-slot'
 
 when@test:
   twig:

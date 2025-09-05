@@ -1,0 +1,9 @@
+{% set icon = icon | default('') %}
+{% set label = label | default('') %}
+
+<div class="space-x-4 inline-flex justify-center items-center sticky top-2 bg-acrylic p-2 pe-4 rounded-full z-10">
+    <div class="w-10 h-10 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
+        <i class="{{ icon }}"></i>
+    </div>
+    <h1 class="text-xl text-white">{{ label }}</h1>
+</div>

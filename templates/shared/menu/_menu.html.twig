@@ -5,46 +5,12 @@
         </div>
         <span>{{ 'menu.main.search' | trans(domain: 'navigation') }}</span>
     </a>
-    <li class="flex-none relative w-16">
+    <li class="flex-none w-16">
         <twig:Overlay:Trigger target="overlay">
             <div class="flex items-center justify-center bg-gradient-primary rounded-full w-16 h-16 p-2 -translate-y-16 shadow-lg absolute">
                 <img src="{{ asset('img/logo2.png') }}" alt="logo" class="w-auto">
             </div>
         </twig:Overlay:Trigger>
-        <twig:Overlay:Overlay id="overlay">
-            <div class="px-8 py-4 grid grid-cols-3 gap-4 w-full">
-                {% include 'shared/menu/_overlay_item.html.twig' with {
-                    'actionUrl': path('home'),
-                    'icon': 'fa-solid fa-chart-line',
-                    'label': 'menu.main.statistics' | trans(domain: 'navigation')
-                } only %}
-                {% include 'shared/menu/_overlay_item.html.twig' with {
-                    'actionUrl': path('back_account_account_list', {enabled: true}),
-                    'icon': 'fa-solid fa-bank',
-                    'label': 'menu.main.account' | trans(domain: 'navigation')
-                } only %}
-                {% include 'shared/menu/_overlay_item.html.twig' with {
-                    'actionUrl': path('back_budget_budget_list', {enabled: true}),
-                    'icon': 'fa-solid fa-piggy-bank',
-                    'label': 'menu.main.budget' | trans(domain: 'navigation')
-                } only %}
-                {% include 'shared/menu/_overlay_item.html.twig' with {
-                    'actionUrl': path('back_entries_list'),
-                    'icon': 'fa-solid fa-cash-register',
-                    'label': 'menu.main.entries' | trans(domain: 'navigation')
-                } only %}
-                {% include 'shared/menu/_overlay_item.html.twig' with {
-                    'actionUrl': path('back_periodicentry_list'),
-                    'icon': 'fa-solid fa-file-invoice fa-regular fa-clock',
-                    'label': 'menu.main.periodic_entries' | trans(domain: 'navigation')
-                } only %}
-                {% include 'shared/menu/_overlay_item.html.twig' with {
-                    'actionUrl': path('back_assignment_list'),
-                    'icon': 'fa-solid fa-circle-dollar-to-slot',
-                    'label': 'menu.main.assignments' | trans(domain: 'navigation')
-                } only %}
-            </div>
-        </twig:Overlay:Overlay>
     </li>
     <a class="flex-auto space-x-2 flex items-center justify-end w-full">
         <span>{{ 'menu.main.create' | trans(domain: 'navigation') }}</span>
@@ -53,3 +19,38 @@
         </div>
     </a>
 </menu>
+
+<twig:Overlay:Overlay id="overlay">
+    <div class="px-8 py-4 grid grid-cols-3 gap-4 w-full">
+        {% include 'shared/menu/_overlay_item.html.twig' with {
+            'actionUrl': path('home'),
+            'icon': icons.statistics,
+            'label': 'menu.main.statistics' | trans(domain: 'navigation')
+        } only %}
+        {% include 'shared/menu/_overlay_item.html.twig' with {
+            'actionUrl': path('back_account_account_list', {enabled: true}),
+            'icon': icons.account,
+            'label': 'menu.main.account' | trans(domain: 'navigation')
+        } only %}
+        {% include 'shared/menu/_overlay_item.html.twig' with {
+            'actionUrl': path('back_budget_budget_list', {enabled: true}),
+            'icon': icons.budget,
+            'label': 'menu.main.budget' | trans(domain: 'navigation')
+        } only %}
+        {% include 'shared/menu/_overlay_item.html.twig' with {
+            'actionUrl': path('back_entries_list'),
+            'icon': icons.entries,
+            'label': 'menu.main.entries' | trans(domain: 'navigation')
+        } only %}
+        {% include 'shared/menu/_overlay_item.html.twig' with {
+            'actionUrl': path('back_periodicentry_list'),
+            'icon': icons.periodic_entries,
+            'label': 'menu.main.periodic_entries' | trans(domain: 'navigation')
+        } only %}
+        {% include 'shared/menu/_overlay_item.html.twig' with {
+            'actionUrl': path('back_assignment_list'),
+            'icon': icons.assignments,
+            'label': 'menu.main.assignments' | trans(domain: 'navigation')
+        } only %}
+    </div>
+</twig:Overlay:Overlay>
