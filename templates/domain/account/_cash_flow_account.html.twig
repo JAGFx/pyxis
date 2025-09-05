@@ -13,18 +13,18 @@
     />
 
     <twig:Liste:MetricOverviewItem
-            title="Provision"
-            :icon="icons.forecast"
-            value="{{ currency.amount(amountBalance.totalSpent, false) }}"
-            color="secondary"
+        title="Provision"
+        :icon="icons.forecast"
+        value="{{ currency.amount(amountBalance.totalSpent, false) }}"
+        color="secondary"
     />
 
     {% if amountBalance.assignments > 0 %}
         <twig:Liste:MetricOverviewItem
-                title="Affectation"
-                :icon="icons.assignments"
-                value="{{ currency.amount(amountBalance.assignments, false) }}"
-                color="default"
+            title="Affectation"
+            :icon="icons.assignments"
+            value="{{ currency.amount(amountBalance.assignments, false) }}"
+            color="default"
         />
     {% else %}
         <div class="flex-auto w-full">&nbsp;</div>

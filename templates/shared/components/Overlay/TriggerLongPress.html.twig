@@ -1,0 +1,5 @@
+{% set target = target | default('') %}
+
+<div {{ stimulus_controller('overlay-trigger-long-press', {target: target}) }}>
+    {% block content %}{% endblock %}
+</div>

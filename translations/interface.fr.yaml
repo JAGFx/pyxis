@@ -1,0 +1,6 @@
+actions:
+  search: Chercher
+  create: Ajouter
+  edit: Editer
+  disabled: Désactiver
+  enable: Activer
