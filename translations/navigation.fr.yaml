@@ -1,0 +1,10 @@
+menu:
+  main:
+    search: Chercher
+    create: Ajouter
+    statistics: Statistiques
+    account: Comptes
+    budget: Budget
+    entries: Entrées
+    periodic_entries: Entrées périodique
+    assignments: Affectations

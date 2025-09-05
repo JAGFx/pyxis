@@ -9,9 +9,9 @@
                     <div class="flex items-center justify-center bg-gradient-primary rounded-full w-16 h-16 p-2">
                         <img src="{{ asset('img/logo2.png') }}" alt="logo" class="w-auto">
                     </div>
-                    <h1 class="text-4xl uppercase font-light">Pyxis</h1>
+                    <h1 class="text-4xl uppercase font-light">{{ 'app_name' | trans }}</h1>
                 </div>
-                <p class="text-center text-muted italic text-sm">- Fluidifiez l'inerte, dynamisez l'acquis -</p>
+                <p class="text-center text-muted italic text-sm">- {{ 'catchphrase' | trans }} -</p>
             </div>
         {% endblock %}
         <div class="flex-auto flex items-center">

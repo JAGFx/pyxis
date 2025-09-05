@@ -1,0 +1,16 @@
+# translations/
+#├── messages.fr.yaml          # Textes généraux de l'application
+#├── forms.fr.yaml             # Labels et textes de formulaires
+#├── validators.fr.yaml        # Messages de validation
+#├── interface.fr.yaml         # Éléments d'interface utilisateur
+#├── navigation.fr.yaml        # Menus et navigation
+#├── flashes.fr.yaml          # Messages flash/notifications
+#├── emails.fr.yaml           # Templates d'emails
+#├── errors.fr.yaml           # Pages d'erreur
+#└── admin.fr.yaml            # Interface d'administration
+
+app_name: Pyxis
+catchphrase: Fluidifiez l'inerte, dynamisez l'acquis
+spent: Dépensé
+forecast: Provision
+balance: Balance
