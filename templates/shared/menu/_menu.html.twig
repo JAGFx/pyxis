@@ -1,10 +1,5 @@
 <menu class="sticky bottom-0 bg-gradient-purple2 text-white p-4 flex justify-between items-center shadow-lg rounded-t-3xl">
-    <a class="flex-auto space-x-2 flex items-center w-full">
-        <div class="w-8 h-8 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
-            <i class="fa-solid fa-magnifying-glass"></i>
-        </div>
-        <span>{{ 'actions.search' | trans(domain: 'interface') }}</span>
-    </a>
+    <twig:Button node="a" icon="fa-solid fa-magnifying-glass" label="{{ 'actions.search' | trans(domain: 'interface') }}"/>
     <li class="flex-none w-16">
         <twig:Overlay:TriggerClick target="overlay">
             <div class="flex items-center justify-center bg-gradient-primary rounded-full w-16 h-16 p-2 -translate-y-16 shadow-lg absolute">
@@ -12,16 +7,11 @@
             </div>
         </twig:Overlay:TriggerClick>
     </li>
-    <a class="flex-auto space-x-2 flex items-center justify-end w-full">
-        <span>{{ 'actions.create' | trans(domain: 'interface') }}</span>
-        <div class="w-8 h-8 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-        </div>
-    </a>
+    <twig:Button node="a" icon="fa-solid fa-wand-magic-sparkles" label="{{ 'actions.create' | trans(domain: 'interface') }}" dir="right"/>
 </menu>
 
 <twig:Overlay:Overlay id="overlay">
-    <div class="px-8 py-4 flex flex-wrap gap-8 justify-center w-full">
+    <div class="overlay-grid">
         {% include 'shared/menu/_overlay_item.html.twig' with {
             'actionUrl': path('home'),
             'icon': icons.statistics,

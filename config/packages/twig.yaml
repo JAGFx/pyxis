@@ -1,6 +1,7 @@
 twig:
   default_path: '%kernel.project_dir%/templates'
-  form_themes: [ 'bootstrap_5_layout.html.twig' ]
+  form_themes:
+    - 'shared/tailwind_v4_theme.html.twig'
   globals:
     icons:
       spent: 'fa-solid fa-leaf'
@@ -14,6 +15,8 @@ twig:
       edit: 'fa-solid fa-pen-clip'
       disable: 'fa-solid fa-toggle-off'
       enable: 'fa-solid fa-toggle-on'
+      transfer: 'fa-solid fa-right-left'
+      save: 'fas fa-paper-plane'
 
 when@test:
   twig:

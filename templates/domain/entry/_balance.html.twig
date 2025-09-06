@@ -15,9 +15,7 @@
                 <span>{{ currency.amount(amountBalance.totalSpent, false) }}</span>
             </div>
             <div class="flex-none">
-                <twig:Button node="a" href="{{ path('home_transfer') }}" class="w-8" color="transparent-25" shape="rounded-full">
-                    <i class="fa-solid fa-right-left"></i>
-                </twig:Button>
+                <twig:Button node="a" href="{{ path('home_transfer') }}" color="transparent-25" :icon="icons.transfer" />
             </div>
             <div class="flex content-center items-center flex-col flex-auto w-full">
                 <small class="text-muted">

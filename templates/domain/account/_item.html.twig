@@ -20,7 +20,7 @@
     <twig:block name="sub_header">
         <h3 class="text-xl text-center p-2">{{ account.name }}</h3>
     </twig:block>
-    <div class="px-8 py-4 flex flex-wrap gap-8 justify-center w-full">
+    <div class="overlay-grid">
         {% include 'shared/menu/_overlay_item.html.twig' with {
             'actionUrl': path('back_account_edit', {'id': account.id}),
             'icon': icons.edit,

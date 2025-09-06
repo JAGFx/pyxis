@@ -1,26 +1,47 @@
 {% set buttonCva = cva({
-    'base': 'rounded-lg p-2 block',
+    'base': 'flex-auto space-x-2 flex items-center w-full',
+    'variants': {
+        'dir': {
+            'left': '',
+            'right': 'justify-end',
+        },
+    },
+    'defaultVariants': {
+        'dir': 'left',
+    },
+}) %}
+
+{% set iconCva = cva({
+    'base': 'w-8 h-8 rounded-full p-2 flex justify-center items-center',
     'variants': {
         'color': {
             'primary': 'bg-gradient-primary text-white',
             'acrylic': 'bg-acrylic text-white',
             'transparent-25': 'bg-white/25 text-white',
         },
-        'shape': {
-            'default': '',
-            'rounded-full': 'rounded-full aspect-square p-0 flex items-center justify-center',
-        },
     },
     'defaultVariants': {
         'color': 'primary',
-        'shape': 'default',
     },
 }) %}
 
 {% set node = node | default('button') %}
-{% set color = color | default('primary') %}
-{% set shape = shape | default('default') %}
 
-<{{ node }} class="{{ buttonCva.apply({color, shape}, attributes.render('class')) | tailwind_merge }}">
-    {% block content %}{% endblock %}
+{% set dir = dir | default('left') %}
+{% set color = color | default('primary') %}
+
+{% set label = label | default('') %}
+{% set icon = icon | default('') %}
+
+
+<{{ node }} class="{{ buttonCva.apply({dir}, attributes.render('class')) | tailwind_merge }}" {{ attributes.without('class') }}>
+    {% if label is not empty and dir == 'right' %}
+        <span class="text-white">{{ label }}</span>
+    {% endif %}
+    <div class="{{ iconCva.apply({color}, attributes.render('class')) | tailwind_merge }}">
+        <i class="{{ icon }}"></i>
+    </div>
+    {% if label is not empty and dir == 'left' %}
+        <span class="text-white">{{ label }}</span>
+    {% endif %}
 </{{ node }}>

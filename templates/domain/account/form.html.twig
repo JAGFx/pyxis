@@ -1,25 +1,21 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h3 class="mt-4 mb-2 text-center">
-        Compte
-    </h3>
+    <twig:PageTitle :icon="icons.account" label="{{ 'account.title' | trans }}" :detail="account.name"
+        >
+        <twig:block name="beforeActions">
+            <twig:Button node="a" icon="fa-solid fa-arrow-left-long" color="acrylic" href="{{ path('back_account_account_list') }}"/>
+        </twig:block>
+    </twig:PageTitle>
 
-    <div class="my-2">
-        <a href="{{ path('back_account_account_list') }}" class="text-white-50 btn btn-outline-light">Retour</a>
-    </div>
-
-    <div class="bg-acrylic rounded p-3 my-2">
+    <div class="bg-acrylic px-4 py-3 rounded-lg shadow-lg">
         {{ form_start(form) }}
         {{ form_errors(form) }}
 
-        <div class="mb-2">
-            {{ form_row(form.name) }}
-        </div>
+        {{ form_row(form.name) }}
 
-        <div class="d-flex justify-content-center align-items-center">
-            <button type="submit" class="btn btn-gradient-accent">Enregistrer</button>
-        </div>
+        <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right"/>
+
         {{ form_end(form) }}
     </div>
 {% endblock %}
