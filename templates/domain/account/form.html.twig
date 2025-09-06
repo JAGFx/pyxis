@@ -8,14 +8,14 @@
         </twig:block>
     </twig:PageTitle>
 
-    <div class="bg-acrylic px-4 py-3 rounded-lg shadow-lg">
-        {{ form_start(form) }}
-        {{ form_errors(form) }}
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
 
-        {{ form_row(form.name) }}
+    {{ form_row(form.name) }}
 
-        <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right"/>
-
-        {{ form_end(form) }}
+    <div class="pt-4 pb-1">
+        <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right" size="lg"/>
     </div>
+
+    {{ form_end(form) }}
 {% endblock %}

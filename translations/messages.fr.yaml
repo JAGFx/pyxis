@@ -20,3 +20,6 @@ account:
   list:
     actions:
       see_cash_flows: Voir la répartition
+
+transfer:
+  title: Transfer

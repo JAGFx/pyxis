@@ -1,209 +1,96 @@
-{# Form Row #}
-{% block form_row -%}
-    <div class="relative mb-4">
-        {{- form_widget(form) -}}
-        {{- form_label(form) -}}
-        {{- form_errors(form) -}}
-        {{- form_help(form) -}}
-    </div>
-{%- endblock form_row %}
+{# templates/forms/tailwind_theme.html.twig #}
 
-{# Labels avec floating effect amélioré #}
-{% block form_label -%}
-    {% if label is not same as(false) -%}
-        {% if not compound -%}
-            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' absolute text-sm text-muted duration-300 transform -translate-y-1 scale-75 top-2 z-10 origin-[0] bg-transparent px-2 peer-focus:px-2 peer-focus:text-muted peer-focus:dark:text-white peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-placeholder-shown:bg-transparent peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-1 rtl:peer-focus:translate-x-0 rtl:peer-focus:left-auto start-1 peer-placeholder-shown:translate-x-0')|trim}) -%}
-        {% endif -%}
-        {% if required %}
-            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
-        {% endif %}
-        <label{% if label_attr %} {% set attr_str = '' %}{% for attrname, attrvalue in label_attr %}{% set attr_str = attr_str ~ ' ' ~ attrname|e('html_attr') ~ '="' ~ attrvalue|e('html_attr') ~ '"' %}{% endfor %}{{ attr_str|raw }}{% endif %} for="{{ id }}">
-            {%- if label is empty -%}
-                {%- if label_format is not empty -%}
-                    {{ label_format|replace({
-                        '%name%': name,
-                        '%id%': id,
-                    })|trans(label_translation_parameters, translation_domain)|raw }}
-                {%- else -%}
-                    {{ name|humanize|trans(label_translation_parameters, translation_domain) }}
-                {%- endif -%}
-            {%- else -%}
-                {{ label|trans(label_translation_parameters, translation_domain)|raw }}
-            {%- endif -%}
-        </label>
-    {%- endif %}
-{%- endblock form_label %}
+{# Form start with default styling #}
+{% block form_start -%}
+    {%- do form.setMethodRendered() -%}
+    {%- set method = method|upper -%}
+    {%- if method in ["GET", "POST"] -%}
+        {%- set form_method = method -%}
+    {%- else -%}
+        {%- set form_method = "POST" -%}
+    {%- endif -%}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' bg-acrylic px-7 py-6 rounded-3xl shadow-lg')|trim
+    }) -%}
+    <form{% if multipart %} enctype="multipart/form-data"{% endif %} method="{{ form_method|lower }}"{% if action != '' %} action="{{ action }}"{% endif %}{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+    {%- if form_method != method -%}
+        <input type="hidden" name="_method" value="{{ method }}" />
+    {%- endif -%}
+{%- endblock form_start %}
 
 
-{# Text Input #}
+{# Form widget base #}
 {% block form_widget_simple -%}
-    {% set type = type|default('text') %}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-6 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer')|trim,
-        placeholder: ' '
-    }) %}
+    {%- set type = type|default('text') -%}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' w-full px-4 py-2 bg-white/10 border rounded-3xl placeholder:text-white/30 text-white text-sm focus:outline-none focus:ring-0 transition-colors duration-200 ' ~
+        (errors|length > 0 ? 'border-secondary' : (form.vars.required and form.vars.data is empty ? 'border-white/30' : 'border-white/30')) ~
+        ' focus:border-primary hover:border-primary/50')|trim
+    }) -%}
     <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
 {%- endblock form_widget_simple %}
 
-
-{# Widget Attributes #}
-{% block widget_attributes -%}
-    id="{{ id }}" name="{{ full_name }}"
-    {%- if disabled %} disabled="disabled"{% endif -%}
-    {%- if required %} required="required"{% endif -%}
-    {%- for attrname, attrvalue in attr -%}
-        {{- " " -}}
-        {%- if attrname in ['placeholder', 'title'] -%}
-            {{- attrname }}="{{ attrvalue|trans(attr_translation_parameters, translation_domain) }}"
-        {%- elseif attrvalue is same as(true) -%}
-            {{- attrname }}="{{ attrname }}"
-        {%- elseif attrvalue is not same as(false) -%}
-            {{- attrname }}="{{ attrvalue }}"
+{# Label styling #}
+{% block form_label -%}
+    {% if label is not same as(false) -%}
+        {% if not compound -%}
+            {% set label_attr = label_attr|merge({'for': id}) %}
         {%- endif -%}
-    {%- endfor -%}
-{%- endblock widget_attributes %}
+        {% if required -%}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+        {%- endif -%}
+        {% if label is empty -%}
+            {%- if label_format is not empty -%}
+                {% set label = label_format|replace({
+                    '%name%': name,
+                    '%id%': id,
+                }) %}
+            {%- else -%}
+                {% set label = name|humanize %}
+            {%- endif -%}
+        {%- endif -%}
+        {%- set label_attr = label_attr|merge({
+            'class': (label_attr.class|default('') ~ ' ms-4 flex justify-start items-center space-x-2 text-sm font-medium text-primary mb-1')|trim
+        }) -%}
+        <label{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}>
+            <span>{{- label|trans({}, translation_domain) -}}</span>
+            {%- if required -%}
+                <div class="flex h-1.5 w-1.5 relative items-center">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500"></span>
+                </div>
+            {%- endif -%}
+        </label>
+    {%- endif -%}
+{%- endblock form_label %}
 
-{# Email Input #}
-{% block email_widget -%}
-    {% set type = type|default('email') %}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer')|trim,
-        placeholder: ' '
-    }) %}
-    {{- block('form_widget_simple') -}}
-{%- endblock email_widget %}
-
-{# Password Input #}
-{% block password_widget -%}
-    {% set type = 'password' %}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer')|trim,
-        placeholder: ' '
-    }) %}
-    <input type="password" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-{%- endblock password_widget %}
-
-{# Number Input #}
-{% block number_widget -%}
-    {% set type = type|default('number') %}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer')|trim,
-        placeholder: ' '
-    }) %}
-    {{- block('form_widget_simple') -}}
-{%- endblock number_widget %}
-
-{# Integer Input #}
-{% block integer_widget -%}
-    {% set type = type|default('number') %}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer')|trim,
-        placeholder: ' '
-    }) %}
-    {{- block('form_widget_simple') -}}
-{%- endblock integer_widget %}
-
-{# Money Input - Champ personnalisé #}
-{% block money_widget -%}
-    <div class="relative">
-        {% set attr = attr|merge({
-            class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-4 pl-8 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer')|trim,
-            placeholder: ' '
-        }) %}
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <span class="text-gray-500 dark:text-gray-400">{{ money_pattern|replace({'{{ widget }}': ''})|trim|default('€') }}</span>
-        </div>
-        {{- block('form_widget_simple') -}}
-    </div>
-{%- endblock money_widget %}
+{# Money label #}
+{% block money_label -%}
+    {{- block('form_label') -}}
+{%- endblock money_label %}
 
 {# Textarea #}
 {% block textarea_widget -%}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer resize-none')|trim,
-        placeholder: ' ',
-        rows: attr.rows|default(4)
-    }) %}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' w-full px-4 py-2 bg-white/10 border rounded-2xl placeholder:text-white/30 text-white text-sm focus:outline-none focus:ring-0 transition-colors duration-200 resize-vertical min-h-[100px] ' ~
+        (errors|length > 0 ? 'border-secondary' : 'border-white/30') ~
+        ' focus:border-primary hover:border-primary/50')|trim
+    }) -%}
     <textarea {{ block('widget_attributes') }}>{{ value }}</textarea>
 {%- endblock textarea_widget %}
 
-{# Date Input #}
-{% block date_widget -%}
-    {% if widget == 'single_text' %}
-        {% set type = 'date' %}
-        {% set attr = attr|merge({
-            class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer')|trim,
-            placeholder: ' '
-        }) %}
-        {{- block('form_widget_simple') -}}
-    {% else %}
-        <div {{ block('widget_container_attributes') }}>
-            {{ date_pattern|replace({
-                '{{ year }}': form_widget(date.year),
-                '{{ month }}': form_widget(date.month),
-                '{{ day }}': form_widget(date.day),
-            })|raw }}
-        </div>
-    {% endif %}
-{%- endblock date_widget %}
-
-{# Time Input #}
-{% block time_widget -%}
-    {% if widget == 'single_text' %}
-        {% set type = 'time' %}
-        {% set attr = attr|merge({
-            class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer')|trim,
-            placeholder: ' '
-        }) %}
-        {{- block('form_widget_simple') -}}
-    {% else %}
-        <div {{ block('widget_container_attributes') }}>
-            {{ form_widget(time.hour) }}{% if with_minutes %}:{{ form_widget(time.minute) }}{% endif %}{% if with_seconds %}:{{ form_widget(time.second) }}{% endif %}
-        </div>
-    {% endif %}
-{%- endblock time_widget %}
-
-{# DateTime Input #}
-{% block datetime_widget -%}
-    {% if widget == 'single_text' %}
-        {% set type = 'datetime-local' %}
-        {% set attr = attr|merge({
-            class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer')|trim,
-            placeholder: ' '
-        }) %}
-        {{- block('form_widget_simple') -}}
-    {% else %}
-        <div {{ block('widget_container_attributes') }}>
-            {{ form_widget(datetime.date) }}
-            {{ form_widget(datetime.time) }}
-        </div>
-    {% endif %}
-{%- endblock datetime_widget %}
-
-{# Widget Container Attributes #}
-{% block widget_container_attributes -%}
-    {%- if id is not empty %}id="{{ id }}"{% endif -%}
-    {%- for attrname, attrvalue in attr -%}
-        {{- " " -}}
-        {%- if attrname in ['placeholder', 'title'] -%}
-            {{- attrname }}="{{ attrvalue|trans(attr_translation_parameters, translation_domain) }}"
-        {%- elseif attrvalue is same as(true) -%}
-            {{- attrname }}="{{ attrname }}"
-        {%- elseif attrvalue is not same as(false) -%}
-            {{- attrname }}="{{ attrvalue }}"
-        {%- endif -%}
-    {%- endfor -%}
-{%- endblock widget_container_attributes %}
-
-{# Select/Choice sans floating label #}
+{# Select field #}
 {% block choice_widget_collapsed -%}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white/10 rounded-lg border border-transparent appearance-none dark:text-white dark:border-transparent dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary')|trim
-    }) %}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' w-full px-4 py-2 bg-white/10 border rounded-3xl text-white text-sm focus:outline-none focus:ring-0 transition-colors duration-200 appearance-none bg-no-repeat bg-right pr-10 ' ~
+        (errors|length > 0 ? 'border-secondary' : 'border-white/30') ~
+        ' focus:border-primary hover:border-primary/50')|trim,
+        'style': (attr.style|default('') ~ 'background-image: url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%23ffffff\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e"); background-position: right 0.75rem center; background-size: 1.5em 1.5em;')|trim
+    }) -%}
     <select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
-        {% if placeholder is not empty -%}
-            <option value=""{% if required and value is empty %} selected="selected"{% endif %}>{{ placeholder != '' ? (placeholder|trans(placeholder_translation_parameters, translation_domain)) : '' }}</option>
-        {%- endif %}
+        {%- if placeholder is not empty -%}
+            <option value="" class="text-white/30">{{ placeholder != '' ? (translation_domain is same as(false) ? placeholder : placeholder|trans({}, translation_domain)) }}</option>
+        {%- endif -%}
         {%- if preferred_choices|length > 0 -%}
             {% set options = preferred_choices %}
             {{- block('choice_widget_options') -}}
@@ -216,138 +103,274 @@
     </select>
 {%- endblock choice_widget_collapsed %}
 
-{# Choice Widget Options #}
+{# Select options #}
 {% block choice_widget_options -%}
-    {% for group_label, choice in options %}
+    {%- for group_label, choice in options -%}
         {%- if choice is iterable -%}
-            <optgroup label="{{ choice_translation_domain is same as(false) ? group_label : group_label|trans({}, choice_translation_domain) }}">
-                {% set options = choice %}
+            <optgroup label="{{ choice_translation_domain is same as(false) ? group_label : group_label|trans({}, choice_translation_domain) }}" class="text-gray-900">
+                {%- set options = choice -%}
                 {{- block('choice_widget_options') -}}
             </optgroup>
         {%- else -%}
-            <option value="{{ choice.value }}"{% if choice.attr %}{% set attr = choice.attr %}{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}{% set attr = {} %}{% endif %}{% if choice is selectedchoice(value) %} selected="selected"{% endif %}>{{ choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) }}</option>
+            <option value="{{ choice.value }}" class="text-gray-900 bg-white"{% if choice.attr %} {% set attr = choice.attr %}{{ block('attributes') }}{% endif %}{% if choice is selectedchoice(value) %} selected="selected"{% endif %}>{{ choice_translation_domain is same as(false) ? choice.label : choice.label|trans({}, choice_translation_domain) }}</option>
         {%- endif -%}
-    {% endfor %}
+    {%- endfor -%}
 {%- endblock choice_widget_options %}
 
-{# Row pour les select - pas de floating label #}
-{% block choice_row -%}
-    <div class="relative">
-        {% if label is not same as(false) -%}
-            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' block mb-2 text-sm font-medium text-gray-900 dark:text-white')|trim}) -%}
-            {{- form_label(form) -}}
-        {%- endif %}
-        {{- form_widget(form) -}}
-        {{- form_errors(form) -}}
-        {{- form_help(form) -}}
+{# Checkboxes and Radios (expanded = true) #}
+{% block choice_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }} class="space-y-3">
+        {%- for child in form -%}
+            <div class="flex items-center">
+                {{- form_widget(child) -}}
+                {{- form_label(child, null, {label_attr: {class: 'ml-3 text-sm text-primary cursor-pointer'}}) -}}
+            </div>
+        {%- endfor -%}
     </div>
-{%- endblock choice_row %}
+{%- endblock choice_widget_expanded %}
 
-{# Checkbox #}
+{# Checkbox widget #}
 {% block checkbox_widget -%}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' w-4 h-4 text-blue-600 bg-gray-100 border-transparent rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-transparent')|trim
-    }) %}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' w-4 h-4 rounded border-2 bg-white/10 border-white/30 text-primary focus:ring-primary focus:ring-2 focus:ring-offset-0 focus:border-primary checked:border-primary transition-colors duration-200')|trim
+    }) -%}
     <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
 {%- endblock checkbox_widget %}
 
-{# Checkbox Row #}
-{% block checkbox_row -%}
-    <div class="flex items-center mb-4">
-        {{- form_widget(form) -}}
-        {% if label is not same as(false) -%}
-            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' ms-2 text-sm font-medium text-gray-900 dark:text-gray-300')|trim}) -%}
-            {{- form_label(form) -}}
-        {%- endif %}
-        {{- form_errors(form) -}}
-        {{- form_help(form) -}}
-    </div>
-{%- endblock checkbox_row %}
-
-{# Radio #}
+{# Radio widget #}
 {% block radio_widget -%}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' w-4 h-4 text-blue-600 bg-gray-100 border-transparent focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-transparent')|trim
-    }) %}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' w-4 h-4 border-2 bg-white/10 border-white/30 text-primary focus:ring-primary focus:ring-2 focus:ring-offset-0 focus:border-primary checked:border-primary transition-colors duration-200')|trim
+    }) -%}
     <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
 {%- endblock radio_widget %}
 
-{# File Input #}
+{# File widget #}
 {% block file_widget -%}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' block w-full text-sm text-gray-900 border border-transparent rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-transparent dark:placeholder-gray-400')|trim
-    }) %}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' w-full px-4 py-2 bg-white/10 border border-white/30 rounded-3xl text-white text-sm focus:outline-none focus:ring-0 focus:border-primary hover:border-primary/50 transition-colors duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-3xl file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90')|trim
+    }) -%}
     <input type="file" {{ block('widget_attributes') }} />
 {%- endblock file_widget %}
 
-{# File Row #}
-{% block file_row -%}
-    <div class="">
-        {% if label is not same as(false) -%}
-            {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' block mb-2 text-sm font-medium text-gray-900 dark:text-white')|trim}) -%}
-            {{- form_label(form) -}}
-        {%- endif %}
-        {{- form_widget(form) -}}
-        {{- form_errors(form) -}}
-        {{- form_help(form) -}}
+{# Password widget #}
+{% block password_widget -%}
+    {%- set type = 'password' -%}
+    {{- block('form_widget_simple') -}}
+{%- endblock password_widget %}
+
+{# Email widget #}
+{% block email_widget -%}
+    {%- set type = 'email' -%}
+    {{- block('form_widget_simple') -}}
+{%- endblock email_widget %}
+
+{# URL widget #}
+{% block url_widget -%}
+    {%- set type = 'url' -%}
+    {{- block('form_widget_simple') -}}
+{%- endblock url_widget %}
+
+{# Number widget #}
+{% block number_widget -%}
+    {%- set type = 'number' -%}
+    {{- block('form_widget_simple') -}}
+{%- endblock number_widget %}
+
+{# Integer widget #}
+{% block integer_widget -%}
+    {%- set type = 'number' -%}
+    {{- block('form_widget_simple') -}}
+{%- endblock integer_widget %}
+
+{# Money widget #}
+{% block money_widget -%}
+    {%- set prepend = money_pattern starts with '{{' -%}
+    {%- set append = money_pattern ends with '}}' -%}
+    {%- if not (prepend or append) -%}
+        {{- block('form_widget_simple') -}}
+    {%- else -%}
+        <div class="relative">
+            {%- if prepend -%}
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/70 text-sm pointer-events-none">
+                    {{- money_pattern|replace({'{{ widget }}': ''})|trim -}}
+                </div>
+                {%- set attr = attr|merge({
+                    'class': (attr.class|default('') ~ ' pl-8')|trim
+                }) -%}
+            {%- endif -%}
+            {%- if append -%}
+                <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/70 text-sm pointer-events-none">
+                    {{- money_pattern|replace({'{{ widget }}': ''})|trim -}}
+                </div>
+                {%- set attr = attr|merge({
+                    'class': (attr.class|default('') ~ ' pr-8')|trim
+                }) -%}
+            {%- endif -%}
+            {%- set type = type|default('text') -%}
+            {%- set attr = attr|merge({
+                'class': (attr.class|default('') ~ ' w-full px-4 py-2 bg-white/10 border rounded-3xl placeholder:text-white/30 text-white text-sm focus:outline-none focus:ring-0 transition-colors duration-200 ' ~
+                (errors|length > 0 ? 'border-secondary' : 'border-white/30') ~
+                ' focus:border-primary hover:border-primary/50')|trim
+            }) -%}
+            <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+        </div>
+    {%- endif -%}
+{%- endblock money_widget %}
+
+{# Percent widget #}
+{% block percent_widget -%}
+    <div class="relative">
+        {%- set type = type|default('text') -%}
+        {%- set attr = attr|merge({
+            'class': (attr.class|default('') ~ ' w-full px-4 py-2 pr-8 bg-white/10 border rounded-3xl placeholder:text-white/30 text-white text-sm focus:outline-none focus:ring-0 transition-colors duration-200 ' ~
+            (errors|length > 0 ? 'border-secondary' : 'border-white/30') ~
+            ' focus:border-primary hover:border-primary/50')|trim
+        }) -%}
+        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+        <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white/70 text-sm pointer-events-none">%</div>
     </div>
-{%- endblock file_row %}
+{%- endblock percent_widget %}
 
-{# Submit Button #}
-{% block submit_widget -%}
-    {% set type = type|default('submit') %}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800')|trim
-    }) %}
-    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{{ label|trans({}, translation_domain) }}</button>
-{%- endblock submit_widget %}
+{# Date widget #}
+{% block date_widget -%}
+    {%- if widget == 'single_text' -%}
+        {%- set type = 'date' -%}
+        {{- block('form_widget_simple') -}}
+    {%- else -%}
+        <div {{ block('widget_container_attributes') }} class="flex space-x-2">
+            {{- date_pattern|replace({
+                '{{ year }}':  form_widget(form.year, {attr: {class: 'flex-1'}}),
+                '{{ month }}': form_widget(form.month, {attr: {class: 'flex-1'}}),
+                '{{ day }}':   form_widget(form.day, {attr: {class: 'flex-1'}}),
+            })|raw -}}
+        </div>
+    {%- endif -%}
+{%- endblock date_widget %}
 
-{# Button #}
-{% block button_widget -%}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800')|trim
-    }) %}
-    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{{ label|trans({}, translation_domain) }}</button>
-{%- endblock button_widget %}
+{# Time widget #}
+{% block time_widget -%}
+    {%- if widget == 'single_text' -%}
+        {%- set type = 'time' -%}
+        {{- block('form_widget_simple') -}}
+    {%- else -%}
+        <div {{ block('widget_container_attributes') }} class="flex space-x-2">
+            {{ form_widget(form.hour, {attr: {class: 'flex-1'}}) }}
+            {%- if with_minutes -%}:{{ form_widget(form.minute, {attr: {class: 'flex-1'}}) }}{%- endif -%}
+            {%- if with_seconds -%}:{{ form_widget(form.second, {attr: {class: 'flex-1'}}) }}{%- endif -%}
+        </div>
+    {%- endif -%}
+{%- endblock time_widget %}
 
-{# Button Attributes #}
-{% block button_attributes -%}
-    id="{{ id }}" name="{{ full_name }}"{% if disabled %} disabled="disabled"{% endif -%}
-    {%- for attrname, attrvalue in attr -%}
-        {{- " " -}}
-        {%- if attrname in ['placeholder', 'title'] -%}
-            {{- attrname }}="{{ attrvalue|trans(attr_translation_parameters, translation_domain) }}"
-        {%- elseif attrvalue is same as(true) -%}
-            {{- attrname }}="{{ attrname }}"
-        {%- elseif attrvalue is not same as(false) -%}
-            {{- attrname }}="{{ attrvalue }}"
-        {%- endif -%}
-    {%- endfor -%}
-{%- endblock button_attributes %}
+{# DateTime widget #}
+{% block datetime_widget -%}
+    {%- if widget == 'single_text' -%}
+        {%- set type = 'datetime-local' -%}
+        {{- block('form_widget_simple') -}}
+    {%- else -%}
+        <div {{ block('widget_container_attributes') }} class="space-y-2">
+            {{ form_widget(form.date) }}
+            {{ form_widget(form.time) }}
+        </div>
+    {%- endif -%}
+{%- endblock datetime_widget %}
 
-{# Reset Button #}
-{% block reset_widget -%}
-    {% set type = 'reset' %}
-    {% set attr = attr|merge({
-        class: (attr.class|default('') ~ ' text-gray-900 bg-white border border-transparent focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-transparent dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700')|trim
-    }) %}
-    <button type="reset" {{ block('button_attributes') }}>{{ label|trans({}, translation_domain) }}</button>
-{%- endblock reset_widget %}
+{# Form row - remove wrapper for form elements #}
+{% block form_row -%}
+    {{- form_label(form) -}}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+    {%- if help is not empty -%}
+        <div class="mt-1 mb-4 text-sm text-white/70">
+            {{- help|trans({}, translation_domain) -}}
+        </div>
+    {%- else -%}
+        <div class="mb-4"></div>
+    {%- endif -%}
+{%- endblock form_row %}
 
-{# Form Errors #}
+{# Form errors #}
 {% block form_errors -%}
-    {% if errors|length > 0 -%}
-        <div class="mt-2 text-sm text-red-600 dark:text-red-500">
+    {%- if errors|length > 0 -%}
+        <div class="mt-1 ms-4">
             {%- for error in errors -%}
-                <span class="block">{{ error.message }}</span>
+                <div class="text-sm text-secondary">
+                    {{ error.message }}
+                </div>
             {%- endfor -%}
         </div>
-    {%- endif %}
+    {%- endif -%}
 {%- endblock form_errors %}
 
-{# Form Help #}
-{% block form_help -%}
-    {%- if help is not empty -%}
-        <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ help|trans(help_translation_parameters, help_translation_domain)|raw }}</div>
+{# Button widget #}
+{% block button_widget -%}
+    {%- if label is empty -%}
+        {%- if label_format is not empty -%}
+            {% set label = label_format|replace({
+                '%name%': name,
+                '%id%': id,
+            }) %}
+        {%- elseif label is same as(false) -%}
+            {% set translation_domain = false %}
+        {%- else -%}
+            {% set label = name|humanize %}
+        {%- endif -%}
     {%- endif -%}
-{%- endblock form_help %}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' inline-flex items-center justify-center px-6 py-2 bg-primary text-white font-medium text-sm rounded-3xl hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed')|trim
+    }) -%}
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>
+        {{ label|trans({}, translation_domain) }}
+    </button>
+{%- endblock button_widget %}
+
+{# Submit button #}
+{% block submit_widget -%}
+    {%- set type = 'submit' -%}
+    {{- block('button_widget') -}}
+{%- endblock submit_widget %}
+
+{# Reset button #}
+{% block reset_widget -%}
+    {%- set type = 'reset' -%}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' inline-flex items-center justify-center px-6 py-2 bg-white/10 text-white font-medium text-sm rounded-3xl border border-white/30 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 transition-colors duration-200')|trim
+    }) -%}
+    {{- block('button_widget') -}}
+{%- endblock reset_widget %}
+
+{# Hidden widget #}
+{% block hidden_widget -%}
+    {%- set type = 'hidden' -%}
+    <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{%- endblock hidden_widget %}
+
+{# Search widget #}
+{% block search_widget -%}
+    {%- set type = 'search' -%}
+    {{- block('form_widget_simple') -}}
+{%- endblock search_widget %}
+
+{# Tel widget #}
+{% block tel_widget -%}
+    {%- set type = 'tel' -%}
+    {{- block('form_widget_simple') -}}
+{%- endblock tel_widget %}
+
+{# Color widget #}
+{% block color_widget -%}
+    {%- set type = 'color' -%}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' w-full h-12 bg-white/10 border border-white/30 rounded-3xl focus:outline-none focus:ring-0 focus:border-primary hover:border-primary/50 transition-colors duration-200 cursor-pointer')|trim
+    }) -%}
+    <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{%- endblock color_widget %}
+
+{# Range widget #}
+{% block range_widget -%}
+    {%- set type = 'range' -%}
+    {%- set attr = attr|merge({
+        'class': (attr.class|default('') ~ ' w-full h-2 bg-white/10 rounded-3xl appearance-none cursor-pointer slider-thumb:appearance-none slider-thumb:w-4 slider-thumb:h-4 slider-thumb:bg-primary slider-thumb:rounded-3xl slider-thumb:cursor-pointer')|trim
+    }) -%}
+    <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{%- endblock range_widget %}
