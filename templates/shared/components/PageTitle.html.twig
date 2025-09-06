@@ -1,9 +1,27 @@
 {% set icon = icon | default('') %}
 {% set label = label | default('') %}
+{% set detail = detail | default('') %}
 
-<div class="space-x-4 inline-flex justify-center items-center sticky top-2 bg-acrylic p-2 pe-4 rounded-full z-10">
-    <div class="w-10 h-10 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
-        <i class="{{ icon }}"></i>
+<div class="sticky top-2 flex justify-start items-center flex-wrap z-10 space-x-1">
+    {% if block("beforeActions") is defined %}
+        <div>
+            {{ block("beforeActions") }}
+        </div>
+    {% endif %}
+
+    <div class="space-x-4 inline-flex justify-center items-center bg-acrylic p-2 pe-5 rounded-full">
+        <div class="w-10 h-10 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
+            <i class="{{ icon }}"></i>
+        </div>
+
+        <div class="{{ detail is not empty ? 'space-y-0.5' : '' }}">
+            <h1 class="text-xl text-white leading-6">{{ label }}</h1>
+
+            {% if detail is not empty %}
+                <p class="text-muted text-sm leading-4">
+                    {{ detail }}
+                </p>
+            {% endif %}
+        </div>
     </div>
-    <h1 class="text-xl text-white">{{ label }}</h1>
 </div>

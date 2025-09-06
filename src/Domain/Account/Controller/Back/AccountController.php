@@ -61,6 +61,7 @@ class AccountController extends AbstractController
 
         return $this->render('domain/account/form.html.twig', [
             'form' => $form,
+            'account' => $account,
         ]);
     }
 }

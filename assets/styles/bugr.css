@@ -67,6 +67,10 @@
     .overlay--closed > .overlay__content {
         @apply scale-75 transition-all duration-300 ease-in-out;
     }
+
+    .overlay-grid {
+        @apply px-8 py-4 flex flex-wrap gap-8 justify-center w-full;
+    }
 }
 
 @layer utilities {
