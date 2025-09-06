@@ -4,7 +4,7 @@
 {% set asTurbo = asTurbo | default(false)  %}
 
 <div class="flex justify-center">
-    <a href="{{ actionUrl }}" class="aspect-square w-20 h-auto rounded-lg p-2 flex flex-col justify-start items-center text-center space-y-2" data-turbo="{{ asTurbo ? 'true' : 'false' }}" >
+    <a href="{{ actionUrl }}" class="aspect-square w-20 h-auto rounded-3xl p-2 flex flex-col justify-start items-center text-center space-y-2" data-turbo="{{ asTurbo ? 'true' : 'false' }}" >
         <div class="w-12 h-12 bg-gradient-primary text-white rounded-full p-2 flex justify-center items-center">
             <i class="{{ icon }} text-[1.2rem]"></i>
         </div>

@@ -19,9 +19,15 @@
             'acrylic': 'bg-acrylic text-white',
             'transparent-25': 'bg-white/25 text-white',
         },
+        'size': {
+            'sm': 'w-6 h-6',
+            'default': 'w-8 h-8',
+            'lg': 'w-10 h-10',
+        },
     },
     'defaultVariants': {
         'color': 'primary',
+        'size': 'default',
     },
 }) %}
 
@@ -29,6 +35,7 @@
 
 {% set dir = dir | default('left') %}
 {% set color = color | default('primary') %}
+{% set size = size | default('default') %}
 
 {% set label = label | default('') %}
 {% set icon = icon | default('') %}
@@ -38,7 +45,7 @@
     {% if label is not empty and dir == 'right' %}
         <span class="text-white">{{ label }}</span>
     {% endif %}
-    <div class="{{ iconCva.apply({color}, attributes.render('class')) | tailwind_merge }}">
+    <div class="{{ iconCva.apply({color, size}, attributes.render('class')) | tailwind_merge }}">
         <i class="{{ icon }}"></i>
     </div>
     {% if label is not empty and dir == 'left' %}

@@ -26,11 +26,11 @@ import TomSelect from "tom-select";
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl))
 
-const selectInputs = document.querySelectorAll('select')
-const selectInputsList = [...selectInputs].map(selectInputsEl => new TomSelect(selectInputsEl,{
-    create: true,
-    sortField: {
-        field: "text",
-        direction: "asc"
-    }
-}))
+// const selectInputs = document.querySelectorAll('select')
+// const selectInputsList = [...selectInputs].map(selectInputsEl => new TomSelect(selectInputsEl,{
+//     create: true,
+//     sortField: {
+//         field: "text",
+//         direction: "asc"
+//     }
+// }))

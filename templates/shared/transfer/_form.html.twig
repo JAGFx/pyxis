@@ -1,34 +1,19 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h3 class="mt-4 mb-2 text-center">
-        Transfer
-    </h3>
+    <twig:PageTitle :icon="icons.transfer" label="{{ 'transfer.title' | trans }}" />
 
-    <div class="my-2">
-        <a href="{{ path('home') }}" class="text-white-50 btn btn-outline-light">Retour</a>
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.account) }}
+    {{ form_row(form.budgetSource) }}
+    {{ form_row(form.budgetTarget) }}
+    {{ form_row(form.amount) }}
+
+    <div class="pt-4 pb-1">
+        <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right" size="lg"/>
     </div>
 
-    <div class="bg-acrylic rounded p-3 my-2">
-        {{ form_start(form) }}
-        {{ form_errors(form) }}
-
-        <div class="mb-2">
-            {{ form_row(form.account) }}
-        </div>
-        <div class="mb-2">
-            {{ form_row(form.budgetSource) }}
-        </div>
-        <div class="mb-2">
-            {{ form_row(form.budgetTarget) }}
-        </div>
-        <div class="mb-2">
-            {{ form_row(form.amount) }}
-        </div>
-
-        <div class="d-flex justify-content-center align-items-center">
-            <button type="submit" class="btn btn-gradient-accent">Enregistrer</button>
-        </div>
-        {{ form_end(form) }}
-    </div>
+    {{ form_end(form) }}
 {% endblock %}
