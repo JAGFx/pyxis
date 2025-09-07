@@ -1,13 +1,59 @@
-<menu class="sticky bottom-0 bg-gradient-purple2 text-white p-4 flex justify-between items-center shadow-lg rounded-t-3xl">
-    <twig:Button node="a" icon="fa-solid fa-magnifying-glass" label="{{ 'actions.search' | trans(domain: 'interface') }}"/>
-    <li class="flex-none w-16">
-        <twig:Overlay:TriggerClick target="overlay">
-            <div class="flex items-center justify-center bg-gradient-primary rounded-full w-16 h-16 p-2 -translate-y-16 shadow-lg absolute">
-                <img src="{{ asset('img/logo2.png') }}" alt="logo" class="w-auto">
+{% set config = config | default({}) %}
+
+{% set hasSerchFormUrl = config.searchFormUrl is defined and config.searchFormUrl is not null %}
+{% set hasCreateUrl = config.createUrl is defined and config.createUrl is not null %}
+{% set hasActions =  hasSerchFormUrl or hasCreateUrl %}
+
+<menu class="sticky bottom-0 {{ hasActions ? 'bg-gradient-purple2' : 'bg-transparent' }} text-white p-4 flex flex-col shadow-lg rounded-t-3xl"
+    {{ stimulus_controller('search-form', {
+        formUrl: (config.searchFormUrl | default('')),
+    }) }}
+>
+    <div class="flex justify-between items-center">
+        <div class="flex-auto w-full">
+            {% if hasSerchFormUrl %}
+                <twig:Button :icon="icons.search" label="{{ 'actions.search' | trans(domain: 'interface') }}" size="lg"
+                 data-action="click->search-form#search"
+                 data-search-menu-target="searchButton"
+                />
+            {% endif %}
+        </div>
+
+        <li class="flex-none w-16">
+            <twig:Overlay:TriggerClick target="overlay">
+                <div class="flex items-center justify-center bg-gradient-primary rounded-full w-16 h-16 p-2 -translate-y-full shadow-lg absolute">
+                    <img src="{{ asset('img/logo2.png') }}" alt="logo" class="w-auto">
+                </div>
+            </twig:Overlay:TriggerClick>
+        </li>
+
+        <div class="flex-auto w-full">
+            {% if hasCreateUrl %}
+                <twig:Button node="a" :href="config.createUrl" icon="fa-solid fa-wand-magic-sparkles" label="{{ 'actions.create' | trans(domain: 'interface') }}" dir="right" size="lg" />
+            {% endif %}
+        </div>
+    </div>
+
+    {% if hasSerchFormUrl %}
+        <turbo-frame id="search-form" class="h-auto max-h-0 opacity-0 transition-all ease-in-out duration-500 overflow-hidden" {{ stimulus_target('search-form', 'searchForm') }}>
+            <div class="px-7 py-6 rounded-3xl shadow-lg w-full max-w-md">
+                <div class="mb-4">
+                    <div class="ms-4 mb-1 flex items-center space-x-2">
+                        <div class="h-4 bg-white/20 rounded-full w-20 shimmer animate-pulse"></div>
+                    </div>
+                    <div class="h-10 bg-white/20 rounded-full shimmer animate-pulse"></div>
+                </div>
+
+                <div class="pt-4 pb-1">
+                    <div class="flex-auto space-x-2 flex items-center w-full justify-end">
+                        <div class="h-4 bg-white/20 rounded-full w-20 shimmer animate-pulse"></div>
+                        <div class="w-10 h-10 rounded-full p-2 flex justify-center items-center animate-pulse bg-white/20">
+                        </div>
+                    </div>
+                </div>
             </div>
-        </twig:Overlay:TriggerClick>
-    </li>
-    <twig:Button node="a" icon="fa-solid fa-wand-magic-sparkles" label="{{ 'actions.create' | trans(domain: 'interface') }}" dir="right"/>
+        </turbo-frame>
+    {% endif %}
 </menu>
 
 <twig:Overlay:Overlay id="overlay">

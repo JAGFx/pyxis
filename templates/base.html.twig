@@ -29,11 +29,11 @@
 {#        {% include 'shared/toast/_container.html.twig' %}#}
         <turbo-frame id="entry_balance" src="{{ path('front_entry_balance') }}" class="flex-none"></turbo-frame>
 
-        <div class="flex-auto px-2 space-y-2 mb-16">
+        <turbo-frame id="main_body" class="flex-auto px-2 space-y-2 mb-16">
             {% block body %}{% endblock %}
-        </div>
+        </turbo-frame>
 
-        {% include 'shared/menu/_menu.html.twig' only %}
+        {% include 'shared/menu/_menu.html.twig' with { config: (config | default({})) } only %}
     </main>
 </body>
 </html>

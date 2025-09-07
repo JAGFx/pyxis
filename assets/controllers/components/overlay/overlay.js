@@ -39,7 +39,6 @@ export default class extends Controller {
 
     // Gérer les événements externes
     handleOpen(event) {
-        console.log( event.detail, this.element.id );
         if (event.detail.target === this.element.id) {
             this.open()
         }

@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <twig:PageTitle :icon="icons.account" label="{{ 'account.title' | trans }}" :detail="account.name"
+    <twig:PageTitle :icon="icons.account" label="{{ 'account.title' | trans }}" detail="{{ account.name | default('actions.create' | trans(domain: 'interface')) }}"
         >
         <twig:block name="beforeActions">
             <twig:Button node="a" icon="fa-solid fa-arrow-left-long" color="acrylic" href="{{ path('back_account_account_list') }}"/>

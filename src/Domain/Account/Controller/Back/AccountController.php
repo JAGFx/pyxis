@@ -26,7 +26,13 @@ class AccountController extends AbstractController
         $accountSearchCommand = new AccountSearchCommand()->setOrderBy('name');
         $accounts             = $this->accountManager->getAccounts($accountSearchCommand);
 
-        return $this->render('domain/account/index.html.twig', ['accounts' => $accounts]);
+        return $this->render('domain/account/index.html.twig', [
+            'accounts' => $accounts,
+            'config'   => [ // TODO: Pass by a VO
+                'createUrl' => $this->generateUrl('back_account_new'),
+                'searchFormUrl' => $this->generateUrl('back_account_new')
+            ],
+        ]);
     }
 
     #[Route('/create', name: 'back_account_new', methods: [Request::METHOD_POST, Request::METHOD_GET])]
@@ -43,7 +49,7 @@ class AccountController extends AbstractController
 
     private function handleForm(ControllerActionEnum $action, Request $request, ?Account $account = null): Response
     {
-        $account ??= new Account();
+        $account ??= new Account()->setName('');
 
         $form = $this
             ->createForm(AccountType::class, $account)
