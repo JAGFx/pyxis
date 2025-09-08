@@ -4,7 +4,7 @@ namespace App\Domain\PeriodicEntry\Controller\Front;
 
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
-use App\Infrastructure\Turbo\Controller\TurboResponseTraits;
+use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/periodic_entries')]
 class PeriodicEntryController extends AbstractController
 {
-    use TurboResponseTraits;
+    use TurboResponseTrait;
 
     public function __construct(
         private readonly PeriodicEntryManager $periodicEntryManager,

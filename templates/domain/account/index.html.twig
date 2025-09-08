@@ -1,17 +1,5 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <twig:PageTitle :icon="icons.account" label="{{ 'account.title' | trans }}" />
-
-{#    <a class="btn btn-xs rounded-circle create-button d-flex justify-content-center align-items-center bg-gradient-accent text-white" href="{{ path('back_account_new') }}">#}
-{#        <i class="fa-solid fa-wand-magic-sparkles"></i>#}
-{#    </a>#}
-
-    <twig:Liste:Liste>
-        {% for account in accounts %}
-            <turbo-frame id="account_list_item_{{ account.id }}">
-                {% include 'domain/account/_item.html.twig' %}
-            </turbo-frame>
-        {% endfor %}
-    </twig:Liste:Liste>
+    {% include 'domain/account/_list.html.twig' %}
 {% endblock %}

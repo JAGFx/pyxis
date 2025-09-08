@@ -36,22 +36,7 @@
 
     {% if hasSerchFormUrl %}
         <turbo-frame id="search-form" class="h-0 opacity-0 transition-all max-h-1/2 ease-in-out duration-500 overflow-hidden" {{ stimulus_target('search-form', 'searchForm') }}>
-            <div class="px-7 py-6 rounded-3xl shadow-lg w-full max-w-md">
-                <div class="mb-4">
-                    <div class="ms-4 mb-1 flex items-center space-x-2">
-                        <div class="h-4 bg-white/20 rounded-full w-20 shimmer animate-pulse"></div>
-                    </div>
-                    <div class="h-10 bg-white/20 rounded-full shimmer animate-pulse"></div>
-                </div>
-
-                <div class="pt-4 pb-1">
-                    <div class="flex-auto space-x-2 flex items-center w-full justify-end">
-                        <div class="h-4 bg-white/20 rounded-full w-20 shimmer animate-pulse"></div>
-                        <div class="w-10 h-10 rounded-full p-2 flex justify-center items-center animate-pulse bg-white/20">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% include 'shared/menu/_search_form_placeholder.html.twig' %}
         </turbo-frame>
     {% endif %}
 </menu>

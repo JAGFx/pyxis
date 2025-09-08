@@ -1,0 +1,18 @@
+{% set show = show | default('true') %}
+
+<div class="px-7 py-6 rounded-3xl w-full max-w-md {{ show == 'none' ? 'hidden' : '' }}" id="search-placeholder">
+    <div class="mb-4">
+        <div class="ms-4 mb-1 flex items-center space-x-2">
+            <div class="h-4 bg-white/20 rounded-full w-20 shimmer animate-pulse"></div>
+        </div>
+        <div class="h-10 bg-white/20 rounded-full shimmer animate-pulse"></div>
+    </div>
+
+    <div class="pt-4 pb-1">
+        <div class="flex-auto space-x-2 flex items-center w-full justify-end">
+            <div class="h-4 bg-white/20 rounded-full w-20 shimmer animate-pulse"></div>
+            <div class="w-10 h-10 rounded-full p-2 flex justify-center items-center animate-pulse bg-white/20">
+            </div>
+        </div>
+    </div>
+</div>

@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\Turbo\TurboBundle;
 
-trait TurboResponseTraits
+trait TurboResponseTrait
 {
     /**
      * @param array<string, mixed> $parameters

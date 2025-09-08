@@ -20,6 +20,6 @@
 {% set color = color|default('primary') %}
 {% set size = size|default('default') %}
 
-<div class="{{ card.apply({color, size}, attributes.render('class')) | tailwind_merge }}">
+<div class="{{ card.apply({color, size}, attributes.render('class')) | tailwind_merge }}" {{ attributes.without('class') }}>
     {% block content %}{% endblock %}
 </div>

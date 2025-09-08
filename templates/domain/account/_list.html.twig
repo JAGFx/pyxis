@@ -1,0 +1,9 @@
+<twig:PageTitle :icon="icons.account" label="{{ 'account.title' | trans }}" />
+
+<twig:Liste:Liste>
+    {% for account in accounts %}
+        <turbo-frame id="account_list_item_{{ account.id }}">
+            {% include 'domain/account/_item.html.twig' %}
+        </turbo-frame>
+    {% endfor %}
+</twig:Liste:Liste>

@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Controller\Front;
 
+use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountSearchType;
 use App\Domain\Account\Manager\AccountManager;
 use App\Domain\Account\Security\AccountVoter;
-use App\Infrastructure\Turbo\Controller\TurboResponseTraits;
+use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -20,7 +21,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('accounts')]
 class AccountController extends AbstractController
 {
-    use TurboResponseTraits;
+    use TurboResponseTrait;
 
     public function __construct(
         private readonly AccountManager $accountManager,
@@ -77,9 +78,26 @@ class AccountController extends AbstractController
 
         return $this->renderTurboStream(
             $request,
-            'domain/account/turbo/success.form.search_and_filter.html.twig',
+            'domain/account/turbo/success.stream.search_and_filter_form.html.twig',
             [
                 'form' => $form,
+            ]);
+    }
+
+    #[Route('/search-and-filter', name: 'front_account_search_and_filter', methods: [Request::METHOD_POST])]
+    public function searchAndFilter(Request $request): Response
+    {
+        $accountSearchCommand = new AccountSearchCommand();
+        $this->createForm(AccountSearchType::class, $accountSearchCommand)
+            ->handleRequest($request);
+
+        $accounts = $this->accountManager->getAccounts($accountSearchCommand);
+
+        return $this->renderTurboStream(
+            $request,
+            'domain/account/turbo/success.stream.search_and_filter.html.twig',
+            [
+                'accounts' => $accounts,
             ]);
     }
 }

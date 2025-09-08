@@ -1,24 +1,5 @@
 {# templates/forms/tailwind_theme.html.twig #}
 
-{# Form start with default styling #}
-{% block form_start -%}
-    {%- do form.setMethodRendered() -%}
-    {%- set method = method|upper -%}
-    {%- if method in ["GET", "POST"] -%}
-        {%- set form_method = method -%}
-    {%- else -%}
-        {%- set form_method = "POST" -%}
-    {%- endif -%}
-    {%- set attr = attr|merge({
-        'class': (attr.class|default('') ~ '')|trim
-    }) -%}
-    <form{% if multipart %} enctype="multipart/form-data"{% endif %} method="{{ form_method|lower }}"{% if action != '' %} action="{{ action }}"{% endif %}{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
-    {%- if form_method != method -%}
-        <input type="hidden" name="_method" value="{{ method }}" />
-    {%- endif -%}
-{%- endblock form_start %}
-
-
 {# Form widget base #}
 {% block form_widget_simple -%}
     {%- set type = type|default('text') -%}

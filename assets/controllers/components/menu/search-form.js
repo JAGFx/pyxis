@@ -87,7 +87,8 @@ export default class extends Controller {
 
         setTimeout(() => {
             this.searchFormTarget.removeAttribute('src')
-            this.searchFormTarget.innerHTML = ''; // TODO: Replace with placeholder
+            this.searchFormTarget.querySelector('#search-form-content')?.remove()
+            this.searchFormTarget.querySelector('#search-placeholder')?.classList.remove('hidden')
         }, 500)
 
         this.isOpenValue = false

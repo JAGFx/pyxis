@@ -6,7 +6,7 @@ namespace App\Domain\Assignment\Controller\Front;
 
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Infrastructure\Turbo\Controller\TurboResponseTraits;
+use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/assignments')]
 class AssignmentController extends AbstractController
 {
-    use TurboResponseTraits;
+    use TurboResponseTrait;
 
     public function __construct(
         private readonly AssignmentManager $assignmentManager,

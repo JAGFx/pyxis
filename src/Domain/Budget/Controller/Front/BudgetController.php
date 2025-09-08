@@ -10,7 +10,7 @@ use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Operator\BudgetOperator;
 use App\Domain\Budget\Security\BudgetVoter;
-use App\Infrastructure\Turbo\Controller\TurboResponseTraits;
+use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\EntryOperator;
 use App\Shared\Utils\YearRange;
 use Doctrine\ORM\NonUniqueResultException;
@@ -25,7 +25,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('budgets')]
 class BudgetController extends AbstractController
 {
-    use TurboResponseTraits;
+    use TurboResponseTrait;
 
     public function __construct(
         private readonly BudgetManager $budgetManager,

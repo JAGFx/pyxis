@@ -4,7 +4,7 @@ namespace App\Domain\Entry\Controller\Front;
 
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Infrastructure\Turbo\Controller\TurboResponseTraits;
+use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/entries')]
 class EntryController extends AbstractController
 {
-    use TurboResponseTraits;
+    use TurboResponseTrait;
 
     public function __construct(
         private readonly EntryManager $entryManager,
