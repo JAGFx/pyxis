@@ -8,14 +8,16 @@
         </twig:block>
     </twig:PageTitle>
 
-    {{ form_start(form, {attr: { class: 'bg-acrylic shadow-lg' }}) }}
-    {{ form_errors(form) }}
+    <twig:Card color="acrylic" size="lg" class="shadow-lg">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
 
-    {{ form_row(form.name) }}
+        {{ form_row(form.name) }}
 
-    <div class="pt-4 pb-1">
-        <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right" size="lg"/>
-    </div>
+        <div class="pt-4 pb-1 flex justify-end">
+            <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right" size="lg"/>
+        </div>
 
-    {{ form_end(form) }}
+        {{ form_end(form) }}
+    </twig:Card>
 {% endblock %}

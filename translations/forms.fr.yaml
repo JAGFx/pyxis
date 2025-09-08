@@ -1,0 +1,18 @@
+shared:
+  default:
+    placeholders:
+      all: Tout
+  yes_no:
+    options:
+      yes: Oui
+      no: Non
+
+account:
+  search:
+    enable:
+      label: Actif
+    name:
+      label: Nom
+  form:
+    name:
+      label: Nom

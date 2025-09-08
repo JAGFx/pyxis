@@ -3,20 +3,22 @@
 {% block stream %}
     <turbo-stream action="update" target="search-form">
         <template>
-            {{ form_start(form, {attr: {class: 'pt-1'}}) }}
-            {{ form_errors(form) }}
+            <twig:Card color="transparent" size="lg" class="pt-1">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
 
-            {{ form_row(form.enable) }}
-            {{ form_row(form.name) }}
+                {{ form_row(form.enable) }}
+                {{ form_row(form.name) }}
 
-            <div class="pt-4 pb-1 flex justify-between">
-                <twig:Button type="button" :icon="icons.back" color="transparent-25" label="{{ 'menu.back' | trans(domain: 'navigation') }}" size="lg"
-                     data-action="click->search-form#reset"
-                />
-                <twig:Button type="submit" :icon="icons.search" label="{{ 'actions.search' | trans(domain: 'interface') }}" dir="right" size="lg"/>
-            </div>
+                <div class="pt-4 pb-1 flex justify-between">
+                    <twig:Button type="button" :icon="icons.back" color="transparent-25" label="{{ 'menu.back' | trans(domain: 'navigation') }}" size="lg"
+                         data-action="click->search-form#reset"
+                    />
+                    <twig:Button type="submit" :icon="icons.search" label="{{ 'actions.search' | trans(domain: 'interface') }}" dir="right" size="lg"/>
+                </div>
 
-            {{ form_end(form) }}
+                {{ form_end(form) }}
+            </twig:Card>
         </template>
     </turbo-stream>
 {% endblock %}

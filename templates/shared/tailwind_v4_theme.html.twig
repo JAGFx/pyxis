@@ -10,9 +10,8 @@
         {%- set form_method = "POST" -%}
     {%- endif -%}
     {%- set attr = attr|merge({
-        'class': (attr.class|default('') ~ ' px-7 py-6 rounded-3xl')|trim
+        'class': (attr.class|default('') ~ '')|trim
     }) -%}
-    {# TODO: Remove this and create card component instead #}
     <form{% if multipart %} enctype="multipart/form-data"{% endif %} method="{{ form_method|lower }}"{% if action != '' %} action="{{ action }}"{% endif %}{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
     {%- if form_method != method -%}
         <input type="hidden" name="_method" value="{{ method }}" />

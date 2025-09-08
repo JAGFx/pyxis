@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Account\Form;
 
 use App\Domain\Account\Entity\Account;
+use App\Shared\Form\Type\YesNoType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,24 +16,22 @@ class AccountSearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('enable', ChoiceType::class, [ // TODO: Factorise and create a type like YesNoChoiceType + translation
-                'choices'  => [
-                    'Oui' => true,
-                    'Non' => false,
-                ],
+            ->add('enable', YesNoType::class, [
                 'required' => false,
-                'label'    => 'Actif',
-                'expanded' => true,
+                'placeholder' => 'shared.default.placeholders.all',
             ])
             ->add('name', TextType::class, [
                 'required' => false,
-                'label'    => 'Nom',
             ])
         ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefault('data_class', AccountSearchType::class);
+        $resolver->setDefaults([
+            'data_class' => Account::class,
+            'label_format' => 'account.search.%name%.label',
+            'translation_domain' => 'forms',
+        ]);
     }
 }

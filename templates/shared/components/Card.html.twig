@@ -1,17 +1,25 @@
 {% set card = cva({
-    'base': 'rounded-3xl p-2',
+    'base': 'rounded-3xl text-white',
     'variants': {
         'color': {
-            'primary': 'bg-gradient-primary text-white',
+            'primary': 'bg-gradient-primary',
+            'acrylic': 'bg-acrylic',
+            'transparent': 'bg-transparent',
+        },
+        'size': {
+            'default': 'p-2',
+            'lg': 'px-7 py-6',
         },
     },
     'defaultVariants': {
         'color': 'primary',
+        'size': 'default',
     },
 }) %}
 
 {% set color = color|default('primary') %}
+{% set size = size|default('default') %}
 
-<div class="{{ card.apply({color}, attributes.render('class')) | tailwind_merge }}">
+<div class="{{ card.apply({color, size}, attributes.render('class')) | tailwind_merge }}">
     {% block content %}{% endblock %}
 </div>

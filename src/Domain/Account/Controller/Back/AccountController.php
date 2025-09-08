@@ -7,6 +7,7 @@ use App\Domain\Account\Form\AccountType;
 use App\Domain\Account\Manager\AccountManager;
 use App\Domain\Account\Model\AccountSearchCommand;
 use App\Shared\Model\ControllerActionEnum;
+use App\Shared\ValueObject\MenuConfiguration;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,10 +29,10 @@ class AccountController extends AbstractController
 
         return $this->render('domain/account/index.html.twig', [
             'accounts' => $accounts,
-            'config'   => [ // TODO: Pass by a VO
-                'createUrl' => $this->generateUrl('back_account_new'),
-                'searchFormUrl' => $this->generateUrl('front_account_search_and_filter_form')
-            ],
+            'config'   => new MenuConfiguration(
+                createUrl: $this->generateUrl('back_account_new'),
+                searchFormUrl: $this->generateUrl('front_account_search_and_filter_form')
+            )
         ]);
     }
 
