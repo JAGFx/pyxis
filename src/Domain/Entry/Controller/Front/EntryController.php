@@ -4,7 +4,7 @@ namespace App\Domain\Entry\Controller\Front;
 
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Shared\Model\TurboResponseTraits;
+use App\Infrastructure\Turbo\Controller\TurboResponseTraits;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;

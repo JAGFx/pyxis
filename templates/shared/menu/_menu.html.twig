@@ -13,8 +13,8 @@
         <div class="flex-auto w-full">
             {% if hasSerchFormUrl %}
                 <twig:Button :icon="icons.search" label="{{ 'actions.search' | trans(domain: 'interface') }}" size="lg"
-                 data-action="click->search-form#search"
-                 data-search-menu-target="searchButton"
+                     data-action="click->search-form#search"
+                     data-search-form-target="actions"
                 />
             {% endif %}
         </div>
@@ -29,13 +29,13 @@
 
         <div class="flex-auto w-full">
             {% if hasCreateUrl %}
-                <twig:Button node="a" :href="config.createUrl" icon="fa-solid fa-wand-magic-sparkles" label="{{ 'actions.create' | trans(domain: 'interface') }}" dir="right" size="lg" />
+                <twig:Button node="a" :href="config.createUrl" icon="fa-solid fa-wand-magic-sparkles" label="{{ 'actions.create' | trans(domain: 'interface') }}" dir="right" size="lg" data-search-form-target="actions" />
             {% endif %}
         </div>
     </div>
 
     {% if hasSerchFormUrl %}
-        <turbo-frame id="search-form" class="h-auto max-h-0 opacity-0 transition-all ease-in-out duration-500 overflow-hidden" {{ stimulus_target('search-form', 'searchForm') }}>
+        <turbo-frame id="search-form" class="h-0 opacity-0 transition-all max-h-1/2 ease-in-out duration-500 overflow-hidden" {{ stimulus_target('search-form', 'searchForm') }}>
             <div class="px-7 py-6 rounded-3xl shadow-lg w-full max-w-md">
                 <div class="mb-4">
                     <div class="ms-4 mb-1 flex items-center space-x-2">

@@ -74,19 +74,19 @@
 }
 
 @layer utilities {
-    .bg-acrylic {
-        @apply bg-black/25 border-0 backdrop-blur-md;
-    }
-
-    .bg-gradient-primary {
-        @apply bg-gradient-to-tl from-primary to-[#e4492c];
-    }
-
-    .bg-gradient-purple2 {
-        @apply bg-gradient-to-tl from-purple to-purple2;
-    }
-
     .text-muted {
         @apply text-white/50;
     }
+}
+
+@utility bg-acrylic {
+    @apply bg-black/25 border-0 backdrop-blur-md;
+}
+
+@utility bg-gradient-primary {
+    @apply bg-gradient-to-tl from-primary to-[#e4492c];
+}
+
+@utility bg-gradient-purple2 {
+    @apply bg-gradient-to-tl from-purple to-purple2;
 }

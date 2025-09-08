@@ -11,6 +11,7 @@ class AccountSearchCommand implements OrderableInterface
 
     public function __construct(
         private ?bool $enable = true,
+        private ?string $name = null,
     ) {
     }
 
@@ -23,6 +24,17 @@ class AccountSearchCommand implements OrderableInterface
     {
         $this->enable = $enable;
 
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): AccountSearchCommand
+    {
+        $this->name = $name;
         return $this;
     }
 }

@@ -30,7 +30,7 @@ class AccountController extends AbstractController
             'accounts' => $accounts,
             'config'   => [ // TODO: Pass by a VO
                 'createUrl' => $this->generateUrl('back_account_new'),
-                'searchFormUrl' => $this->generateUrl('back_account_new')
+                'searchFormUrl' => $this->generateUrl('front_account_search_and_filter_form')
             ],
         ]);
     }

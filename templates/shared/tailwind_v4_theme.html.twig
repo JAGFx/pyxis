@@ -10,8 +10,9 @@
         {%- set form_method = "POST" -%}
     {%- endif -%}
     {%- set attr = attr|merge({
-        'class': (attr.class|default('') ~ ' bg-acrylic px-7 py-6 rounded-3xl shadow-lg')|trim
+        'class': (attr.class|default('') ~ ' px-7 py-6 rounded-3xl')|trim
     }) -%}
+    {# TODO: Remove this and create card component instead #}
     <form{% if multipart %} enctype="multipart/form-data"{% endif %} method="{{ form_method|lower }}"{% if action != '' %} action="{{ action }}"{% endif %}{% for attrname, attrvalue in attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
     {%- if form_method != method -%}
         <input type="hidden" name="_method" value="{{ method }}" />
@@ -117,17 +118,30 @@
     {%- endfor -%}
 {%- endblock choice_widget_options %}
 
-{# Checkboxes and Radios (expanded = true) #}
+{# Checkboxes and Radios (expanded = true) - Segmented style #}
 {% block choice_widget_expanded -%}
-    <div {{ block('widget_container_attributes') }} class="space-y-3">
+    <div {{ block('widget_container_attributes') }} class="flex bg-white/10 border border-white/30 rounded-3xl p-1 gap-1">
         {%- for child in form -%}
-            <div class="flex items-center">
-                {{- form_widget(child) -}}
-                {{- form_label(child, null, {label_attr: {class: 'ml-3 text-sm text-primary cursor-pointer'}}) -}}
+            {%- set input_type = multiple ? 'checkbox' : 'radio' -%}
+            <div class="flex-1 relative">
+                <input type="{{ input_type }}"
+                       id="{{ child.vars.id }}"
+                       name="{{ child.vars.full_name }}"
+                       value="{{ child.vars.value }}"
+                       {% if child.vars.checked %}checked="checked"{% endif %}
+                       class="absolute inset-0 opacity-0 cursor-pointer peer" />
+                <label for="{{ child.vars.id }}"
+                       class="flex items-center justify-center px-2 py-1 text-sm font-medium cursor-pointer rounded-2xl transition-all duration-200 w-full
+                              text-white/70 hover:text-white
+                              peer-checked:bg-gradient-primary peer-checked:text-white peer-checked:shadow-sm
+                              peer-focus-visible:outline peer-focus-visible:outline-primary/50">
+                    {{- child.vars.label|trans({}, translation_domain) -}}
+                </label>
             </div>
         {%- endfor -%}
     </div>
 {%- endblock choice_widget_expanded %}
+
 
 {# Checkbox widget #}
 {% block checkbox_widget -%}

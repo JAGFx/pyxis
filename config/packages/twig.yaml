@@ -18,6 +18,7 @@ twig:
       transfer: 'fa-solid fa-right-left'
       save: 'fas fa-paper-plane'
       search: 'fa-solid fa-magnifying-glass'
+      back: 'fa-solid fa-arrow-left-long'
 
 when@test:
   twig:

@@ -10,7 +10,7 @@ use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Budget\Operator\BudgetOperator;
 use App\Domain\Budget\Security\BudgetVoter;
-use App\Shared\Model\TurboResponseTraits;
+use App\Infrastructure\Turbo\Controller\TurboResponseTraits;
 use App\Shared\Operator\EntryOperator;
 use App\Shared\Utils\YearRange;
 use Doctrine\ORM\NonUniqueResultException;

@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace App\Domain\Account\Controller\Front;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Form\AccountSearchType;
 use App\Domain\Account\Manager\AccountManager;
 use App\Domain\Account\Security\AccountVoter;
-use App\Shared\Model\TurboResponseTraits;
+use App\Infrastructure\Turbo\Controller\TurboResponseTraits;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -67,5 +68,18 @@ class AccountController extends AbstractController
                 'amountBalance' => $amountBalance,
             ]
         );
+    }
+
+    #[Route('/search-and-filter-form', name: 'front_account_search_and_filter_form', methods: [Request::METHOD_GET])]
+    public function searchAndFilterForm(Request $request): Response
+    {
+        $form = $this->createForm(AccountSearchType::class);
+
+        return $this->renderTurboStream(
+            $request,
+            'domain/account/turbo/success.form.search_and_filter.html.twig',
+            [
+            'form' => $form,
+        ]);
     }
 }

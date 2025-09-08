@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Model;
+namespace App\Infrastructure\Turbo\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

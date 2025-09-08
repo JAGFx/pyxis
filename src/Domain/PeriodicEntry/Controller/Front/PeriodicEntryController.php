@@ -4,7 +4,7 @@ namespace App\Domain\PeriodicEntry\Controller\Front;
 
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
-use App\Shared\Model\TurboResponseTraits;
+use App\Infrastructure\Turbo\Controller\TurboResponseTraits;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -6,7 +6,7 @@ namespace App\Domain\Assignment\Controller\Front;
 
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Shared\Model\TurboResponseTraits;
+use App\Infrastructure\Turbo\Controller\TurboResponseTraits;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
