@@ -15,14 +15,14 @@
   <a href="https://symfony.com">
     <img src="https://img.shields.io/badge/symfony-7.3-000000.svg?logo=symfony" alt="Symfony">
   </a>
-  <a href="https://github.com/JAGFx/pyxis/tree/master?tab=MIT-1-ov-file">
-    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
-  </a>
   <a href="https://github.com/JAGFx/pyxis/commits">
     <img src="https://img.shields.io/github/last-commit/JAGFx/pyxis" alt="Last Commit">
   </a>
   <a href="https://github.com/JAGFx/pyxis/tags">
     <img src="https://img.shields.io/github/v/tag/JAGFx/pyxis" alt="Latest Tag">
+  </a>
+  <a href="https://github.com/JAGFx/pyxis/tree/master?tab=MIT-1-ov-file">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT">
   </a>
 </p>
 
@@ -31,6 +31,10 @@
 This project primarily serves as a technical playground where I can take time to explore and refine my development practices. My objective is to make thoughtful technical choices while deepening my expertise with the technologies involved.
 
 Beyond its core functionality, this savings application embodies my development philosophy: emphasizing quality, maintainability, and sustainable code. It stands as both a reflection of my current capabilities and my approach to web development.
+
+The rise of AI has significantly democratized access to technical knowledge and made troubleshooting development issues more approachable.
+
+Nevertheless, AI is a powerful tool, not a replacement for critical thinking. I embrace it as an invaluable development companion while maintaining full ownership of my architectural and technical decisions.
 
 **The technical implementation reflects these core principles through:**
 
