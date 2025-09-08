@@ -41,8 +41,8 @@ Nevertheless, AI is a powerful tool, not a replacement for critical thinking. I 
 - 📱 **Mobile-First Approach** - Optimized UX design prioritizing mobile experience
 - 🐳 **Containerized Development** - Dockerized environment for consistent development and deployment
 - ⚡ **Modern Frontend Stack** - Symfony UX (Turbo, Stimulus) for enhanced user experience
-- 🔍 **Code Quality Assurance** - Comprehensive linting with PHPStan, ESLint, and StyleLint
-- 🧪 **Testing Suite** - Unit and functional tests with PHPUnit and Panther for browser testing
+- 🔍 **Code Quality Assurance** - Comprehensive linting with PHPStan, Rector and StyleLint
+- 🧪 **Testing Suite** - Unit and functional tests with PHPUnit
 - 🚀 **Automated CI/CD Pipeline** - GitHub Actions for continuous integration and deployment
 
 ## ✨ Key Features
