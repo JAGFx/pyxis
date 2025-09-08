@@ -32,6 +32,12 @@ install: start db
 
 fixture: db
 	@bin/php bin/console h:f:l -n --purge-with-truncate
+
+init: build
+	@echo "APP_ENV=dev" > .env.local
+	@$(MAKE) install
+	@$(MAKE) fixture
+
 # -- End Environment
 
 # -- Start Code linter & test (CI)
@@ -50,8 +56,5 @@ lint:
 	npm run lint
 
 ci: lint test
-
-gh\:workflow:
-	@~/bin/act -P ghcr.io/jagfx/bugr2:ci=ghcr.io/jagfx/bugr2:ci -W .github/workflows/cd.yaml
 
 # -- End Code linter & test (CI)

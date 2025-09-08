@@ -30,6 +30,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/nginx/Dockerfile
+      target: base
     volumes:
       - ./:/var/www/symfony/
     ports:
@@ -56,3 +57,4 @@ volumes:
 
 networks:
   app_network:
+    name: pyxis_network

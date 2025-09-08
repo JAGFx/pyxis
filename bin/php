@@ -3,5 +3,5 @@
 
 docker run -i --rm  \
 	-v "$(pwd):/var/www/symfony/" \
-	--network=bugr2_app_network \
+	--network=pyxis_network \
 	pyxis-php:latest "$@"
