@@ -2,8 +2,8 @@
 
 namespace App\Shared\Controller;
 
+use App\Shared\DTO\Transfer;
 use App\Shared\Form\TransferType;
-use App\Shared\Model\Transfer;
 use App\Shared\Operator\HomeOperator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

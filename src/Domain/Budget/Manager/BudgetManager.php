@@ -3,13 +3,13 @@
 namespace App\Domain\Budget\Manager;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Entity\EntryKindEnum;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Model\EntryKindEnum;
 
 readonly class BudgetManager
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Entry\Model;
+namespace App\Domain\Entry\Entity;
 
 enum EntryTypeEnum: string
 {

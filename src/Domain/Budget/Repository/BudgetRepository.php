@@ -2,9 +2,9 @@
 
 namespace App\Domain\Budget\Repository;
 
+use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Model\BudgetSearchCommand;
-use App\Domain\Entry\Model\EntryKindEnum;
+use App\Domain\Entry\Entity\EntryKindEnum;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;

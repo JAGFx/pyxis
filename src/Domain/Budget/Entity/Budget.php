@@ -7,7 +7,7 @@ use App\Domain\Budget\Model\BudgetProgressTrait;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Shared\Model\TimestampableTrait;
+use App\Shared\Entity\TimestampableTrait;
 use App\Shared\Utils\YearRange;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;

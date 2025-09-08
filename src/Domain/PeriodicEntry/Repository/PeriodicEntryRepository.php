@@ -2,9 +2,9 @@
 
 namespace App\Domain\PeriodicEntry\Repository;
 
-use App\Domain\Entry\Model\EntryTypeEnum;
+use App\Domain\Entry\Entity\EntryTypeEnum;
+use App\Domain\PeriodicEntry\DTO\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Model\PeriodicEntrySearchCommand;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;

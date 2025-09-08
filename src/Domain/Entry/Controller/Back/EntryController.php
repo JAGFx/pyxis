@@ -2,13 +2,13 @@
 
 namespace App\Domain\Entry\Controller\Back;
 
+use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Form\EntryType;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Model\EntrySearchCommand;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
-use App\Infrastructure\KnpPaginator\Model\OrderEnum;
+use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

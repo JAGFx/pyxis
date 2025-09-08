@@ -5,7 +5,7 @@ namespace App\Domain\Account\Entity;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Entry\Entity\Entry;
-use App\Shared\Model\TimestampableTrait;
+use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

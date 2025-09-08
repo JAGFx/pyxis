@@ -19,8 +19,8 @@ class AccountType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Account::class,
-            'label_format' => 'account.form.%name%.label',
+            'data_class'         => Account::class,
+            'label_format'       => 'account.form.%name%.label',
             'translation_domain' => 'forms',
         ]);
     }

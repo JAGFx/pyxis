@@ -3,10 +3,10 @@
 namespace App\Shared\Operator;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Assignment\DTO\AssignmentSearchCommand;
 use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Domain\Assignment\Model\AssignmentSearchCommand;
+use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Model\EntrySearchCommand;
 use App\Shared\ValueObject\AmountBalance;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;

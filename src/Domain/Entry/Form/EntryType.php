@@ -2,8 +2,8 @@
 
 namespace App\Domain\Entry\Form;
 
+use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Model\AccountSearchCommand;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\Entry;

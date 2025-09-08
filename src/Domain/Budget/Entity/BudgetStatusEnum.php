@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Budget\Model;
+namespace App\Domain\Budget\Entity;
 
 enum BudgetStatusEnum: string
 {

@@ -2,6 +2,8 @@
 
 namespace App\Domain\Budget\Model;
 
+use App\Domain\Budget\Entity\BudgetStatusEnum;
+
 trait BudgetProgressTrait
 {
     abstract public function getProgress(): float;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\KnpPaginator\Model;
+namespace App\Infrastructure\KnpPaginator\DTO;
 
 interface OrderableInterface
 {

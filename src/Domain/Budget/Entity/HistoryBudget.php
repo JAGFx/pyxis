@@ -2,7 +2,6 @@
 
 namespace App\Domain\Budget\Entity;
 
-use App\Domain\Budget\Model\BudgetStatusEnum;
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;

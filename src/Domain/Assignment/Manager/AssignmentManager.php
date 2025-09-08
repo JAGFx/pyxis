@@ -2,8 +2,8 @@
 
 namespace App\Domain\Assignment\Manager;
 
+use App\Domain\Assignment\DTO\AssignmentSearchCommand;
 use App\Domain\Assignment\Entity\Assignment;
-use App\Domain\Assignment\Model\AssignmentSearchCommand;
 use App\Domain\Assignment\Repository\AssignmentRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;

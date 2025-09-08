@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\PeriodicEntry\Model;
+namespace App\Domain\PeriodicEntry\DTO;
 
-use App\Domain\Entry\Model\EntryTypeEnum;
-use App\Infrastructure\KnpPaginator\Model\OrderableInterface;
-use App\Infrastructure\KnpPaginator\Model\OrderableTrait;
+use App\Domain\Entry\Entity\EntryTypeEnum;
+use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
+use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 
 class PeriodicEntrySearchCommand implements OrderableInterface
 {

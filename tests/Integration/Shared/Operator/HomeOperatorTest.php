@@ -5,7 +5,7 @@ namespace App\Tests\Integration\Shared\Operator;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Shared\Model\Transfer;
+use App\Shared\DTO\Transfer;
 use App\Shared\Operator\HomeOperator;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;

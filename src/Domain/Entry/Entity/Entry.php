@@ -4,10 +4,8 @@ namespace App\Domain\Entry\Entity;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Entry\Model\EntryKindEnum;
-use App\Domain\Entry\Model\EntryTypeEnum;
 use App\Domain\Entry\Repository\EntryRepository;
-use App\Shared\Model\TimestampableTrait;
+use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;

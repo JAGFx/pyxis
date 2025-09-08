@@ -2,13 +2,13 @@
 
 namespace App\Domain\Budget\Controller\Back;
 
+use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Form\BudgetType;
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Budget\Security\BudgetVoter;
-use App\Shared\Model\ControllerActionEnum;
+use App\Shared\Controller\ControllerActionEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

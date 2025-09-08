@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\Assignment\Model;
+namespace App\Domain\Assignment\DTO;
 
 use App\Domain\Account\Entity\Account;
-use App\Infrastructure\KnpPaginator\Model\OrderableInterface;
-use App\Infrastructure\KnpPaginator\Model\OrderableTrait;
+use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
+use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 
 class AssignmentSearchCommand implements OrderableInterface
 {

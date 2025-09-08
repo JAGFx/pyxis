@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domain\Entry\Model;
+namespace App\Domain\Entry\DTO;
 
 use App\Domain\Account\Entity\Account;
-use App\Infrastructure\KnpPaginator\Model\OrderableInterface;
-use App\Infrastructure\KnpPaginator\Model\OrderableTrait;
-use App\Infrastructure\KnpPaginator\Model\PaginableTrait;
-use App\Infrastructure\KnpPaginator\Model\PaginationInterface;
+use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
+use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
+use App\Infrastructure\KnpPaginator\DTO\PaginableTrait;
+use App\Infrastructure\KnpPaginator\DTO\PaginationInterface;
 use DateTimeImmutable;
 
 class EntrySearchCommand implements PaginationInterface, OrderableInterface

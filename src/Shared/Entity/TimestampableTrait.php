@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Model;
+namespace App\Shared\Entity;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;

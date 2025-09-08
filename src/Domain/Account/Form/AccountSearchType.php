@@ -17,7 +17,7 @@ class AccountSearchType extends AbstractType
     {
         $builder
             ->add('enable', YesNoType::class, [
-                'required' => false,
+                'required'    => false,
                 'placeholder' => 'shared.default.placeholders.all',
             ])
             ->add('name', TextType::class, [
@@ -29,8 +29,8 @@ class AccountSearchType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Account::class,
-            'label_format' => 'account.search.%name%.label',
+            'data_class'         => Account::class,
+            'label_format'       => 'account.search.%name%.label',
             'translation_domain' => 'forms',
         ]);
     }

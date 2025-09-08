@@ -3,9 +3,9 @@
 namespace App\Shared\Operator;
 
 use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Entity\EntryKindEnum;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Model\EntryKindEnum;
-use App\Shared\Model\Transfer;
+use App\Shared\DTO\Transfer;
 
 class HomeOperator
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Model;
+namespace App\Shared\DTO;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;

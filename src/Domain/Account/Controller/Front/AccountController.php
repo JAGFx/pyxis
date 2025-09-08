@@ -79,7 +79,7 @@ class AccountController extends AbstractController
             $request,
             'domain/account/turbo/success.form.search_and_filter.html.twig',
             [
-            'form' => $form,
-        ]);
+                'form' => $form,
+            ]);
     }
 }

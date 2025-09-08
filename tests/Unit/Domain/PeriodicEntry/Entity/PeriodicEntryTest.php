@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Domain\PeriodicEntry\Entity;
 
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Entry\Model\EntryTypeEnum;
+use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;

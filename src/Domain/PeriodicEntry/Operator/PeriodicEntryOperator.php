@@ -3,8 +3,8 @@
 namespace App\Domain\PeriodicEntry\Operator;
 
 use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Entity\EntryKindEnum;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Model\EntryKindEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;

@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\KnpPaginator\Controller;
 
-use App\Infrastructure\KnpPaginator\Model\PaginationInterface;
+use App\Infrastructure\KnpPaginator\DTO\PaginationInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 

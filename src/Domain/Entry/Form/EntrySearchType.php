@@ -2,7 +2,7 @@
 
 namespace App\Domain\Entry\Form;
 
-use App\Domain\Entry\Model\EntrySearchCommand;
+use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Infrastructure\KnpPaginator\Form\PaginationBuilder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;

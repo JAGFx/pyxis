@@ -2,8 +2,8 @@
 
 namespace App\Domain\Assignment\Form;
 
+use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Model\AccountSearchCommand;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Assignment\Entity\Assignment;
 use Doctrine\ORM\QueryBuilder;

@@ -2,11 +2,11 @@
 
 namespace App\Domain\PeriodicEntry\Form;
 
+use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Model\AccountSearchCommand;
 use App\Domain\Account\Repository\AccountRepository;
+use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use Doctrine\ORM\QueryBuilder;

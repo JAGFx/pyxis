@@ -2,9 +2,9 @@
 
 namespace App\Domain\Budget\Repository;
 
+use App\Domain\Budget\DTO\BudgetSearchCommand;
+use App\Domain\Budget\DTO\HistoryBudgetSearchCommand;
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Model\BudgetSearchCommand;
-use App\Domain\Budget\Model\HistoryBudgetSearchCommand;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;

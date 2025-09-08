@@ -2,8 +2,8 @@
 
 namespace App\Domain\Assignment\Repository;
 
+use App\Domain\Assignment\DTO\AssignmentSearchCommand;
 use App\Domain\Assignment\Entity\Assignment;
-use App\Domain\Assignment\Model\AssignmentSearchCommand;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;

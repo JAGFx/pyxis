@@ -3,8 +3,8 @@
 namespace App\Tests\Integration\Domain\Budget\Repository;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Shared\Utils\YearRange;
 use App\Tests\Factory\AccountFactory;

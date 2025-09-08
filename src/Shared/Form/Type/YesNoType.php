@@ -15,10 +15,10 @@ class YesNoType extends AbstractType
         $resolver->setDefaults([
             'choices' => [
                 'shared.yes_no.options.yes' => true,
-                'shared.yes_no.options.no' => false,
+                'shared.yes_no.options.no'  => false,
             ],
-            'expanded' => true,
-            'translation_domain' => 'forms'
+            'expanded'           => true,
+            'translation_domain' => 'forms',
         ]);
     }
 

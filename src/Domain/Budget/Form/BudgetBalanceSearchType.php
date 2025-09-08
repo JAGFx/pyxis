@@ -2,7 +2,7 @@
 
 namespace App\Domain\Budget\Form;
 
-use App\Domain\Budget\Model\BudgetSearchCommand;
+use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Shared\Utils\YearRange;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

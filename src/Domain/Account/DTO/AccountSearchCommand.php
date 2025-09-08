@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Domain\Account\Model;
+namespace App\Domain\Account\DTO;
 
-use App\Infrastructure\KnpPaginator\Model\OrderableInterface;
-use App\Infrastructure\KnpPaginator\Model\OrderableTrait;
+use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
+use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 
 class AccountSearchCommand implements OrderableInterface
 {
@@ -35,6 +35,7 @@ class AccountSearchCommand implements OrderableInterface
     public function setName(?string $name): AccountSearchCommand
     {
         $this->name = $name;
+
         return $this;
     }
 }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Assignment\Controller\Back;
 
+use App\Domain\Assignment\DTO\AssignmentSearchCommand;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentType;
 use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Domain\Assignment\Model\AssignmentSearchCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -2,9 +2,9 @@
 
 namespace App\Domain\Budget\Manager;
 
+use App\Domain\Budget\DTO\BudgetSearchCommand;
+use App\Domain\Budget\DTO\HistoryBudgetSearchCommand;
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Model\BudgetSearchCommand;
-use App\Domain\Budget\Model\HistoryBudgetSearchCommand;
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
 
 class HistoryBudgetManager

@@ -2,8 +2,8 @@
 
 namespace App\Domain\Entry\Manager;
 
+use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Model\EntrySearchCommand;
 use App\Domain\Entry\Repository\EntryRepository;
 use App\Domain\Entry\ValueObject\EntryBalance;
 use App\Shared\Utils\Statistics;

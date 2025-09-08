@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Domain\Budget\Model;
+namespace App\Domain\Budget\DTO;
 
-use App\Infrastructure\KnpPaginator\Model\OrderableInterface;
-use App\Infrastructure\KnpPaginator\Model\OrderableTrait;
+use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
+use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 
 class BudgetSearchCommand implements OrderableInterface
 {

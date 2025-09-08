@@ -3,9 +3,9 @@
 namespace App\Tests\Integration\Domain\Budget\Manager;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Model\BudgetSearchCommand;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;

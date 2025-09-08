@@ -2,8 +2,8 @@
 
 namespace App\Domain\Entry\Repository;
 
+use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Model\EntrySearchCommand;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;

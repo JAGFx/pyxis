@@ -2,8 +2,8 @@
 
 namespace App\Domain\PeriodicEntry\Manager;
 
+use App\Domain\PeriodicEntry\DTO\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Model\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
 
 class PeriodicEntryManager

@@ -4,9 +4,9 @@ namespace App\Domain\PeriodicEntry\Entity;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Entry\Model\EntryTypeEnum;
+use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
-use App\Shared\Model\TimestampableTrait;
+use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;

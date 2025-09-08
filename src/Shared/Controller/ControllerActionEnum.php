@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Model;
+namespace App\Shared\Controller;
 
 enum ControllerActionEnum
 {

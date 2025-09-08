@@ -2,11 +2,11 @@
 
 namespace App\Domain\Account\Controller\Back;
 
+use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountType;
 use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Account\Model\AccountSearchCommand;
-use App\Shared\Model\ControllerActionEnum;
+use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\ValueObject\MenuConfiguration;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +32,7 @@ class AccountController extends AbstractController
             'config'   => new MenuConfiguration(
                 createUrl: $this->generateUrl('back_account_new'),
                 searchFormUrl: $this->generateUrl('front_account_search_and_filter_form')
-            )
+            ),
         ]);
     }
 
@@ -67,7 +67,7 @@ class AccountController extends AbstractController
         }
 
         return $this->render('domain/account/form.html.twig', [
-            'form' => $form,
+            'form'    => $form,
             'account' => $account,
         ]);
     }
