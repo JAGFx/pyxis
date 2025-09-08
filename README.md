@@ -5,7 +5,7 @@
 <p align="center">
     <b><i>Mobilize the static, energize the acquired</i></b><br>
     ---- <br>
-    Mobile-first personal savings app that helps you manage your spending money separately from monthly savings for annual expenses (vacations, insurance, equipment, etc.), providing clear visualization and control over both financial pools.
+    Mobile-first personal savings app that separates your available spending money from monthly provisions for annual expenses (vacations, insurance, equipment, etc.), helping you build reserves throughout the year while knowing exactly how much you can freely spend.
 </p>
 
 <p align="center">
