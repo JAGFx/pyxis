@@ -1,0 +1,9 @@
+{% import 'shared/_currency.macro.html.twig' as currency %}
+
+<twig:PageTitle :icon="icons.budget" label="{{ 'budget.title' | trans }}" />
+
+<twig:Liste:Liste>
+    {% for budget in budgets %}
+        {% include 'domain/budget/_item.html.twig' %}
+    {% endfor %}
+</twig:Liste:Liste>

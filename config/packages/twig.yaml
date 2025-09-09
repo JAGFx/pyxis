@@ -20,6 +20,7 @@ twig:
       search: 'fa-solid fa-magnifying-glass'
       back: 'fa-solid fa-arrow-left-long'
       remove: 'fa-solid fa-trash-can'
+      see_balance: 'fa-solid fa-scale-balanced'
 
 when@test:
   twig:

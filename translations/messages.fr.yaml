@@ -28,3 +28,12 @@ assignment:
   title: Affectations
   props:
     account: Compte
+
+budget:
+  title: Budgets
+  list:
+    positive_overflow: Surplus sur N-1
+    negative_overflow: Dépassement sur N-1
+    actions:
+      see_cash_flows: Voir la répartition
+      balance: Équilibrer

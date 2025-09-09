@@ -4,11 +4,12 @@ namespace App\Domain\Budget\Controller\Back;
 
 use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Form\BudgetType;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Shared\Controller\ControllerActionEnum;
+use App\Shared\Factory\MenuConfigurationFactory;
+use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,20 +21,18 @@ class BudgetController extends AbstractController
 {
     public function __construct(
         private readonly BudgetManager $budgetManager,
+        private readonly MenuConfigurationFactory $menuConfigurationFactory,
     ) {
     }
 
     #[Route('/', name: 'back_budget_budget_list', methods: Request::METHOD_GET)]
-    public function list(Request $request): Response
+    public function list(): Response
     {
         $budgetSearchCommand = new BudgetSearchCommand()->setOrderBy('name');
 
-        $this
-            ->createForm(BudgetSearchType::class, $budgetSearchCommand)
-            ->submit($request->query->all());
-
         return $this->render('domain/budget/index.html.twig', [
             'budgets' => $this->budgetManager->getBudgets($budgetSearchCommand),
+            'config'  => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::BUDGET),
         ]);
     }
 

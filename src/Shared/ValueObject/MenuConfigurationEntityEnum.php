@@ -9,6 +9,7 @@ enum MenuConfigurationEntityEnum: string
 {
     case ACCOUNT    = 'account';
     case ASSIGNMENT = 'assignment';
+    case BUDGET     = 'budget';
 
     public function getSearchFormType(): string
     {

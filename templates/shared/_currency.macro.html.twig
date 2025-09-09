@@ -1,9 +1,9 @@
 {% macro amount(amount, color = 'true', disable = 'false') %}
     {% set class = (amount >= 0 )
         ? 'text-success'
-        : 'text-danger' %}
+        : 'text-secondary' %}
     {% set class = (disable == 'true')
-        ? 'text-secondary'
+        ? 'text-muted'
         : class
     %}
 

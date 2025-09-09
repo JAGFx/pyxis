@@ -1,52 +1,5 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% import 'shared/_currency.macro.html.twig' as currency %}
-
-    <div class="d-flex justify-content-between align-items-center text-primary mt-4 mb-2 mx-3">
-        <div class="d-flex justify-content-start align-items-center">
-            <span>Budget</span>
-            <div class="btn-group">
-                <button class="btn border-0 btn-xs dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-filter"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-dark">
-                    <li>
-                        <span class="dropdown-item d-flex justify-content-center align-items-start flex-column">
-                            <span>Statut</span>
-                            <small class="text-white-50 d-flex justify-content-center align-items-center w-100">
-                                {% set linkClassAll = (app.request.query.get('enabled', false) == true)
-                                    ? 'link-secondary'
-                                    : 'link-primary'
-                                %}
-                                {% set linkEnabledAll = (app.request.query.get('enabled', false) == true)
-                                    ? 'link-primary'
-                                    : 'link-secondary'
-                                %}
-                                <a href="{{ path('back_budget_budget_list') }}" class="w-100 text-center {{ linkClassAll }} text-decoration-none">Tout</a>
-                                <a href="{{ path('back_budget_budget_list', {
-                                    'enabled' : true
-                                }) }}" class="w-100 text-center {{ linkEnabledAll }} text-decoration-none">Actif</a>
-                            </small>
-                        </span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="me-3 text-end">Cible</div>
-    </div>
-    <a class="btn btn-xs rounded-circle create-button d-flex justify-content-center align-items-center bg-gradient-accent text-white" href="{{ path('back_budget_create') }}">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-    </a>
-
-    <ul class="list-group rounded">
-        {% for budget in budgets %}
-            <turbo-frame id="budget_list_item_{{ budget.id }}">
-                {% include 'domain/budget/_item.html.twig' %}
-            </turbo-frame>
-        {% endfor %}
-    </ul>
-{#    <div class="text-center my-4">#}
-{#        <span class="text-white-50">Voir plus</span>#}
-{#    </div>#}
+    {% include 'domain/budget/_list.html.twig' %}
 {% endblock %}
