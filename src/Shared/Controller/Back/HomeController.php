@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Controller;
+namespace App\Shared\Controller\Back;
 
 use App\Shared\DTO\Transfer;
 use App\Shared\Form\TransferType;

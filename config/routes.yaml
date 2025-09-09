@@ -1,13 +1,7 @@
 shared:
-  resource:
-    path: ../src/Shared/Controller/
-    namespace: App\Shared\Controller
   type: attribute
+  resource: '../src/Shared/Controller/**/*'
 
-domain_back:
+domain:
   type: attribute
-  resource: '../src/Domain/**/Controller/Back/*'
-
-domain_front:
-  type: attribute
-  resource: '../src/Domain/**/Controller/Front/*'
+  resource: '../src/Domain/**/Controller/**/*'

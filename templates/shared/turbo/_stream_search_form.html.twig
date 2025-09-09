@@ -5,7 +5,7 @@
         <template>
             {% include 'shared/menu/_search_form_placeholder.html.twig' with {show: 'none'} %}
             <div id="search-form-content">
-                {% block form_content %}{% endblock %}
+                {{ component(liveComponent) }}
             </div>
         </template>
     </turbo-stream>

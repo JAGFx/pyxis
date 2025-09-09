@@ -71,21 +71,8 @@ class AccountController extends AbstractController
         );
     }
 
-    #[Route('/search-and-filter-form', name: 'front_account_search_and_filter_form', methods: [Request::METHOD_GET])]
-    public function searchAndFilterForm(Request $request): Response
-    {
-        $form = $this->createForm(AccountSearchType::class);
-
-        return $this->renderTurboStream(
-            $request,
-            'domain/account/turbo/success.stream.search_and_filter_form.html.twig',
-            [
-                'form' => $form,
-            ]);
-    }
-
-    #[Route('/search-and-filter', name: 'front_account_search_and_filter', methods: [Request::METHOD_POST])]
-    public function searchAndFilter(Request $request): Response
+    #[Route('/search', name: 'front_account_search', methods: [Request::METHOD_POST])]
+    public function search(Request $request): Response
     {
         $accountSearchCommand = new AccountSearchCommand();
         $this->createForm(AccountSearchType::class, $accountSearchCommand)
@@ -95,7 +82,7 @@ class AccountController extends AbstractController
 
         return $this->renderTurboStream(
             $request,
-            'domain/account/turbo/success.stream.search_and_filter.html.twig',
+            'domain/account/turbo/success.stream.search.html.twig',
             [
                 'accounts' => $accounts,
             ]);

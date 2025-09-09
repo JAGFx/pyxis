@@ -18,7 +18,7 @@ class AccountSearchForm extends AbstractController
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(AccountSearchType::class, options: [
-            'action' => $this->generateUrl('front_account_search_and_filter'),
+            'action' => $this->generateUrl('front_account_search'),
         ]);
     }
 }

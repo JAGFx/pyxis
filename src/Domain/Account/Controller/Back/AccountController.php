@@ -7,7 +7,9 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountType;
 use App\Domain\Account\Manager\AccountManager;
 use App\Shared\Controller\ControllerActionEnum;
+use App\Shared\Utils\SearchFormUrl;
 use App\Shared\ValueObject\MenuConfiguration;
+use App\Shared\ValueObject\SearchFormTargetEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,6 +20,7 @@ class AccountController extends AbstractController
 {
     public function __construct(
         private readonly AccountManager $accountManager,
+        private readonly SearchFormUrl $searchFormUrl,
     ) {
     }
 
@@ -31,7 +34,9 @@ class AccountController extends AbstractController
             'accounts' => $accounts,
             'config'   => new MenuConfiguration(
                 createUrl: $this->generateUrl('back_account_new'),
-                searchFormUrl: $this->generateUrl('front_account_search_and_filter_form')
+                searchFormUrl: $this->searchFormUrl->generateSearchFormUrl(
+                    SearchFormTargetEnum::ACCOUNT
+                )
             ),
         ]);
     }
