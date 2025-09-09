@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <twig:PageTitle :icon="icons.account" label="{{ 'budget.title' | trans }}" detail="{{ budget.name ~ ' - ' ~ ('budget.list.actions.balance' | trans) }}"
+    >
+        <twig:block name="beforeActions">
+            <twig:Button node="a" :icon="icons.back" color="acrylic" href="{{ path('back_budget_budget_list') }}"/>
+        </twig:block>
+    </twig:PageTitle>
+
+    <twig:Card color="acrylic" size="lg" class="shadow-lg">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.account) }}
+
+        <div class="pt-4 pb-1 flex justify-end">
+            <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right" size="lg"/>
+        </div>
+
+        {{ form_end(form) }}
+    </twig:Card>
+{% endblock %}

@@ -23,3 +23,10 @@ assignment:
       label: Nom
     account:
       label: Compte
+
+budget:
+  account_balance:
+    budget:
+      label: Budget
+    account:
+        label: Compte

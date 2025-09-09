@@ -68,13 +68,13 @@
                     />
                 {% endif %}
 
-                {#            {% if budget.positiveCashFlow or budget.negativeCashFlow %}#}
-                {#                <a class="flex-none" data-turbo="true"#}
-                {#                   href="{{ path('front_budget_balancing', {#}
-                {#                       'budgetId': budget.id,#}
-                {#                       'accountId': cashFlow.account.id,#}
-                {#                   }) }}"><small>{{ 'budget.list.actions.balance' | trans }}</small></a>#}
-                {#            {% endif %}#}
+                {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::BALANCE'), budget) %}
+                    <twig:Overlay:GridActionButton
+                        actionUrl="{{ path('back_budget_balance', {'id': budget.id}) }}"
+                        :icon="icons.see_balance"
+                        label="{{ 'budget.list.actions.balance' | trans }}"
+                    />
+                {% endif %}
             </div>
         </twig:Overlay:Overlay>
     {% endif %}

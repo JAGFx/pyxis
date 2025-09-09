@@ -2,7 +2,6 @@
 
 namespace App\Domain\Budget\Controller\Front;
 
-use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetBalanceSearchType;
@@ -11,11 +10,7 @@ use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Operator\BudgetOperator;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\Operator\EntryOperator;
 use App\Shared\Utils\YearRange;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +26,6 @@ class BudgetController extends AbstractController
         private readonly BudgetManager $budgetManager,
         private readonly BudgetOperator $budgetOperator,
         private readonly HistoryBudgetManager $historyBudgetManager,
-        private readonly EntryOperator $entryOperator,
     ) {
     }
 
@@ -80,31 +74,6 @@ class BudgetController extends AbstractController
             'domain/budget/turbo/toggle.turbo.stream.html.twig',
             [
                 'budget' => $budget,
-            ]
-        );
-    }
-
-    /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
-     */
-    #[Route('/{budgetId}/balancing/accounts/{accountId}', name: 'front_budget_balancing', methods: [Request::METHOD_GET])]
-    #[IsGranted(BudgetVoter::MANAGE, 'budget')]
-    public function balancing(
-        Request $request,
-        #[MapEntity(mapping: ['budgetId' => 'id'])] Budget $budget,
-        #[MapEntity(mapping: ['accountId' => 'id'])] Account $account,
-    ): Response {
-        $this->budgetManager->balancing($budget, $account);
-
-        $this->addFlash('success', 'Budget équilibré');
-
-        return $this->renderTurboStream(
-            $request,
-            'domain/budget/turbo/balancing.turbo.stream.html.twig',
-            [
-                'budget'        => $budget,
-                'amountBalance' => $this->entryOperator->getAmountBalance(),
             ]
         );
     }

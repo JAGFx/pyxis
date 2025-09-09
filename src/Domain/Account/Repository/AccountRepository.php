@@ -33,6 +33,22 @@ class AccountRepository extends ServiceEntityRepository
                 ->setParameter('name', '%' . $command->getName() . '%');
         }
 
+        // TODO: Add test for this
+        if (true === $command->hasPositiveOrNegativeBalance()) {
+            $queryBuilder = $queryBuilder
+                ->leftJoin('a.entries', 'e');
+
+            if (!is_null($command->getBudget())) {
+                $queryBuilder
+                    ->andWhere('e.budget = :budget')
+                    ->setParameter('budget', $command->getBudget());
+            }
+
+            $queryBuilder
+                ->groupBy('a.id')
+                ->having('SUM(e.amount) != 0');
+        }
+
         switch ($command->getOrderBy()) {
             case 'name':
                 $queryBuilder->orderBy('a.name', $command->getOrderDirection()->value);

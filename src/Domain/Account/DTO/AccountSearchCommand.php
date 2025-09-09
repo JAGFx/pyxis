@@ -2,6 +2,7 @@
 
 namespace App\Domain\Account\DTO;
 
+use App\Domain\Budget\Entity\Budget;
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 
@@ -12,6 +13,8 @@ class AccountSearchCommand implements OrderableInterface
     public function __construct(
         private ?bool $enable = true,
         private ?string $name = null,
+        private ?Budget $budget = null,
+        private ?bool $positiveOrNegativeBalance = null,
     ) {
     }
 
@@ -35,6 +38,30 @@ class AccountSearchCommand implements OrderableInterface
     public function setName(?string $name): AccountSearchCommand
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getBudget(): ?Budget
+    {
+        return $this->budget;
+    }
+
+    public function setBudget(?Budget $budget): AccountSearchCommand
+    {
+        $this->budget = $budget;
+
+        return $this;
+    }
+
+    public function hasPositiveOrNegativeBalance(): ?bool
+    {
+        return $this->positiveOrNegativeBalance;
+    }
+
+    public function setPositiveOrNegativeBalance(?bool $positiveOrNegativeBalance): AccountSearchCommand
+    {
+        $this->positiveOrNegativeBalance = $positiveOrNegativeBalance;
 
         return $this;
     }

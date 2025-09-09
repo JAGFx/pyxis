@@ -2,7 +2,7 @@
 
 namespace App\Domain\Budget\Manager;
 
-use App\Domain\Account\Entity\Account;
+use App\Domain\Budget\DTO\BudgetAccountBalance;
 use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Repository\BudgetRepository;
@@ -78,8 +78,11 @@ readonly class BudgetManager
         return $budget;
     }
 
-    public function balancing(Budget $budget, Account $account): void
+    public function balancing(BudgetAccountBalance $budgetAccountBalance): void
     {
+        $budget  = $budgetAccountBalance->getBudget();
+        $account = $budgetAccountBalance->getAccount();
+
         if ($budget->hasPositiveCashFlow() || $budget->hasNegativeCashFlow()) {
             $entryBalanceSpent = new Entry()
                 ->setAccount($account)

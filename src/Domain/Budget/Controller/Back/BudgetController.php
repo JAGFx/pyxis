@@ -2,8 +2,10 @@
 
 namespace App\Domain\Budget\Controller\Back;
 
+use App\Domain\Budget\DTO\BudgetAccountBalance;
 use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
+use App\Domain\Budget\Form\BudgetAccountBalanceType;
 use App\Domain\Budget\Form\BudgetType;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Security\BudgetVoter;
@@ -47,6 +49,28 @@ class BudgetController extends AbstractController
     public function edit(Request $request, Budget $budget): Response
     {
         return $this->handleForm(ControllerActionEnum::EDIT, $request, $budget);
+    }
+
+    #[Route('/{id}/balance', name: 'back_budget_balance', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[IsGranted(BudgetVoter::BALANCE, 'budget')]
+    public function balance(Request $request, Budget $budget): Response
+    {
+        $budgetAccountBalance = new BudgetAccountBalance($budget);
+
+        $form = $this
+            ->createForm(BudgetAccountBalanceType::class, $budgetAccountBalance)
+            ->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->budgetManager->balancing($budgetAccountBalance);
+
+            return $this->redirectToRoute('back_budget_budget_list');
+        }
+
+        return $this->render('domain/budget/balance.html.twig', [
+            'form'   => $form,
+            'budget' => $budget,
+        ]);
     }
 
     private function handleForm(ControllerActionEnum $action, Request $request, ?Budget $budget = null): Response
