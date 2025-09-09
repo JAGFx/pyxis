@@ -3,7 +3,7 @@
 namespace App\Shared\Controller\Front;
 
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\ValueObject\SearchFormTargetEnum;
+use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,17 +20,17 @@ class HomeController extends AbstractController
         Request $request,
         #[MapQueryParameter] string $target,
     ): Response {
-        $searchTarget = SearchFormTargetEnum::tryFrom($target)
+        $searchTarget = MenuConfigurationEntityEnum::tryFrom($target)
             ?? throw new InvalidArgumentException(sprintf("Target '%s' is not supported", $target));
 
-        $form = $this->createForm($searchTarget->getFormType());
+        $form = $this->createForm($searchTarget->getSearchFormType());
 
         return $this->renderTurboStream(
             $request,
             'shared/turbo/search_form.turbo.stream.html.twig',
             [
                 'form'          => $form,
-                'liveComponent' => $searchTarget->getLiveComponent(),
+                'liveComponent' => $searchTarget->getSearchLiveComponent(),
             ]);
     }
 }

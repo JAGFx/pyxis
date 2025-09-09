@@ -5,12 +5,12 @@ namespace App\Shared\ValueObject;
 use App\Domain\Account\Form\AccountSearchType;
 use App\Domain\Assignment\Form\AssignmentSearchType;
 
-enum SearchFormTargetEnum: string
+enum MenuConfigurationEntityEnum: string
 {
     case ACCOUNT    = 'account';
     case ASSIGNMENT = 'assignment';
 
-    public function getFormType(): string
+    public function getSearchFormType(): string
     {
         return match ($this) {
             self::ACCOUNT    => AccountSearchType::class,
@@ -18,7 +18,7 @@ enum SearchFormTargetEnum: string
         };
     }
 
-    public function getLiveComponent(): string
+    public function getSearchLiveComponent(): string
     {
         return match ($this) {
             self::ACCOUNT    => 'AccountSearchForm',

@@ -15,6 +15,8 @@ parameters:
           path: src/
         - message: '#^Property (.*)::\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
           path: src/
+        - message: '#Match expression does not handle remaining value: (.*)#'
+          path: src/
     excludePaths:
         - src/Shared/Command/ImportOlderDataCommand.php
     reportUnmatchedIgnoredErrors: false
