@@ -75,7 +75,7 @@ class BudgetController extends AbstractController
 
     private function handleForm(ControllerActionEnum $action, Request $request, ?Budget $budget = null): Response
     {
-        $budget ??= new Budget();
+        $budget ??= new Budget()->setName('');
 
         $form = $this->createForm(BudgetType::class, $budget)
             ->handleRequest($request);
@@ -91,7 +91,8 @@ class BudgetController extends AbstractController
         }
 
         return $this->render('domain/budget/form.html.twig', [
-            'form' => $form,
+            'form'   => $form,
+            'budget' => $budget,
         ]);
     }
 }

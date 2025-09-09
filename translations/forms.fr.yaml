@@ -30,3 +30,10 @@ budget:
       label: Budget
     account:
         label: Compte
+  form:
+    name:
+      label: Nom
+    amount:
+      label: Montant
+    enable:
+      label: Actif

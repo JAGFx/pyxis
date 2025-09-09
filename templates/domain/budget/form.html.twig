@@ -1,30 +1,25 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h3 class="mt-4 mb-2 text-center">
-       Budget
-    </h3>
+    <twig:PageTitle :icon="icons.budget" label="{{ 'budget.title' | trans }}" detail="{{ budget.name | default(('actions.create' | trans(domain: 'interface'))) }}"
+    >
+        <twig:block name="beforeActions">
+            <twig:Button node="a" :icon="icons.back" color="acrylic" href="{{ path('back_budget_budget_list') }}"/>
+        </twig:block>
+    </twig:PageTitle>
 
-    <div class="my-2">
-        <a href="{{ path('back_budget_budget_list') }}" class="text-white-50 btn btn-outline-light">Retour</a>
-    </div>
-
-    <div class="bg-acrylic rounded p-3 my-2">
+    <twig:Card color="acrylic" size="lg" class="shadow-lg">
         {{ form_start(form) }}
+        {{ form_errors(form) }}
 
-        <div class="mb-2">
-            {{ form_row(form.name) }}
-        </div>
-        <div class="mb-2">
-            {{ form_row(form.amount) }}
-        </div>
-        <div class="mb-2">
-            {{ form_row(form.enable) }}
+        {{ form_row(form.enable) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.amount) }}
+
+        <div class="pt-4 pb-1 flex justify-end">
+            <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right" size="lg"/>
         </div>
 
-        <div class="d-flex justify-content-center align-items-center">
-            <button type="submit" class="btn btn-gradient-accent">Enregistrer</button>
-        </div>
         {{ form_end(form) }}
-    </div>
+    </twig:Card>
 {% endblock %}

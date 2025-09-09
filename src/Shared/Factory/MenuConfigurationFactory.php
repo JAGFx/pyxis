@@ -21,12 +21,12 @@ final readonly class MenuConfigurationFactory
         );
     }
 
-    private function generateCreateUrl(MenuConfigurationEntityEnum $target): ?string
+    private function generateCreateUrl(MenuConfigurationEntityEnum $target): string
     {
         return match ($target) {
             MenuConfigurationEntityEnum::ACCOUNT    => $this->urlGenerator->generate('back_account_new'),
             MenuConfigurationEntityEnum::ASSIGNMENT => $this->urlGenerator->generate('back_assignment_create'),
-            default                                 => null,
+            MenuConfigurationEntityEnum::BUDGET     => $this->urlGenerator->generate('back_budget_create'),
         };
     }
 

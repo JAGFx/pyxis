@@ -50,6 +50,7 @@ class BudgetVoter extends Voter
         if ($budget->hasPositiveCashFlow()) {
             return true;
         }
+
         return $budget->hasNegativeCashFlow();
     }
 }
