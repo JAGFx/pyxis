@@ -27,6 +27,12 @@ class AccountRepository extends ServiceEntityRepository
                 ->setParameter('enable', $command->getEnable());
         }
 
+        if (null !== $command->getName()) {
+            $queryBuilder
+                ->andWhere('a.name LIKE :name')
+                ->setParameter('name', '%' . $command->getName() . '%');
+        }
+
         switch ($command->getOrderBy()) {
             case 'name':
                 $queryBuilder->orderBy('a.name', $command->getOrderDirection()->value);

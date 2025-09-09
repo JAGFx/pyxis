@@ -74,7 +74,8 @@ class AccountController extends AbstractController
     #[Route('/search', name: 'front_account_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $accountSearchCommand = new AccountSearchCommand();
+        $accountSearchCommand = new AccountSearchCommand()->setOrderBy('name');
+
         $this->createForm(AccountSearchType::class, $accountSearchCommand)
             ->handleRequest($request);
 

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Account\Twig\Components;
 
+use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Form\AccountSearchType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -17,7 +18,7 @@ class AccountSearchForm extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(AccountSearchType::class, options: [
+        return $this->createForm(AccountSearchType::class, new AccountSearchCommand(), [
             'action' => $this->generateUrl('front_account_search'),
         ]);
     }
