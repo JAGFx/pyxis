@@ -25,17 +25,18 @@
             <h3 class="text-xl text-center p-2">{{ assignment.name }}</h3>
         </twig:block>
         <div class="overlay-grid">
-            {% include 'shared/menu/_overlay_item.html.twig' with {
-                'actionUrl': path('back_assignment_edit', {'id': assignment.id}),
-                'icon': icons.edit,
-                'label': 'actions.edit' | trans(domain: 'interface')
-            } only %}
-            {% include 'shared/menu/_overlay_item.html.twig' with {
-                'actionUrl': path('front_assignment_remove', {'id': assignment.id}),
-                'icon': icons.remove,
-                'label': 'actions.remove' | trans(domain: 'interface'),
-                'asTurbo': true
-            } only %}
+            <twig:Overlay:GridActionButton
+                actionUrl="{{ path('back_assignment_edit', {'id': assignment.id}) }}"
+                :icon="icons.edit"
+                label="{{ 'actions.edit' | trans(domain: 'interface') }}"
+            />
+            <twig:Overlay:GridActionButton
+                actionUrl="{{ path('front_assignment_remove', {'id': assignment.id}) }}"
+                :icon="icons.remove"
+                label="{{ 'actions.remove' | trans(domain: 'interface') }}"
+                color="secondary"
+                data-turbo="true"
+            />
         </div>
     </twig:Overlay:Overlay>
 </turbo-frame>

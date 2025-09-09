@@ -87,6 +87,10 @@
     @apply bg-gradient-to-tl from-primary to-[#e4492c];
 }
 
+@utility bg-gradient-secondary {
+    @apply bg-gradient-to-tl from-secondary to-[#e4492c];
+}
+
 @utility bg-gradient-purple2 {
     @apply bg-gradient-to-tl from-purple to-purple2;
 }

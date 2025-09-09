@@ -1,0 +1,27 @@
+{% set iconCva = cva({
+    'base': 'w-12 h-12 rounded-full p-2 flex justify-center items-center',
+    'variants': {
+        'color': {
+            'primary': 'bg-gradient-primary text-white',
+            'secondary': 'bg-gradient-secondary text-white',
+        },
+    },
+    'defaultVariants': {
+        'color': 'primary',
+    },
+}) %}
+
+{% set color = color | default('primary') %}
+
+{% set icon = icon | default('')  %}
+{% set label = label | default('')  %}
+{% set actionUrl = actionUrl | default('#')  %}
+
+<div class="flex justify-center">
+    <a href="{{ actionUrl }}" class="aspect-square w-20 h-auto rounded-3xl p-2 flex flex-col justify-start items-center text-center space-y-2" {{ attributes.without('class') }}>
+        <div class="{{ iconCva.apply({color}) | tailwind_merge }}" >
+            <i class="{{ icon }} text-[1.2rem]"></i>
+        </div>
+        <small>{{ label }}</small>
+    </a>
+</div>

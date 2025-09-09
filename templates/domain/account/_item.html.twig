@@ -24,28 +24,28 @@
             <h3 class="text-xl text-center p-2">{{ account.name }}</h3>
         </twig:block>
         <div class="overlay-grid">
-            {% include 'shared/menu/_overlay_item.html.twig' with {
-                'actionUrl': path('back_account_edit', {'id': account.id}),
-                'icon': icons.edit,
-                'label': 'actions.edit' | trans(domain: 'interface')
-            } only %}
+            <twig:Overlay:GridActionButton
+                actionUrl="{{ path('back_account_edit', {'id': account.id}) }}"
+                :icon="icons.edit"
+                label="{{ 'actions.edit' | trans(domain: 'interface') }}"
+            />
 
             {% if account.enable %}
                 {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::DISABLE'), account) %}
-                    {% include 'shared/menu/_overlay_item.html.twig' with {
-                        'actionUrl': path('front_account_toggle', {'id': account.id}),
-                        'icon': icons.disable,
-                        'label': 'actions.disabled' | trans(domain: 'interface'),
-                        'asTurbo': true
-                    } only %}
+                    <twig:Overlay:GridActionButton
+                        actionUrl="{{ path('front_account_toggle', {'id': account.id}) }}"
+                        :icon="icons.disable"
+                        label="{{ 'actions.disabled' | trans(domain: 'interface') }}"
+                        data-turbo="true"
+                    />
                 {% endif %}
             {% else %}
-                {% include 'shared/menu/_overlay_item.html.twig' with {
-                    'actionUrl': path('front_account_toggle', {'id': account.id}) ,
-                    'icon': icons.enable,
-                    'label': 'actions.enable' | trans(domain: 'interface'),
-                    'asTurbo': true
-                } only %}
+                <twig:Overlay:GridActionButton
+                    actionUrl="{{ path('front_account_toggle', {'id': account.id}) }}"
+                    :icon="icons.enable"
+                    label="{{ 'actions.enable' | trans(domain: 'interface') }}"
+                    data-turbo="true"
+                />
             {% endif %}
         </div>
     </twig:Overlay:Overlay>
