@@ -30,6 +30,12 @@ class AssignmentRepository extends ServiceEntityRepository
                 ->setParameter('account', $command->getAccount());
         }
 
+        if (!is_null($command->getName())) {
+            $queryBuilder
+                ->andWhere('a.name LIKE :name')
+                ->setParameter('name', '%' . $command->getName() . '%');
+        }
+
         switch ($command->getOrderBy()) {
             case 'name':
                 $queryBuilder->orderBy('a.name', $command->getOrderDirection()->value);

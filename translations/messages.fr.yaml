@@ -23,3 +23,8 @@ account:
 
 transfer:
   title: Transfer
+
+assignment:
+  title: Affectations
+  props:
+    account: Compte

@@ -2,8 +2,6 @@
 
 <twig:Liste:Liste>
     {% for account in accounts %}
-        <turbo-frame id="account_list_item_{{ account.id }}">
-            {% include 'domain/account/_item.html.twig' %}
-        </turbo-frame>
+        {% include 'domain/account/_item.html.twig' %}
     {% endfor %}
 </twig:Liste:Liste>

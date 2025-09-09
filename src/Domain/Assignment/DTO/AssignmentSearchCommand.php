@@ -12,7 +12,7 @@ class AssignmentSearchCommand implements OrderableInterface
 
     public function __construct(
         private ?Account $account = null,
-        private ?bool $enable = true,
+        private ?string $name = null,
     ) {
     }
 
@@ -28,14 +28,14 @@ class AssignmentSearchCommand implements OrderableInterface
         return $this;
     }
 
-    public function getEnable(): ?bool
+    public function getName(): ?string
     {
-        return $this->enable;
+        return $this->name;
     }
 
-    public function setEnable(?bool $enable): AssignmentSearchCommand
+    public function setName(?string $name): AssignmentSearchCommand
     {
-        $this->enable = $enable;
+        $this->name = $name;
 
         return $this;
     }

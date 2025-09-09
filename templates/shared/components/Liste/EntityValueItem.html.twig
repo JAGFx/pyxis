@@ -1,0 +1,22 @@
+{% set label = label | default('') %}
+{% set icon = icon | default('') %}
+{% set color = color | default('default') %}
+
+{% set entityValueItemCva = cva({
+    'base': 'text-muted space-x-1 inline-flex items-center',
+    'variants': {
+        'color': {
+            'primary': 'text-primary',
+            'secondary': 'text-secondary',
+            'default': 'text-muted',
+        },
+    },
+    'defaultVariants': {
+        'color': 'default',
+    },
+}) %}
+
+<small class="{{ entityValueItemCva.apply({color}) }}" data-bs-toggle="tooltip" data-bs-title="{{ label }}" data-bs-placement="bottom">
+    <i class="{{ icon }}"></i>
+    <span>{% block content %}{% endblock %}</span>
+</small>

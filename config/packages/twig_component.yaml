@@ -2,4 +2,6 @@ twig_component:
     anonymous_template_directory: 'shared/components/'
     defaults:
         App\Domain\Account\Twig\Components\: 'domain/account/components/'
+        App\Domain\Assignment\Twig\Components\: 'domain/assigment/components/'
+
         App\Shared\Twig\Components\: 'shared/components/'

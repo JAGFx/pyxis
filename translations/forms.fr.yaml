@@ -16,3 +16,10 @@ account:
   form:
     name:
       label: Nom
+
+assignment:
+  search:
+    name:
+      label: Nom
+    account:
+      label: Compte

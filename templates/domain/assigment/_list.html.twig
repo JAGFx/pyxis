@@ -1,0 +1,7 @@
+<twig:PageTitle :icon="icons.assignments" label="{{ 'assignment.title' | trans }}" />
+
+<twig:Liste:Liste>
+    {% for assignment in assignments %}
+        {% include 'domain/assigment/_item.html.twig' %}
+    {% endfor %}
+</twig:Liste:Liste>

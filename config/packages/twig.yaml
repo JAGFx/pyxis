@@ -19,6 +19,7 @@ twig:
       save: 'fas fa-paper-plane'
       search: 'fa-solid fa-magnifying-glass'
       back: 'fa-solid fa-arrow-left-long'
+      remove: 'fa-solid fa-trash-can'
 
 when@test:
   twig:

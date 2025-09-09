@@ -1,0 +1,15 @@
+<div {{ attributes }} >
+    <twig:Card color="transparent" size="lg" class="pt-1" >
+        {{ form_start(form, { attr: {
+            'data-turbo': true
+        }}) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.account) }}
+        {{ form_row(form.name) }}
+
+        {% include 'shared/menu/_search_form_button_actions.html.twig' %}
+
+        {{ form_end(form) }}
+    </twig:Card>
+</div>
