@@ -45,7 +45,7 @@ class AccountController extends AbstractController
 
         return $this->renderTurboStream(
             $request,
-            'domain/account/turbo/success.stream.toggle.html.twig',
+            'domain/account/turbo/toggle.turbo.stream.html.twig',
             [
                 'account' => $account,
             ]
@@ -63,7 +63,7 @@ class AccountController extends AbstractController
 
         return $this->renderTurboStream(
             $request,
-            'domain/account/turbo/success.stream.cash_flow_account.html.twig',
+            'domain/account/turbo/cash_flow_account.turbo.stream.html.twig',
             [
                 'account'       => $account,
                 'amountBalance' => $amountBalance,
@@ -82,7 +82,7 @@ class AccountController extends AbstractController
 
         return $this->renderTurboStream(
             $request,
-            'domain/account/turbo/success.stream.search.html.twig',
+            'domain/account/turbo/search.turbo.stream.html.twig',
             [
                 'accounts' => $accounts,
             ]);

@@ -56,7 +56,7 @@ class BudgetController extends AbstractController
 
         return $this->renderTurboStream(
             $request,
-            'domain/budget/turbo/success.stream.progress_list.html.twig',
+            'domain/budget/turbo/progress_list.turbo.stream.html.twig',
             [
                 'form'   => $form,
                 'values' => $values,
@@ -77,7 +77,7 @@ class BudgetController extends AbstractController
 
         return $this->renderTurboStream(
             $request,
-            'domain/budget/turbo/success.stream.toggle.html.twig',
+            'domain/budget/turbo/toggle.turbo.stream.html.twig',
             [
                 'budget' => $budget,
             ]
@@ -101,7 +101,7 @@ class BudgetController extends AbstractController
 
         return $this->renderTurboStream(
             $request,
-            'domain/budget/turbo/success.stream.balancing.html.twig',
+            'domain/budget/turbo/balancing.turbo.stream.html.twig',
             [
                 'budget'        => $budget,
                 'amountBalance' => $this->entryOperator->getAmountBalance(),
@@ -114,7 +114,7 @@ class BudgetController extends AbstractController
     {
         return $this->renderTurboStream(
             $request,
-            'domain/budget/turbo/success.stream.cash_flow_account.html.twig',
+            'domain/budget/turbo/cash_flow_account.turbo.stream.html.twig',
             [
                 'budget'    => $budget,
                 'cashFlows' => $this->budgetOperator->getBudgetCashFlowsByAccount($budget),

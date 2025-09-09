@@ -27,7 +27,7 @@ class HomeController extends AbstractController
 
         return $this->renderTurboStream(
             $request,
-            'shared/turbo/_stream_search_form.html.twig',
+            'shared/turbo/search_form.turbo.stream.html.twig',
             [
                 'form'          => $form,
                 'liveComponent' => $searchTarget->getLiveComponent(),

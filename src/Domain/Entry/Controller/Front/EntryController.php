@@ -31,7 +31,7 @@ class EntryController extends AbstractController
     #[Route('/balance', name: 'front_entry_balance', methods: Request::METHOD_GET)]
     public function balance(Request $request): Response
     {
-        return $this->renderTurboStream($request, 'domain/entry/turbo/success.stream.balance.html.twig', [
+        return $this->renderTurboStream($request, 'domain/entry/turbo/balance.turbo.stream.html.twig', [
             'amountBalance' => $this->entryOperator->getAmountBalance(),
         ]);
     }
@@ -42,7 +42,7 @@ class EntryController extends AbstractController
         $entryId = $entry->getId();
         $this->entryManager->remove($entry);
 
-        return $this->renderTurboStream($request, 'domain/entry/turbo/success.stream.remove.html.twig', [
+        return $this->renderTurboStream($request, 'domain/entry/turbo/remove.turbo.stream.html.twig', [
             'entryId' => $entryId,
         ]);
     }

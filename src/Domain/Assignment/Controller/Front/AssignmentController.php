@@ -28,7 +28,7 @@ class AssignmentController extends AbstractController
         $assignmentId = $assignment->getId();
         $this->assignmentManager->remove($assignment);
 
-        return $this->renderTurboStream($request, 'domain/assigment/turbo/success.stream.remove.html.twig', [
+        return $this->renderTurboStream($request, 'domain/assigment/turbo/remove.turbo.stream.html.twig', [
             'assignmentId' => $assignmentId,
         ]);
     }

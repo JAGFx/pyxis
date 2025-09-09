@@ -27,7 +27,7 @@ class PeriodicEntryController extends AbstractController
 
         $this->periodicEntryManager->remove($periodicEntry);
 
-        return $this->renderTurboStream($request, 'domain/periodic_entry/turbo/stream.success.remove.html.twig', [
+        return $this->renderTurboStream($request, 'domain/periodic_entry/turbo/remove.turbo.stream.html.twig', [
             'periodicEntryId' => $periodicEntryId,
         ]);
     }
