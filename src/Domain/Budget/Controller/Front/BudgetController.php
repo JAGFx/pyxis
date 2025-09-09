@@ -5,6 +5,7 @@ namespace App\Domain\Budget\Controller\Front;
 use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetBalanceSearchType;
+use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Operator\BudgetOperator;
@@ -89,5 +90,23 @@ class BudgetController extends AbstractController
                 'cashFlows' => $this->budgetOperator->getBudgetCashFlowsByAccount($budget),
             ]
         );
+    }
+
+    #[Route('/search', name: 'front_budget_search', methods: [Request::METHOD_POST])]
+    public function search(Request $request): Response
+    {
+        $budgetSearchCommand = new BudgetSearchCommand()->setOrderBy('name');
+
+        $this->createForm(BudgetSearchType::class, $budgetSearchCommand)
+            ->handleRequest($request);
+
+        $budgets = $this->budgetManager->getBudgets($budgetSearchCommand);
+
+        return $this->renderTurboStream(
+            $request,
+            'domain/budget/turbo/search.turbo.stream.html.twig',
+            [
+                'budgets' => $budgets,
+            ]);
     }
 }

@@ -1,0 +1,10 @@
+{% extends 'shared/turbo/_stream.html.twig' %}
+
+{% block stream %}
+    <turbo-stream action="update" target="main_body">
+        <template>
+            {% include 'domain/budget/_list.html.twig' %}
+        </template>
+    </turbo-stream>
+{% endblock %}
+

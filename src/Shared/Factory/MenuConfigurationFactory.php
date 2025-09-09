@@ -30,14 +30,14 @@ final readonly class MenuConfigurationFactory
         };
     }
 
-    private function generateSearchFormUrl(MenuConfigurationEntityEnum $target): ?string
+    private function generateSearchFormUrl(MenuConfigurationEntityEnum $target): string
     {
         return match ($target) {
             MenuConfigurationEntityEnum::ACCOUNT,
-            MenuConfigurationEntityEnum::ASSIGNMENT => $this->urlGenerator->generate('front_home_search_form', [
+            MenuConfigurationEntityEnum::ASSIGNMENT,
+            MenuConfigurationEntityEnum::BUDGET => $this->urlGenerator->generate('front_home_search_form', [
                 'target' => $target->value,
             ]),
-            default => null,
         };
     }
 }

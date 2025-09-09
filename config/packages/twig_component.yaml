@@ -3,5 +3,6 @@ twig_component:
     defaults:
         App\Domain\Account\Twig\Components\: 'domain/account/components/'
         App\Domain\Assignment\Twig\Components\: 'domain/assigment/components/'
+        App\Domain\Budget\Twig\Components\: 'domain/budget/components/'
 
         App\Shared\Twig\Components\: 'shared/components/'

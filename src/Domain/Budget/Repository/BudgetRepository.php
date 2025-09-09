@@ -38,12 +38,16 @@ class BudgetRepository extends ServiceEntityRepository
             ->orderBy('b.name');
 
         if (null !== $command->getName()) {
-            $queryBuilder->andWhere('b.name = :name')
-                ->setParameter('name', $command->getName());
+            $queryBuilder
+                ->andWhere('b.name LIKE :name')
+                ->setParameter('name', '%' . $command->getName() . '%');
         }
 
-        if (true === $command->getEnabled()) {
-            $queryBuilder->andWhere('b.enable = TRUE');
+        if (!is_null($command->getEnable())) {
+            $queryBuilder
+                ->andWhere('b.enable = :enable')
+                ->setParameter('enable', $command->getEnable())
+            ;
         }
 
         switch ($command->getOrderBy()) {

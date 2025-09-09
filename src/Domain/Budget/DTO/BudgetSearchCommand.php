@@ -15,7 +15,7 @@ class BudgetSearchCommand implements OrderableInterface
         private ?string $name = null,
         private ?bool $excludeCurrentYear = null,
         private ?int $budgetId = null,
-        private ?bool $enabled = true,
+        private ?bool $enable = true,
     ) {
     }
 
@@ -79,14 +79,14 @@ class BudgetSearchCommand implements OrderableInterface
         return $this;
     }
 
-    public function getEnabled(): ?bool
+    public function getEnable(): ?bool
     {
-        return $this->enabled;
+        return $this->enable;
     }
 
-    public function setEnabled(?bool $enabled): self
+    public function setEnable(?bool $enable): self
     {
-        $this->enabled = $enabled;
+        $this->enable = $enable;
 
         return $this;
     }

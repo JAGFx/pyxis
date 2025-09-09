@@ -37,3 +37,8 @@ budget:
       label: Montant
     enable:
       label: Actif
+  search:
+    enable:
+      label: Actif
+    name:
+      label: Nom
