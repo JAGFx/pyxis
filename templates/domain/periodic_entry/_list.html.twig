@@ -1,0 +1,9 @@
+{% import 'shared/_currency.macro.html.twig' as currency %}
+
+<twig:PageTitle :icon="icons.periodic_entries" label="{{ 'periodic_entry.title' | trans }}" />
+
+<twig:Liste:Liste>
+    {% for periodicEntry in periodicEntries %}
+        {% include 'domain/periodic_entry/_item.html.twig' %}
+    {% endfor %}
+</twig:Liste:Liste>

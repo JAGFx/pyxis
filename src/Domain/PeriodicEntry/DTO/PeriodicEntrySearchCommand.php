@@ -12,6 +12,7 @@ class PeriodicEntrySearchCommand implements OrderableInterface
 
     public function __construct(
         private ?EntryTypeEnum $entryTypeEnum = null,
+        private ?string $name = null,
     ) {
     }
 
@@ -23,6 +24,18 @@ class PeriodicEntrySearchCommand implements OrderableInterface
     public function setEntryTypeEnum(?EntryTypeEnum $entryTypeEnum): PeriodicEntrySearchCommand
     {
         $this->entryTypeEnum = $entryTypeEnum;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): PeriodicEntrySearchCommand
+    {
+        $this->name = $name;
 
         return $this;
     }

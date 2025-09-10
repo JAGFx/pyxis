@@ -14,4 +14,9 @@ enum EntryTypeEnum: string
             self::TYPE_SPENT    => 'Dépense',
         };
     }
+
+    public function label(): string
+    {
+        return 'entry_type_enum.form.options.' . $this->name;
+    }
 }

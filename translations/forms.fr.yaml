@@ -42,3 +42,28 @@ budget:
       label: Actif
     name:
       label: Nom
+
+periodic_entry:
+    form:
+      account:
+        label: Compte
+      name:
+        label: Nom
+      amount:
+        label: Montant
+      execution_date:
+        label: Date d'exécution
+      budgets:
+        label: Budgets
+        placeholder: -- Pas de budget --
+    search:
+      name:
+          label: Nom
+      entry_type_enum:
+          label: Type
+
+entry_type_enum:
+  form:
+    options:
+      TYPE_SPENT: Dépense
+      TYPE_FORECAST: Provision

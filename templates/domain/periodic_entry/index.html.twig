@@ -1,24 +1,5 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% import 'shared/_currency.macro.html.twig' as currency %}
-
-    <div class="d-flex justify-content-between align-items-center text-primary mt-4 mb-2 mx-3">
-        <div class="d-flex justify-content-start align-items-center">
-            <span>Entrée périodique</span>
-        </div>
-        <div class="me-3 text-end">Valeur</div>
-    </div>
-
-    <a class="btn btn-xs rounded-circle create-button d-flex justify-content-center align-items-center bg-gradient-accent text-white" href="{{ path('back_periodicentry_create') }}">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-    </a>
-
-    <ul class="list-group rounded">
-        {% for periodicEntry in periodicEntries %}
-            <turbo-frame id="periodic_entry_list_item_{{ periodicEntry.id }}">
-                {% include 'domain/periodic_entry/_item.html.twig' %}
-            </turbo-frame>
-        {% endfor %}
-    </ul>
+    {% include 'domain/periodic_entry/_list.html.twig' %}
 {% endblock %}

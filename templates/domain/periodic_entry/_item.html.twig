@@ -1,45 +1,72 @@
-{% import 'shared/_currency.macro.html.twig' as currency %}
+{% set frameId = 'periodic_entry_list_item_' ~ periodicEntry.id %}
 
-<div class="position-relative">
-    <li class="list-group-item list-group-item-acrylic d-flex justify-content-center align-items-center">
-        <div class="d-flex justify-content-center align-items-start w-100 flex-column">
-            <div class="d-flex justify-content-between align-items-center w-100">
+<turbo-frame id="periodic_entry_list_item_{{ periodicEntry.id }}">
+    <twig:Overlay:TriggerLongPress target="{{ frameId }}">
+        <twig:Liste:Item>
+            {% import 'shared/_currency.macro.html.twig' as currency %}
+
+            <div class="flex justify-between items-center">
                 <span>{{ periodicEntry.name }}</span>
-                <span class="me-2">{{ currency.amount(periodicEntry.totalAmount, true) }}</span>
+{#                <a data-turbo="true" href="{{ path('front_account_cash_flow', {'id': account.id}) }}" class="text-muted flex items-center">#}
+{#                    <small>#}
+{#                        <span>{{ 'account.list.actions.see_cash_flows' | trans }}</span>#}
+{#                        <i class="{{ icons.see_balance }}"></i>#}
+{#                    </small>#}
+{#                </a>#}
             </div>
-            <div class="d-flex justify-content-start align-items-center flex-wrap w-100 text-white-50">
-                <small class="me-2" data-bs-toggle="tooltip" data-bs-title="Type" data-bs-placement="bottom">
+
+            <twig:block name="detail">
+                {% import 'shared/_currency.macro.html.twig' as currency %}
+
+                <span data-bs-toggle="tooltip" data-bs-title="Balance" data-bs-placement="bottom">
+                    {{ currency.amount(periodicEntry.totalAmount, true) }}
+                </span>
+                <div class="space-x-2">
                     {% if periodicEntry.isForecast %}
-                        <i class="fa-solid fa-shield-halved text-warning"></i>
-                        <span class="text-warning">{{ periodicEntry.type.humanize }}</span>
+                        <twig:Liste:EntityValueItem :icon="icons.forecast" label="{{ 'periodic_entry.props.type' | trans }}" color="secondary">
+                            {{ periodicEntry.type.humanize }}
+                        </twig:Liste:EntityValueItem>
                     {% else %}
-                        <i class="fa-solid fa-leaf text-primary"></i>
-                        <span class="text-primary">{{ periodicEntry.type.humanize }}</span>
+                        <twig:Liste:EntityValueItem :icon="icons.spent" label="{{ 'periodic_entry.props.type' | trans }}" color="primary">
+                            {{ periodicEntry.type.humanize }}
+                        </twig:Liste:EntityValueItem>
                     {% endif %}
-                </small>
-                <small class="me-2" data-bs-toggle="tooltip" data-bs-title="Compte" data-bs-placement="bottom">
-                    <i class="fa-solid fa-building-columns"></i>
-                    <span>{{ periodicEntry.account.name }}</span>
-                </small>
-                <small class="me-2" data-bs-toggle="tooltip" data-bs-title="Date d'execution" data-bs-placement="bottom">
-                    <i class="fa-solid fa-calendar-day"></i>
-                    <small>{{ periodicEntry.executionDate | format_datetime(pattern='d MMM', locale=app.request.locale) }}</small>
-                </small>
-                {% if periodicEntry.isForecast %}
-                    <small class="me-2" data-bs-toggle="tooltip" data-bs-title="Nombre de budget(s) actif" data-bs-placement="bottom">
-                        <i class="fa-solid fa-coins"></i>
-                        <small>{{ periodicEntry.countBudgets }}</small>
-                    </small>
-                {% endif %}
-            </div>
+
+                    <twig:Liste:EntityValueItem :icon="icons.account" label="{{ 'periodic_entry.props.account' | trans }}">
+                        {{ periodicEntry.account.name }}
+                    </twig:Liste:EntityValueItem>
+
+                    <twig:Liste:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'periodic_entry.props.execution_date' | trans }}">
+                        {{ periodicEntry.executionDate | format_datetime(pattern='d MMM', locale=app.request.locale) }}
+                    </twig:Liste:EntityValueItem>
+
+                    {% if periodicEntry.isForecast %}
+                        <twig:Liste:EntityValueItem icon="fa-solid fa-coins" label="{{ 'periodic_entry.actif_budget' | trans }}">
+                            {{ periodicEntry.countBudgets }}
+                        </twig:Liste:EntityValueItem>
+                    {% endif %}
+                </div>
+            </twig:block>
+        </twig:Liste:Item>
+    </twig:Overlay:TriggerLongPress>
+
+    <twig:Overlay:Overlay id="{{ frameId }}">
+        <twig:block name="sub_header">
+            <h3 class="text-xl text-center p-2">{{ periodicEntry.name }}</h3>
+        </twig:block>
+        <div class="overlay-grid">
+            <twig:Overlay:GridActionButton
+                actionUrl="{{ path('back_periodicentry_edit', {'id': periodicEntry.id}) }}"
+                :icon="icons.edit"
+                label="{{ 'actions.edit' | trans(domain: 'interface') }}"
+            />
+            <twig:Overlay:GridActionButton
+                actionUrl="{{ path('front_periodic_entry_remove', {'id': periodicEntry.id}) }}"
+                :icon="icons.remove"
+                label="{{ 'actions.remove' | trans(domain: 'interface') }}"
+                color="secondary"
+                data-turbo="true"
+            />
         </div>
-    </li>
-    <twig:ItemDropdown>
-        <li>
-            <a class="dropdown-item" href="{{ path('back_periodicentry_edit', {'id': periodicEntry.id}) }}">Modifier</a>
-        </li>
-        <li>
-            <a class="dropdown-item" data-turbo="true" href="{{ path('front_periodicentry_remove', {'id': periodicEntry.id}) }}">Supprimer</a>
-        </li>
-    </twig:ItemDropdown>
-</div>
+    </twig:Overlay:Overlay>
+</turbo-frame>

@@ -24,31 +24,22 @@ class PeriodicEntryType extends AbstractType
     {
         $builder
             ->add('account', EntityType::class, [
-                'class'        => Account::class,
-                'choice_label' => 'name',
-                'label'        => 'Compte',
-                'row_attr'     => [
-                    'class' => 'form-floating',
-                ],
+                'class'         => Account::class,
+                'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
                     $accountSearchCommand = new AccountSearchCommand(true)->setOrderBy('name');
 
                     return $repository->getAccountsQueryBuilder($accountSearchCommand);
                 },
             ])
-            ->add('name', TextType::class, [
-                'label'    => 'Nom',
-                'row_attr' => [
-                    'class' => 'form-floating',
-                ],
-            ])
+            ->add('name', TextType::class)
             ->add('amount', MoneyType::class, [
-                'label'    => 'Montant',
                 'required' => false,
             ])
-            ->add('executionDate', DateType::class, [
-                'widget' => 'single_text',
-                'input'  => 'datetime_immutable',
+            ->add('execution_date', DateType::class, [
+                'property_path' => 'executionDate',
+                'widget'        => 'single_text',
+                'input'         => 'datetime_immutable',
             ])
             ->add('budgets', EntityType::class, [
                 'class'         => Budget::class,
@@ -56,20 +47,21 @@ class PeriodicEntryType extends AbstractType
                 'expanded'      => false,
                 'choice_label'  => 'name',
                 'required'      => false,
-                'placeholder'   => '-- Pas de budget --',
+                'placeholder'   => 'periodic_entry.form.budgets.placeholder',
                 'query_builder' => static function (BudgetRepository $budgetRepository): QueryBuilder {
                     $budgetSearchCommand = new BudgetSearchCommand(enable: true)->setOrderBy('name');
 
                     return $budgetRepository->getBudgetsQueryBuilder($budgetSearchCommand);
                 },
-                'row_attr' => [
-                    'class' => 'form-floating',
-                ],
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefault('data_class', PeriodicEntry::class);
+        $resolver->setDefaults([
+            'data_class'         => PeriodicEntry::class,
+            'label_format'       => 'periodic_entry.form.%name%.label',
+            'translation_domain' => 'forms',
+        ]);
     }
 }

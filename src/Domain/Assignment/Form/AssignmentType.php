@@ -20,6 +20,7 @@ class AssignmentType extends AbstractType
     #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        // TODO: Rework
         $builder
             ->add('account', EntityType::class, [
                 'class'        => Account::class,

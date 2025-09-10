@@ -37,3 +37,11 @@ budget:
     actions:
       see_cash_flows: Voir la répartition
       balance: Équilibrer
+
+periodic_entry:
+    title: Entrées périodiques
+    actif_budget: Nombre de budget(s) actif
+    props:
+      type: Type
+      account: Compte
+      execution_date: Date d'exécution

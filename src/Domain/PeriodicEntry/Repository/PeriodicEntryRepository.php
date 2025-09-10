@@ -55,6 +55,13 @@ class PeriodicEntryRepository extends ServiceEntityRepository
         $queryBuilder = $this
             ->createQueryBuilder('p');
 
+        if (null !== $command->getName()) {
+            $queryBuilder
+                ->andWhere('p.name LIKE :name')
+                ->setParameter('name', '%' . $command->getName() . '%')
+            ;
+        }
+
         if (EntryTypeEnum::TYPE_SPENT === $command->getEntryTypeEnum()) {
             $queryBuilder
                 ->andWhere('p.budgets IS EMPTY')
