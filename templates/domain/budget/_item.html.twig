@@ -15,12 +15,13 @@
 
                 <div class="flex justify-between items-center">
                     {% if budget.hasNegativeCashFlow %}
-                        <span class="text-secondary" data-bs-toggle="tooltip" data-bs-title="{{ 'budget.list.negative_overflow' | trans }}">
+                        <span data-bs-toggle="tooltip" data-bs-title="{{ 'budget.list.negative_overflow' | trans }}">
                         <small>{{ currency.amount(budget.cashFlow) }}</small>
+                        {# TODO: Add sign option on macro #}
                     </span>
                     {% endif %}
                     {% if budget.hasPositiveCashFlow %}
-                        <span class="text-success" data-bs-toggle="tooltip" data-bs-title="{{ 'budget.list.positive_overflow' | trans }}">
+                        <span data-bs-toggle="tooltip" data-bs-title="{{ 'budget.list.positive_overflow' | trans }}">
                             <small>{{ currency.amount(budget.cashFlow) }}</small>
                         </span>
                     {% endif %}

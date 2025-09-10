@@ -20,30 +20,20 @@ class AssignmentType extends AbstractType
     #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        // TODO: Rework
         $builder
             ->add('account', EntityType::class, [
-                'class'        => Account::class,
-                'choice_label' => 'name',
-                'label'        => 'Compte',
-                'row_attr'     => [
-                    'class' => 'form-floating',
-                ],
+                'class'         => Account::class,
+                'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
                     $accountSearchCommand = new AccountSearchCommand(true)->setOrderBy('name');
 
                     return $repository->getAccountsQueryBuilder($accountSearchCommand);
                 },
+                'required'    => false,
+                'placeholder' => 'shared.default.placeholders.all',
             ])
-            ->add('name', TextType::class, [
-                'label'    => 'Nom',
-                'row_attr' => [
-                    'class' => 'form-floating',
-                ],
-            ])
-            ->add('amount', MoneyType::class, [
-                'label' => 'Valeur',
-            ])
+            ->add('name', TextType::class)
+            ->add('amount', MoneyType::class)
         ;
     }
 
@@ -51,7 +41,9 @@ class AssignmentType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'class' => Assignment::class,
+            'data_class'         => Assignment::class,
+            'label_format'       => 'assignment.form.%name%.label',
+            'translation_domain' => 'forms',
         ]);
     }
 }

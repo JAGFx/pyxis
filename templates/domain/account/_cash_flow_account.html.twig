@@ -5,15 +5,16 @@
 </span>
 
 <div class="flex justify-between items-center space-x-2 mt-2">
+{#     TODO: Use translation #}
     <twig:Liste:MetricOverviewItem
-        title="Dépense"
+        title="{{ 'account.list.spent' | trans }}"
         :icon="icons.spent"
         value="{{ currency.amount(amountBalance.totalSpent, false) }}"
         color="primary"
     />
 
     <twig:Liste:MetricOverviewItem
-        title="Provision"
+        title="{{ 'account.list.forecast' | trans }}"
         :icon="icons.forecast"
         value="{{ currency.amount(amountBalance.totalSpent, false) }}"
         color="secondary"
@@ -21,8 +22,8 @@
 
     {% if amountBalance.assignments > 0 %}
         <twig:Liste:MetricOverviewItem
-            title="Affectation"
-            :icon="icons.assignments"
+            title="{{ 'account.list.assignment' | trans }}"
+            :icon="icons.assignment"
             value="{{ currency.amount(amountBalance.assignments, false) }}"
             color="default"
         />

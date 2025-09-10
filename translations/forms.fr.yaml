@@ -23,6 +23,13 @@ assignment:
       label: Nom
     account:
       label: Compte
+  form:
+    name:
+      label: Nom
+    account:
+      label: Compte
+    amount:
+      label: Montant
 
 budget:
   account_balance:

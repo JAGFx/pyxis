@@ -23,25 +23,25 @@
                 </span>
                 <div class="space-x-2">
                     {% if periodicEntry.isForecast %}
-                        <twig:Liste:EntityValueItem :icon="icons.forecast" label="{{ 'periodic_entry.props.type' | trans }}" color="secondary">
+                        <twig:Liste:EntityValueItem :icon="icons.forecast" label="{{ 'periodic_entry.list.type' | trans }}" color="secondary">
                             {{ periodicEntry.type.humanize }}
                         </twig:Liste:EntityValueItem>
                     {% else %}
-                        <twig:Liste:EntityValueItem :icon="icons.spent" label="{{ 'periodic_entry.props.type' | trans }}" color="primary">
+                        <twig:Liste:EntityValueItem :icon="icons.spent" label="{{ 'periodic_entry.list.type' | trans }}" color="primary">
                             {{ periodicEntry.type.humanize }}
                         </twig:Liste:EntityValueItem>
                     {% endif %}
 
-                    <twig:Liste:EntityValueItem :icon="icons.account" label="{{ 'periodic_entry.props.account' | trans }}">
+                    <twig:Liste:EntityValueItem :icon="icons.account" label="{{ 'periodic_entry.list.account' | trans }}">
                         {{ periodicEntry.account.name }}
                     </twig:Liste:EntityValueItem>
 
-                    <twig:Liste:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'periodic_entry.props.execution_date' | trans }}">
+                    <twig:Liste:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'periodic_entry.list.execution_date' | trans }}">
                         {{ periodicEntry.executionDate | format_datetime(pattern='d MMM', locale=app.request.locale) }}
                     </twig:Liste:EntityValueItem>
 
                     {% if periodicEntry.isForecast %}
-                        <twig:Liste:EntityValueItem icon="fa-solid fa-coins" label="{{ 'periodic_entry.actif_budget' | trans }}">
+                        <twig:Liste:EntityValueItem icon="fa-solid fa-coins" label="{{ 'periodic_entry.list.active_budget' | trans }}">
                             {{ periodicEntry.countBudgets }}
                         </twig:Liste:EntityValueItem>
                     {% endif %}

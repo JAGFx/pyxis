@@ -6,3 +6,4 @@ actions:
   enable: Activer
   save: Valider
   remove: Supprimer
+  back: Retour

@@ -1,9 +1,8 @@
 menu:
-  back: Retour
   main:
     statistics: Statistiques
-    account: Comptes
-    budget: Budget
+    accounts: Comptes
+    budgets: Budgets
     entries: Entrées
     periodic_entries: Entrées périodique
     assignments: Affectations

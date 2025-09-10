@@ -18,6 +18,9 @@ balance: Balance
 account:
   title: Comptes
   list:
+    spent: Dépense
+    forecast: Provision
+    assignment: Affectation
     actions:
       see_cash_flows: Voir la répartition
 
@@ -26,7 +29,7 @@ transfer:
 
 assignment:
   title: Affectations
-  props:
+  list:
     account: Compte
 
 budget:
@@ -40,8 +43,8 @@ budget:
 
 periodic_entry:
     title: Entrées périodiques
-    actif_budget: Nombre de budget(s) actif
-    props:
+    list:
       type: Type
       account: Compte
       execution_date: Date d'exécution
+      active_budget: Nombre de budget(s) actif
