@@ -2,8 +2,11 @@
 
 namespace App\Domain\Entry\Controller\Front;
 
+use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
@@ -45,5 +48,26 @@ class EntryController extends AbstractController
         return $this->renderTurboStream($request, 'domain/entry/turbo/remove.turbo.stream.html.twig', [
             'entryId' => $entryId,
         ]);
+    }
+
+    #[Route('/search', name: 'front_entry_search', methods: [Request::METHOD_POST])]
+    public function search(Request $request): Response
+    {
+        $entrySearchCommand = new EntrySearchCommand()
+            ->setOrderBy('createdAt')
+            ->setOrderDirection(OrderEnum::DESC)
+        ;
+
+        $this->createForm(EntrySearchType::class, $entrySearchCommand)
+            ->handleRequest($request);
+
+        $entries = $this->entryManager->getPaginated($entrySearchCommand);
+
+        return $this->renderTurboStream(
+            $request,
+            'domain/entry/turbo/search.turbo.stream.html.twig',
+            [
+                'entries' => $entries,
+            ]);
     }
 }

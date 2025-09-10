@@ -42,9 +42,17 @@ budget:
       balance: Équilibrer
 
 periodic_entry:
-    title: Entrées périodiques
-    list:
-      type: Type
-      account: Compte
-      execution_date: Date d'exécution
-      active_budget: Nombre de budget(s) actif
+  title: Entrées périodiques
+  list:
+    type: Type
+    account: Compte
+    execution_date: Date d'exécution
+    active_budget: Nombre de budget(s) actif
+
+entry:
+  title: Entrées
+  list:
+    created_at: Date de valeur
+    type: Type
+    account: Compte
+    budget: Budget

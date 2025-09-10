@@ -5,5 +5,6 @@ twig_component:
         App\Domain\Assignment\Twig\Components\: 'domain/assigment/components/'
         App\Domain\Budget\Twig\Components\: 'domain/budget/components/'
         App\Domain\PeriodicEntry\Twig\Components\: 'domain/periodic_entry/components/'
+        App\Domain\Entry\Twig\Components\: 'domain/entry/components/'
 
         App\Shared\Twig\Components\: 'shared/components/'

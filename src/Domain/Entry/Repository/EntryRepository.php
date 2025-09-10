@@ -4,6 +4,7 @@ namespace App\Domain\Entry\Repository;
 
 use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Entity\EntryTypeEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -64,6 +65,33 @@ class EntryRepository extends ServiceEntityRepository
                 ->andWhere('e.createdAt BETWEEN :startDate AND :endDate')
                 ->setParameter('startDate', $command->getStartDate()->format('Y-m-d'))
                 ->setParameter('endDate', $command->getEndDate()->format('Y-m-d'));
+        }
+
+        if (!is_null($command->getName())) {
+            $queryBuilder
+                ->andWhere('e.name LIKE :name')
+                ->setParameter('name', '%' . $command->getName() . '%');
+        }
+
+        // TODO: Add test for ir
+        if (EntryTypeEnum::TYPE_SPENT === $command->getType()) {
+            $queryBuilder
+                ->andWhere('e.budget IS NULL');
+        } elseif (EntryTypeEnum::TYPE_FORECAST === $command->getType()) {
+            $queryBuilder
+                ->andWhere('e.budget IS NOT NULL');
+        }
+
+        if (!is_null($command->getAccount())) {
+            $queryBuilder
+                ->andWhere('e.account = :account')
+                ->setParameter('account', $command->getAccount());
+        }
+
+        if (!is_null($command->getBudget())) {
+            $queryBuilder
+                ->andWhere('e.budget = :budget')
+                ->setParameter('budget', $command->getBudget());
         }
 
         switch ($command->getOrderBy()) {

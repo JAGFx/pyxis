@@ -4,11 +4,13 @@ namespace App\Domain\Entry\Controller\Back;
 
 use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Form\EntrySearchType;
+use App\Domain\Entry\Form\EntryPaginationType;
 use App\Domain\Entry\Form\EntryType;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
+use App\Shared\Factory\MenuConfigurationFactory;
+use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +25,7 @@ class EntryController extends AbstractController
 
     public function __construct(
         private readonly EntryManager $entryManager,
+        private readonly MenuConfigurationFactory $menuConfigurationFactory,
     ) {
     }
 
@@ -33,17 +36,18 @@ class EntryController extends AbstractController
             ->setOrderBy('createdAt')
             ->setOrderDirection(OrderEnum::DESC)
         ;
-        $this->handlePaginationForm($request, EntrySearchType::class, $entrySearchCommand);
+        $this->handlePaginationForm($request, EntryPaginationType::class, $entrySearchCommand);
 
         return $this->render('domain/entry/index.html.twig', [
-            'pagination' => $this->entryManager->getPaginated($entrySearchCommand),
+            'entries' => $this->entryManager->getPaginated($entrySearchCommand),
+            'config'  => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::ENTRY),
         ]);
     }
 
     #[Route('/create', name: 'back_entry_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
-        return $this->handleForm(self::HANDLE_FORM_CREATE, $request, new Entry());
+        return $this->handleForm(self::HANDLE_FORM_CREATE, $request);
     }
 
     #[Route('/{id}/update', name: 'back_entry_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
@@ -52,8 +56,10 @@ class EntryController extends AbstractController
         return $this->handleForm(self::HANDLE_FORM_UPDATE, $request, $entry);
     }
 
-    private function handleForm(string $type, Request $request, Entry $entry): Response
+    private function handleForm(string $type, Request $request, ?Entry $entry = null): Response
     {
+        $entry ??= new Entry()->setName('');
+
         $form = $this
             ->createForm(EntryType::class, $entry)
             ->handleRequest($request);
@@ -69,7 +75,8 @@ class EntryController extends AbstractController
         }
 
         return $this->render('domain/entry/form.html.twig', [
-            'form' => $form,
+            'form'  => $form,
+            'entry' => $entry,
         ]);
     }
 }

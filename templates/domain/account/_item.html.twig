@@ -30,6 +30,7 @@
                 label="{{ 'actions.edit' | trans(domain: 'interface') }}"
             />
 
+{#            TODO: Use voter instead#}
             {% if account.enable %}
                 {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::DISABLE'), account) %}
                     <twig:Overlay:GridActionButton

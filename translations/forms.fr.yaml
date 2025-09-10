@@ -79,6 +79,27 @@ periodic_entry:
       entry_type_enum:
           label: Type
 
+entry:
+  form:
+    account:
+      label: Compte
+    name:
+      label: Nom
+    amount:
+      label: Montant
+    budget:
+      label: Budget
+      placeholder: -- Pas de budget --
+  search:
+    name:
+      label: Nom
+    type:
+      label: Type
+    account:
+      label: Compte
+    budget:
+      label: Budget
+
 entry_type_enum:
   form:
     options:

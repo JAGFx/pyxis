@@ -1,55 +1,69 @@
-{% import 'shared/_currency.macro.html.twig' as currency %}
+{% set frameId = 'entry_list_item_' ~ entry.id %}
 
-<turbo-frame id="entry_list_item_{{ entry.id }}">
-    <div class="position-relative">
-        <li class="list-group-item list-group-item-acrylic d-flex justify-content-center align-items-center">
-            <div class="d-flex justify-content-center align-items-start w-100 flex-column">
-                <div class="d-flex justify-content-between align-items-center w-100">
-                    <span>{{ entry.name }}</span>
-                    <span class="me-2">{{ currency.amount(entry.amount, true) }}</span>
-                </div>
-                <small class="me-2 text-white-50" data-bs-toggle="tooltip" data-bs-title="Date de valeur" data-bs-placement="bottom">
-                    <i class="fa-solid fa-calendar-day"></i>
-                    <span>{{ entry.createdAt | format_datetime(timeFormat='short', locale=app.request.locale) }}</span>
-                </small>
-                <div class="d-flex justify-content-start align-items-center flex-wrap w-100 text-white-50">
-                    <div class="d-flex align-items-center me-2">
-                        <small data-bs-toggle="tooltip" data-bs-title="Type" data-bs-placement="bottom">
-                            {% if entry.isForecast %}
-                                <i class="fa-solid fa-shield-halved text-warning"></i>
-                                <span class="text-warning">{{ entry.type.humanize }}</span>
-                            {% else %}
-                                <i class="fa-solid fa-leaf text-primary"></i>
-                                <span class="text-primary">{{ entry.type.humanize }}</span>
-                            {% endif %}
-                        </small>
-                    </div>
-                    <div class="d-flex align-items-center me-2">
-                        <small data-bs-toggle="tooltip" data-bs-title="Compte" data-bs-placement="bottom">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>{{ entry.account.name }}</span>
-                        </small>
-                    </div>
-                    {% if entry.isForecast %}
-                        <div class="d-flex align-items-center me-2" data-bs-toggle="tooltip" data-bs-title="Budget" data-bs-placement="bottom">
-                            <small>
-                                <i class="fa-solid fa-piggy-bank"></i>
-                                <span>{{ entry.budget.name }}</span>
-                            </small>
-                        </div>
-                    {% endif %}
+<turbo-frame id="{{ frameId }}">
+    <twig:Overlay:TriggerLongPress target="{{ frameId }}">
+        <twig:Liste:Item>
+            {% import 'shared/_currency.macro.html.twig' as currency %}
+
+            <div class="flex justify-between items-center">
+                <span>{{ entry.name }}</span>
+                <div class="flex-none">
+                    {{ currency.amount(entry.amount, true) }}
                 </div>
             </div>
-        </li>
-        {% if not entry.isABalancing %}
-            <twig:ItemDropdown>
-                <li>
-                    <a class="dropdown-item" href="{{ path('back_entry_edit', {'id': entry.id}) }}">Modifier</a>
-                </li>
-                <li>
-                    <a class="dropdown-item" data-turbo="true" href="{{ path('front_entry_remove', {'id': entry.id}) }}">Supprimer</a>
-                </li>
-            </twig:ItemDropdown>
-        {% endif %}
-    </div>
+
+            <twig:block name="detail">
+                <div class="flex justify-start items-center space-x-2">
+                    <twig:Liste:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'entry.list.created_at' | trans }}">
+                        {{ entry.createdAt | format_datetime(timeFormat='short', locale=app.request.locale) }}
+                    </twig:Liste:EntityValueItem>
+                    {# TODO add flag here for balance & transfer #}
+                </div>
+                <div class="flex justify-start items-center space-x-2">
+                    {% if entry.isForecast %}
+                        <twig:Liste:EntityValueItem :icon="icons.forecast" label="{{ 'entry.list.type' | trans }}" color="secondary">
+                            {{ entry.type.humanize }}
+                        </twig:Liste:EntityValueItem>
+                    {% else %}
+                        <twig:Liste:EntityValueItem :icon="icons.spent" label="{{ 'entry.list.type' | trans }}" color="primary">
+                            {{ entry.type.humanize }}
+                        </twig:Liste:EntityValueItem>
+                    {% endif %}
+
+                    <twig:Liste:EntityValueItem :icon="icons.account" label="{{ 'entry.list.account' | trans }}">
+                        {{ entry.account.name }}
+                    </twig:Liste:EntityValueItem>
+
+                    {% if entry.isForecast %}
+                        <twig:Liste:EntityValueItem :icon="icons.budget" label="{{ 'entry.list.budget' | trans }}">
+                            {{ entry.budget.name }}
+                        </twig:Liste:EntityValueItem>
+                    {% endif %}
+                </div>
+            </twig:block>
+        </twig:Liste:Item>
+    </twig:Overlay:TriggerLongPress>
+
+    {#            TODO: Use voter instead#}
+    {% if not entry.isABalancing %}
+        <twig:Overlay:Overlay id="{{ frameId }}">
+            <twig:block name="sub_header">
+                <h3 class="text-xl text-center p-2">{{ entry.name }}</h3>
+            </twig:block>
+            <div class="overlay-grid">
+                <twig:Overlay:GridActionButton
+                    actionUrl="{{ path('back_entry_edit', {'id': entry.id}) }}"
+                    :icon="icons.edit"
+                    label="{{ 'actions.edit' | trans(domain: 'interface') }}"
+                />
+                <twig:Overlay:GridActionButton
+                    actionUrl="{{ path('front_entry_remove', {'id': entry.id}) }}"
+                    :icon="icons.remove"
+                    label="{{ 'actions.remove' | trans(domain: 'interface') }}"
+                    color="secondary"
+                    data-turbo="true"
+                />
+            </div>
+        </twig:Overlay:Overlay>
+    {% endif %}
 </turbo-frame>

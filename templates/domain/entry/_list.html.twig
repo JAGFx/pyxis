@@ -1,0 +1,12 @@
+<twig:PageTitle :icon="icons.entry" label="{{ 'entry.title' | trans }}" />
+
+<twig:Liste:Liste>
+    {% for entry in entries %}
+        {% include 'domain/entry/_item.html.twig' %}
+    {% endfor %}
+
+    {# TODO: Create a component for it #}
+    <div class="mt-4 d-flex justify-content-center">
+        {{ knp_pagination_render(entries) }}
+    </div>
+</twig:Liste:Liste>

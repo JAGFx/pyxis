@@ -28,6 +28,7 @@ final readonly class MenuConfigurationFactory
             MenuConfigurationEntityEnum::ASSIGNMENT     => $this->urlGenerator->generate('back_assignment_create'),
             MenuConfigurationEntityEnum::BUDGET         => $this->urlGenerator->generate('back_budget_create'),
             MenuConfigurationEntityEnum::PERIODIC_ENTRY => $this->urlGenerator->generate('back_periodicentry_create'),
+            MenuConfigurationEntityEnum::ENTRY          => $this->urlGenerator->generate('back_entry_create'),
         };
     }
 
@@ -37,7 +38,8 @@ final readonly class MenuConfigurationFactory
             MenuConfigurationEntityEnum::ACCOUNT,
             MenuConfigurationEntityEnum::ASSIGNMENT,
             MenuConfigurationEntityEnum::BUDGET,
-            MenuConfigurationEntityEnum::PERIODIC_ENTRY => $this->urlGenerator->generate('front_home_search_form', [
+            MenuConfigurationEntityEnum::PERIODIC_ENTRY,
+            MenuConfigurationEntityEnum::ENTRY => $this->urlGenerator->generate('front_home_search_form', [
                 'target' => $target->value,
             ]),
         };

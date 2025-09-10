@@ -42,7 +42,7 @@ class PeriodicEntryController extends AbstractController
         return $this->handleRequest(self::HANDLE_FORM_CREATE, $request);
     }
 
-    #[Route('/{id}/update', 'back_periodicentry_edit', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route('/{id}/update', 'back_periodic_entry_edit', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit(PeriodicEntry $periodicEntry, Request $request): Response
     {
         return $this->handleRequest(self::HANDLE_FORM_UPDATE, $request, $periodicEntry);

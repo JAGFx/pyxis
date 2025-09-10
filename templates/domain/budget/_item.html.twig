@@ -53,6 +53,7 @@
                     label="{{ 'actions.edit' | trans(domain: 'interface') }}"
                 />
 
+                {#            TODO: Use voter instead#}
                 {% if budget.enable %}
                     <twig:Overlay:GridActionButton
                         actionUrl="{{ path('front_budget_toggle', {'id': budget.id}) }}"

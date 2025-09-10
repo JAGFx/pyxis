@@ -7,6 +7,7 @@
 
             <div class="flex justify-between items-center">
                 <span>{{ periodicEntry.name }}</span>
+                {# TODO: Add to see budgets with turbo #}
 {#                <a data-turbo="true" href="{{ path('front_account_cash_flow', {'id': account.id}) }}" class="text-muted flex items-center">#}
 {#                    <small>#}
 {#                        <span>{{ 'account.list.actions.see_cash_flows' | trans }}</span>#}
@@ -56,7 +57,7 @@
         </twig:block>
         <div class="overlay-grid">
             <twig:Overlay:GridActionButton
-                actionUrl="{{ path('back_periodicentry_edit', {'id': periodicEntry.id}) }}"
+                actionUrl="{{ path('back_periodic_entry_edit', {'id': periodicEntry.id}) }}"
                 :icon="icons.edit"
                 label="{{ 'actions.edit' | trans(domain: 'interface') }}"
             />
