@@ -16,7 +16,11 @@
     },
 }) %}
 
-<small class="{{ entityValueItemCva.apply({color}) }}" data-bs-toggle="tooltip" data-bs-title="{{ label }}" data-bs-placement="bottom">
-    <i class="{{ icon }}"></i>
-    <span>{% block content %}{% endblock %}</span>
-</small>
+{% set content = block('content') %}
+
+<twig:Tooltip title="{{ label }}" class="inline-flex" placement="top">
+    <small class="{{ entityValueItemCva.apply({color}) }}">
+        <i class="{{ icon }}"></i>
+        <span>{{ content | raw }}</span>
+    </small>
+</twig:Tooltip>

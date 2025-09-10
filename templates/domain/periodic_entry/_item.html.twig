@@ -19,9 +19,10 @@
             <twig:block name="detail">
                 {% import 'shared/_currency.macro.html.twig' as currency %}
 
-                <span data-bs-toggle="tooltip" data-bs-title="Balance" data-bs-placement="bottom">
+                <twig:Tooltip title="Balance" placement="right" class="inline-flex relative">
+                    {% import 'shared/_currency.macro.html.twig' as currency %}
                     {{ currency.amount(periodicEntry.totalAmount, true) }}
-                </span>
+                </twig:Tooltip>
                 <div class="space-x-2">
                     {% if periodicEntry.isForecast %}
                         <twig:Liste:EntityValueItem :icon="icons.forecast" label="{{ 'periodic_entry.list.type' | trans }}" color="secondary">

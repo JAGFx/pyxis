@@ -1,0 +1,42 @@
+{% set tooltipCva = cva({
+    'base': 'absolute invisible flex place-content-center px-2 py-0.5 text-white bg-gradient-primary rounded-3xl opacity-0 tooltip',
+    'variants': {
+        'placement': {
+            'top': '!mb-1',
+            'bottom': '!mt-1',
+            'right': '!ms-2',
+            'left': '!me-2',
+        },
+    },
+    'defaultVariants': {
+        'placement': 'bottom',
+    },
+}) %}
+
+{% set dotCva = cva({
+    'base': 'bg-gradient-primary w-1.5 h-1.5 absolute rounded-full',
+    'variants': {
+        'placement': {
+            'top': '-bottom-1 translate-y-full',
+            'bottom': '-top-1 -translate-y-full',
+            'right': '-left-1 -translate-x-full top-1/2 -translate-y-1/2',
+            'left': '-right-1 translate-x-full top-1/2 -translate-y-1/2',
+        },
+    },
+    'defaultVariants': {
+        'placement': 'bottom',
+    },
+}) %}
+
+{% set title = title | default('') %}
+{% set placement = placement | default('bottom') %}
+{% set tooltipId = 'tooltip-' ~ random() %}
+
+<div {{ attributes }} data-tooltip-target="{{ tooltipId }}" data-tooltip-trigger="click" data-tooltip-placement="{{ placement }}">
+     {% block content %}{% endblock %}
+
+    <div id="{{ tooltipId }}" role="tooltip" class="{{ tooltipCva.apply({placement}) }}">
+        <small>{{ title }}</small>
+        <div class="{{ dotCva.apply({placement}) }}"></div>
+    </div>
+</div>

@@ -1,10 +1,11 @@
 @import "tailwindcss";
-@import '@fortawesome/fontawesome-free/css/all.css';
+@import "@fortawesome/fontawesome-free/css/all.css";
+@import "flowbite/src/themes/default";
 
-/*@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');*/
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
-
+@import "https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap";
 @source not "../../public/";
+@plugin "flowbite/plugin";
+@source "../../node_modules/flowbite";
 
 /**
     theme - Variables et tokens de design
@@ -17,80 +18,81 @@
  */
 
 @theme {
-    --color-black: #22223b;
-    --color-black2: #272727;
-    --color-primary: #ffc500;
-    --color-secondary: #ea7059;
-    --color-purple: #4B2743;
-    --color-purple2: #341539;
-    --color-white-600: #eee8d5;
-    --color-red: #ea7059;
-    --color-success: #0f0;
-
-    --background-image-main: url("../images/bg.png");
-
-    --font-family-inter: 'Fredoka', system-ui, sans-serif;
-    --font-family-sans: 'Fredoka', system-ui, sans-serif;
+  --color-black: #22223b;
+  --color-black2: #272727;
+  --color-primary: #ffc500;
+  --color-secondary: #ea7059;
+  --color-purple: #4b2743;
+  --color-purple2: #341539;
+  --color-white-600: #eee8d5;
+  --color-red: #ea7059;
+  --color-success: #0f0;
+  --background-image-main: url("../images/bg.png");
+  --font-family-inter: "Fredoka", system-ui, sans-serif;
+  --font-family-sans: "Fredoka", system-ui, sans-serif;
+  --tw-shadow-color: rgb(34 34 59 / 0.3);
 }
 
 @layer base {
-    html {
-        font-family: theme(--font-family-inter);
-    }
+  html {
+    font-family: theme(--font-family-inter);
+  }
 
-    body {
-        background:
-                linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                var(--background-image-main) no-repeat center center;
-        @apply bg-cover bg-center bg-no-repeat bg-fixed;
-    }
+  body {
+    background:
+      linear-gradient(rgb(0 0 0 / 50%), rgb(0 0 0 / 50%)),
+      var(--background-image-main) no-repeat center center;
+
+    @apply bg-cover bg-center bg-no-repeat bg-fixed;
+  }
 }
 
 @layer components {
-    .overlay--open.overlay__backdrop {
-        @apply opacity-100 z-50;
-        transition:
-            opacity 300ms ease-in-out
-    }
+  .overlay--open.overlay__backdrop {
+    @apply opacity-100 z-50;
 
-    .overlay--open > .overlay__content {
-        @apply scale-100 transition-all duration-300 ease-in-out;
-    }
+    transition: opacity 300ms ease-in-out;
+  }
 
-    .overlay--closed.overlay__backdrop {
-        @apply opacity-0 pointer-events-none hidden;
-        transition:
-            all 300ms ease-in-out,
-            display 400ms ease-in-out allow-discrete;
-    }
+  .overlay--open > .overlay__content {
+    @apply scale-100 transition-all duration-300 ease-in-out;
+  }
 
-    .overlay--closed > .overlay__content {
-        @apply scale-75 transition-all duration-300 ease-in-out;
-    }
+  .overlay--closed.overlay__backdrop {
+    @apply opacity-0 pointer-events-none hidden;
 
-    .overlay-grid {
-        @apply px-8 py-4 flex flex-wrap gap-8 justify-center w-full;
-    }
+    transition:
+      all 300ms ease-in-out,
+      display 400ms ease-in-out allow-discrete;
+  }
+
+  .overlay--closed > .overlay__content {
+    @apply scale-75 transition-all duration-300 ease-in-out;
+  }
+
+  .overlay-grid {
+    @apply px-8 py-4 flex flex-wrap gap-8 justify-center w-full;
+  }
 }
 
 @layer utilities {
-    .text-muted {
-        @apply text-white/50;
-    }
+  .text-muted {
+    @apply text-white/50;
+  }
 }
 
 @utility bg-acrylic {
-    @apply bg-black/25 border-0 backdrop-blur-md;
+  @apply bg-black/25 border-0 backdrop-blur-md;
 }
 
 @utility bg-gradient-primary {
-    @apply bg-gradient-to-tl from-primary to-[#e4492c];
+  @apply bg-gradient-to-tl from-primary to-[#e4492c];
 }
 
 @utility bg-gradient-secondary {
-    @apply bg-gradient-to-tl from-secondary to-[#e4492c];
+  @apply bg-gradient-to-tl from-secondary to-[#e4492c];
 }
 
 @utility bg-gradient-purple2 {
-    @apply bg-gradient-to-tl from-purple to-purple2;
+  @apply bg-gradient-to-tl from-purple to-purple2;
 }

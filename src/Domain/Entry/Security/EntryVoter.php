@@ -2,10 +2,10 @@
 
 namespace App\Domain\Entry\Security;
 
-use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use App\Domain\Entry\Entity\Entry;
 use LogicException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -17,7 +17,7 @@ class EntryVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if ($attribute !== self::MANAGE) {
+        if (self::MANAGE !== $attribute) {
             return false;
         }
 

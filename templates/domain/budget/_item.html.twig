@@ -11,19 +11,20 @@
             </div>
 
             <twig:block name="detail">
-                {% import 'shared/_currency.macro.html.twig' as currency %}
-
                 <div class="flex justify-between items-center">
                     {% if budget.hasNegativeCashFlow %}
-                        <span data-bs-toggle="tooltip" data-bs-title="{{ 'budget.list.negative_overflow' | trans }}">
-                        <small>{{ currency.amount(budget.cashFlow) }}</small>
-                        {# TODO: Add sign option on macro #}
-                    </span>
+                        <twig:Tooltip title="{{ 'budget.list.negative_overflow' | trans }}" class="inline" placement="right">
+                            {% import 'shared/_currency.macro.html.twig' as currency %}
+                                <small>{{ currency.amount(budget.cashFlow) }}</small>
+                            {# TODO: Add sign option on macro #}
+                        </twig:Tooltip>
                     {% endif %}
                     {% if budget.hasPositiveCashFlow %}
-                        <span data-bs-toggle="tooltip" data-bs-title="{{ 'budget.list.positive_overflow' | trans }}">
+                        <twig:Tooltip title="{{ 'budget.list.positive_overflow' | trans }}" class="inline" placement="right">
+                            {% import 'shared/_currency.macro.html.twig' as currency %}
                             <small>{{ currency.amount(budget.cashFlow) }}</small>
-                        </span>
+                            {# TODO: Add sign option on macro #}
+                        </twig:Tooltip>
                     {% endif %}
                     {% if budget.hasNegativeCashFlow or  budget.hasPositiveCashFlow%}
                         <div>
