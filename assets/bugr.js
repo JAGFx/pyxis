@@ -6,30 +6,9 @@
  */
 
 // any CSS you import will output into a single css file (bugr.scss in this case)
-// import './styles/bugr.scss';
 import './styles/bugr.css';
 
 // start the Stimulus application
-// import '@popperjs/core/dist/esm/index'
 import 'flowbite';
 
-// TODO: Remove all bootstrap things
 import './bootstrap';
-// import 'bootstrap/js/dist/base-component'
-// import 'bootstrap/js/dist/dropdown'
-// import 'bootstrap/js/dist/button'
-// import 'bootstrap/js/dist/collapse'
-// import 'bootstrap/js/dist/popover'
-// import Tooltip from 'bootstrap/js/dist/tooltip'
-// import 'bootstrap/js/dist/toast'
-// import TomSelect from "tom-select";
-//import 'bootstrap/js/dist'
-
-// const selectInputs = document.querySelectorAll('select')
-// const selectInputsList = [...selectInputs].map(selectInputsEl => new TomSelect(selectInputsEl,{
-//     create: true,
-//     sortField: {
-//         field: "text",
-//         direction: "asc"
-//     }
-// }))

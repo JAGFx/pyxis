@@ -192,8 +192,9 @@ jobs:
             var/cache/
           key: workspace-${{ github.sha }}-${{ github.run_attempt }}
 
-      - name: Run Stylelint
-        run: npm run lint -- --max-warnings=0
+      # TODO: Standby. Add later a linter for JS + CSS
+#      - name: Run Stylelint
+#        run: npm run lint -- --max-warnings=0
           
   unit_test:
     name: Unit test

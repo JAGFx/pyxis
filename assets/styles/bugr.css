@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "@fortawesome/fontawesome-free/css/all.css";
 @import "flowbite/src/themes/default";
-
 @import "https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap";
 @source not "../../public/";
 @plugin "flowbite/plugin";
@@ -30,7 +29,7 @@
   --background-image-main: url("../images/bg.png");
   --font-family-inter: "Fredoka", system-ui, sans-serif;
   --font-family-sans: "Fredoka", system-ui, sans-serif;
-  --tw-shadow-color: rgb(34 34 59 / 0.3);
+  --tw-shadow-color: rgb(34 34 59 / 30%);
 }
 
 @layer base {

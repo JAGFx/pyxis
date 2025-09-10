@@ -44,9 +44,6 @@ jobs:
       - name: Build assets
         run: npm run build
 
-      - name: Remove dev dependencies
-        run: npm ci --no-progress --silent --production
-
       - name: Cache build workspace
         uses: actions/cache@v4
         with:
