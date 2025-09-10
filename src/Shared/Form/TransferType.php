@@ -5,7 +5,9 @@ namespace App\Shared\Form;
 use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Repository\AccountRepository;
+use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
+use App\Domain\Budget\Repository\BudgetRepository;
 use App\Shared\DTO\Transfer;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -21,8 +23,6 @@ class TransferType extends AbstractType
         $builder
             ->add('account', EntityType::class, [
                 'class'         => Account::class,
-                'required'      => false,
-                'label'         => 'Name',
                 'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
                     $accountSearchCommand = new AccountSearchCommand(true)->setOrderBy('name');
@@ -30,31 +30,37 @@ class TransferType extends AbstractType
                     return $repository->getAccountsQueryBuilder($accountSearchCommand);
                 },
             ])
-            ->add('budgetSource', EntityType::class, [
-                'class'        => Budget::class,
-                'required'     => false,
-                'label'        => 'Origine',
-                'choice_label' => 'name',
-                'row_attr'     => [
-                    'class' => 'form-floating',
-                ],
+            ->add('budget_source', EntityType::class, [
+                'property_path' => 'budgetSource',
+                'class'         => Budget::class,
+                'choice_label'  => 'name',
+                'query_builder' => function (BudgetRepository $repository): QueryBuilder {
+                    $accountSearchCommand = new BudgetSearchCommand(enable: true)->setOrderBy('name');
+
+                    return $repository->getBudgetsQueryBuilder($accountSearchCommand);
+                },
+                'required' => false,
             ])
-            ->add('budgetTarget', EntityType::class, [
-                'class'        => Budget::class,
-                'required'     => false,
-                'label'        => 'Cible',
-                'choice_label' => 'name',
-                'row_attr'     => [
-                    'class' => 'form-floating',
-                ],
+            ->add('budget_target', EntityType::class, [
+                'property_path' => 'budgetTarget',
+                'class'         => Budget::class,
+                'choice_label'  => 'name',
+                'query_builder' => function (BudgetRepository $repository): QueryBuilder {
+                    $accountSearchCommand = new BudgetSearchCommand(enable: true)->setOrderBy('name');
+
+                    return $repository->getBudgetsQueryBuilder($accountSearchCommand);
+                },
+                'required' => false,
             ])
-            ->add('amount', MoneyType::class, [
-                'label' => 'Valeur',
-            ]);
+            ->add('amount', MoneyType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefault('data_class', Transfer::class);
+        $resolver->setDefaults([
+            'data_class'         => Transfer::class,
+            'label_format'       => 'shared.transfer.%name%.label',
+            'translation_domain' => 'forms',
+        ]);
     }
 }

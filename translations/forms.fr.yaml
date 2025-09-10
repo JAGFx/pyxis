@@ -7,6 +7,16 @@ shared:
       yes: Oui
       no: Non
 
+  transfer:
+    account:
+      label: Compte
+    budget_source:
+      label: Budget source
+    budget_target:
+      label: Budget cible
+    amount:
+      label: Montant
+
 account:
   search:
     enable:

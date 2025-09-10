@@ -1,0 +1,3 @@
+shared:
+  transfer:
+    same_budget_source_target: Le budget cible doivent être différent du budget source.
