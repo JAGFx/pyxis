@@ -14,10 +14,11 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class AccountVoter extends Voter
 {
     public const string DISABLE = 'ACCOUNT_DISABLE';
+    public const string ENABLE  = 'ACCOUNT_ENABLE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (self::DISABLE !== $attribute) {
+        if (!in_array($attribute, [self::DISABLE, self::ENABLE], true)) {
             return false;
         }
 
@@ -31,6 +32,7 @@ class AccountVoter extends Voter
 
         return match ($attribute) {
             self::DISABLE => $this->canDisable($account),
+            self::ENABLE  => $this->canEnable($account),
             default       => throw new LogicException('This code should not be reached!'),
         };
     }
@@ -46,5 +48,10 @@ class AccountVoter extends Voter
         }
 
         return $account->getAssignments()->isEmpty();
+    }
+
+    private function canEnable(Account $account): bool
+    {
+        return !$account->isEnable();
     }
 }

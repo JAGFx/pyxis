@@ -53,15 +53,15 @@
                     label="{{ 'actions.edit' | trans(domain: 'interface') }}"
                 />
 
-                {#            TODO: Use voter instead#}
-                {% if budget.enable %}
+                {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::DISABLE'), budget) %}
                     <twig:Overlay:GridActionButton
                         actionUrl="{{ path('front_budget_toggle', {'id': budget.id}) }}"
                         :icon="icons.disable"
                         label="{{ 'actions.disabled' | trans(domain: 'interface') }}"
                         data-turbo="true"
                     />
-                {% else %}
+                {% endif %}
+                {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::ENABLE'), budget) %}
                     <twig:Overlay:GridActionButton
                         actionUrl="{{ path('front_budget_toggle', {'id': budget.id}) }}"
                         :icon="icons.enable"
@@ -69,7 +69,6 @@
                         data-turbo="true"
                     />
                 {% endif %}
-
                 {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::BALANCE'), budget) %}
                     <twig:Overlay:GridActionButton
                         actionUrl="{{ path('back_budget_balance', {'id': budget.id}) }}"

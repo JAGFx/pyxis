@@ -30,17 +30,15 @@
                 label="{{ 'actions.edit' | trans(domain: 'interface') }}"
             />
 
-{#            TODO: Use voter instead#}
-            {% if account.enable %}
-                {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::DISABLE'), account) %}
-                    <twig:Overlay:GridActionButton
-                        actionUrl="{{ path('front_account_toggle', {'id': account.id}) }}"
-                        :icon="icons.disable"
-                        label="{{ 'actions.disabled' | trans(domain: 'interface') }}"
-                        data-turbo="true"
-                    />
-                {% endif %}
-            {% else %}
+            {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::DISABLE'), account) %}
+                <twig:Overlay:GridActionButton
+                    actionUrl="{{ path('front_account_toggle', {'id': account.id}) }}"
+                    :icon="icons.disable"
+                    label="{{ 'actions.disabled' | trans(domain: 'interface') }}"
+                    data-turbo="true"
+                />
+            {% endif %}
+            {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::ENABLE'), account) %}
                 <twig:Overlay:GridActionButton
                     actionUrl="{{ path('front_account_toggle', {'id': account.id}) }}"
                     :icon="icons.enable"

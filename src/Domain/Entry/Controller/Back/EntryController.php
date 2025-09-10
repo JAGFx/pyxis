@@ -7,6 +7,7 @@ use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntryPaginationType;
 use App\Domain\Entry\Form\EntryType;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
@@ -15,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/entries')]
 class EntryController extends AbstractController
@@ -51,6 +53,7 @@ class EntryController extends AbstractController
     }
 
     #[Route('/{id}/update', name: 'back_entry_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[IsGranted(EntryVoter::MANAGE, 'entry')]
     public function edit(Entry $entry, Request $request): Response
     {
         return $this->handleForm(self::HANDLE_FORM_UPDATE, $request, $entry);

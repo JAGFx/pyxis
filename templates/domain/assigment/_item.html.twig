@@ -30,6 +30,7 @@
                 :icon="icons.edit"
                 label="{{ 'actions.edit' | trans(domain: 'interface') }}"
             />
+            {# TODO: Add confirm before action #}
             <twig:Overlay:GridActionButton
                 actionUrl="{{ path('front_assignment_remove', {'id': assignment.id}) }}"
                 :icon="icons.remove"

@@ -15,10 +15,12 @@ class BudgetVoter extends Voter
 {
     public const string MANAGE  = 'BUDGET_MANAGE';
     public const string BALANCE = 'BUDGET_BALANCE';
+    public const string ENABLE  = 'BUDGET_ENABLE';
+    public const string DISABLE = 'BUDGET_DISABLE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if (!in_array($attribute, [self::MANAGE, self::BALANCE], true)) {
+        if (!in_array($attribute, [self::MANAGE, self::BALANCE, self::ENABLE, self::DISABLE], true)) {
             return false;
         }
 
@@ -33,6 +35,8 @@ class BudgetVoter extends Voter
         return match ($attribute) {
             self::MANAGE  => $this->canManage($budget),
             self::BALANCE => $this->canBalance($budget),
+            self::ENABLE  => $this->canEnable($budget),
+            self::DISABLE => $this->canDisable($budget),
             default       => throw new LogicException('This code should not be reached!'),
         };
     }
@@ -52,5 +56,15 @@ class BudgetVoter extends Voter
         }
 
         return $budget->hasNegativeCashFlow();
+    }
+
+    private function canEnable(Budget $budget): bool
+    {
+        return $this->canManage($budget) && !$budget->getEnable();
+    }
+
+    private function canDisable(Budget $budget): bool
+    {
+        return $this->canManage($budget) && $budget->getEnable();
     }
 }

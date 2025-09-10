@@ -34,6 +34,8 @@ class AccountController extends AbstractController
     {
         if ($account->isEnable()) {
             $this->denyAccessUnlessGranted(AccountVoter::DISABLE, $account);
+        } else {
+            $this->denyAccessUnlessGranted(AccountVoter::ENABLE, $account);
         }
 
         $this->accountManager->toggle($account);

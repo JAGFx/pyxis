@@ -6,6 +6,7 @@ use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\EntryOperator;
@@ -15,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/entries')]
 class EntryController extends AbstractController
@@ -40,6 +42,7 @@ class EntryController extends AbstractController
     }
 
     #[Route('/{id}/remove', name: 'front_entry_remove', methods: Request::METHOD_GET)]
+    #[IsGranted(EntryVoter::MANAGE, 'entry')]
     public function remove(Entry $entry, Request $request): Response
     {
         $entryId = $entry->getId();

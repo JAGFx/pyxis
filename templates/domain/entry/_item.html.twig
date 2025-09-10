@@ -44,8 +44,7 @@
         </twig:Liste:Item>
     </twig:Overlay:TriggerLongPress>
 
-    {#            TODO: Use voter instead#}
-    {% if not entry.isABalancing %}
+    {% if is_granted(constant('App\\Domain\\Entry\\Security\\EntryVoter::MANAGE'), entry) %}
         <twig:Overlay:Overlay id="{{ frameId }}">
             <twig:block name="sub_header">
                 <h3 class="text-xl text-center p-2">{{ entry.name }}</h3>
