@@ -3,6 +3,7 @@
 namespace App\Tests\Unit\Domain\Budget\Manager;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Budget\DTO\BudgetAccountBalance;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Entry\Entity\Entry;
@@ -65,7 +66,7 @@ class BudgetManagerTest extends TestCase
             ->expects(self::never())
             ->method('update');
 
-        $budgetManager->balancing($budget, new Account());
+        $budgetManager->balancing(new BudgetAccountBalance($budget, new Account()));
 
         self::assertCount(3, $budget->getEntries());
         self::assertSame($progress, $budget->getProgress());
@@ -96,7 +97,7 @@ class BudgetManagerTest extends TestCase
 
         self::assertSame($overflow, $budget->getCashFlow());
 
-        $budgetManager->balancing($budget, new Account());
+        $budgetManager->balancing(new BudgetAccountBalance($budget, new Account()));
 
         $balancingEntry = $budget->getEntries()
             ->filter(fn (Entry $entry): bool => str_starts_with($entry->getName(), 'Équilibrage'))
@@ -133,7 +134,7 @@ class BudgetManagerTest extends TestCase
 
         self::assertSame($overflow, $budget->getCashFlow());
 
-        $budgetManager->balancing($budget, new Account());
+        $budgetManager->balancing(new BudgetAccountBalance($budget, new Account()));
 
         $balancingEntry = $budget->getEntries()
             ->filter(fn (Entry $entry): bool => str_starts_with($entry->getName(), 'Équilibrage'))

@@ -3,6 +3,7 @@
 namespace App\Tests\Integration\Domain\Budget\Manager;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Budget\DTO\BudgetAccountBalance;
 use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Manager\BudgetManager;
@@ -87,7 +88,10 @@ class BudgetManagerTest extends KernelTestCase
         /** @var Account $account */
         $account = AccountFactory::first()->_real();
 
-        $this->budgetManager->balancing($budget, $account);
+        $this->budgetManager->balancing(new BudgetAccountBalance(
+            budget: $budget,
+            account: $account,
+        ));
         $newBalance = $this->entryManager->balance();
 
         self::assertSame($initialBalance->getTotalSpent() + $overflow, $newBalance->getTotalSpent());
