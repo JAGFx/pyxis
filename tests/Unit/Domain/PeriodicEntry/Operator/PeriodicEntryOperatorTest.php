@@ -8,7 +8,7 @@ use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
-use App\Domain\PeriodicEntry\Operator\PeriodicEntryOperator;
+use App\Shared\Operator\PeriodicEntryOperator;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 

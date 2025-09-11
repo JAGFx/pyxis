@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\PeriodicEntry\Operator;
+namespace App\Shared\Operator;
 
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryKindEnum;

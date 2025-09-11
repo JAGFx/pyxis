@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Tests\Unit\Domain\Budget\Operator;
+namespace App\Tests\Unit\Shared\Operator;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Operator\HistoryBudgetOperator;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
+use App\Shared\Operator\HistoryBudgetOperator;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 

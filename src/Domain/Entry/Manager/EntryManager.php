@@ -20,6 +20,7 @@ class EntryManager
 
     public function balance(?EntrySearchCommand $command = null): EntryBalance
     {
+        // TODO: Add test for this
         /** @var array<string, mixed> $data */
         $data = $this->entryRepository
             ->balance($command ?? new EntrySearchCommand())

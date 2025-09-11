@@ -40,6 +40,7 @@ class EntryRepository extends ServiceEntityRepository
 
     public function balance(EntrySearchCommand $command): QueryBuilder
     {
+        // TODO: Add test for this
         $queryBuilder = $this->createQueryBuilder('e')
             ->select('SUM(e.amount) as sum, b.id')
             ->leftJoin('e.budget', 'b')

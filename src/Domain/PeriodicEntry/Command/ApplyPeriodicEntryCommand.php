@@ -4,7 +4,7 @@ namespace App\Domain\PeriodicEntry\Command;
 
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
-use App\Domain\PeriodicEntry\Operator\PeriodicEntryOperator;
+use App\Shared\Operator\PeriodicEntryOperator;
 use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;

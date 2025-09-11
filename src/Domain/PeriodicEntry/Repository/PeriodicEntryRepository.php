@@ -62,6 +62,7 @@ class PeriodicEntryRepository extends ServiceEntityRepository
             ;
         }
 
+        // TODO: Add test for this
         if (EntryTypeEnum::TYPE_SPENT === $command->getEntryTypeEnum()) {
             $queryBuilder
                 ->andWhere('p.budgets IS EMPTY')
