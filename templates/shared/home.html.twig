@@ -1,8 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="bg-acrylic rounded p-3 mt-4 mb-2">
-        <turbo-frame id="budget_progress_form" src="{{ path('front_budget_filter') }}"></turbo-frame>
-        <turbo-frame id="budget_progress_list"></turbo-frame>
-    </div>
+    <twig:PageTitle :icon="icons.statistics" label="{{ 'statistic.title' | trans }}" />
+
+    <twig:BudgetBalanceProgress />
+    {#TODO: Clean up#}
+{#    <div class="bg-acrylic rounded p-3 mt-4 mb-2">#}
+{#        <turbo-frame id="budget_progress_form" src="{{ path('front_budget_filter') }}"></turbo-frame>#}
+{#        <turbo-frame id="budget_progress_list"></turbo-frame>#}
+{#    </div>#}
 {% endblock %}

@@ -2,8 +2,8 @@
 
 namespace App\Domain\Budget\Scheduler\Handler;
 
-use App\Domain\Budget\Operator\HistoryBudgetOperator;
 use App\Domain\Budget\Scheduler\Message\CreateAnnuallyHistoryBudgetMessage;
+use App\Shared\Operator\HistoryBudgetOperator;
 use App\Shared\Utils\YearRange;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;

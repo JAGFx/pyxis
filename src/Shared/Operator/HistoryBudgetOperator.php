@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Budget\Operator;
+namespace App\Shared\Operator;
 
 use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\DTO\HistoryBudgetSearchCommand;
@@ -8,26 +8,24 @@ use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Shared\Utils\YearRange;
-use Deprecated;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-class HistoryBudgetOperator
+readonly class HistoryBudgetOperator
 {
     public function __construct(
-        private readonly BudgetManager $budgetManager,
-        private readonly HistoryBudgetManager $historyBudgetManager,
-        private readonly LoggerInterface $logger,
+        private BudgetManager $budgetManager,
+        private HistoryBudgetManager $historyBudgetManager,
+        private LoggerInterface $logger,
     ) {
     }
 
-    #[Deprecated]
     public function generateHistoryBudgetsForYear(int $year): void
     {
         $budgetsValues = $this->budgetManager->getBudgetValuesObject(
             new BudgetSearchCommand()
-               ->setShowCredits(false)
-               ->setYear($year)
+                ->setShowCredits(false)
+                ->setYear($year)
         );
 
         foreach ($budgetsValues as $budgetValue) {
@@ -52,6 +50,7 @@ class HistoryBudgetOperator
                 ->setBudget($budget)
                 ->setAmount($budget->getAmount())
                 ->setDate(YearRange::firstDayOf($year))
+                ->setSpent($budgetValue->getProgress(true))
                 ->setRelativeProgress($budgetValue->getProgress(true))
             ;
 

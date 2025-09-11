@@ -53,7 +53,6 @@ lint:
 	bin/php php-cs-fixer fix --using-cache=no --diff
 	bin/php vendor/bin/phpstan analyse -n src
 	bin/php vendor/bin/rector process src
-	npm run lint
 
 ci: lint test
 

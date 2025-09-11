@@ -19,11 +19,8 @@ class BudgetBalanceSearchType extends AbstractType
 
         $builder
             ->add('year', ChoiceType::class, [
-                'label'    => 'Année',
-                'choices'  => array_combine(array_values($years), array_values($years)),
-                'row_attr' => [
-                    'class' => 'form-floating',
-                ],
+                'label'   => false,
+                'choices' => array_combine(array_values($years), array_values($years)),
             ]);
     }
 

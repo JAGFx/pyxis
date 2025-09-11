@@ -1,8 +1,4 @@
 App\Domain\Budget\Entity\Budget:
-#  budget_{1..5}:
-#    name: <name()>
-#    amount: <randomFloat(2, 15, 1500)>
-
   budget_disabled:
     name: Budget disabled
     amount: <randomFloat(2, 15, 1500)>
@@ -34,12 +30,14 @@ App\Domain\Budget\Entity\HistoryBudget:
     date: <dateTimeImmutable('first day previous year')>
     relativeProgress: 250
     amount: 200
+    spent: 500
     budget: '@budget_over'
 
   history_budget_full:
     date: <dateTimeImmutable('first day previous year')>
     relativeProgress: 100
     amount: 200
+    spent: 200
     budget: '@budget_full'
 
   history_budget_empty:

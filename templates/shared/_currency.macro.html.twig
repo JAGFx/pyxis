@@ -1,4 +1,4 @@
-{% macro amount(amount, color = 'true', disable = 'false') %}
+{% macro amount(amount, color = 'true', disable = 'false', forceSign = false) %}
     {% set class = (amount >= 0 )
         ? 'text-success'
         : 'text-secondary' %}
@@ -7,7 +7,7 @@
         : class
     %}
 
-    <span class="{{ color == 'true' ? class : '' }}">{{ amount | currency(false) }}</span>
+    <span class="{{ color == 'true' ? class : '' }}">{{ amount | currency(forceSign) }}</span>
 {% endmacro %}
 
 {% macro progress(amount, status, color = 'true') %}

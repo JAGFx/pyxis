@@ -25,6 +25,9 @@ class HistoryBudget
     #[Column]
     private ?float $relativeProgress = null;
 
+    #[Column(nullable: true)]
+    private ?float $spent = null;
+
     #[Column]
     private ?float $amount = null;
 
@@ -61,6 +64,18 @@ class HistoryBudget
     public function setRelativeProgress(?float $relativeProgress): HistoryBudget
     {
         $this->relativeProgress = $relativeProgress;
+
+        return $this;
+    }
+
+    public function getSpent(): ?float
+    {
+        return $this->spent;
+    }
+
+    public function setSpent(?float $spent): HistoryBudget
+    {
+        $this->spent = $spent;
 
         return $this;
     }

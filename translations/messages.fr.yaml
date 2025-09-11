@@ -40,6 +40,10 @@ budget:
     actions:
       see_cash_flows: Voir la répartition
       balance: Équilibrer
+  balance:
+    progress: Dépenses
+    amount: Montant
+    balance: Balance
 
 periodic_entry:
   title: Entrées périodiques
@@ -56,3 +60,6 @@ entry:
     type: Type
     account: Compte
     budget: Budget
+
+statistic:
+  title: Statistiques
