@@ -29,8 +29,6 @@ class AssignmentType extends AbstractType
 
                     return $repository->getAccountsQueryBuilder($accountSearchCommand);
                 },
-                'required'    => false,
-                'placeholder' => 'shared.default.placeholders.all',
             ])
             ->add('name', TextType::class)
             ->add('amount', MoneyType::class)

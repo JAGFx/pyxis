@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\When;
 
+// TODO: Add a suspend feature
 #[ORM\Entity(repositoryClass: PeriodicEntryRepository::class)]
 class PeriodicEntry
 {

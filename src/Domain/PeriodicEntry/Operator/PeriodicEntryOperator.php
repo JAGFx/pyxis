@@ -25,6 +25,11 @@ class PeriodicEntryOperator
      */
     public function addSplitForBudgets(PeriodicEntry $periodicEntry, ?DateTimeImmutable $date = null): void
     {
+        // TODO: Add test for it
+        if ($periodicEntry->getExecutionDate()->format('j') !== new DateTimeImmutable()->format('j')) {
+            throw new PeriodicEntrySplitBudgetException('The periodic entry is not scheduled for today.');
+        }
+
         $date ??= new DateTimeImmutable();
         $firstDateOfCurrentMonth = $date->modify('first day of this month 00:00:00');
         $lastDateOfCurrentMonth  = $date->modify('last day of this month 23:59:59');

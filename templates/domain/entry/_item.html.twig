@@ -13,32 +13,34 @@
             </div>
 
             <twig:block name="detail">
-                <div class="flex justify-start items-center space-x-2">
-                    <twig:Liste:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'entry.list.created_at' | trans }}">
-                        {{ entry.createdAt | format_datetime(timeFormat='short', locale=app.request.locale) }}
-                    </twig:Liste:EntityValueItem>
-                    {# TODO add flag here for balance & transfer #}
-                </div>
-                <div class="flex justify-start items-center space-x-2">
-                    {% if entry.isForecast %}
-                        <twig:Liste:EntityValueItem :icon="icons.forecast" label="{{ 'entry.list.type' | trans }}" color="secondary">
-                            {{ entry.type.humanize }}
+                <div class="space-y-1.5 mt-1">
+                    <div class="flex justify-start items-center space-x-2">
+                        <twig:Liste:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'entry.list.created_at' | trans }}">
+                            {{ entry.createdAt | format_datetime(timeFormat='short', locale=app.request.locale) }}
                         </twig:Liste:EntityValueItem>
-                    {% else %}
-                        <twig:Liste:EntityValueItem :icon="icons.spent" label="{{ 'entry.list.type' | trans }}" color="primary">
-                            {{ entry.type.humanize }}
-                        </twig:Liste:EntityValueItem>
-                    {% endif %}
+                        {# TODO add flag here for balance & transfer #}
+                    </div>
+                    <div class="flex justify-start items-center space-x-2">
+                        {% if entry.isForecast %}
+                            <twig:Liste:EntityValueItem :icon="icons.forecast" label="{{ 'entry.list.type' | trans }}" color="secondary">
+                                {{ entry.type.humanize }}
+                            </twig:Liste:EntityValueItem>
+                        {% else %}
+                            <twig:Liste:EntityValueItem :icon="icons.spent" label="{{ 'entry.list.type' | trans }}" color="primary">
+                                {{ entry.type.humanize }}
+                            </twig:Liste:EntityValueItem>
+                        {% endif %}
 
-                    <twig:Liste:EntityValueItem :icon="icons.account" label="{{ 'entry.list.account' | trans }}">
-                        {{ entry.account.name }}
-                    </twig:Liste:EntityValueItem>
-
-                    {% if entry.isForecast %}
-                        <twig:Liste:EntityValueItem :icon="icons.budget" label="{{ 'entry.list.budget' | trans }}">
-                            {{ entry.budget.name }}
+                        <twig:Liste:EntityValueItem :icon="icons.account" label="{{ 'entry.list.account' | trans }}">
+                            {{ entry.account.name }}
                         </twig:Liste:EntityValueItem>
-                    {% endif %}
+
+                        {% if entry.isForecast %}
+                            <twig:Liste:EntityValueItem :icon="icons.budget" label="{{ 'entry.list.budget' | trans }}">
+                                {{ entry.budget.name }}
+                            </twig:Liste:EntityValueItem>
+                        {% endif %}
+                    </div>
                 </div>
             </twig:block>
         </twig:Liste:Item>

@@ -51,6 +51,7 @@ periodic_entry:
     type: Type
     account: Compte
     execution_date: Date d'exécution
+    execution_date_value: Jour %dayInMonth%
     active_budget: Nombre de budget(s) actif
 
 entry:

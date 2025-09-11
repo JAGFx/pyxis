@@ -46,12 +46,17 @@ readonly class HistoryBudgetOperator
                 continue;
             }
 
+            $relativeProgress = 0.0 !== $budget->getAmount()
+                ? ($budgetValue->getProgress(true) / $budget->getAmount()) * 100
+                : 0.0;
+
+            // TODO: Add test for this
             $historyBudget = new HistoryBudget()
                 ->setBudget($budget)
                 ->setAmount($budget->getAmount())
                 ->setDate(YearRange::firstDayOf($year))
                 ->setSpent($budgetValue->getProgress(true))
-                ->setRelativeProgress($budgetValue->getProgress(true))
+                ->setRelativeProgress($relativeProgress)
             ;
 
             try {

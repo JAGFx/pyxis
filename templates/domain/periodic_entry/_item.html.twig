@@ -39,7 +39,7 @@
                     </twig:Liste:EntityValueItem>
 
                     <twig:Liste:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'periodic_entry.list.execution_date' | trans }}">
-                        {{ periodicEntry.executionDate | format_datetime(pattern='d MMM', locale=app.request.locale) }}
+                        {{ 'periodic_entry.list.execution_date_value' | trans({'%dayInMonth%' : periodicEntry.executionDate.format('j')}) }}
                     </twig:Liste:EntityValueItem>
 
                     {% if periodicEntry.isForecast %}
