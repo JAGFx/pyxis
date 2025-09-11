@@ -4,14 +4,11 @@ namespace App\Domain\Budget\Controller\Front;
 
 use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Form\BudgetBalanceSearchType;
 use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\BudgetOperator;
-use App\Shared\Utils\YearRange;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,37 +23,7 @@ class BudgetController extends AbstractController
     public function __construct(
         private readonly BudgetManager $budgetManager,
         private readonly BudgetOperator $budgetOperator,
-        private readonly HistoryBudgetManager $historyBudgetManager,
     ) {
-    }
-
-    #[Route('/progress-filter', name: 'front_budget_filter', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function filter(Request $request): Response
-    {
-        $budgetSearchCommand = new BudgetSearchCommand()
-            ->setShowCredits(false)
-            ->setYear(YearRange::current());
-
-        $years = $this->historyBudgetManager->getAvailableYears();
-        $form  = $this
-            ->createForm(BudgetBalanceSearchType::class, $budgetSearchCommand, [
-                'action' => $this->generateUrl('front_budget_filter'),
-                'years'  => $years,
-            ])
-            ->handleRequest($request);
-
-        $values = (YearRange::current() === $budgetSearchCommand->getYear())
-            ? $this->budgetManager->getBudgetValuesObject($budgetSearchCommand)
-            : $this->historyBudgetManager->getHistories($budgetSearchCommand);
-
-        return $this->renderTurboStream(
-            $request,
-            'domain/budget/turbo/progress_list.turbo.stream.html.twig',
-            [
-                'form'   => $form,
-                'values' => $values,
-            ]
-        );
     }
 
     #[Route('/{id}/toggle', name: 'front_budget_toggle', methods: [Request::METHOD_GET])]

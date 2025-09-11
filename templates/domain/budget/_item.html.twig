@@ -15,15 +15,13 @@
                     {% if budget.hasNegativeCashFlow %}
                         <twig:Tooltip title="{{ 'budget.list.negative_overflow' | trans }}" class="inline" placement="right">
                             {% import 'shared/_currency.macro.html.twig' as currency %}
-                                <small>{{ currency.amount(budget.cashFlow) }}</small>
-                            {# TODO: Add sign option on macro #}
+                                <small>{{ currency.amount(budget.cashFlow, 'true', 'false', true) }}</small>
                         </twig:Tooltip>
                     {% endif %}
                     {% if budget.hasPositiveCashFlow %}
                         <twig:Tooltip title="{{ 'budget.list.positive_overflow' | trans }}" class="inline" placement="right">
                             {% import 'shared/_currency.macro.html.twig' as currency %}
-                            <small>{{ currency.amount(budget.cashFlow) }}</small>
-                            {# TODO: Add sign option on macro #}
+                            <small>{{ currency.amount(budget.cashFlow, 'true', 'false', true) }}</small>
                         </twig:Tooltip>
                     {% endif %}
                     {% if budget.hasNegativeCashFlow or  budget.hasPositiveCashFlow%}

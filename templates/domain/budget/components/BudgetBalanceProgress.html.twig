@@ -17,38 +17,37 @@
                 {{ budgetBalanceProgress.name }}
 
                 <twig:block name="detail">
-                        <div class="flex-auto flex justify-between items-center space-x-2 mt-2 relative">
-                            {% import 'shared/_currency.macro.html.twig' as currency %}
-                            <twig:List:MetricOverviewItem
-                                title="{{ 'budget.balance.amount' | trans }}"
-                                value="{{ currency.amount(budgetBalanceProgress.amount, false) }}"
-                            />
-                            <twig:List:MetricOverviewItem
-                                title="{{ 'budget.balance.progress' | trans }}"
-                                value="{{ currency.amount(budgetBalanceProgress.progress, false) }}"
-                            />
-                            <twig:List:MetricOverviewItem
-                                title="{{ 'budget.balance.balance' | trans }}"
-                                value="{{ currency.amount(budgetBalanceProgress.balance, false, false, true) }}"
-                                color="{{not budgetBalanceProgress.over ? 'success' : 'secondary'}}"
-                            />
-                            <div class="flex-auto w-full">&nbsp;</div>
-                            <div class="absolute flex justify-center items-center pe-2 pb-2 right-0.5 -translate-y-3">
-                                {% set relativeProgress = min(
-                                    budgetBalanceProgress.trueRelativeProgress, 100
-                                ) %}
-                                {# TODO: Adapt color with status #}
-                                {# TODO: Create a twig component #}
-                                <div
-                                    role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ relativeProgress }}"
-                                    style="--p:{{ relativeProgress }}; --c: var(--color-primary);"
-                                    class="relative grid place-items-center h-16 w-16 rounded-full
-             bg-[conic-gradient(from_270deg,var(--c)_calc(var(--p)*1%),theme(color.black)_0)]">
-                                    <div class="absolute inset-[14%] rounded-full bg-gradient-purple2"></div>
-                                    <small class="relative text-white">{{ budgetBalanceProgress.trueRelativeProgress | number_format(0) }}%</small>
-                                </div>
+                    <div class="flex-auto flex justify-between items-center space-x-2 mt-2 relative">
+                        {% import 'shared/_currency.macro.html.twig' as currency %}
+                        <twig:List:MetricOverviewItem
+                            title="{{ 'budget.balance.amount' | trans }}"
+                            value="{{ currency.amount(budgetBalanceProgress.amount, false) }}"
+                        />
+                        <twig:List:MetricOverviewItem
+                            title="{{ 'budget.balance.progress' | trans }}"
+                            value="{{ currency.amount(budgetBalanceProgress.progress, false) }}"
+                        />
+                        <twig:List:MetricOverviewItem
+                            title="{{ 'budget.balance.balance' | trans }}"
+                            value="{{ currency.amount(budgetBalanceProgress.balance, false, false, true) }}"
+                            color="{{not budgetBalanceProgress.over ? 'success' : 'secondary'}}"
+                        />
+                        <div class="flex-auto w-full">&nbsp;</div>
+                        <div class="absolute flex justify-center items-center pe-2 pb-2 right-0.5 -translate-y-3">
+                            {% set relativeProgress = min(
+                                budgetBalanceProgress.trueRelativeProgress, 100
+                            ) %}
+                            {% set color =  budgetBalanceProgress.over ? '--color-secondary' : '--color-primary' %}
+                            <div
+                                role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ relativeProgress }}"
+                                style="--p:{{ relativeProgress }}; --c: var({{ color }});"
+                                class="relative grid place-items-center h-16 w-16 rounded-full
+         bg-[conic-gradient(from_270deg,var(--c)_calc(var(--p)*1%),theme(color.black)_0)]">
+                                <div class="absolute inset-[14%] rounded-full bg-gradient-purple2"></div>
+                                <small class="relative text-white">{{ budgetBalanceProgress.trueRelativeProgress | number_format(0) }}%</small>
                             </div>
                         </div>
+                    </div>
                 </twig:block>
             </twig:List:Item>
         </twig:List:List>
