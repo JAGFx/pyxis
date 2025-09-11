@@ -31,7 +31,7 @@ class EntryController extends AbstractController
     ) {
     }
 
-    #[Route('/', name: 'back_entries_list', methods: Request::METHOD_GET)]
+    #[Route(name: 'back_entries_list', methods: Request::METHOD_GET)]
     public function list(Request $request): Response
     {
         $entrySearchCommand = new EntrySearchCommand()

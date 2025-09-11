@@ -41,7 +41,7 @@ class AccountController extends AbstractController
         return $this->handleForm(ControllerActionEnum::CREATE, $request);
     }
 
-    #[Route('/{id}', name: 'back_account_edit', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route('/{id}/update', name: 'back_account_edit', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit(Request $request, Account $account): Response
     {
         return $this->handleForm(ControllerActionEnum::EDIT, $request, $account);
