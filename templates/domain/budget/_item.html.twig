@@ -2,7 +2,7 @@
 
 <turbo-frame id="{{ frameId }}">
     <twig:Overlay:TriggerLongPress target="{{ frameId }}">
-        <twig:Liste:Item>
+        <twig:List:Item>
             {% import 'shared/_currency.macro.html.twig' as currency %}
 
             <div class="flex justify-between items-center">
@@ -39,7 +39,7 @@
                 </div>
                 <turbo-frame id="budget_list_item__cash_flow_by_account_{{ budget.id }}"></turbo-frame>
             </twig:block>
-        </twig:Liste:Item>
+        </twig:List:Item>
     </twig:Overlay:TriggerLongPress>
 
     {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::MANAGE'), budget) %}

@@ -1,6 +1,6 @@
 <twig:PageTitle :icon="icons.entry" label="{{ 'entry.title' | trans }}" />
 
-<twig:Liste:Liste>
+<twig:List:List>
     {% for entry in entries %}
         {% include 'domain/entry/_item.html.twig' %}
     {% endfor %}
@@ -8,4 +8,4 @@
     <div class="mt-4 flex justify-center items-center">
         {{ knp_pagination_render(entries) }}
     </div>
-</twig:Liste:Liste>
+</twig:List:List>

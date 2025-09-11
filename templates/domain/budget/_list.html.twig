@@ -2,8 +2,8 @@
 
 <twig:PageTitle :icon="icons.budget" label="{{ 'budget.title' | trans }}" />
 
-<twig:Liste:Liste>
+<twig:List:List>
     {% for budget in budgets %}
         {% include 'domain/budget/_item.html.twig' %}
     {% endfor %}
-</twig:Liste:Liste>
+</twig:List:List>

@@ -2,8 +2,8 @@
 
 <twig:PageTitle :icon="icons.periodic_entry" label="{{ 'periodic_entry.title' | trans }}" />
 
-<twig:Liste:Liste>
+<twig:List:List>
     {% for periodicEntry in periodicEntries %}
         {% include 'domain/periodic_entry/_item.html.twig' %}
     {% endfor %}
-</twig:Liste:Liste>
+</twig:List:List>

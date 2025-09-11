@@ -2,7 +2,7 @@
 
 <turbo-frame id="periodic_entry_list_item_{{ periodicEntry.id }}">
     <twig:Overlay:TriggerLongPress target="{{ frameId }}">
-        <twig:Liste:Item>
+        <twig:List:Item>
             {% import 'shared/_currency.macro.html.twig' as currency %}
 
             <div class="flex justify-between items-center">
@@ -25,31 +25,31 @@
                 </twig:Tooltip>
                 <div class="space-x-2">
                     {% if periodicEntry.isForecast %}
-                        <twig:Liste:EntityValueItem :icon="icons.forecast" label="{{ 'periodic_entry.list.type' | trans }}" color="secondary">
+                        <twig:List:EntityValueItem :icon="icons.forecast" label="{{ 'periodic_entry.list.type' | trans }}" color="secondary">
                             {{ periodicEntry.type.humanize }}
-                        </twig:Liste:EntityValueItem>
+                        </twig:List:EntityValueItem>
                     {% else %}
-                        <twig:Liste:EntityValueItem :icon="icons.spent" label="{{ 'periodic_entry.list.type' | trans }}" color="primary">
+                        <twig:List:EntityValueItem :icon="icons.spent" label="{{ 'periodic_entry.list.type' | trans }}" color="primary">
                             {{ periodicEntry.type.humanize }}
-                        </twig:Liste:EntityValueItem>
+                        </twig:List:EntityValueItem>
                     {% endif %}
 
-                    <twig:Liste:EntityValueItem :icon="icons.account" label="{{ 'periodic_entry.list.account' | trans }}">
+                    <twig:List:EntityValueItem :icon="icons.account" label="{{ 'periodic_entry.list.account' | trans }}">
                         {{ periodicEntry.account.name }}
-                    </twig:Liste:EntityValueItem>
+                    </twig:List:EntityValueItem>
 
-                    <twig:Liste:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'periodic_entry.list.execution_date' | trans }}">
+                    <twig:List:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'periodic_entry.list.execution_date' | trans }}">
                         {{ 'periodic_entry.list.execution_date_value' | trans({'%dayInMonth%' : periodicEntry.executionDate.format('j')}) }}
-                    </twig:Liste:EntityValueItem>
+                    </twig:List:EntityValueItem>
 
                     {% if periodicEntry.isForecast %}
-                        <twig:Liste:EntityValueItem icon="fa-solid fa-coins" label="{{ 'periodic_entry.list.active_budget' | trans }}">
+                        <twig:List:EntityValueItem icon="fa-solid fa-coins" label="{{ 'periodic_entry.list.active_budget' | trans }}">
                             {{ periodicEntry.countBudgets }}
-                        </twig:Liste:EntityValueItem>
+                        </twig:List:EntityValueItem>
                     {% endif %}
                 </div>
             </twig:block>
-        </twig:Liste:Item>
+        </twig:List:Item>
     </twig:Overlay:TriggerLongPress>
 
     <twig:Overlay:Overlay id="{{ frameId }}">

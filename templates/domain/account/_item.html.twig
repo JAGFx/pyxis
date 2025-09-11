@@ -2,7 +2,7 @@
 
 <turbo-frame id="{{ frameId }}">
     <twig:Overlay:TriggerLongPress target="{{ frameId }}">
-        <twig:Liste:Item>
+        <twig:List:Item>
             <div class="flex justify-between items-center">
                 <span class="{{ account.enable ? '' : 'line-through text-muted' }}">{{ account.name }}</span>
                 <a data-turbo="true" href="{{ path('front_account_cash_flow', {'id': account.id}) }}" class="text-muted flex items-center">
@@ -16,7 +16,7 @@
             <twig:block name="detail">
                 <turbo-frame id="account_list_item__cash_flow_by_account_{{ account.id }}" class="space-y-2"></turbo-frame>
             </twig:block>
-        </twig:Liste:Item>
+        </twig:List:Item>
     </twig:Overlay:TriggerLongPress>
 
     <twig:Overlay:Overlay id="{{ frameId }}">

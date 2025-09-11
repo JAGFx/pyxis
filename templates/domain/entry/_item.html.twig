@@ -2,7 +2,7 @@
 
 <turbo-frame id="{{ frameId }}">
     <twig:Overlay:TriggerLongPress target="{{ frameId }}">
-        <twig:Liste:Item>
+        <twig:List:Item>
             {% import 'shared/_currency.macro.html.twig' as currency %}
 
             <div class="flex justify-between items-center">
@@ -15,35 +15,35 @@
             <twig:block name="detail">
                 <div class="space-y-1.5 mt-1">
                     <div class="flex justify-start items-center space-x-2">
-                        <twig:Liste:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'entry.list.created_at' | trans }}">
+                        <twig:List:EntityValueItem icon="fa-solid fa-calendar-day" label="{{ 'entry.list.created_at' | trans }}">
                             {{ entry.createdAt | format_datetime(timeFormat='short', locale=app.request.locale) }}
-                        </twig:Liste:EntityValueItem>
+                        </twig:List:EntityValueItem>
                         {# TODO add flag here for balance & transfer #}
                     </div>
                     <div class="flex justify-start items-center space-x-2">
                         {% if entry.isForecast %}
-                            <twig:Liste:EntityValueItem :icon="icons.forecast" label="{{ 'entry.list.type' | trans }}" color="secondary">
+                            <twig:List:EntityValueItem :icon="icons.forecast" label="{{ 'entry.list.type' | trans }}" color="secondary">
                                 {{ entry.type.humanize }}
-                            </twig:Liste:EntityValueItem>
+                            </twig:List:EntityValueItem>
                         {% else %}
-                            <twig:Liste:EntityValueItem :icon="icons.spent" label="{{ 'entry.list.type' | trans }}" color="primary">
+                            <twig:List:EntityValueItem :icon="icons.spent" label="{{ 'entry.list.type' | trans }}" color="primary">
                                 {{ entry.type.humanize }}
-                            </twig:Liste:EntityValueItem>
+                            </twig:List:EntityValueItem>
                         {% endif %}
 
-                        <twig:Liste:EntityValueItem :icon="icons.account" label="{{ 'entry.list.account' | trans }}">
+                        <twig:List:EntityValueItem :icon="icons.account" label="{{ 'entry.list.account' | trans }}">
                             {{ entry.account.name }}
-                        </twig:Liste:EntityValueItem>
+                        </twig:List:EntityValueItem>
 
                         {% if entry.isForecast %}
-                            <twig:Liste:EntityValueItem :icon="icons.budget" label="{{ 'entry.list.budget' | trans }}">
+                            <twig:List:EntityValueItem :icon="icons.budget" label="{{ 'entry.list.budget' | trans }}">
                                 {{ entry.budget.name }}
-                            </twig:Liste:EntityValueItem>
+                            </twig:List:EntityValueItem>
                         {% endif %}
                     </div>
                 </div>
             </twig:block>
-        </twig:Liste:Item>
+        </twig:List:Item>
     </twig:Overlay:TriggerLongPress>
 
     {% if is_granted(constant('App\\Domain\\Entry\\Security\\EntryVoter::MANAGE'), entry) %}

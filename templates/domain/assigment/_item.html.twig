@@ -2,7 +2,7 @@
 
 <turbo-frame id="{{ frameId }}">
     <twig:Overlay:TriggerLongPress target="{{ frameId }}">
-        <twig:Liste:Item>
+        <twig:List:Item>
             {% import 'shared/_currency.macro.html.twig' as currency %}
 
             <div class="flex justify-between items-center">
@@ -13,11 +13,11 @@
             </div>
 
             <twig:block name="detail">
-                <twig:Liste:EntityValueItem :icon="icons.account" label="{{ 'assignment.list.account' | trans }}">
+                <twig:List:EntityValueItem :icon="icons.account" label="{{ 'assignment.list.account' | trans }}">
                     {{ assignment.account.name }}
-                </twig:Liste:EntityValueItem>
+                </twig:List:EntityValueItem>
             </twig:block>
-        </twig:Liste:Item>
+        </twig:List:Item>
     </twig:Overlay:TriggerLongPress>
 
     <twig:Overlay:Overlay id="{{ frameId }}">
