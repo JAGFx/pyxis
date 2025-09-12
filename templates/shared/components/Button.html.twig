@@ -1,4 +1,4 @@
-{% set buttonCva = html_cva({
+{% set buttonCva = cva({
     'base': 'space-x-2 flex items-center',
     'variants': {
         'dir': {
@@ -11,7 +11,7 @@
     },
 }) %}
 
-{% set iconCva = html_cva({
+{% set iconCva = cva({
     'base': 'w-8 h-8 rounded-full p-2 flex justify-center items-center',
     'variants': {
         'color': {
@@ -45,7 +45,7 @@
     {% if label is not empty and dir == 'right' %}
         <span class="text-white">{{ label }}</span>
     {% endif %}
-    <div class="{{ iconCva.apply({color, size}, attributes.render('class')) | tailwind_merge }}">
+    <div class="{{ iconCva.apply({color, size}, attributes.render('class'))  }}">
         <i class="{{ icon }}"></i>
     </div>
     {% if label is not empty and dir == 'left' %}
