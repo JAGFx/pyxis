@@ -64,7 +64,6 @@ class BudgetRepository extends ServiceEntityRepository
 
     public function getBudgetValueObjectsQueryBuilder(BudgetSearchCommand $command): QueryBuilder
     {
-        // TODO: Add test for this
         $queryBuilder = $this->createQueryBuilder('b')
             ->select(
                 'NEW App\Domain\Budget\ValueObject\BudgetValueObject(b.id, b.name, b.amount, b.enable, SUM(e.amount))'

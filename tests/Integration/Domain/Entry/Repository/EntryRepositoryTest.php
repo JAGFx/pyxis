@@ -1,0 +1,266 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\Integration\Domain\Entry\Repository;
+
+use App\Domain\Account\Entity\Account;
+use App\Domain\Entry\DTO\EntrySearchCommand;
+use App\Domain\Entry\Entity\EntryTypeEnum;
+use App\Domain\Entry\Repository\EntryRepository;
+use App\Tests\Factory\AccountFactory;
+use App\Tests\Factory\BudgetFactory;
+use App\Tests\Factory\EntryFactory;
+use App\Tests\Integration\Shared\KernelTestCase;
+
+class EntryRepositoryTest extends KernelTestCase
+{
+    private const string ACCOUNT_1 = 'Account 1';
+    private const string ACCOUNT_2 = 'Account 2';
+    private const string BUDGET_1  = 'Budget 1';
+    private const string BUDGET_2  = 'Budget 2';
+    private EntryRepository $entryRepository;
+
+    protected function setUp(): void
+    {
+        self::bootKernel();
+        $container = static::getContainer();
+
+        $this->entryRepository = $container->get(EntryRepository::class);
+    }
+
+    private function populateDatabaseBalance(bool $withEntries = true): void
+    {
+        // Create accounts
+        $account1 = AccountFactory::new()->create(['name' => self::ACCOUNT_1]);
+        $account2 = AccountFactory::new()->create(['name' => self::ACCOUNT_2]);
+
+        // Create budgets
+        $budget1 = BudgetFactory::new()->create(['name' => self::BUDGET_1]);
+        $budget2 = BudgetFactory::new()->create(['name' => self::BUDGET_2]);
+
+        if (!$withEntries) {
+            return;
+        }
+
+        // Create entries for account1 and budget1 (sum = 150)
+        EntryFactory::new()->create([
+            'account' => $account1,
+            'budget'  => $budget1,
+            'amount'  => 100.0,
+            'name'    => 'Entry 1',
+        ]);
+        EntryFactory::new()->create([
+            'account' => $account1,
+            'budget'  => $budget1,
+            'amount'  => 50.0,
+            'name'    => 'Entry 2',
+        ]);
+
+        // Create entries for account1 and budget2 (sum = 75)
+        EntryFactory::new()->create([
+            'account' => $account1,
+            'budget'  => $budget2,
+            'amount'  => 75.0,
+            'name'    => 'Entry 3',
+        ]);
+
+        // Create entries for account2 and budget1 (sum = 200)
+        EntryFactory::new()->create([
+            'account' => $account2,
+            'budget'  => $budget1,
+            'amount'  => 200.0,
+            'name'    => 'Entry 4',
+        ]);
+
+        // Create entries for account2 and budget2 (sum = -50)
+        EntryFactory::new()->create([
+            'account' => $account2,
+            'budget'  => $budget2,
+            'amount'  => -50.0,
+            'name'    => 'Entry 5',
+        ]);
+
+        // Create entries with no budget (should be grouped under NULL budget id)
+        EntryFactory::new()->create([
+            'account' => $account1,
+            'budget'  => null,
+            'amount'  => 25.0,
+            'name'    => 'Entry 6',
+        ]);
+        EntryFactory::new()->create([
+            'account' => $account2,
+            'budget'  => null,
+            'amount'  => 30.0,
+            'name'    => 'Entry 7',
+        ]);
+    }
+
+    public function testBalanceWithoutAccountFilter(): void
+    {
+        $this->populateDatabaseBalance();
+
+        $command = new EntrySearchCommand();
+
+        $queryBuilder   = $this->entryRepository->balance($command);
+        $entriesBalance = $queryBuilder->getQuery()->getResult();
+
+        self::assertCount(3, $entriesBalance, 'Should return 3 groups (2 budgets + 1 null budget)');
+
+        // Sort results by budget id for predictable assertions
+        usort($entriesBalance, fn ($budgetBalance1, $budgetBalance2) => ($budgetBalance1['id'] ?? 0) <=> ($budgetBalance2['id'] ?? 0));
+
+        // Check null budget group (entries without budget)
+        self::assertNull($entriesBalance[0]['id'], 'First group should have null budget id');
+        self::assertEquals(55.0, $entriesBalance[0]['sum'], 'Sum for entries without budget should be 55 (25 + 30)');
+
+        // Check budget groups
+        self::assertNotNull($entriesBalance[1]['id'], 'Second group should have a budget id');
+        self::assertEquals(350.0, $entriesBalance[1]['sum'], 'Sum for first budget should be 350 (100 + 50 + 200)');
+
+        self::assertNotNull($entriesBalance[2]['id'], 'Third group should have a budget id');
+        self::assertEquals(25.0, $entriesBalance[2]['sum'], 'Sum for second budget should be 25 (75 + (-50))');
+    }
+
+    public function testBalanceWithAccountFilter(): void
+    {
+        $this->populateDatabaseBalance();
+
+        $account1 = AccountFactory::repository()->findOneBy(['name' => self::ACCOUNT_1])->_real();
+
+        $command = new EntrySearchCommand(account: $account1);
+
+        $queryBuilder   = $this->entryRepository->balance($command);
+        $entriesBalance = $queryBuilder->getQuery()->getResult();
+
+        self::assertCount(3, $entriesBalance, 'Should return 3 groups for account 1');
+
+        // Sort results by budget id for predictable assertions
+        usort($entriesBalance, fn ($budgetBalance1, $budgetBalance2) => ($budgetBalance1['id'] ?? 0) <=> ($budgetBalance2['id'] ?? 0));
+
+        // Check null budget group (entries without budget for account1)
+        self::assertNull($entriesBalance[0]['id'], 'First group should have null budget id');
+        self::assertEquals(25.0, $entriesBalance[0]['sum'], 'Sum for account1 entries without budget should be 25');
+
+        // Check budget groups for account1
+        self::assertNotNull($entriesBalance[1]['id'], 'Second group should have a budget id');
+        self::assertEquals(150.0, $entriesBalance[1]['sum'], 'Sum for account1 first budget should be 150 (100 + 50)');
+
+        self::assertNotNull($entriesBalance[2]['id'], 'Third group should have a budget id');
+        self::assertEquals(75.0, $entriesBalance[2]['sum'], 'Sum for account1 second budget should be 75');
+    }
+
+    public function testBalanceWithNonExistentAccount(): void
+    {
+        $this->populateDatabaseBalance();
+
+        /** @var Account $nonExistentAccount */
+        $nonExistentAccount = AccountFactory::new()->create(['name' => 'Non Existent'])->_real();
+
+        $command = new EntrySearchCommand(account: $nonExistentAccount);
+
+        $queryBuilder   = $this->entryRepository->balance($command);
+        $entriesBalance = $queryBuilder->getQuery()->getResult();
+
+        self::assertEmpty($entriesBalance, 'Should return empty array for account with no entries');
+    }
+
+    public function testBalanceWithNoEntries(): void
+    {
+        $this->populateDatabaseBalance(false);
+
+        // Clear all entries
+        $command = new EntrySearchCommand();
+
+        $queryBuilder   = $this->entryRepository->balance($command);
+        $entriesBalance = $queryBuilder->getQuery()->getResult();
+
+        self::assertEmpty($entriesBalance, 'Should return empty array when no entries exist');
+    }
+
+    private function populateDatabaseFiter(): void
+    {
+        $account = AccountFactory::new()->create(['name' => self::ACCOUNT_1]);
+        $budget  = BudgetFactory::new()->create(['name' => self::BUDGET_1]);
+
+        // Create entries WITH budget (TYPE_FORECAST)
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => $budget,
+            'amount'  => 100.0,
+            'name'    => 'Forecast Entry 1',
+        ]);
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => $budget,
+            'amount'  => 200.0,
+            'name'    => 'Forecast Entry 2',
+        ]);
+
+        // Create entries WITHOUT budget (TYPE_SPENT)
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => null,
+            'amount'  => 50.0,
+            'name'    => 'Spent Entry 1',
+        ]);
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => null,
+            'amount'  => 75.0,
+            'name'    => 'Spent Entry 2',
+        ]);
+    }
+
+    public function testGetTypeFilterWithTypeSpent(): void
+    {
+        $this->populateDatabaseFiter();
+
+        $command = new EntrySearchCommand(type: EntryTypeEnum::TYPE_SPENT);
+
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($command);
+        $entries      = $queryBuilder->getQuery()->getResult();
+
+        self::assertCount(2, $entries, 'Should return only entries with null budget for TYPE_SPENT');
+
+        foreach ($entries as $entry) {
+            self::assertNull($entry->getBudget(), 'All entries should have null budget for TYPE_SPENT');
+            self::assertStringContainsString('Spent', $entry->getName(), 'Entry name should contain "Spent"');
+        }
+    }
+
+    public function testGetTypeFilterWithTypeForecast(): void
+    {
+        $this->populateDatabaseFiter();
+
+        $command = new EntrySearchCommand(type: EntryTypeEnum::TYPE_FORECAST);
+
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($command);
+        $entries      = $queryBuilder->getQuery()->getResult();
+
+        $this->assertCount(2, $entries, 'Should return only entries with budget for TYPE_FORECAST');
+
+        foreach ($entries as $entry) {
+            $this->assertNotNull($entry->getBudget(), 'All entries should have a budget for TYPE_FORECAST');
+            $this->assertStringContainsString('Forecast', $entry->getName(), 'Entry name should contain "Forecast"');
+        }
+    }
+
+    public function testGetTypeFilterWithNullType(): void
+    {
+        $this->populateDatabaseFiter();
+
+        $command = new EntrySearchCommand(type: null);
+
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($command);
+        $entries      = $queryBuilder->getQuery()->getResult();
+
+        $this->assertCount(4, $entries, 'Should return all entries when type is null');
+
+        $entriesWithBudget    = array_filter($entries, fn ($entry) => null !== $entry->getBudget());
+        $entriesWithoutBudget = array_filter($entries, fn ($entry) => null === $entry->getBudget());
+
+        $this->assertCount(2, $entriesWithBudget, 'Should have 2 entries with budget');
+        $this->assertCount(2, $entriesWithoutBudget, 'Should have 2 entries without budget');
+    }
+}

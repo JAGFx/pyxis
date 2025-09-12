@@ -80,7 +80,6 @@ readonly class BudgetManager
 
     public function balancing(BudgetAccountBalance $budgetAccountBalance): void
     {
-        // TODO: Add test for this
         $budget  = $budgetAccountBalance->getBudget();
         $account = $budgetAccountBalance->getAccount();
 

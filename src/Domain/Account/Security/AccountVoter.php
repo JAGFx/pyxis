@@ -25,6 +25,7 @@ class AccountVoter extends Voter
         return $subject instanceof Account;
     }
 
+    // TODO: Add test for it
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var Account $account */

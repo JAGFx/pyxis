@@ -7,10 +7,10 @@ use App\Domain\Entry\Entity\EntryKindEnum;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\DTO\Transfer;
 
-class HomeOperator
+readonly class HomeOperator
 {
     public function __construct(
-        private readonly EntryManager $entryManager,
+        private EntryManager $entryManager,
     ) {
     }
 

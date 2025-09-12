@@ -33,6 +33,7 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
 
         $amountBalance = $this->entryOperator->getAmountBalance($value->getAccount());
 
+        // TODO: Add test for it
         if ($value->getAmount() > $amountBalance->getTotal()) {
             $this->context
                 ->buildViolation($constraint->message)

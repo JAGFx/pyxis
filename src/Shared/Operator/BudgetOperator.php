@@ -27,7 +27,6 @@ readonly class BudgetOperator
      */
     public function getBudgetBalanceProgresses(BudgetSearchCommand $command): array
     {
-        // TODO: Add test for this
         if (YearRange::current() === $command->getYear()) {
             $budgetsVO = $this->budgetManager->getBudgetValuesObject($command);
 

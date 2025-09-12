@@ -4,7 +4,7 @@ namespace App\Tests\Integration\Domain\Budget\Repository;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\DTO\BudgetSearchCommand;
-use App\Domain\Budget\Manager\BudgetManager;
+use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Shared\Utils\YearRange;
 use App\Tests\Factory\AccountFactory;
@@ -18,8 +18,8 @@ use function Zenstruck\Foundry\faker;
 
 class BudgetRepositoryTest extends KernelTestCase
 {
-    private const BUDGET_NAME = 'Budget spent Current year';
-    private BudgetManager $budgetManager;
+    private const string BUDGET_NAME = 'Budget spent Current year';
+    private BudgetRepository $budgetRepository;
 
     /**
      * @throws Exception
@@ -29,7 +29,7 @@ class BudgetRepositoryTest extends KernelTestCase
         self::bootKernel();
         $container = static::getContainer();
 
-        $this->budgetManager = $container->get(BudgetManager::class);
+        $this->budgetRepository = $container->get(BudgetRepository::class);
 
         $this->populateDatabase();
     }
@@ -76,7 +76,11 @@ class BudgetRepositoryTest extends KernelTestCase
             ->setYear($data['year'] ?? null)
             ->setShowCredits($data['showCredit'] ?? null);
 
-        $budgetsVos = $this->budgetManager->getBudgetValuesObject($command);
+        $budgetsVos = $this->budgetRepository
+            ->getBudgetValueObjectsQueryBuilder($command)
+            ->getQuery()
+            ->getResult()
+        ;
 
         self::assertCount(1, $budgetsVos);
 

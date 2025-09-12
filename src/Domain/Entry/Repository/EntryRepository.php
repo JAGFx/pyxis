@@ -40,7 +40,6 @@ class EntryRepository extends ServiceEntityRepository
 
     public function balance(EntrySearchCommand $command): QueryBuilder
     {
-        // TODO: Add test for this
         $queryBuilder = $this->createQueryBuilder('e')
             ->select('SUM(e.amount) as sum, b.id')
             ->leftJoin('e.budget', 'b')
@@ -74,7 +73,6 @@ class EntryRepository extends ServiceEntityRepository
                 ->setParameter('name', '%' . $command->getName() . '%');
         }
 
-        // TODO: Add test for ir
         if (EntryTypeEnum::TYPE_SPENT === $command->getType()) {
             $queryBuilder
                 ->andWhere('e.budget IS NULL');
@@ -100,7 +98,7 @@ class EntryRepository extends ServiceEntityRepository
                 $queryBuilder->orderBy('e.createdAt', $command->getOrderDirection()->value);
                 break;
             default:
-                $queryBuilder->orderBy('a.id', $command->getOrderDirection()->value);
+                $queryBuilder->orderBy('e.id', $command->getOrderDirection()->value);
                 break;
         }
 

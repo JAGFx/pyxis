@@ -33,7 +33,6 @@ class AccountRepository extends ServiceEntityRepository
                 ->setParameter('name', '%' . $command->getName() . '%');
         }
 
-        // TODO: Add test for this
         if (true === $command->hasPositiveOrNegativeBalance()) {
             $queryBuilder = $queryBuilder
                 ->leftJoin('a.entries', 'e');

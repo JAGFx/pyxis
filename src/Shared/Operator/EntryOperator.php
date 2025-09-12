@@ -11,11 +11,11 @@ use App\Shared\ValueObject\AmountBalance;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 
-class EntryOperator
+readonly class EntryOperator
 {
     public function __construct(
-        private readonly EntryManager $entryManager,
-        private readonly AssignmentManager $assignmentManager,
+        private EntryManager $entryManager,
+        private AssignmentManager $assignmentManager,
     ) {
     }
 

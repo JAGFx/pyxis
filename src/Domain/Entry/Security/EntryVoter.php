@@ -24,6 +24,7 @@ class EntryVoter extends Voter
         return $subject instanceof Entry;
     }
 
+    // TODO: add test for it
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
         /** @var Entry $entry */

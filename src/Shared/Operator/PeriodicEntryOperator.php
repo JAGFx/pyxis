@@ -11,11 +11,11 @@ use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
 use DateMalformedStringException;
 use DateTimeImmutable;
 
-class PeriodicEntryOperator
+readonly class PeriodicEntryOperator
 {
     public function __construct(
-        private readonly EntryManager $entryManager,
-        private readonly PeriodicEntryManager $periodicEntryManager,
+        private EntryManager $entryManager,
+        private PeriodicEntryManager $periodicEntryManager,
     ) {
     }
 
@@ -25,7 +25,6 @@ class PeriodicEntryOperator
      */
     public function addSplitForBudgets(PeriodicEntry $periodicEntry, ?DateTimeImmutable $date = null): void
     {
-        // TODO: Add test for it
         if ($periodicEntry->getExecutionDate()->format('j') !== new DateTimeImmutable()->format('j')) {
             throw new PeriodicEntrySplitBudgetException('The periodic entry is not scheduled for today.');
         }
@@ -48,6 +47,7 @@ class PeriodicEntryOperator
                 ->setName($periodicEntry->getName())
                 ->setAccount($periodicEntry->getAccount())
             ;
+
             $this->entryManager->create($entry);
         } else {
             foreach ($periodicEntry->getBudgets() as $budget) {

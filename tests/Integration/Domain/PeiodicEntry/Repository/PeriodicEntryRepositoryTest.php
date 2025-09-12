@@ -5,7 +5,7 @@ namespace App\Tests\Integration\Domain\PeiodicEntry\Repository;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\DTO\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
+use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
@@ -13,14 +13,14 @@ use App\Tests\Integration\Shared\KernelTestCase;
 
 class PeriodicEntryRepositoryTest extends KernelTestCase
 {
-    private PeriodicEntryManager $periodicEntryManager;
+    private PeriodicEntryRepository $periodicEntryRepository;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $container = static::getContainer();
 
-        $this->periodicEntryManager = $container->get(PeriodicEntryManager::class);
+        $this->periodicEntryRepository = $container->get(PeriodicEntryRepository::class);
 
         $this->populateDatabase();
     }
@@ -48,7 +48,11 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
 
     public function testGetPeriodicEntriesVosIsRightClass(): void
     {
-        $periodicEntries = $this->periodicEntryManager->getPeriodicEntries();
+        $periodicEntries = $this->periodicEntryRepository
+            ->getPeriodicEntriesQueryBuilder()
+            ->getQuery()
+            ->getResult()
+        ;
 
         foreach ($periodicEntries as $periodicEntry) {
             self::assertInstanceOf(PeriodicEntry::class, $periodicEntry);
@@ -57,9 +61,13 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
 
     public function testPeriodicEntriesSpentIsRight(): void
     {
-        $periodicEntriesSpent = $this->periodicEntryManager->getPeriodicEntries(
-            new PeriodicEntrySearchCommand(EntryTypeEnum::TYPE_SPENT)
-        );
+        $periodicEntriesSpent = $this->periodicEntryRepository
+            ->getPeriodicEntriesQueryBuilder(
+                new PeriodicEntrySearchCommand(EntryTypeEnum::TYPE_SPENT)
+            )
+            ->getQuery()
+            ->getResult()
+        ;
 
         self::assertCount(1, $periodicEntriesSpent);
 
@@ -73,9 +81,13 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
 
     public function testPeriodicEntriesForecastIsRight(): void
     {
-        $periodicEntriesSpent = $this->periodicEntryManager->getPeriodicEntries(
-            new PeriodicEntrySearchCommand(EntryTypeEnum::TYPE_FORECAST)
-        );
+        $periodicEntriesSpent = $this->periodicEntryRepository
+            ->getPeriodicEntriesQueryBuilder(
+                new PeriodicEntrySearchCommand(EntryTypeEnum::TYPE_FORECAST)
+            )
+            ->getQuery()
+            ->getResult()
+        ;
 
         self::assertCount(1, $periodicEntriesSpent);
 
