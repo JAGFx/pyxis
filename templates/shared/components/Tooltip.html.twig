@@ -1,4 +1,4 @@
-{% set tooltipCva = cva({
+{% set tooltipCva = html_cva({
     'base': 'absolute invisible flex place-content-center px-2 py-0.5 text-white bg-gradient-primary rounded-3xl opacity-0 tooltip',
     'variants': {
         'placement': {
@@ -13,7 +13,7 @@
     },
 }) %}
 
-{% set dotCva = cva({
+{% set dotCva = html_cva({
     'base': 'bg-gradient-primary w-1.5 h-1.5 absolute rounded-full',
     'variants': {
         'placement': {
