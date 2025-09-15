@@ -38,10 +38,10 @@ class BudgetRepository extends ServiceEntityRepository
                 ->setParameter('name', '%' . $command->getName() . '%');
         }
 
-        if (!is_null($command->getEnable())) {
+        if (!is_null($command->isEnabled())) {
             $queryBuilder
-                ->andWhere('b.enable = :enable')
-                ->setParameter('enable', $command->getEnable())
+                ->andWhere('b.enabled = :enable')
+                ->setParameter('enable', $command->isEnabled())
             ;
         }
 
@@ -61,7 +61,7 @@ class BudgetRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('b')
             ->select(
-                'NEW App\Domain\Budget\ValueObject\BudgetValueObject(b.id, b.name, b.amount, b.enable, SUM(e.amount))'
+                'NEW App\Domain\Budget\ValueObject\BudgetValueObject(b.id, b.name, b.amount, b.enabled, SUM(e.amount))'
             )
             ->join('b.entries', 'e')
             ->groupBy('b.id');

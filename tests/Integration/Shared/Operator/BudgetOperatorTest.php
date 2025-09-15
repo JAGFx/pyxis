@@ -40,9 +40,9 @@ class BudgetOperatorTest extends KernelTestCase
     public function testGetBudgetBalanceProgressesWithNoBudgetExpensesNorHistory(): void
     {
         BudgetFactory::new()->create([
-            'name'   => 'Budget Without Expenses',
-            'amount' => 500.0,
-            'enable' => true,
+            'name'    => 'Budget Without Expenses',
+            'amount'  => 500.0,
+            'enabled' => true,
         ]);
 
         $budgetSearchCommand = new BudgetSearchCommand()
@@ -62,9 +62,9 @@ class BudgetOperatorTest extends KernelTestCase
         $account = AccountFactory::new()->create(['name' => self::ACCOUNT_1]);
 
         $budget = BudgetFactory::new()->create([
-            'name'   => 'Current Year Budget',
-            'amount' => 800.0,
-            'enable' => true,
+            'name'    => 'Current Year Budget',
+            'amount'  => 800.0,
+            'enabled' => true,
         ]);
         $testYear = YearRange::current();
 
@@ -108,9 +108,9 @@ class BudgetOperatorTest extends KernelTestCase
         $account = AccountFactory::new()->create(['name' => self::ACCOUNT_1]);
 
         $budget = BudgetFactory::new()->create([
-            'name'   => 'Complete Budget',
-            'amount' => 1200.0,
-            'enable' => true,
+            'name'    => 'Complete Budget',
+            'amount'  => 1200.0,
+            'enabled' => true,
         ]);
 
         $testYear = YearRange::current();
@@ -197,9 +197,9 @@ class BudgetOperatorTest extends KernelTestCase
     public function testGetBudgetBalanceProgressesNoCurrentExpensesButHistoricalData(): void
     {
         $budget = BudgetFactory::new()->create([
-            'name'   => 'Historical Only Budget',
-            'amount' => 600.0,
-            'enable' => true,
+            'name'    => 'Historical Only Budget',
+            'amount'  => 600.0,
+            'enabled' => true,
         ]);
 
         // Create historical data only
@@ -266,9 +266,9 @@ class BudgetOperatorTest extends KernelTestCase
 
         // Budget 1: Current expenses only (no history)
         $budget1 = BudgetFactory::new()->create([
-            'name'   => 'Current Only Budget',
-            'amount' => 400.0,
-            'enable' => true,
+            'name'    => 'Current Only Budget',
+            'amount'  => 400.0,
+            'enabled' => true,
         ]);
 
         $testYear = YearRange::current();
@@ -283,9 +283,9 @@ class BudgetOperatorTest extends KernelTestCase
 
         // Budget 2: No current expenses, only history
         $budget2 = BudgetFactory::new()->create([
-            'name'   => 'Historical Only Budget 2',
-            'amount' => 300.0,
-            'enable' => true,
+            'name'    => 'Historical Only Budget 2',
+            'amount'  => 300.0,
+            'enabled' => true,
         ]);
 
         HistoryBudgetFactory::new()->create([
@@ -298,9 +298,9 @@ class BudgetOperatorTest extends KernelTestCase
 
         // Budget 3: Both current expenses AND history
         $budget3 = BudgetFactory::new()->create([
-            'name'   => 'Mixed Budget',
-            'amount' => 500.0,
-            'enable' => true,
+            'name'    => 'Mixed Budget',
+            'amount'  => 500.0,
+            'enabled' => true,
         ]);
 
         EntryFactory::new()->create([

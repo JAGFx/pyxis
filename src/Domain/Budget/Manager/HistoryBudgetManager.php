@@ -8,11 +8,11 @@ use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class HistoryBudgetManager
+readonly class HistoryBudgetManager
 {
     public function __construct(
-        private readonly HistoryBudgetRepository $repository,
-        private readonly EntityManagerInterface $entityManager,
+        private HistoryBudgetRepository $repository,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

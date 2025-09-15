@@ -44,9 +44,9 @@ class PeriodicEntryTest extends TestCase
         $periodicEntry = new PeriodicEntry()
             ->setAmount(2500)
             ->setBudgets(new ArrayCollection([
-                new Budget()->setEnable(true)->setAmount(100.0),
-                new Budget()->setEnable(true)->setAmount(200.0),
-                new Budget()->setEnable(true)->setAmount(300.0),
+                new Budget()->setEnabled(true)->setAmount(100.0),
+                new Budget()->setEnabled(true)->setAmount(200.0),
+                new Budget()->setEnabled(true)->setAmount(300.0),
             ]))
         ;
 
@@ -58,9 +58,9 @@ class PeriodicEntryTest extends TestCase
         $periodicEntry = new PeriodicEntry()
             ->setAmount(2500)
             ->setBudgets(new ArrayCollection([
-                new Budget()->setEnable(true)->setAmount(100.0),
-                new Budget()->setEnable(true)->setAmount(200.0),
-                new Budget()->setEnable(false)->setAmount(300.0),
+                new Budget()->setEnabled(true)->setAmount(100.0),
+                new Budget()->setEnabled(true)->setAmount(200.0),
+                new Budget()->setEnabled(false)->setAmount(300.0),
             ]))
         ;
 
@@ -69,13 +69,13 @@ class PeriodicEntryTest extends TestCase
 
     public function testGetAmountForBudgetEnabled(): void
     {
-        $targetBudget = new Budget()->setEnable(true)->setAmount(1200.0);
+        $targetBudget = new Budget()->setEnabled(true)->setAmount(1200.0);
 
         $periodicEntry = new PeriodicEntry()
             ->setAmount(2500)
             ->setBudgets(new ArrayCollection([
-                new Budget()->setEnable(true)->setAmount(100.0),
-                new Budget()->setEnable(true)->setAmount(200.0),
+                new Budget()->setEnabled(true)->setAmount(100.0),
+                new Budget()->setEnabled(true)->setAmount(200.0),
                 $targetBudget,
             ]))
         ;
@@ -85,13 +85,13 @@ class PeriodicEntryTest extends TestCase
 
     public function testGetAmountForBudgetDisabledMustReturnZero(): void
     {
-        $targetBudget = new Budget()->setEnable(false)->setAmount(300.0);
+        $targetBudget = new Budget()->setEnabled(false)->setAmount(300.0);
 
         $periodicEntry = new PeriodicEntry()
             ->setAmount(2500)
             ->setBudgets(new ArrayCollection([
-                new Budget()->setEnable(true)->setAmount(100.0),
-                new Budget()->setEnable(true)->setAmount(200.0),
+                new Budget()->setEnabled(true)->setAmount(100.0),
+                new Budget()->setEnabled(true)->setAmount(200.0),
                 $targetBudget,
             ]))
         ;

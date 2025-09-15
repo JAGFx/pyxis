@@ -3,6 +3,7 @@
 namespace App\Tests\Integration\Shared\Operator;
 
 use App\Domain\Entry\Entity\EntryKindEnum;
+use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Shared\Operator\PeriodicEntryOperator;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
@@ -62,24 +63,24 @@ class PeriodicEntryOperatorTest extends KernelTestCase
         $account = AccountFactory::new()->create(['name' => 'Test Provision Account']);
 
         $budget1 = BudgetFactory::new()->create([
-            'name'   => 'Food',
-            'amount' => 600.0, // 50€/month
-            'enable' => true,
+            'name'    => 'Food',
+            'amount'  => 600.0, // 50€/month
+            'enabled' => true,
         ]);
 
         $budget2 = BudgetFactory::new()->create([
-            'name'   => 'Transportation',
-            'amount' => 360.0, // 30€/month
-            'enable' => true,
+            'name'    => 'Transportation',
+            'amount'  => 360.0, // 30€/month
+            'enabled' => true,
         ]);
 
         $budget3 = BudgetFactory::new()->create([
-            'name'   => 'Entertainment',
-            'amount' => 240.0, // 20€/month
-            'enable' => true,
+            'name'    => 'Entertainment',
+            'amount'  => 240.0, // 20€/month
+            'enabled' => true,
         ]);
 
-        /** @var PeriodicEntryFactory $periodicEntryFactory */
+        /** @var PeriodicEntry $periodicEntry */
         $periodicEntry = PeriodicEntryFactory::new()->create([
             'name'              => 'Monthly provisions',
             'amount'            => null, // No amount = FORECAST type
@@ -123,30 +124,30 @@ class PeriodicEntryOperatorTest extends KernelTestCase
         $account = AccountFactory::new()->create(['name' => 'Test Mixed Account']);
 
         $activeBudget1 = BudgetFactory::new()->create([
-            'name'   => 'Active Budget 1',
-            'amount' => 480.0, // 40€/month
-            'enable' => true,
+            'name'    => 'Active Budget 1',
+            'amount'  => 480.0, // 40€/month
+            'enabled' => true,
         ]);
 
         $activeBudget2 = BudgetFactory::new()->create([
-            'name'   => 'Active Budget 2',
-            'amount' => 600.0, // 50€/month
-            'enable' => true,
+            'name'    => 'Active Budget 2',
+            'amount'  => 600.0, // 50€/month
+            'enabled' => true,
         ]);
 
         $inactiveBudget = BudgetFactory::new()->create([
-            'name'   => 'Inactive Budget',
-            'amount' => 360.0,
-            'enable' => false, // Disabled budget
+            'name'    => 'Inactive Budget',
+            'amount'  => 360.0,
+            'enabled' => false, // Disabled budget
         ]);
 
         $zeroBudget = BudgetFactory::new()->create([
-            'name'   => 'Zero Budget',
-            'amount' => 0.0, // Zero amount
-            'enable' => true,
+            'name'    => 'Zero Budget',
+            'amount'  => 0.0, // Zero amount
+            'enabled' => true,
         ]);
 
-        /** @var PeriodicEntryFactory $periodicEntryFactory */
+        /** @var PeriodicEntry $periodicEntry */
         $periodicEntry = PeriodicEntryFactory::new()->create([
             'name'              => 'Selective provisions',
             'amount'            => null,

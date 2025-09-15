@@ -34,7 +34,7 @@ readonly class BudgetManager
 
     public function toggle(Budget $budget, bool $flush = true): void
     {
-        $budget->setEnable(!$budget->getEnable());
+        $budget->setEnabled(!$budget->isEnabled());
 
         $this->update($flush);
     }

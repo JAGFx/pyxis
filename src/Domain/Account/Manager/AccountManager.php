@@ -7,11 +7,11 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Repository\AccountRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class AccountManager
+readonly class AccountManager
 {
     public function __construct(
-        private readonly AccountRepository $repository,
-        private readonly EntityManagerInterface $entityManager,
+        private AccountRepository $repository,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -32,7 +32,7 @@ class AccountManager
 
     public function toggle(Account $account): void
     {
-        $account->setEnable(!$account->isEnable());
+        $account->setEnabled(!$account->isEnabled());
 
         $this->update();
     }

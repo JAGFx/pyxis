@@ -5,6 +5,8 @@ namespace App\Domain\Entry\Entity;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Repository\EntryRepository;
+use App\Shared\Entity\CollectionManagerTrait;
+use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
@@ -22,15 +24,13 @@ use Symfony\Component\Validator\Constraints\NotNull;
 class Entry
 {
     use TimestampableTrait;
+    use NameableTrait;
+    use CollectionManagerTrait;
 
     #[Id]
     #[GeneratedValue]
     #[Column(type: Types::INTEGER)]
     private ?int $id = null;
-
-    #[Column]
-    #[NotBlank]
-    private string $name;
 
     #[Column(type: Types::FLOAT)]
     #[NotBlank]
@@ -60,18 +60,6 @@ class Entry
         return $this->id;
     }
 
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
     public function getAmount(): ?float
     {
         return $this->amount;
@@ -90,8 +78,6 @@ class Entry
             ? EntryTypeEnum::TYPE_FORECAST
             : EntryTypeEnum::TYPE_SPENT;
     }
-
-    // ----
 
     public function isForecast(): bool
     {

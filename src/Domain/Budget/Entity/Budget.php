@@ -7,6 +7,8 @@ use App\Domain\Budget\Model\BudgetProgressTrait;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
+use App\Shared\Entity\CollectionManagerTrait;
+use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use App\Shared\Utils\YearRange;
 use DateTimeImmutable;
@@ -21,14 +23,13 @@ class Budget
 {
     use BudgetProgressTrait;
     use TimestampableTrait;
+    use NameableTrait;
+    use CollectionManagerTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
-
-    #[ORM\Column]
-    private string $name;
 
     #[ORM\Column(type: Types::FLOAT)]
     #[GreaterThan(value: 0)]
@@ -43,11 +44,11 @@ class Budget
     /**
      * @var Collection<int, Entry>
      */
-    #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Entry::class, cascade: ['persist', 'remove'], /* fetch: 'EXTRA_LAZY', */ indexBy: 'createdAt')]
+    #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Entry::class, cascade: ['persist', 'remove'], indexBy: 'createdAt')]
     private Collection $entries;
 
-    #[ORM\Column(type: Types::BOOLEAN)]
-    private bool $enable = true;
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    private bool $enabled = true;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $readOnly = false;
@@ -62,18 +63,6 @@ class Budget
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getAmount(): float
@@ -98,20 +87,14 @@ class Budget
 
     public function addPeriodicEntry(PeriodicEntry $periodicEntry): self
     {
-        if (!$this->periodicEntries->contains($periodicEntry)) {
-            $this->periodicEntries[] = $periodicEntry;
-            $periodicEntry->addBudget($this);
-        }
+        $this->addToCollection($this->periodicEntries, $periodicEntry, 'addBudget', $this);
 
         return $this;
     }
 
     public function removePeriodicEntry(PeriodicEntry $periodicEntry): self
     {
-        if ($this->periodicEntries->contains($periodicEntry)) {
-            $this->periodicEntries->removeElement($periodicEntry);
-            $periodicEntry->removeBudget($this);
-        }
+        $this->removeFromCollection($this->periodicEntries, $periodicEntry, 'removeBudget', $this);
 
         return $this;
     }
@@ -136,21 +119,26 @@ class Budget
 
     public function addEntry(Entry $entry): self
     {
-        if (!$this->entries->contains($entry)) {
-            $this->entries->add($entry);
-        }
+        $this->addToCollection($this->entries, $entry, 'setBudget', $this);
 
         return $this;
     }
 
-    public function getEnable(): bool
+    public function removeEntry(Entry $entry): self
     {
-        return $this->enable;
+        $this->removeFromCollection($this->entries, $entry, 'setBudget');
+
+        return $this;
     }
 
-    public function setEnable(bool $enable): self
+    public function isEnabled(): bool
     {
-        $this->enable = $enable;
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): self
+    {
+        $this->enabled = $enabled;
 
         return $this;
     }
@@ -160,7 +148,7 @@ class Budget
         return $this->readOnly;
     }
 
-    public function setReadOnly(bool $readOnly): Budget
+    public function setReadOnly(bool $readOnly): self
     {
         $this->readOnly = $readOnly;
 
@@ -178,8 +166,8 @@ class Budget
 
     public function getCashFlow(?Account $account = null): float
     {
-        $readableCollection = $this->entries
-            ->filter(static function (Entry $entry) use ($account): bool {
+        $readableCollection = $this->entries->filter(
+            static function (Entry $entry) use ($account): bool {
                 if (!is_null($account) && $entry->getAccount() !== $account) {
                     return false;
                 }
@@ -189,7 +177,8 @@ class Budget
                 }
 
                 return $entry->isABalancing();
-            });
+            }
+        );
 
         return array_reduce(
             $readableCollection->toArray(),

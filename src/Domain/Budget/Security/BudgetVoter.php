@@ -61,11 +61,11 @@ class BudgetVoter extends Voter
 
     private function canEnable(Budget $budget): bool
     {
-        return $this->canManage($budget) && !$budget->getEnable();
+        return $this->canManage($budget) && !$budget->isEnabled();
     }
 
     private function canDisable(Budget $budget): bool
     {
-        return $this->canManage($budget) && $budget->getEnable();
+        return $this->canManage($budget) && $budget->isEnabled();
     }
 }

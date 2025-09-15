@@ -2,11 +2,11 @@
 
 namespace App\Shared\ValueObject;
 
-class MenuConfiguration
+readonly class MenuConfiguration
 {
     public function __construct(
-        private readonly ?string $createUrl = null,
-        private readonly ?string $searchFormUrl = null,
+        private ?string $createUrl = null,
+        private ?string $searchFormUrl = null,
     ) {
     }
 

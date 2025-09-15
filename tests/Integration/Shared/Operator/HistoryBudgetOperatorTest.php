@@ -29,16 +29,16 @@ class HistoryBudgetOperatorTest extends KernelTestCase
 
         // Create a budget without entries
         BudgetFactory::new()->create([
-            'name'   => 'Budget without entries',
-            'amount' => 500.0,
-            'enable' => true,
+            'name'    => 'Budget without entries',
+            'amount'  => 500.0,
+            'enabled' => true,
         ]);
 
         // Create a budget with entries to ensure the method works
         $budgetWithEntries = BudgetFactory::new()->create([
-            'name'   => 'Budget with entries',
-            'amount' => 300.0,
-            'enable' => true,
+            'name'    => 'Budget with entries',
+            'amount'  => 300.0,
+            'enabled' => true,
         ]);
 
         $account = AccountFactory::new()->create(['name' => 'Test Account']);
@@ -109,9 +109,9 @@ class HistoryBudgetOperatorTest extends KernelTestCase
     ): void {
         $testYear = 2025;
         $budget   = BudgetFactory::new()->create([
-            'name'   => 'Test Budget - ' . $description,
-            'amount' => $budgetAmount,
-            'enable' => true,
+            'name'    => 'Test Budget - ' . $description,
+            'amount'  => $budgetAmount,
+            'enabled' => true,
         ]);
 
         if (!empty($entries)) {
@@ -144,9 +144,9 @@ class HistoryBudgetOperatorTest extends KernelTestCase
         $testYear = 2024;
         $account  = AccountFactory::new()->create(['name' => 'Idempotent Test Account']);
         $budget   = BudgetFactory::new()->create([
-            'name'   => 'Test Idempotent Budget',
-            'amount' => 500.0,
-            'enable' => true,
+            'name'    => 'Test Idempotent Budget',
+            'amount'  => 500.0,
+            'enabled' => true,
         ]);
 
         EntryFactory::new()->create([
@@ -202,9 +202,9 @@ class HistoryBudgetOperatorTest extends KernelTestCase
         $testYear = 2024;
         $account  = AccountFactory::new()->create(['name' => 'Large Dataset Account']);
         $budget   = BudgetFactory::new()->create([
-            'name'   => $categoryName,
-            'amount' => $budgetAmount,
-            'enable' => true,
+            'name'    => $categoryName,
+            'amount'  => $budgetAmount,
+            'enabled' => true,
         ]);
 
         foreach ($entries as $entryData) {

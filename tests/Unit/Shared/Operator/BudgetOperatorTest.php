@@ -56,18 +56,9 @@ class BudgetOperatorTest extends TestCase
     {
         $account = new Account();
         $account->setName($name);
-        $account->setEnable(true);
+        $account->setEnabled(true);
 
         return $account;
-    }
-
-    private function createBudget(string $name, float $amount = 1000.0): Budget
-    {
-        $budget = new Budget();
-        $budget->setName($name);
-        $budget->setAmount($amount);
-
-        return $budget;
     }
 
     private function setupAccountManagerMock(array $accounts): void

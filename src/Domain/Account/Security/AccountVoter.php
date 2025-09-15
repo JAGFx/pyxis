@@ -40,7 +40,7 @@ class AccountVoter extends Voter
 
     private function canDisable(Account $account): bool
     {
-        if (!$account->isEnable()) {
+        if (!$account->isEnabled()) {
             return false;
         }
 
@@ -53,6 +53,6 @@ class AccountVoter extends Voter
 
     private function canEnable(Account $account): bool
     {
-        return !$account->isEnable();
+        return !$account->isEnabled();
     }
 }

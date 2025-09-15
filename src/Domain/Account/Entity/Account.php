@@ -5,27 +5,26 @@ namespace App\Domain\Account\Entity;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Entry\Entity\Entry;
+use App\Shared\Entity\CollectionManagerTrait;
+use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
 class Account
 {
     use TimestampableTrait;
+    use NameableTrait;
+    use CollectionManagerTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $id = null;
-
-    #[ORM\Column]
-    #[NotBlank]
-    private string $name;
 
     /**
      * @var Collection<int, Entry>
@@ -33,8 +32,8 @@ class Account
     #[ORM\OneToMany(mappedBy: 'account', targetEntity: Entry::class, fetch: 'EXTRA_LAZY', indexBy: 'createdAt')]
     private Collection $entries;
 
-    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
-    private bool $enable = true;
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    private bool $enabled = true;
 
     /**
      * @var Collection<int, Assignment>
@@ -52,18 +51,6 @@ class Account
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): Account
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     /**
@@ -86,31 +73,26 @@ class Account
 
     public function addEntry(Entry $entry): self
     {
-        if (!$this->entries->contains($entry)) {
-            $entry->setAccount($this);
-            $this->entries->add($entry);
-        }
+        $this->addToCollection($this->entries, $entry, 'setAccount');
 
         return $this;
     }
 
     public function removeEntry(Entry $entry): self
     {
-        if ($this->entries->removeElement($entry) && $entry->getAccount() === $this) {
-            $entry->setAccount(null);
-        }
+        $this->removeFromCollection($this->entries, $entry, 'setAccount');
 
         return $this;
     }
 
-    public function isEnable(): bool
+    public function isEnabled(): bool
     {
-        return $this->enable;
+        return $this->enabled;
     }
 
-    public function setEnable(bool $enable): Account
+    public function setEnabled(bool $enabled): self
     {
-        $this->enable = $enable;
+        $this->enabled = $enabled;
 
         return $this;
     }
@@ -126,9 +108,23 @@ class Account
     /**
      * @param Collection<int, Assignment> $assignments
      */
-    public function setAssignments(Collection $assignments): Account
+    public function setAssignments(Collection $assignments): self
     {
         $this->assignments = $assignments;
+
+        return $this;
+    }
+
+    public function addAssignment(Assignment $assignment): self
+    {
+        $this->addToCollection($this->assignments, $assignment, 'setAccount');
+
+        return $this;
+    }
+
+    public function removeAssignment(Assignment $assignment): self
+    {
+        $this->removeFromCollection($this->assignments, $assignment, 'setAccount');
 
         return $this;
     }

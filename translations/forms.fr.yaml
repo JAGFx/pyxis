@@ -19,7 +19,7 @@ shared:
 
 account:
   search:
-    enable:
+    enabled:
       label: Actif
     name:
       label: Nom
@@ -52,10 +52,10 @@ budget:
       label: Nom
     amount:
       label: Montant
-    enable:
+    enabled:
       label: Actif
   search:
-    enable:
+    enabled:
       label: Actif
     name:
       label: Nom

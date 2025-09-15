@@ -7,11 +7,11 @@ use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
-class PeriodicEntryManager
+readonly class PeriodicEntryManager
 {
     public function __construct(
-        private readonly PeriodicEntryRepository $repository,
-        private readonly EntityManagerInterface $entityManager,
+        private PeriodicEntryRepository $repository,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

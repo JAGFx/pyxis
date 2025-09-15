@@ -11,12 +11,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
-class EntryManager
+readonly class EntryManager
 {
     public function __construct(
-        private readonly EntryRepository $repository,
-        private readonly PaginatorInterface $paginator,
-        private readonly EntityManagerInterface $entityManager,
+        private EntryRepository $repository,
+        private PaginatorInterface $paginator,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

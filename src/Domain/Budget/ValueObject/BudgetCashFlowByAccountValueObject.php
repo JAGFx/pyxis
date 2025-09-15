@@ -5,12 +5,12 @@ namespace App\Domain\Budget\ValueObject;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 
-class BudgetCashFlowByAccountValueObject
+readonly class BudgetCashFlowByAccountValueObject
 {
     public function __construct(
-        private readonly Budget $budget,
-        private readonly Account $account,
-        private readonly float $cashFlow,
+        private Budget $budget,
+        private Account $account,
+        private float $cashFlow,
     ) {
     }
 

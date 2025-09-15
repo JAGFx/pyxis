@@ -136,7 +136,7 @@ class PeriodicEntry
 
     public function getAmountFor(Budget $budgetTarget): float
     {
-        if (false === $budgetTarget->getEnable()) {
+        if (false === $budgetTarget->isEnabled()) {
             return 0.0;
         }
 

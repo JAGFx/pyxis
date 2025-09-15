@@ -4,7 +4,7 @@
     <twig:Overlay:TriggerLongPress target="{{ frameId }}">
         <twig:List:Item>
             <div class="flex justify-between items-center">
-                <span class="{{ account.enable ? '' : 'line-through text-muted' }}">{{ account.name }}</span>
+                <span class="{{ account.enabled ? '' : 'line-through text-muted' }}">{{ account.name }}</span>
                 <a data-turbo="true" href="{{ path('front_account_cash_flow', {'id': account.id}) }}" class="text-muted flex items-center">
                     <small>
                         <span>{{ 'account.list.actions.see_cash_flows' | trans }}</span>

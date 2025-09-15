@@ -11,21 +11,21 @@ class AccountSearchCommand implements OrderableInterface
     use OrderableTrait;
 
     public function __construct(
-        private ?bool $enable = true,
+        private ?bool $enabled = true,
         private ?string $name = null,
         private ?Budget $budget = null,
         private ?bool $positiveOrNegativeBalance = null,
     ) {
     }
 
-    public function getEnable(): ?bool
+    public function isEnabled(): ?bool
     {
-        return $this->enable;
+        return $this->enabled;
     }
 
-    public function setEnable(?bool $enable): AccountSearchCommand
+    public function setEnabled(?bool $enabled): AccountSearchCommand
     {
-        $this->enable = $enable;
+        $this->enabled = $enabled;
 
         return $this;
     }

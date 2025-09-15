@@ -33,7 +33,7 @@ class BudgetController extends AbstractController
         $this->budgetManager->toggle($budget);
 
         $message = 'Budget ';
-        $message .= ($budget->getEnable()) ? 'activé' : 'désactivé';
+        $message .= ($budget->isEnabled()) ? 'activé' : 'désactivé';
 
         $this->addFlash('success', $message);
 

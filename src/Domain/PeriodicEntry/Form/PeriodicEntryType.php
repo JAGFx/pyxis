@@ -49,7 +49,7 @@ class PeriodicEntryType extends AbstractType
                 'required'      => false,
                 'placeholder'   => 'periodic_entry.form.budgets.placeholder',
                 'query_builder' => static function (BudgetRepository $budgetRepository): QueryBuilder {
-                    $budgetSearchCommand = new BudgetSearchCommand(enable: true)->setOrderBy('name');
+                    $budgetSearchCommand = new BudgetSearchCommand(enabled: true)->setOrderBy('name');
 
                     return $budgetRepository->getBudgetsQueryBuilder($budgetSearchCommand);
                 },

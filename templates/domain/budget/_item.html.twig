@@ -6,8 +6,8 @@
             {% import 'shared/_currency.macro.html.twig' as currency %}
 
             <div class="flex justify-between items-center">
-                <span class="{{ budget.enable ? '' : 'line-through text-muted' }}">{{ budget.name }}</span>
-                <span>{{ currency.amount(budget.amount, true, not budget.enable) }}</span>
+                <span class="{{ budget.enabled ? '' : 'line-through text-muted' }}">{{ budget.name }}</span>
+                <span>{{ currency.amount(budget.amount, true, not budget.enabled) }}</span>
             </div>
 
             <twig:block name="detail">

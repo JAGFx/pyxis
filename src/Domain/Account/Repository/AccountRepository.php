@@ -21,10 +21,10 @@ class AccountRepository extends ServiceEntityRepository
     public function getAccountsQueryBuilder(AccountSearchCommand $command): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('a');
-        if (null !== $command->getEnable()) {
+        if (null !== $command->isEnabled()) {
             $queryBuilder
-                ->andWhere('a.enable = :enable')
-                ->setParameter('enable', $command->getEnable());
+                ->andWhere('a.enabled = :enable')
+                ->setParameter('enable', $command->isEnabled());
         }
 
         if (null !== $command->getName()) {

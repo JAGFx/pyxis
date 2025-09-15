@@ -9,11 +9,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 
-class AssignmentManager
+readonly class AssignmentManager
 {
     public function __construct(
-        private readonly AssignmentRepository $repository,
-        private readonly EntityManagerInterface $entityManager,
+        private AssignmentRepository $repository,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 

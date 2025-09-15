@@ -17,7 +17,7 @@ class BudgetType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('amount', MoneyType::class)
-            ->add('enable', YesNoType::class);
+            ->add('enabled', YesNoType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -2,11 +2,11 @@
 
 namespace App\Domain\Entry\ValueObject;
 
-class EntryBalance
+readonly class EntryBalance
 {
     public function __construct(
-        private readonly float $totalSpent,
-        private readonly float $totalForecast,
+        private float $totalSpent,
+        private float $totalForecast,
     ) {
     }
 

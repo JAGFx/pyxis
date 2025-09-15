@@ -32,7 +32,7 @@ class AccountController extends AbstractController
     #[Route('/{id}/toggle', name: 'front_account_toggle', methods: [Request::METHOD_GET])]
     public function toggle(Request $request, Account $account): Response
     {
-        if ($account->isEnable()) {
+        if ($account->isEnabled()) {
             $this->denyAccessUnlessGranted(AccountVoter::DISABLE, $account);
         } else {
             $this->denyAccessUnlessGranted(AccountVoter::ENABLE, $account);
@@ -41,7 +41,7 @@ class AccountController extends AbstractController
         $this->accountManager->toggle($account);
 
         $message = 'Compte ';
-        $message .= ($account->isEnable()) ? 'activé' : 'désactivé';
+        $message .= ($account->isEnabled()) ? 'activé' : 'désactivé';
 
         $this->addFlash('success', $message);
 

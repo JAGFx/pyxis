@@ -2,13 +2,13 @@
 
 namespace App\Shared\ValueObject;
 
-class AmountBalance
+readonly class AmountBalance
 {
     public function __construct(
-        private readonly float $total,
-        private readonly float $totalSpent,
-        private readonly float $totalForecast,
-        private readonly float $assignments,
+        private float $total,
+        private float $totalSpent,
+        private float $totalForecast,
+        private float $assignments,
     ) {
     }
 

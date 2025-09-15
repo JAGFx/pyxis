@@ -111,12 +111,12 @@ class PeriodicEntryOperatorTest extends TestCase
         $disabledBudget1 = (new Budget())
             ->setName('Disabled Budget 1')
             ->setAmount(100.0)
-            ->setEnable(false);
+            ->setEnabled(false);
 
         $disabledBudget2 = (new Budget())
             ->setName('Disabled Budget 2')
             ->setAmount(200.0)
-            ->setEnable(false);
+            ->setEnabled(false);
 
         $periodicEntry = (new PeriodicEntry())
             ->setExecutionDate($today)
@@ -145,7 +145,7 @@ class PeriodicEntryOperatorTest extends TestCase
         $zeroBudget = (new Budget())
             ->setName('Zero Budget')
             ->setAmount(0.0)
-            ->setEnable(true);
+            ->setEnabled(true);
 
         $periodicEntry = (new PeriodicEntry())
             ->setExecutionDate($today)
@@ -227,12 +227,12 @@ class PeriodicEntryOperatorTest extends TestCase
             ->addBudget((new Budget())
                 ->setName('Budget 1')
                 ->setAmount(200.0)
-                ->setEnable(true)
+                ->setEnabled(true)
             )
             ->addBudget((new Budget())
                 ->setName('Budget 2')
                 ->setAmount(300.0)
-                ->setEnable(true)
+                ->setEnabled(true)
             );
 
         $this->entryManagerMock
@@ -261,17 +261,17 @@ class PeriodicEntryOperatorTest extends TestCase
             ->addBudget((new Budget())
                 ->setName('Enabled Budget 1')
                 ->setAmount(200.0)
-                ->setEnable(true)
+                ->setEnabled(true)
             )
             ->addBudget((new Budget())
                 ->setName('Enabled Budget 2')
                 ->setAmount(300.0)
-                ->setEnable(true)
+                ->setEnabled(true)
             )
             ->addBudget((new Budget())
                 ->setName('Disabled Budget')
                 ->setAmount(150.0)
-                ->setEnable(false)
+                ->setEnabled(false)
             );
 
         $this->entryManagerMock

@@ -37,7 +37,7 @@ class EntryType extends AbstractType
                 'class'         => Budget::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (BudgetRepository $repository): QueryBuilder {
-                    $accountSearchCommand = new BudgetSearchCommand(enable: true)->setOrderBy('name');
+                    $accountSearchCommand = new BudgetSearchCommand(enabled: true)->setOrderBy('name');
 
                     return $repository->getBudgetsQueryBuilder($accountSearchCommand);
                 },

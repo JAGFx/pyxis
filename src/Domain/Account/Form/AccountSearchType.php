@@ -16,7 +16,7 @@ class AccountSearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('enable', YesNoType::class, [
+            ->add('enabled', YesNoType::class, [
                 'required'    => false,
                 'placeholder' => 'shared.default.placeholders.all',
             ])
