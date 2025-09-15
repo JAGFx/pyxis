@@ -20,8 +20,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand('bugr:old-data:import')]
 class ImportOlderDataCommand
 {
-    public const string DEFAULT_ACCOUNT = 'Livret A';
-    public const string DEFAULT_BUDGET  = 'Budget par défaut';
+    public const string DEFAULT_ACCOUNT             = 'Livret A';
+    public const string DEFAULT_BUDGET              = 'Budget par défaut';
+    public const string DEFAULT_BUDGET_NAME_FORCAST = 'Import des provisions';
     private Connection $connection;
     private Connection $oldBugrManager;
 
@@ -87,7 +88,7 @@ class ImportOlderDataCommand
             }
 
             $this->connection->insert('entry', [
-                'name'       => 'Import des provisions',
+                'name'       => self::DEFAULT_BUDGET_NAME_FORCAST,
                 'amount'     => $amountForecast,
                 'created_at' => new DateTimeImmutable(),
                 'updated_at' => new DateTimeImmutable(),

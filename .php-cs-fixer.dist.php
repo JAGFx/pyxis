@@ -6,7 +6,8 @@ $finder = (new PhpCsFixer\Finder())
         __DIR__ . '/tests',
     ])
     ->exclude([
-        __DIR__ . '/src/Shared/Command/ImportOlderDataCommand.php'
+        __DIR__ . '/src/Shared/Command/ImportOlderDataCommand.php',
+        __DIR__ . '/src/Shared/Command/OldBudgetSummaryCommand.php',
     ])
     ->name('*.php');
 

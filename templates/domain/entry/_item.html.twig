@@ -19,6 +19,7 @@
                             {{ entry.createdAt | format_datetime(timeFormat='short', locale=app.request.locale) }}
                         </twig:List:EntityValueItem>
                         {# TODO add flag here for balance & transfer #}
+                        {# TODO space informations and add async load for additionals informations #}
                     </div>
                     <div class="flex justify-start items-center space-x-2">
                         {% if entry.isForecast %}

@@ -19,4 +19,5 @@ parameters:
           path: src/
     excludePaths:
         - src/Shared/Command/ImportOlderDataCommand.php
+        - src/Shared/Command/OldBudgetSummaryCommand.php
     reportUnmatchedIgnoredErrors: false
