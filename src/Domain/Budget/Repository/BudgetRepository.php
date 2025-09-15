@@ -22,14 +22,9 @@ class BudgetRepository extends ServiceEntityRepository
 
     public function create(Budget $budget): self
     {
-        $this->_em->persist($budget);
+        $this->getEntityManager()->persist($budget);
 
         return $this;
-    }
-
-    public function flush(): void
-    {
-        $this->_em->flush();
     }
 
     public function getBudgetsQueryBuilder(BudgetSearchCommand $command): QueryBuilder

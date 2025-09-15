@@ -50,13 +50,8 @@ class HistoryBudgetRepository extends ServiceEntityRepository
 
     public function create(HistoryBudget $historyBudget): self
     {
-        $this->_em->persist($historyBudget);
+        $this->getEntityManager()->persist($historyBudget);
 
         return $this;
-    }
-
-    public function flush(): void
-    {
-        $this->_em->flush();
     }
 }

@@ -4,7 +4,7 @@
     <twig:PageTitle :icon="icons.account" label="{{ 'account.title' | trans }}" detail="{{ account.name | default('actions.create' | trans(domain: 'interface')) }}"
         >
         <twig:block name="beforeActions">
-            <twig:Button node="a" :icon="icons.back" color="acrylic" href="{{ path('back_account_account_list') }}"/>
+            <twig:Button node="a" :icon="icons.back" color="acrylic" href="{{ path('back_account_list') }}"/>
         </twig:block>
     </twig:PageTitle>
 

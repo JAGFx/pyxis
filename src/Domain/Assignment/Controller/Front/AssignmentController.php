@@ -35,7 +35,7 @@ class AssignmentController extends AbstractController
         ]);
     }
 
-    #[Route('/search', name: 'front_assigment_search', methods: [Request::METHOD_POST])]
+    #[Route('/search', name: 'front_assignment_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
         $assignmentSearchCommand = new AssignmentSearchCommand()->setOrderBy('name');

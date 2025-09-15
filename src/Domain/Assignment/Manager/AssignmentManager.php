@@ -5,6 +5,7 @@ namespace App\Domain\Assignment\Manager;
 use App\Domain\Assignment\DTO\AssignmentSearchCommand;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Repository\AssignmentRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 
@@ -12,6 +13,7 @@ class AssignmentManager
 {
     public function __construct(
         private readonly AssignmentRepository $repository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -45,22 +47,28 @@ class AssignmentManager
         return $assignments;
     }
 
-    public function create(Assignment $assignment): void
+    public function create(Assignment $entity, bool $flush = true): void
     {
-        $this->repository
-            ->create($assignment)
-            ->flush();
+        $this->repository->create($entity);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
-    public function update(): void
+    public function update(bool $flush = true): void
     {
-        $this->repository->flush();
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
-    public function remove(Assignment $assignment): void
+    public function remove(Assignment $entity, bool $flush = true): void
     {
-        $this->repository
-            ->remove($assignment)
-            ->flush();
+        $this->repository->remove($entity);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 }

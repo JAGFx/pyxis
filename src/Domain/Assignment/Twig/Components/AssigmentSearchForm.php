@@ -19,7 +19,7 @@ class AssigmentSearchForm extends AbstractController
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(AssignmentSearchType::class, new AssignmentSearchCommand(), [
-            'action' => $this->generateUrl('front_assigment_search'),
+            'action' => $this->generateUrl('front_assignment_search'),
         ]);
     }
 }

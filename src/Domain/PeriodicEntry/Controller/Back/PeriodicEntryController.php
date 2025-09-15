@@ -25,7 +25,7 @@ class PeriodicEntryController extends AbstractController
     ) {
     }
 
-    #[Route(name: 'back_periodicentry_list', methods: Request::METHOD_GET)]
+    #[Route(name: 'back_periodic_entry_list', methods: Request::METHOD_GET)]
     public function list(): Response
     {
         $periodicEntrySearchCommand = new PeriodicEntrySearchCommand()->setOrderBy('name');
@@ -36,7 +36,7 @@ class PeriodicEntryController extends AbstractController
         ]);
     }
 
-    #[Route('/create', 'back_periodicentry_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route('/create', 'back_periodic_entry_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
         return $this->handleRequest(self::HANDLE_FORM_CREATE, $request);
@@ -60,10 +60,10 @@ class PeriodicEntryController extends AbstractController
             if (self::HANDLE_FORM_CREATE === $type) {
                 $this->periodicEntryManager->create($periodicEntry);
             } else {
-                $this->periodicEntryManager->update($periodicEntry);
+                $this->periodicEntryManager->update();
             }
 
-            return $this->redirectToRoute('back_periodicentry_list');
+            return $this->redirectToRoute('back_periodic_entry_list');
         }
 
         return $this->render('domain/periodic_entry/form.html.twig', [

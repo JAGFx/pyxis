@@ -7,21 +7,23 @@ use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Repository\EntryRepository;
 use App\Domain\Entry\ValueObject\EntryBalance;
 use App\Shared\Utils\Statistics;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
 class EntryManager
 {
     public function __construct(
-        private readonly EntryRepository $entryRepository,
+        private readonly EntryRepository $repository,
         private readonly PaginatorInterface $paginator,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
     public function balance(?EntrySearchCommand $command = null): EntryBalance
     {
         /** @var array<string, mixed> $data */
-        $data = $this->entryRepository
+        $data = $this->repository
             ->balance($command ?? new EntrySearchCommand())
             ->getQuery()
             ->getResult();
@@ -35,32 +37,36 @@ class EntryManager
         return new EntryBalance($spentAmount, $forecastAmount);
     }
 
-    public function create(Entry $entry): void
+    public function create(Entry $entity, bool $flush = true): void
     {
-        $this->entryRepository
-            ->create($entry)
-            ->flush();
+        $this->repository->create($entity);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
-    public function update(Entry $entry): void
+    public function update(Entry $entry, bool $flush = true): void
     {
         if ($entry->isABalancing()) {
             return;
         }
 
-        $this->entryRepository
-            ->flush();
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
-    public function remove(Entry $entry): void
+    public function remove(Entry $entry, bool $flush = true): void
     {
         if ($entry->isABalancing()) {
             return;
         }
 
-        $this->entryRepository
-            ->remove($entry)
-            ->flush();
+        $this->repository->remove($entry);
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
     /**
@@ -72,7 +78,7 @@ class EntryManager
 
         /** @var PaginationInterface<int, Entry> $pagination */
         $pagination = $this->paginator->paginate(
-            $this->entryRepository->getEntriesQueryBuilder($command),
+            $this->repository->getEntriesQueryBuilder($command),
             $command->getPage(),
             $command->getPageSize()
         );

@@ -49,22 +49,22 @@
             label="{{ 'menu.main.statistics' | trans(domain: 'navigation') }}"
         />
         <twig:Overlay:GridActionButton
-            actionUrl="{{ path('back_account_account_list') }}"
+            actionUrl="{{ path('back_account_list') }}"
             :icon="icons.account"
             label="{{ 'menu.main.accounts' | trans(domain: 'navigation') }}"
         />
         <twig:Overlay:GridActionButton
-            actionUrl="{{ path('back_budget_budget_list') }}"
+            actionUrl="{{ path('back_budget_list') }}"
             :icon="icons.budget"
             label="{{ 'menu.main.budgets' | trans(domain: 'navigation') }}"
         />
         <twig:Overlay:GridActionButton
-            actionUrl="{{ path('back_entries_list') }}"
+            actionUrl="{{ path('back_entry_list') }}"
             :icon="icons.entry"
             label="{{ 'menu.main.entries' | trans(domain: 'navigation') }}"
         />
         <twig:Overlay:GridActionButton
-            actionUrl="{{ path('back_periodicentry_list') }}"
+            actionUrl="{{ path('back_periodic_entry_list') }}"
             :icon="icons.periodic_entry"
             label="{{ 'menu.main.periodic_entries' | trans(domain: 'navigation') }}"
         />

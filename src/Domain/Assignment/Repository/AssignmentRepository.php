@@ -57,19 +57,14 @@ class AssignmentRepository extends ServiceEntityRepository
 
     public function create(Assignment $entity): self
     {
-        $this->_em->persist($entity);
+        $this->getEntityManager()->persist($entity);
 
         return $this;
     }
 
-    public function flush(): void
-    {
-        $this->_em->flush();
-    }
-
     public function remove(Assignment $entry): self
     {
-        $this->_em->remove($entry);
+        $this->getEntityManager()->remove($entry);
 
         return $this;
     }

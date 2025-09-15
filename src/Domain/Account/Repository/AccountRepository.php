@@ -62,13 +62,8 @@ class AccountRepository extends ServiceEntityRepository
 
     public function create(Account $account): self
     {
-        $this->_em->persist($account);
+        $this->getEntityManager()->persist($account);
 
         return $this;
-    }
-
-    public function flush(): void
-    {
-        $this->_em->flush();
     }
 }

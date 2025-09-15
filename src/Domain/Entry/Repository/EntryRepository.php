@@ -19,23 +19,18 @@ class EntryRepository extends ServiceEntityRepository
         parent::__construct($registry, Entry::class);
     }
 
-    public function create(Entry $entry): self
+    public function create(Entry $entity): self
     {
-        $this->_em->persist($entry);
+        $this->getEntityManager()->persist($entity);
 
         return $this;
     }
 
     public function remove(Entry $entry): self
     {
-        $this->_em->remove($entry);
+        $this->getEntityManager()->remove($entry);
 
         return $this;
-    }
-
-    public function flush(): void
-    {
-        $this->_em->flush();
     }
 
     public function balance(EntrySearchCommand $command): QueryBuilder

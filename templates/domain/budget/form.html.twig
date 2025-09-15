@@ -4,7 +4,7 @@
     <twig:PageTitle :icon="icons.budget" label="{{ 'budget.title' | trans }}" detail="{{ budget.name | default(('actions.create' | trans(domain: 'interface'))) }}"
     >
         <twig:block name="beforeActions">
-            <twig:Button node="a" :icon="icons.back" color="acrylic" href="{{ path('back_budget_budget_list') }}"/>
+            <twig:Button node="a" :icon="icons.back" color="acrylic" href="{{ path('back_budget_list') }}"/>
         </twig:block>
     </twig:PageTitle>
 

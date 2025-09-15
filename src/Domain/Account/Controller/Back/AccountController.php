@@ -23,7 +23,7 @@ class AccountController extends AbstractController
     ) {
     }
 
-    #[Route(name: 'back_account_account_list', methods: Request::METHOD_GET)]
+    #[Route(name: 'back_account_list', methods: Request::METHOD_GET)]
     public function index(): Response
     {
         $accountSearchCommand = new AccountSearchCommand()->setOrderBy('name');
@@ -62,7 +62,7 @@ class AccountController extends AbstractController
                 $this->accountManager->update();
             }
 
-            return $this->redirectToRoute('back_account_account_list');
+            return $this->redirectToRoute('back_account_list');
         }
 
         return $this->render('domain/account/form.html.twig', [

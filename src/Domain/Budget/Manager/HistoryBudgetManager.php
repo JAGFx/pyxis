@@ -6,21 +6,23 @@ use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\DTO\HistoryBudgetSearchCommand;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class HistoryBudgetManager
 {
     public function __construct(
         private readonly HistoryBudgetRepository $repository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function create(HistoryBudget $historyBudget): self
+    public function create(HistoryBudget $entity, bool $flush = true): void
     {
-        $this->repository
-            ->create($historyBudget)
-            ->flush();
+        $this->repository->create($entity);
 
-        return $this;
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
     /**

@@ -5,27 +5,39 @@ namespace App\Domain\PeriodicEntry\Manager;
 use App\Domain\PeriodicEntry\DTO\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class PeriodicEntryManager
 {
     public function __construct(
-        private readonly PeriodicEntryRepository $periodicEntryRepository,
+        private readonly PeriodicEntryRepository $repository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function create(PeriodicEntry $entry, bool $flush = true): void
+    public function create(PeriodicEntry $entity, bool $flush = true): void
     {
-        $this->periodicEntryRepository->create($entry, $flush);
+        $this->repository->create($entity);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
-    public function update(PeriodicEntry $entry, bool $flush = true): void
+    public function update(bool $flush = true): void
     {
-        $this->periodicEntryRepository->update($entry, $flush);
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
-    public function remove(PeriodicEntry $entry, bool $flush = true): void
+    public function remove(PeriodicEntry $entity, bool $flush = true): void
     {
-        $this->periodicEntryRepository->remove($entry, $flush);
+        $this->repository->remove($entity);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
     /** @return PeriodicEntry[] */
@@ -34,7 +46,7 @@ class PeriodicEntryManager
         $command ??= new PeriodicEntrySearchCommand();
 
         /** @var PeriodicEntry[] $periodicEntries */
-        $periodicEntries = $this->periodicEntryRepository
+        $periodicEntries = $this->repository
             ->getPeriodicEntriesQueryBuilder($command)
             ->getQuery()
             ->getResult();

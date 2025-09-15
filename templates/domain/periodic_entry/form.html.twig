@@ -4,7 +4,7 @@
     <twig:PageTitle :icon="icons.periodic_entry" label="{{ 'periodic_entry.title' | trans }}" detail="{{ periodicEntry.name | default(('actions.create' | trans(domain: 'interface'))) }}"
     >
         <twig:block name="beforeActions">
-            <twig:Button node="a" :icon="icons.back" color="acrylic" href="{{ path('back_periodicentry_list') }}"/>
+            <twig:Button node="a" :icon="icons.back" color="acrylic" href="{{ path('back_periodic_entry_list') }}"/>
         </twig:block>
     </twig:PageTitle>
 

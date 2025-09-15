@@ -69,6 +69,6 @@ readonly class PeriodicEntryOperator
         }
 
         $periodicEntry->setLastExecutionDate(new DateTimeImmutable());
-        $this->periodicEntryManager->update($periodicEntry);
+        $this->periodicEntryManager->update();
     }
 }

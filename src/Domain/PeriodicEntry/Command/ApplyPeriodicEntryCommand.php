@@ -38,7 +38,7 @@ class ApplyPeriodicEntryCommand
                     $this->periodicEntryOperator->addSplitForBudgets($periodicEntry);
                     $periodicEntry->setLastExecutionDate(new DateTimeImmutable());
 
-                    $this->periodicEntryManager->update($periodicEntry);
+                    $this->periodicEntryManager->update();
                 } catch (PeriodicEntrySplitBudgetException $exception) {
                     $symfonyStyle->info($exception->getMessage());
                     $this->logger->info($exception->getMessage(), [

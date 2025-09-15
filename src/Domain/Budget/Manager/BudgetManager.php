@@ -10,32 +10,38 @@ use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryKindEnum;
 use App\Domain\Entry\Manager\EntryManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class BudgetManager
 {
     public function __construct(
-        private BudgetRepository $budgetRepository,
+        private BudgetRepository $repository,
         private EntryManager $entryManager,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function create(Budget $budget): void
+    public function create(Budget $entity, bool $flush = true): void
     {
-        $this->budgetRepository
-            ->create($budget)
-            ->flush();
+        $this->repository->create($entity);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
-    public function toggle(Budget $budget): void
+    public function update(bool $flush = true): void
+    {
+        if ($flush) {
+            $this->entityManager->flush();
+        }
+    }
+
+    public function toggle(Budget $budget, bool $flush = true): void
     {
         $budget->setEnable(!$budget->getEnable());
 
-        $this->budgetRepository->flush();
-    }
-
-    public function update(): void
-    {
-        $this->budgetRepository->flush();
+        $this->update($flush);
     }
 
     /**
@@ -46,7 +52,7 @@ readonly class BudgetManager
         $command ??= new BudgetSearchCommand();
 
         /** @var Budget[] $result */
-        $result = $this->budgetRepository
+        $result = $this->repository
             ->getBudgetsQueryBuilder($command)
             ->getQuery()
             ->getResult();
@@ -62,7 +68,7 @@ readonly class BudgetManager
         $command ??= new BudgetSearchCommand();
 
         /** @var BudgetValueObject[] $result */
-        $result = $this->budgetRepository
+        $result = $this->repository
             ->getBudgetValueObjectsQueryBuilder($command)
             ->getQuery()
             ->getResult();
@@ -73,7 +79,7 @@ readonly class BudgetManager
     public function find(int $id): ?Budget
     {
         /** @var ?Budget $budget */
-        $budget = $this->budgetRepository->find($id);
+        $budget = $this->repository->find($id);
 
         return $budget;
     }

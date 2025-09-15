@@ -31,7 +31,7 @@ class EntryController extends AbstractController
     ) {
     }
 
-    #[Route(name: 'back_entries_list', methods: Request::METHOD_GET)]
+    #[Route(name: 'back_entry_list', methods: Request::METHOD_GET)]
     public function list(Request $request): Response
     {
         $entrySearchCommand = new EntrySearchCommand()
@@ -74,7 +74,7 @@ class EntryController extends AbstractController
                 $this->entryManager->update($entry);
             }
 
-            return $this->redirectToRoute('back_entries_list');
+            return $this->redirectToRoute('back_entry_list');
         }
 
         return $this->render('domain/entry/form.html.twig', [

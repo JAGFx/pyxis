@@ -5,11 +5,13 @@ namespace App\Domain\Account\Manager;
 use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Repository\AccountRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 class AccountManager
 {
     public function __construct(
         private readonly AccountRepository $repository,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -35,15 +37,19 @@ class AccountManager
         $this->update();
     }
 
-    public function create(Account $account): void
+    public function create(Account $entity, bool $flush = true): void
     {
-        $this->repository
-            ->create($account)
-            ->flush();
+        $this->repository->create($entity);
+
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
-    public function update(): void
+    public function update(bool $flush = true): void
     {
-        $this->repository->flush();
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 }

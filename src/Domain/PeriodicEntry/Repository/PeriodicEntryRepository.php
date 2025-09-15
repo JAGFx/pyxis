@@ -19,31 +19,16 @@ class PeriodicEntryRepository extends ServiceEntityRepository
         parent::__construct($registry, PeriodicEntry::class);
     }
 
-    public function create(PeriodicEntry $entry, bool $flush = true): self
+    public function create(PeriodicEntry $entity): self
     {
-        $this->_em->persist($entry);
-
-        if ($flush) {
-            $this->_em->flush();
-        }
+        $this->getEntityManager()->persist($entity);
 
         return $this;
     }
 
-    public function update(PeriodicEntry $entry, bool $flush = true): void
+    public function remove(PeriodicEntry $entry): self
     {
-        if ($flush) {
-            $this->_em->flush();
-        }
-    }
-
-    public function remove(PeriodicEntry $entry, bool $flush = true): self
-    {
-        $this->_em->remove($entry);
-
-        if ($flush) {
-            $this->_em->flush();
-        }
+        $this->getEntityManager()->remove($entry);
 
         return $this;
     }

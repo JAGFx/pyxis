@@ -27,7 +27,7 @@ class BudgetController extends AbstractController
     ) {
     }
 
-    #[Route(name: 'back_budget_budget_list', methods: Request::METHOD_GET)]
+    #[Route(name: 'back_budget_list', methods: Request::METHOD_GET)]
     public function list(): Response
     {
         $budgetSearchCommand = new BudgetSearchCommand()->setOrderBy('name');
@@ -64,7 +64,7 @@ class BudgetController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->budgetManager->balancing($budgetAccountBalance);
 
-            return $this->redirectToRoute('back_budget_budget_list');
+            return $this->redirectToRoute('back_budget_list');
         }
 
         return $this->render('domain/budget/balance.html.twig', [
@@ -87,7 +87,7 @@ class BudgetController extends AbstractController
                 $this->budgetManager->update();
             }
 
-            return $this->redirectToRoute('back_budget_budget_list');
+            return $this->redirectToRoute('back_budget_list');
         }
 
         return $this->render('domain/budget/form.html.twig', [

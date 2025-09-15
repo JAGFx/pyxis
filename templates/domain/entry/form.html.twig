@@ -4,7 +4,7 @@
     <twig:PageTitle :icon="icons.entry" label="{{ 'entry.title' | trans }}" detail="{{ entry.name | default('actions.create' | trans(domain: 'interface')) }}"
     >
         <twig:block name="beforeActions">
-            <twig:Button node="a" :icon="icons.back" color="acrylic" href="{{ path('back_entries_list') }}"/>
+            <twig:Button node="a" :icon="icons.back" color="acrylic" href="{{ path('back_entry_list') }}"/>
         </twig:block>
     </twig:PageTitle>
 
