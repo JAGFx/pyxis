@@ -4,33 +4,52 @@ namespace App\Tests\Unit\Shared\Operator;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Manager\AccountManager;
+use App\Domain\Budget\DTO\BudgetAccountBalance;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
+use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Entity\EntryKindEnum;
+use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Operator\BudgetOperator;
+use App\Tests\Unit\Shared\BudgetTestTrait;
+use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class BudgetOperatorTest extends TestCase
 {
+    use BudgetTestTrait;
+    private const float BUDGET_AMOUNT = 1000.0;
     private BudgetManager $budgetManager;
     private HistoryBudgetManager $historyBudgetManager;
     private AccountManager $accountManager;
+    private EntryManager $entryManager;
+    private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
         $this->budgetManager        = $this->createMock(BudgetManager::class);
         $this->historyBudgetManager = $this->createMock(HistoryBudgetManager::class);
         $this->accountManager       = $this->createMock(AccountManager::class);
+        $this->entryManager         = $this->createMock(EntryManager::class);
+        $this->entityManager        = $this->createMock(EntityManagerInterface::class);
     }
 
-    private function createBudgetOperator(): BudgetOperator
+    private function createBudgetOperator(array $onlyMethods = []): BudgetOperator|MockObject
     {
-        return new BudgetOperator(
-            $this->budgetManager,
-            $this->historyBudgetManager,
-            $this->accountManager
-        );
+        return $this->getMockBuilder(BudgetOperator::class)
+            ->onlyMethods($onlyMethods)
+            ->setConstructorArgs([
+                $this->budgetManager,
+                $this->historyBudgetManager,
+                $this->accountManager,
+                $this->entryManager,
+                $this->entityManager,
+            ])
+            ->getMock();
     }
 
     private function createAccount(string $name): Account
@@ -205,5 +224,117 @@ class BudgetOperatorTest extends TestCase
         self::assertContains(-0.01, $cashFlows);
         self::assertContains(1000.0, $cashFlows);
         self::assertNotContains(0.0, $cashFlows);
+    }
+
+    public function testBudgetWithBalancedCashFlowDoNothing(): void
+    {
+        $progress = 200.0;
+        $cashFlow = 0.0;
+        $budget   = $this->generateBudget([
+            'amount'  => self::BUDGET_AMOUNT,
+            'entries' => [
+                [
+                    'entryName'      => 'Past year entry',
+                    'entryAmount'    => -self::BUDGET_AMOUNT,
+                    'entryCreatedAt' => new DateTimeImmutable('-1 year'),
+                ],
+                [
+                    'entryName'      => 'Past year entry',
+                    'entryAmount'    => self::BUDGET_AMOUNT,
+                    'entryCreatedAt' => new DateTimeImmutable('-1 year -1 hour'),
+                ],
+                [
+                    'entryAmount' => 200,
+                ],
+            ],
+        ]);
+
+        $this->entityManager
+            ->expects(self::never())
+            ->method('flush');
+
+        $budgetManager = $this->createBudgetOperator();
+
+        $budgetManager->balancing(new BudgetAccountBalance($budget, new Account()));
+
+        self::assertCount(3, $budget->getEntries());
+        self::assertSame($progress, $budget->getProgress());
+        self::assertSame($cashFlow, $budget->getCashFlow());
+    }
+
+    public function testBudgetWithPositiveCashFlowMustTransferToSpent(): void
+    {
+        $overflow = 500.0;
+        $budget   = $this->generateBudget([
+            'amount'  => self::BUDGET_AMOUNT,
+            'entries' => [
+                [
+                    'entryName'      => 'Past year entry',
+                    'entryAmount'    => $overflow,
+                    'entryCreatedAt' => new DateTimeImmutable('-1 year'),
+                ],
+                [
+                    'entryAmount' => 200,
+                ],
+            ],
+        ]);
+
+        $this->entityManager
+            ->expects(self::once())
+            ->method('flush');
+
+        $budgetManager = $this->createBudgetOperator();
+
+        self::assertSame($overflow, $budget->getCashFlow());
+
+        $budgetManager->balancing(new BudgetAccountBalance($budget, new Account()));
+
+        $balancingEntry = $budget->getEntries()
+            ->filter(fn (Entry $entry): bool => str_starts_with($entry->getName(), 'Équilibrage'))
+            ->first();
+
+        self::assertCount(2 + 1, $budget->getEntries());
+        self::assertInstanceOf(Entry::class, $balancingEntry);
+        self::assertSame($balancingEntry->getKind(), EntryKindEnum::BALANCING);
+        self::assertSame(-$overflow, $balancingEntry->getAmount());
+        self::assertSame(0.0, $budget->getCashFlow());
+    }
+
+    public function testBudgetWithNegativeCashFlowMustTransferToSpent(): void
+    {
+        $overflow = -500.0;
+        $budget   = $this->generateBudget([
+            'amount'  => self::BUDGET_AMOUNT,
+            'entries' => [
+                [
+                    'entryName'      => 'Past year entry',
+                    'entryAmount'    => $overflow,
+                    'entryCreatedAt' => new DateTimeImmutable('-1 year'),
+                ],
+                [
+                    'entryAmount' => 200,
+                ],
+            ],
+        ]);
+
+        $this->entityManager
+            ->expects(self::once())
+            ->method('flush');
+
+        $budgetManager = $this->createBudgetOperator();
+
+        self::assertSame($overflow, $budget->getCashFlow());
+
+        $budgetManager->balancing(new BudgetAccountBalance($budget, new Account()));
+
+        $balancingEntry = $budget->getEntries()
+            ->filter(fn (Entry $entry): bool => str_starts_with($entry->getName(), 'Équilibrage'))
+            ->first();
+
+        self::assertCount(2 + 1, $budget->getEntries());
+        self::assertInstanceOf(Entry::class, $balancingEntry);
+        self::assertSame($balancingEntry->getKind(), EntryKindEnum::BALANCING);
+        self::assertSame(-$overflow, $balancingEntry->getAmount());
+        self::assertSame(0.0, $budget->getCashFlow());
     }
 }

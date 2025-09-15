@@ -3,6 +3,7 @@
 namespace App\Shared\Operator;
 
 use App\Domain\Account\Manager\AccountManager;
+use App\Domain\Budget\DTO\BudgetAccountBalance;
 use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
@@ -11,7 +12,11 @@ use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
+use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Entity\EntryKindEnum;
+use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Utils\YearRange;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class BudgetOperator
 {
@@ -19,6 +24,8 @@ readonly class BudgetOperator
         private BudgetManager $budgetManager,
         private HistoryBudgetManager $historyBudgetManager,
         private AccountManager $accountManager,
+        private EntryManager $entryManager,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -79,5 +86,31 @@ readonly class BudgetOperator
         }
 
         return $cashFlows;
+    }
+
+    public function balancing(BudgetAccountBalance $budgetAccountBalance): void
+    {
+        $budget  = $budgetAccountBalance->getBudget();
+        $account = $budgetAccountBalance->getAccount();
+
+        if ($budget->hasPositiveCashFlow() || $budget->hasNegativeCashFlow()) {
+            $entryBalanceSpent = new Entry()
+                ->setAccount($account)
+                ->setName(sprintf('Équilibrage de %s', $budget->getName()))
+                ->setKind(EntryKindEnum::BALANCING)
+                ->setAmount($budget->getCashFlow());
+
+            $entryBalanceForecast = new Entry()
+                ->setAccount($account)
+                ->setBudget($budget)
+                ->setName(sprintf('Équilibrage de %s', $budget->getName()))
+                ->setKind(EntryKindEnum::BALANCING)
+                ->setAmount(-$budget->getCashFlow());
+
+            $budget->addEntry($entryBalanceForecast);
+
+            $this->entryManager->create($entryBalanceSpent);
+            $this->entityManager->flush();
+        }
     }
 }

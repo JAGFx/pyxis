@@ -5,6 +5,7 @@ namespace App\Tests\Unit\Domain\Entry\Manager;
 use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\Entry\Repository\EntryRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Knp\Component\Pager\PaginatorInterface;
@@ -26,7 +27,8 @@ class EntryManagerTest extends TestCase
     {
         return new EntryManager(
             $this->entryRepository,
-            $this->paginator
+            $this->paginator,
+            $this->createMock(EntityManagerInterface::class)
         );
     }
 

@@ -11,6 +11,7 @@ use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
+use App\Shared\Operator\BudgetOperator;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +24,7 @@ class BudgetController extends AbstractController
 {
     public function __construct(
         private readonly BudgetManager $budgetManager,
-        private readonly MenuConfigurationFactory $menuConfigurationFactory,
+        private readonly MenuConfigurationFactory $menuConfigurationFactory, private readonly BudgetOperator $budgetOperator,
     ) {
     }
 
@@ -62,7 +63,7 @@ class BudgetController extends AbstractController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->budgetManager->balancing($budgetAccountBalance);
+            $this->budgetOperator->balancing($budgetAccountBalance);
 
             return $this->redirectToRoute('back_budget_list');
         }
