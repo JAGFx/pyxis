@@ -2,7 +2,7 @@
 
 namespace App\Domain\Entry\Form;
 
-use App\Domain\Entry\DTO\EntrySearchCommand;
+use App\Domain\Entry\Request\EntrySearchRequest;
 use App\Infrastructure\KnpPaginator\Form\PaginationBuilder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,6 +17,6 @@ class EntryPaginationType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefault('data_class', EntrySearchCommand::class);
+        $resolver->setDefault('data_class', EntrySearchRequest::class);
     }
 }

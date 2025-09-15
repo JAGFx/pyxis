@@ -2,9 +2,9 @@
 
 namespace App\Domain\Assignment\Manager;
 
-use App\Domain\Assignment\DTO\AssignmentSearchCommand;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Repository\AssignmentRepository;
+use App\Domain\Assignment\Request\AssignmentSearchRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -21,11 +21,11 @@ readonly class AssignmentManager
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function balance(?AssignmentSearchCommand $command = null): float
+    public function balance(?AssignmentSearchRequest $searchRequest = null): float
     {
         /** @var ?float $data */
         $data = $this->repository
-            ->balanceQueryBuilder($command ?? new AssignmentSearchCommand())
+            ->balanceQueryBuilder($searchRequest ?? new AssignmentSearchRequest())
             ->getQuery()
             ->getSingleScalarResult();
 
@@ -35,11 +35,11 @@ readonly class AssignmentManager
     /**
      * @return Assignment[]
      */
-    public function getAssignments(?AssignmentSearchCommand $command = null): array
+    public function getAssignments(?AssignmentSearchRequest $searchRequest = null): array
     {
         /** @var Assignment[] $assignments */
         $assignments = $this->repository
-            ->getAssignmentsQueryBuilder($command ?? new AssignmentSearchCommand())
+            ->getAssignmentsQueryBuilder($searchRequest ?? new AssignmentSearchRequest())
             ->getQuery()
             ->getResult()
         ;

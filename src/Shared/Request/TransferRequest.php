@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\DTO;
+namespace App\Shared\Request;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Positive;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-class Transfer
+class TransferRequest
 {
     #[NotNull]
     private ?Account $account     = null;
@@ -36,7 +36,7 @@ class Transfer
         return $this->account;
     }
 
-    public function setAccount(?Account $account): Transfer
+    public function setAccount(?Account $account): TransferRequest
     {
         $this->account = $account;
 
@@ -48,7 +48,7 @@ class Transfer
         return $this->budgetSource;
     }
 
-    public function setBudgetSource(?Budget $budgetSource): Transfer
+    public function setBudgetSource(?Budget $budgetSource): TransferRequest
     {
         $this->budgetSource = $budgetSource;
 
@@ -60,7 +60,7 @@ class Transfer
         return $this->budgetTarget;
     }
 
-    public function setBudgetTarget(?Budget $budgetTarget): Transfer
+    public function setBudgetTarget(?Budget $budgetTarget): TransferRequest
     {
         $this->budgetTarget = $budgetTarget;
 
@@ -72,7 +72,7 @@ class Transfer
         return $this->amount;
     }
 
-    public function setAmount(float $amount): Transfer
+    public function setAmount(float $amount): TransferRequest
     {
         $this->amount = $amount;
 

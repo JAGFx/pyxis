@@ -4,7 +4,7 @@ namespace App\Shared\Entity;
 
 use Doctrine\Common\Collections\Collection;
 
-trait CollectionManagerTrait
+trait EntityCollectionTrait
 {
     /**
      * @template T of object

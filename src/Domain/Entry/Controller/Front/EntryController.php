@@ -2,10 +2,10 @@
 
 namespace App\Domain\Entry\Controller\Front;
 
-use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Entry\Request\EntrySearchRequest;
 use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
@@ -56,15 +56,15 @@ class EntryController extends AbstractController
     #[Route('/search', name: 'front_entry_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $entrySearchCommand = new EntrySearchCommand()
+        $searchRequest = new EntrySearchRequest()
             ->setOrderBy('createdAt')
             ->setOrderDirection(OrderEnum::DESC)
         ;
 
-        $this->createForm(EntrySearchType::class, $entrySearchCommand)
+        $this->createForm(EntrySearchType::class, $searchRequest)
             ->handleRequest($request);
 
-        $entries = $this->entryManager->getPaginated($entrySearchCommand);
+        $entries = $this->entryManager->getPaginated($searchRequest);
 
         return $this->renderTurboStream(
             $request,

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Domain\Budget\DTO;
+namespace App\Domain\Budget\Request;
 
 use App\Domain\Budget\Entity\Budget;
 
-class HistoryBudgetSearchCommand
+class HistoryBudgetSearchRequest
 {
     public function __construct(
         private ?Budget $budget,
@@ -17,7 +17,7 @@ class HistoryBudgetSearchCommand
         return $this->budget;
     }
 
-    public function setBudget(?Budget $budget): HistoryBudgetSearchCommand
+    public function setBudget(?Budget $budget): HistoryBudgetSearchRequest
     {
         $this->budget = $budget;
 
@@ -29,7 +29,7 @@ class HistoryBudgetSearchCommand
         return $this->year;
     }
 
-    public function setYear(?int $year): HistoryBudgetSearchCommand
+    public function setYear(?int $year): HistoryBudgetSearchRequest
     {
         $this->year = $year;
 

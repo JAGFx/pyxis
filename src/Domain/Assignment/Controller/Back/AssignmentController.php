@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Assignment\Controller\Back;
 
-use App\Domain\Assignment\DTO\AssignmentSearchCommand;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentType;
 use App\Domain\Assignment\Manager\AssignmentManager;
+use App\Domain\Assignment\Request\AssignmentSearchRequest;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,10 +30,10 @@ class AssignmentController extends AbstractController
     #[Route(name: 'back_assignment_list', methods: [Request::METHOD_GET])]
     public function index(): Response
     {
-        $assignmentSearchCommand = new AssignmentSearchCommand()->setOrderBy('name');
+        $searchRequest = new AssignmentSearchRequest()->setOrderBy('name');
 
         return $this->render('domain/assigment/index.html.twig', [
-            'assignments' => $this->assignmentManager->getAssignments($assignmentSearchCommand),
+            'assignments' => $this->assignmentManager->getAssignments($searchRequest),
             'config'      => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::ASSIGNMENT),
         ]);
     }

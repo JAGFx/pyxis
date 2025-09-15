@@ -2,9 +2,9 @@
 
 namespace App\Domain\Entry\Repository;
 
-use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryTypeEnum;
+use App\Domain\Entry\Request\EntrySearchRequest;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -33,67 +33,67 @@ class EntryRepository extends ServiceEntityRepository
         return $this;
     }
 
-    public function balance(EntrySearchCommand $command): QueryBuilder
+    public function balance(EntrySearchRequest $searchRequest): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('e')
             ->select('SUM(e.amount) as sum, b.id')
             ->leftJoin('e.budget', 'b')
             ->groupBy('b.id');
 
-        if (!is_null($command->getAccount())) {
+        if (!is_null($searchRequest->getAccount())) {
             $queryBuilder
                 ->andWhere('e.account = :account')
-                ->setParameter('account', $command->getAccount());
+                ->setParameter('account', $searchRequest->getAccount());
         }
 
         return $queryBuilder;
     }
 
-    public function getEntriesQueryBuilder(EntrySearchCommand $command): QueryBuilder
+    public function getEntriesQueryBuilder(EntrySearchRequest $searchRequest): QueryBuilder
     {
         $queryBuilder = $this
             ->createQueryBuilder('e')
         ;
 
-        if (!is_null($command->getStartDate()) && !is_null($command->getEndDate())) {
+        if (!is_null($searchRequest->getStartDate()) && !is_null($searchRequest->getEndDate())) {
             $queryBuilder
                 ->andWhere('e.createdAt BETWEEN :startDate AND :endDate')
-                ->setParameter('startDate', $command->getStartDate()->format('Y-m-d'))
-                ->setParameter('endDate', $command->getEndDate()->format('Y-m-d'));
+                ->setParameter('startDate', $searchRequest->getStartDate()->format('Y-m-d'))
+                ->setParameter('endDate', $searchRequest->getEndDate()->format('Y-m-d'));
         }
 
-        if (!is_null($command->getName())) {
+        if (!is_null($searchRequest->getName())) {
             $queryBuilder
                 ->andWhere('e.name LIKE :name')
-                ->setParameter('name', '%' . $command->getName() . '%');
+                ->setParameter('name', '%' . $searchRequest->getName() . '%');
         }
 
-        if (EntryTypeEnum::TYPE_SPENT === $command->getType()) {
+        if (EntryTypeEnum::TYPE_SPENT === $searchRequest->getType()) {
             $queryBuilder
                 ->andWhere('e.budget IS NULL');
-        } elseif (EntryTypeEnum::TYPE_FORECAST === $command->getType()) {
+        } elseif (EntryTypeEnum::TYPE_FORECAST === $searchRequest->getType()) {
             $queryBuilder
                 ->andWhere('e.budget IS NOT NULL');
         }
 
-        if (!is_null($command->getAccount())) {
+        if (!is_null($searchRequest->getAccount())) {
             $queryBuilder
                 ->andWhere('e.account = :account')
-                ->setParameter('account', $command->getAccount());
+                ->setParameter('account', $searchRequest->getAccount());
         }
 
-        if (!is_null($command->getBudget())) {
+        if (!is_null($searchRequest->getBudget())) {
             $queryBuilder
                 ->andWhere('e.budget = :budget')
-                ->setParameter('budget', $command->getBudget());
+                ->setParameter('budget', $searchRequest->getBudget());
         }
 
-        switch ($command->getOrderBy()) {
+        switch ($searchRequest->getOrderBy()) {
             case 'createdAt':
-                $queryBuilder->orderBy('e.createdAt', $command->getOrderDirection()->value);
+                $queryBuilder->orderBy('e.createdAt', $searchRequest->getOrderDirection()->value);
                 break;
             default:
-                $queryBuilder->orderBy('e.id', $command->getOrderDirection()->value);
+                $queryBuilder->orderBy('e.id', $searchRequest->getOrderDirection()->value);
                 break;
         }
 

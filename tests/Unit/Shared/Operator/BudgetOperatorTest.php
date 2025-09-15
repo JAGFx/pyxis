@@ -4,10 +4,10 @@ namespace App\Tests\Unit\Shared\Operator;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Budget\DTO\BudgetAccountBalance;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
+use App\Domain\Budget\Request\BudgetAccountBalanceRequest;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryKindEnum;
@@ -246,7 +246,7 @@ class BudgetOperatorTest extends TestCase
 
         $budgetManager = $this->createBudgetOperator();
 
-        $budgetManager->balancing(new BudgetAccountBalance($budget, new Account()));
+        $budgetManager->balancing(new BudgetAccountBalanceRequest($budget, new Account()));
 
         self::assertCount(3, $budget->getEntries());
         self::assertSame($progress, $budget->getProgress());
@@ -278,7 +278,7 @@ class BudgetOperatorTest extends TestCase
 
         self::assertSame($overflow, $budget->getCashFlow());
 
-        $budgetManager->balancing(new BudgetAccountBalance($budget, new Account()));
+        $budgetManager->balancing(new BudgetAccountBalanceRequest($budget, new Account()));
 
         $balancingEntry = $budget->getEntries()
             ->filter(fn (Entry $entry): bool => str_starts_with($entry->getName(), 'Équilibrage'))
@@ -316,7 +316,7 @@ class BudgetOperatorTest extends TestCase
 
         self::assertSame($overflow, $budget->getCashFlow());
 
-        $budgetManager->balancing(new BudgetAccountBalance($budget, new Account()));
+        $budgetManager->balancing(new BudgetAccountBalanceRequest($budget, new Account()));
 
         $balancingEntry = $budget->getEntries()
             ->filter(fn (Entry $entry): bool => str_starts_with($entry->getName(), 'Équilibrage'))

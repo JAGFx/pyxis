@@ -2,10 +2,10 @@
 
 namespace App\Domain\Budget\Controller\Front;
 
-use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Manager\BudgetManager;
+use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\BudgetOperator;
@@ -62,12 +62,12 @@ class BudgetController extends AbstractController
     #[Route('/search', name: 'front_budget_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $budgetSearchCommand = new BudgetSearchCommand()->setOrderBy('name');
+        $searchRequest = new BudgetSearchRequest()->setOrderBy('name');
 
-        $this->createForm(BudgetSearchType::class, $budgetSearchCommand)
+        $this->createForm(BudgetSearchType::class, $searchRequest)
             ->handleRequest($request);
 
-        $budgets = $this->budgetManager->getBudgets($budgetSearchCommand);
+        $budgets = $this->budgetManager->getBudgets($searchRequest);
 
         return $this->renderTurboStream(
             $request,

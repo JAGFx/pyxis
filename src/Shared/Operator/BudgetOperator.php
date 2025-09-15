@@ -3,12 +3,12 @@
 namespace App\Shared\Operator;
 
 use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Budget\DTO\BudgetAccountBalance;
-use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
+use App\Domain\Budget\Request\BudgetAccountBalanceRequest;
+use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
@@ -32,10 +32,10 @@ readonly class BudgetOperator
     /**
      * @return BudgetBalanceProgressValueObject[]
      */
-    public function getBudgetBalanceProgresses(BudgetSearchCommand $command): array
+    public function getBudgetBalanceProgresses(BudgetSearchRequest $searchRequest): array
     {
-        if (YearRange::current() === $command->getYear()) {
-            $budgetsVO = $this->budgetManager->getBudgetValuesObject($command);
+        if (YearRange::current() === $searchRequest->getYear()) {
+            $budgetsVO = $this->budgetManager->getBudgetValuesObject($searchRequest);
 
             return array_map(
                 fn (BudgetValueObject $budgetValueObject): BudgetBalanceProgressValueObject => new BudgetBalanceProgressValueObject(
@@ -49,7 +49,7 @@ readonly class BudgetOperator
             );
         }
 
-        $histories = $this->historyBudgetManager->getHistories($command);
+        $histories = $this->historyBudgetManager->getHistories($searchRequest);
 
         return array_map(
             fn (HistoryBudget $history): BudgetBalanceProgressValueObject => new BudgetBalanceProgressValueObject(
@@ -88,7 +88,7 @@ readonly class BudgetOperator
         return $cashFlows;
     }
 
-    public function balancing(BudgetAccountBalance $budgetAccountBalance): void
+    public function balancing(BudgetAccountBalanceRequest $budgetAccountBalance): void
     {
         $budget  = $budgetAccountBalance->getBudget();
         $account = $budgetAccountBalance->getAccount();

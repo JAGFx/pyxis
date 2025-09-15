@@ -2,8 +2,8 @@
 
 namespace App\Domain\Budget\Repository;
 
-use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
+use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Entry\Entity\EntryKindEnum;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -27,37 +27,37 @@ class BudgetRepository extends ServiceEntityRepository
         return $this;
     }
 
-    public function getBudgetsQueryBuilder(BudgetSearchCommand $command): QueryBuilder
+    public function getBudgetsQueryBuilder(BudgetSearchRequest $searchRequest): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('b')
             ->orderBy('b.name');
 
-        if (null !== $command->getName()) {
+        if (null !== $searchRequest->getName()) {
             $queryBuilder
                 ->andWhere('b.name LIKE :name')
-                ->setParameter('name', '%' . $command->getName() . '%');
+                ->setParameter('name', '%' . $searchRequest->getName() . '%');
         }
 
-        if (!is_null($command->isEnabled())) {
+        if (!is_null($searchRequest->isEnabled())) {
             $queryBuilder
                 ->andWhere('b.enabled = :enable')
-                ->setParameter('enable', $command->isEnabled())
+                ->setParameter('enable', $searchRequest->isEnabled())
             ;
         }
 
-        switch ($command->getOrderBy()) {
+        switch ($searchRequest->getOrderBy()) {
             case 'name':
-                $queryBuilder->orderBy('b.name', $command->getOrderDirection()->value);
+                $queryBuilder->orderBy('b.name', $searchRequest->getOrderDirection()->value);
                 break;
             default:
-                $queryBuilder->orderBy('b.id', $command->getOrderDirection()->value);
+                $queryBuilder->orderBy('b.id', $searchRequest->getOrderDirection()->value);
                 break;
         }
 
         return $queryBuilder;
     }
 
-    public function getBudgetValueObjectsQueryBuilder(BudgetSearchCommand $command): QueryBuilder
+    public function getBudgetValueObjectsQueryBuilder(BudgetSearchRequest $searchRequest): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('b')
             ->select(
@@ -66,32 +66,32 @@ class BudgetRepository extends ServiceEntityRepository
             ->join('b.entries', 'e')
             ->groupBy('b.id');
 
-        if (null !== $command->getYear()) {
+        if (null !== $searchRequest->getYear()) {
             $queryBuilder->andWhere('e.createdAt BETWEEN :from AND :to')
-                ->setParameter('from', YearRange::firstDayOf($command->getYear())->format('Y-m-d H:i:s'))
-                ->setParameter('to', YearRange::lastDayOf($command->getYear())->format('Y-m-d H:i:s'));
+                ->setParameter('from', YearRange::firstDayOf($searchRequest->getYear())->format('Y-m-d H:i:s'))
+                ->setParameter('to', YearRange::lastDayOf($searchRequest->getYear())->format('Y-m-d H:i:s'));
         }
 
-        if (true === $command->getShowCredits()) {
+        if (true === $searchRequest->getShowCredits()) {
             $queryBuilder->andWhere('e.amount > 0')
                 ->andWhere('e.kind = :kind')
                 ->setParameter('kind', EntryKindEnum::DEFAULT);
         }
 
-        if (false === $command->getShowCredits()) {
+        if (false === $searchRequest->getShowCredits()) {
             $queryBuilder->andWhere('e.amount < 0')
                 ->andWhere('e.kind = :kind')
                 ->setParameter('kind', EntryKindEnum::DEFAULT);
         }
 
-        if (null !== $command->getName()) {
+        if (null !== $searchRequest->getName()) {
             $queryBuilder->andWhere('b.name = :name')
-                ->setParameter('name', $command->getName());
+                ->setParameter('name', $searchRequest->getName());
         }
 
-        if (null !== $command->getBudgetId()) {
+        if (null !== $searchRequest->getBudgetId()) {
             $queryBuilder->andWhere('b.id = :budget')
-                ->setParameter('budget', $command->getBudgetId());
+                ->setParameter('budget', $searchRequest->getBudgetId());
         }
 
         return $queryBuilder;

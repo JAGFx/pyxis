@@ -2,9 +2,9 @@
 
 namespace App\Domain\Budget\Twig\Components;
 
-use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Form\BudgetBalanceSearchType;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
+use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Shared\Operator\BudgetOperator;
 use App\Shared\Utils\YearRange;
@@ -34,13 +34,13 @@ class BudgetBalanceProgress extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        $budgetSearchCommand = new BudgetSearchCommand()
+        $searchRequest = new BudgetSearchRequest()
             ->setShowCredits(false)
             ->setYear(YearRange::current());
 
-        $this->budgetBalanceProgresses = $this->budgetOperator->getBudgetBalanceProgresses($budgetSearchCommand);
+        $this->budgetBalanceProgresses = $this->budgetOperator->getBudgetBalanceProgresses($searchRequest);
 
-        return $this->createForm(BudgetBalanceSearchType::class, $budgetSearchCommand, [
+        return $this->createForm(BudgetBalanceSearchType::class, $searchRequest, [
             'years' => $this->historyBudgetManager->getAvailableYears(),
         ]);
     }
@@ -49,7 +49,7 @@ class BudgetBalanceProgress extends AbstractController
     public function onYearChange(): void
     {
         $this->submitForm();
-        /** @var ?BudgetSearchCommand $budgetSearchCommand */
+        /** @var ?BudgetSearchRequest $budgetSearchCommand */
         $budgetSearchCommand = $this->form?->getData();
 
         if (null === $budgetSearchCommand) {

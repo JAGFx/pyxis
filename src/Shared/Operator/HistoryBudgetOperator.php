@@ -2,11 +2,11 @@
 
 namespace App\Shared\Operator;
 
-use App\Domain\Budget\DTO\BudgetSearchCommand;
-use App\Domain\Budget\DTO\HistoryBudgetSearchCommand;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
+use App\Domain\Budget\Request\BudgetSearchRequest;
+use App\Domain\Budget\Request\HistoryBudgetSearchRequest;
 use App\Shared\Utils\YearRange;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -23,7 +23,7 @@ readonly class HistoryBudgetOperator
     public function generateHistoryBudgetsForYear(int $year): void
     {
         $budgetsValues = $this->budgetManager->getBudgetValuesObject(
-            new BudgetSearchCommand()
+            new BudgetSearchRequest()
                 ->setShowCredits(false)
                 ->setYear($year)
         );
@@ -36,7 +36,7 @@ readonly class HistoryBudgetOperator
             }
 
             $historyBudgets = $this->historyBudgetManager->getHistories(
-                new HistoryBudgetSearchCommand(
+                new HistoryBudgetSearchRequest(
                     $budget,
                     $year
                 )

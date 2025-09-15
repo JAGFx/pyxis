@@ -5,7 +5,7 @@ namespace App\Domain\Entry\Entity;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Repository\EntryRepository;
-use App\Shared\Entity\CollectionManagerTrait;
+use App\Shared\Entity\EntityCollectionTrait;
 use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
@@ -25,7 +25,7 @@ class Entry
 {
     use TimestampableTrait;
     use NameableTrait;
-    use CollectionManagerTrait;
+    use EntityCollectionTrait;
 
     #[Id]
     #[GeneratedValue]

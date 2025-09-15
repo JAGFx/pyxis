@@ -2,10 +2,10 @@
 
 namespace App\Domain\PeriodicEntry\Controller\Front;
 
-use App\Domain\PeriodicEntry\DTO\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchType;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
+use App\Domain\PeriodicEntry\Request\PeriodicEntrySearchRequest;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,12 +37,12 @@ class PeriodicEntryController extends AbstractController
     #[Route('/search', name: 'front_periodic_entry_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $periodicEntrySearchCommand = new PeriodicEntrySearchCommand()->setOrderBy('name');
+        $searchRequest = new PeriodicEntrySearchRequest()->setOrderBy('name');
 
-        $this->createForm(PeriodicEntrySearchType::class, $periodicEntrySearchCommand)
+        $this->createForm(PeriodicEntrySearchType::class, $searchRequest)
             ->handleRequest($request);
 
-        $periodicEntries = $this->periodicEntryManager->getPeriodicEntries($periodicEntrySearchCommand);
+        $periodicEntries = $this->periodicEntryManager->getPeriodicEntries($searchRequest);
 
         return $this->renderTurboStream(
             $request,

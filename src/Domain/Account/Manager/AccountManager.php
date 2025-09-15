@@ -2,9 +2,9 @@
 
 namespace App\Domain\Account\Manager;
 
-use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Repository\AccountRepository;
+use App\Domain\Account\Request\AccountSearchRequest;
 use Doctrine\ORM\EntityManagerInterface;
 
 readonly class AccountManager
@@ -18,11 +18,11 @@ readonly class AccountManager
     /**
      * @return Account[]
      */
-    public function getAccounts(?AccountSearchCommand $command = null): array
+    public function getAccounts(?AccountSearchRequest $searchRequest = null): array
     {
         /** @var Account[] $accounts */
         $accounts = $this->repository
-            ->getAccountsQueryBuilder($command ?? new AccountSearchCommand())
+            ->getAccountsQueryBuilder($searchRequest ?? new AccountSearchRequest())
             ->getQuery()
             ->getResult()
         ;

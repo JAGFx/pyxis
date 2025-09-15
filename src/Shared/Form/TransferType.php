@@ -2,13 +2,13 @@
 
 namespace App\Shared\Form;
 
-use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Budget\DTO\BudgetSearchCommand;
+use App\Domain\Account\Request\AccountSearchRequest;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Repository\BudgetRepository;
-use App\Shared\DTO\Transfer;
+use App\Domain\Budget\Request\BudgetSearchRequest;
+use App\Shared\Request\TransferRequest;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -25,9 +25,9 @@ class TransferType extends AbstractType
                 'class'         => Account::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
-                    $accountSearchCommand = new AccountSearchCommand(true)->setOrderBy('name');
+                    $searchRequest = new AccountSearchRequest(true)->setOrderBy('name');
 
-                    return $repository->getAccountsQueryBuilder($accountSearchCommand);
+                    return $repository->getAccountsQueryBuilder($searchRequest);
                 },
             ])
             ->add('budget_source', EntityType::class, [
@@ -35,9 +35,9 @@ class TransferType extends AbstractType
                 'class'         => Budget::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (BudgetRepository $repository): QueryBuilder {
-                    $accountSearchCommand = new BudgetSearchCommand(enabled: true)->setOrderBy('name');
+                    $searchRequest = new BudgetSearchRequest(enabled: true)->setOrderBy('name');
 
-                    return $repository->getBudgetsQueryBuilder($accountSearchCommand);
+                    return $repository->getBudgetsQueryBuilder($searchRequest);
                 },
                 'required' => false,
             ])
@@ -46,9 +46,9 @@ class TransferType extends AbstractType
                 'class'         => Budget::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (BudgetRepository $repository): QueryBuilder {
-                    $accountSearchCommand = new BudgetSearchCommand(enabled: true)->setOrderBy('name');
+                    $searchRequest = new BudgetSearchRequest(enabled: true)->setOrderBy('name');
 
-                    return $repository->getBudgetsQueryBuilder($accountSearchCommand);
+                    return $repository->getBudgetsQueryBuilder($searchRequest);
                 },
                 'required' => false,
             ])
@@ -58,7 +58,7 @@ class TransferType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => Transfer::class,
+            'data_class'         => TransferRequest::class,
             'label_format'       => 'shared.transfer.%name%.label',
             'translation_domain' => 'forms',
         ]);

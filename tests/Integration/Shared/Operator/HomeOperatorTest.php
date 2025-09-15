@@ -5,8 +5,8 @@ namespace App\Tests\Integration\Shared\Operator;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Shared\DTO\Transfer;
 use App\Shared\Operator\HomeOperator;
+use App\Shared\Request\TransferRequest;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
@@ -90,7 +90,7 @@ class HomeOperatorTest extends KernelTestCase
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
 
-        $transfer = new Transfer()
+        $transfer = new TransferRequest()
             ->setAccount($account)
             ->setAmount(self::BUDGET_AMOUNT)
             ->setBudgetSource($budgetSource)

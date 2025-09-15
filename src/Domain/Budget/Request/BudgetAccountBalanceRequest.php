@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domain\Budget\DTO;
+namespace App\Domain\Budget\Request;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class BudgetAccountBalance
+class BudgetAccountBalanceRequest
 {
     public function __construct(
         private Budget $budget,
@@ -21,7 +21,7 @@ class BudgetAccountBalance
         return $this->budget;
     }
 
-    public function setBudget(Budget $budget): BudgetAccountBalance
+    public function setBudget(Budget $budget): BudgetAccountBalanceRequest
     {
         $this->budget = $budget;
 
@@ -33,7 +33,7 @@ class BudgetAccountBalance
         return $this->account;
     }
 
-    public function setAccount(?Account $account): BudgetAccountBalance
+    public function setAccount(?Account $account): BudgetAccountBalanceRequest
     {
         $this->account = $account;
 

@@ -2,9 +2,9 @@
 
 namespace App\Shared\Controller\Back;
 
-use App\Shared\DTO\Transfer;
 use App\Shared\Form\TransferType;
 use App\Shared\Operator\HomeOperator;
+use App\Shared\Request\TransferRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,11 +27,11 @@ class HomeController extends AbstractController
     public function transfer(Request $request): Response
     {
         $form = $this
-            ->createForm(TransferType::class, $transfer = new Transfer())
+            ->createForm(TransferType::class, $transferRequest = new TransferRequest())
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->homeOperator->transfer($transfer);
+            $this->homeOperator->transfer($transferRequest);
 
             return $this->redirectToRoute('home');
         }

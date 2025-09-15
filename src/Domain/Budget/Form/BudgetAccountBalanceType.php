@@ -2,10 +2,10 @@
 
 namespace App\Domain\Budget\Form;
 
-use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Budget\DTO\BudgetAccountBalance;
+use App\Domain\Account\Request\AccountSearchRequest;
+use App\Domain\Budget\Request\BudgetAccountBalanceRequest;
 use Doctrine\ORM\QueryBuilder;
 use Override;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -23,21 +23,21 @@ class BudgetAccountBalanceType extends AbstractType
         $builder
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
                 $form = $event->getForm();
-                /** @var BudgetAccountBalance $budgetAccountBalance */
-                $budgetAccountBalance = $event->getData();
+                /** @var BudgetAccountBalanceRequest $budgetAccountBalanceRequest */
+                $budgetAccountBalanceRequest = $event->getData();
 
                 $form
                     ->add('account', EntityType::class, [
                         'class'         => Account::class,
                         'choice_label'  => 'name',
-                        'query_builder' => function (AccountRepository $repository) use ($budgetAccountBalance): QueryBuilder {
-                            $accountSearchCommand = new AccountSearchCommand(true)
+                        'query_builder' => function (AccountRepository $repository) use ($budgetAccountBalanceRequest): QueryBuilder {
+                            $searchRequest = new AccountSearchRequest(true)
                                 ->setOrderBy('name')
-                                ->setBudget($budgetAccountBalance->getBudget())
+                                ->setBudget($budgetAccountBalanceRequest->getBudget())
                                 ->setPositiveOrNegativeBalance(true)
                             ;
 
-                            return $repository->getAccountsQueryBuilder($accountSearchCommand);
+                            return $repository->getAccountsQueryBuilder($searchRequest);
                         },
                     ])
                 ;
@@ -49,7 +49,7 @@ class BudgetAccountBalanceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => BudgetAccountBalance::class,
+            'data_class'         => BudgetAccountBalanceRequest::class,
             'label_format'       => 'budget.account_balance.%name%.label',
             'translation_domain' => 'forms',
         ]);

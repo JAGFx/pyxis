@@ -2,9 +2,9 @@
 
 namespace App\Tests\Unit\Domain\Entry\Manager;
 
-use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\Entry\Repository\EntryRepository;
+use App\Domain\Entry\Request\EntrySearchRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -32,7 +32,7 @@ class EntryManagerTest extends TestCase
         );
     }
 
-    private function expectBalance(array $expectedData, ?EntrySearchCommand $command = null): void
+    private function expectBalance(array $expectedData, ?EntrySearchRequest $searchRequest = null): void
     {
         $query = $this->createMock(Query::class);
         $query->expects(self::once())
@@ -47,7 +47,7 @@ class EntryManagerTest extends TestCase
         $this->entryRepository
             ->expects(self::once())
             ->method('balance')
-            ->with($command ?? new EntrySearchCommand())
+            ->with($searchRequest ?? new EntrySearchRequest())
             ->willReturn($queryBuilder);
     }
 
@@ -68,13 +68,13 @@ class EntryManagerTest extends TestCase
 
     public function testBalanceWithProvidedCommand(): void
     {
-        $command      = new EntrySearchCommand();
-        $expectedData = [
+        $searchRequest = new EntrySearchRequest();
+        $expectedData  = [
             ['id' => null, 'sum' => 75.0], // spent entries
             ['id' => 1, 'sum' => 125.0],   // forecast entries
         ];
 
-        $this->expectBalance($expectedData, $command);
+        $this->expectBalance($expectedData, $searchRequest);
         $result = $this->createEntryManagerMock()->balance();
 
         self::assertEquals(75.0, $result->getTotalSpent());

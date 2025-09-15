@@ -5,7 +5,7 @@ namespace App\Shared\Operator;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryKindEnum;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Shared\DTO\Transfer;
+use App\Shared\Request\TransferRequest;
 
 readonly class HomeOperator
 {
@@ -14,7 +14,7 @@ readonly class HomeOperator
     ) {
     }
 
-    public function transfer(Transfer $transfer): void
+    public function transfer(TransferRequest $transfer): void
     {
         $entrySourceName = $transfer->getBudgetSource()?->getName() ?? 'Dépense';
         $entryTargetName = $transfer->getBudgetTarget()?->getName() ?? 'Dépense';
@@ -24,14 +24,14 @@ readonly class HomeOperator
             ->setBudget($transfer->getBudgetSource())
             ->setAmount(-$transfer->getAmount())
             ->setAccount($transfer->getAccount())
-            ->setName(sprintf('Transfer depuis %s', $entrySourceName));
+            ->setName(sprintf('TransferRequest depuis %s', $entrySourceName));
 
         $entryTarget = new Entry()
             ->setKind(EntryKindEnum::BALANCING)
             ->setBudget($transfer->getBudgetTarget())
             ->setAmount($transfer->getAmount())
             ->setAccount($transfer->getAccount())
-            ->setName(sprintf('Transfer vers %s', $entryTargetName));
+            ->setName(sprintf('TransferRequest vers %s', $entryTargetName));
 
         $transfer
             ->getBudgetSource()

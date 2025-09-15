@@ -2,9 +2,9 @@
 
 namespace App\Domain\Budget\Manager;
 
-use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Repository\BudgetRepository;
+use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -42,13 +42,13 @@ readonly class BudgetManager
     /**
      * @return Budget[]
      */
-    public function getBudgets(?BudgetSearchCommand $command = null): array
+    public function getBudgets(?BudgetSearchRequest $searchRequest = null): array
     {
-        $command ??= new BudgetSearchCommand();
+        $searchRequest ??= new BudgetSearchRequest();
 
         /** @var Budget[] $result */
         $result = $this->repository
-            ->getBudgetsQueryBuilder($command)
+            ->getBudgetsQueryBuilder($searchRequest)
             ->getQuery()
             ->getResult();
 
@@ -58,13 +58,13 @@ readonly class BudgetManager
     /**
      * @return BudgetValueObject[]
      */
-    public function getBudgetValuesObject(?BudgetSearchCommand $command = null): array
+    public function getBudgetValuesObject(?BudgetSearchRequest $searchRequest = null): array
     {
-        $command ??= new BudgetSearchCommand();
+        $searchRequest ??= new BudgetSearchRequest();
 
         /** @var BudgetValueObject[] $result */
         $result = $this->repository
-            ->getBudgetValueObjectsQueryBuilder($command)
+            ->getBudgetValueObjectsQueryBuilder($searchRequest)
             ->getQuery()
             ->getResult();
 

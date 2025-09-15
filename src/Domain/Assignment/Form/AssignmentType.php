@@ -2,9 +2,9 @@
 
 namespace App\Domain\Assignment\Form;
 
-use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Repository\AccountRepository;
+use App\Domain\Account\Request\AccountSearchRequest;
 use App\Domain\Assignment\Entity\Assignment;
 use Doctrine\ORM\QueryBuilder;
 use Override;
@@ -25,9 +25,9 @@ class AssignmentType extends AbstractType
                 'class'         => Account::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
-                    $accountSearchCommand = new AccountSearchCommand(true)->setOrderBy('name');
+                    $searchRequest = new AccountSearchRequest(true)->setOrderBy('name');
 
-                    return $repository->getAccountsQueryBuilder($accountSearchCommand);
+                    return $repository->getAccountsQueryBuilder($searchRequest);
                 },
             ])
             ->add('name', TextType::class)

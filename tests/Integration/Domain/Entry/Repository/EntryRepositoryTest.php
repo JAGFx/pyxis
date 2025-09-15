@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Domain\Entry\Repository;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\Entry\Repository\EntryRepository;
+use App\Domain\Entry\Request\EntrySearchRequest;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
@@ -100,9 +100,9 @@ class EntryRepositoryTest extends KernelTestCase
     {
         $this->populateDatabaseBalance();
 
-        $command = new EntrySearchCommand();
+        $searchRequest = new EntrySearchRequest();
 
-        $queryBuilder   = $this->entryRepository->balance($command);
+        $queryBuilder   = $this->entryRepository->balance($searchRequest);
         $entriesBalance = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(3, $entriesBalance, 'Should return 3 groups (2 budgets + 1 null budget)');
@@ -128,9 +128,9 @@ class EntryRepositoryTest extends KernelTestCase
 
         $account1 = AccountFactory::repository()->findOneBy(['name' => self::ACCOUNT_1])->_real();
 
-        $command = new EntrySearchCommand(account: $account1);
+        $searchRequest = new EntrySearchRequest(account: $account1);
 
-        $queryBuilder   = $this->entryRepository->balance($command);
+        $queryBuilder   = $this->entryRepository->balance($searchRequest);
         $entriesBalance = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(3, $entriesBalance, 'Should return 3 groups for account 1');
@@ -157,9 +157,9 @@ class EntryRepositoryTest extends KernelTestCase
         /** @var Account $nonExistentAccount */
         $nonExistentAccount = AccountFactory::new()->create(['name' => 'Non Existent'])->_real();
 
-        $command = new EntrySearchCommand(account: $nonExistentAccount);
+        $searchRequest = new EntrySearchRequest(account: $nonExistentAccount);
 
-        $queryBuilder   = $this->entryRepository->balance($command);
+        $queryBuilder   = $this->entryRepository->balance($searchRequest);
         $entriesBalance = $queryBuilder->getQuery()->getResult();
 
         self::assertEmpty($entriesBalance, 'Should return empty array for account with no entries');
@@ -170,9 +170,9 @@ class EntryRepositoryTest extends KernelTestCase
         $this->populateDatabaseBalance(false);
 
         // Clear all entries
-        $command = new EntrySearchCommand();
+        $searchRequest = new EntrySearchRequest();
 
-        $queryBuilder   = $this->entryRepository->balance($command);
+        $queryBuilder   = $this->entryRepository->balance($searchRequest);
         $entriesBalance = $queryBuilder->getQuery()->getResult();
 
         self::assertEmpty($entriesBalance, 'Should return empty array when no entries exist');
@@ -216,9 +216,9 @@ class EntryRepositoryTest extends KernelTestCase
     {
         $this->populateDatabaseFiter();
 
-        $command = new EntrySearchCommand(type: EntryTypeEnum::TYPE_SPENT);
+        $searchRequest = new EntrySearchRequest(type: EntryTypeEnum::TYPE_SPENT);
 
-        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($command);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
         $entries      = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(2, $entries, 'Should return only entries with null budget for TYPE_SPENT');
@@ -233,9 +233,9 @@ class EntryRepositoryTest extends KernelTestCase
     {
         $this->populateDatabaseFiter();
 
-        $command = new EntrySearchCommand(type: EntryTypeEnum::TYPE_FORECAST);
+        $searchRequest = new EntrySearchRequest(type: EntryTypeEnum::TYPE_FORECAST);
 
-        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($command);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
         $entries      = $queryBuilder->getQuery()->getResult();
 
         $this->assertCount(2, $entries, 'Should return only entries with budget for TYPE_FORECAST');
@@ -250,9 +250,9 @@ class EntryRepositoryTest extends KernelTestCase
     {
         $this->populateDatabaseFiter();
 
-        $command = new EntrySearchCommand(type: null);
+        $searchRequest = new EntrySearchRequest(type: null);
 
-        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($command);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
         $entries      = $queryBuilder->getQuery()->getResult();
 
         $this->assertCount(4, $entries, 'Should return all entries when type is null');

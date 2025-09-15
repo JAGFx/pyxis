@@ -2,11 +2,11 @@
 
 namespace App\Domain\Entry\Controller\Back;
 
-use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntryPaginationType;
 use App\Domain\Entry\Form\EntryType;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Entry\Request\EntrySearchRequest;
 use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
@@ -34,14 +34,14 @@ class EntryController extends AbstractController
     #[Route(name: 'back_entry_list', methods: Request::METHOD_GET)]
     public function list(Request $request): Response
     {
-        $entrySearchCommand = new EntrySearchCommand()
+        $searchRequest = new EntrySearchRequest()
             ->setOrderBy('createdAt')
             ->setOrderDirection(OrderEnum::DESC)
         ;
-        $this->handlePaginationForm($request, EntryPaginationType::class, $entrySearchCommand);
+        $this->handlePaginationForm($request, EntryPaginationType::class, $searchRequest);
 
         return $this->render('domain/entry/index.html.twig', [
-            'entries' => $this->entryManager->getPaginated($entrySearchCommand),
+            'entries' => $this->entryManager->getPaginated($searchRequest),
             'config'  => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::ENTRY),
         ]);
     }

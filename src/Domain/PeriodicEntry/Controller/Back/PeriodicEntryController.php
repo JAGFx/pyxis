@@ -2,10 +2,10 @@
 
 namespace App\Domain\PeriodicEntry\Controller\Back;
 
-use App\Domain\PeriodicEntry\DTO\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntryType;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
+use App\Domain\PeriodicEntry\Request\PeriodicEntrySearchRequest;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,10 +28,10 @@ class PeriodicEntryController extends AbstractController
     #[Route(name: 'back_periodic_entry_list', methods: Request::METHOD_GET)]
     public function list(): Response
     {
-        $periodicEntrySearchCommand = new PeriodicEntrySearchCommand()->setOrderBy('name');
+        $searchRequest = new PeriodicEntrySearchRequest()->setOrderBy('name');
 
         return $this->render('domain/periodic_entry/index.html.twig', [
-            'periodicEntries' => $this->periodicEntryManager->getPeriodicEntries($periodicEntrySearchCommand),
+            'periodicEntries' => $this->periodicEntryManager->getPeriodicEntries($searchRequest),
             'config'          => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::PERIODIC_ENTRY),
         ]);
     }

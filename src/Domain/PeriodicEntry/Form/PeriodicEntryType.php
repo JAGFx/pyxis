@@ -2,12 +2,12 @@
 
 namespace App\Domain\PeriodicEntry\Form;
 
-use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Budget\DTO\BudgetSearchCommand;
+use App\Domain\Account\Request\AccountSearchRequest;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Repository\BudgetRepository;
+use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -27,9 +27,9 @@ class PeriodicEntryType extends AbstractType
                 'class'         => Account::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
-                    $accountSearchCommand = new AccountSearchCommand(true)->setOrderBy('name');
+                    $searchRequest = new AccountSearchRequest(true)->setOrderBy('name');
 
-                    return $repository->getAccountsQueryBuilder($accountSearchCommand);
+                    return $repository->getAccountsQueryBuilder($searchRequest);
                 },
             ])
             ->add('name', TextType::class)
@@ -49,9 +49,9 @@ class PeriodicEntryType extends AbstractType
                 'required'      => false,
                 'placeholder'   => 'periodic_entry.form.budgets.placeholder',
                 'query_builder' => static function (BudgetRepository $budgetRepository): QueryBuilder {
-                    $budgetSearchCommand = new BudgetSearchCommand(enabled: true)->setOrderBy('name');
+                    $searchRequest = new BudgetSearchRequest(enabled: true)->setOrderBy('name');
 
-                    return $budgetRepository->getBudgetsQueryBuilder($budgetSearchCommand);
+                    return $budgetRepository->getBudgetsQueryBuilder($searchRequest);
                 },
             ]);
     }

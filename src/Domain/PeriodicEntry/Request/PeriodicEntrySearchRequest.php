@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Domain\PeriodicEntry\DTO;
+namespace App\Domain\PeriodicEntry\Request;
 
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 
-class PeriodicEntrySearchCommand implements OrderableInterface
+class PeriodicEntrySearchRequest implements OrderableInterface
 {
     use OrderableTrait;
 
@@ -21,7 +21,7 @@ class PeriodicEntrySearchCommand implements OrderableInterface
         return $this->entryTypeEnum;
     }
 
-    public function setEntryTypeEnum(?EntryTypeEnum $entryTypeEnum): PeriodicEntrySearchCommand
+    public function setEntryTypeEnum(?EntryTypeEnum $entryTypeEnum): PeriodicEntrySearchRequest
     {
         $this->entryTypeEnum = $entryTypeEnum;
 
@@ -33,7 +33,7 @@ class PeriodicEntrySearchCommand implements OrderableInterface
         return $this->name;
     }
 
-    public function setName(?string $name): PeriodicEntrySearchCommand
+    public function setName(?string $name): PeriodicEntrySearchRequest
     {
         $this->name = $name;
 

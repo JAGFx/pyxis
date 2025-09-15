@@ -8,10 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 trait PaginationFormHandlerTrait
 {
-    public function handlePaginationForm(Request $request, string $formType, PaginationInterface $command): void
+    public function handlePaginationForm(Request $request, string $formType, PaginationInterface $searchRequest): void
     {
         $this
-            ->createForm($formType, $command, [
+            ->createForm($formType, $searchRequest, [
                 'method'          => Request::METHOD_GET,
                 'csrf_protection' => false,
             ])

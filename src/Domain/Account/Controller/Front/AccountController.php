@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Controller\Front;
 
-use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountSearchType;
 use App\Domain\Account\Manager\AccountManager;
+use App\Domain\Account\Request\AccountSearchRequest;
 use App\Domain\Account\Security\AccountVoter;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\EntryOperator;
@@ -76,12 +76,12 @@ class AccountController extends AbstractController
     #[Route('/search', name: 'front_account_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $accountSearchCommand = new AccountSearchCommand()->setOrderBy('name');
+        $searchRequest = new AccountSearchRequest()->setOrderBy('name');
 
-        $this->createForm(AccountSearchType::class, $accountSearchCommand)
+        $this->createForm(AccountSearchType::class, $searchRequest)
             ->handleRequest($request);
 
-        $accounts = $this->accountManager->getAccounts($accountSearchCommand);
+        $accounts = $this->accountManager->getAccounts($searchRequest);
 
         return $this->renderTurboStream(
             $request,

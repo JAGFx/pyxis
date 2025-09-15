@@ -2,10 +2,10 @@
 
 namespace App\Domain\Account\Controller\Back;
 
-use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountType;
 use App\Domain\Account\Manager\AccountManager;
+use App\Domain\Account\Request\AccountSearchRequest;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
@@ -26,8 +26,8 @@ class AccountController extends AbstractController
     #[Route(name: 'back_account_list', methods: Request::METHOD_GET)]
     public function index(): Response
     {
-        $accountSearchCommand = new AccountSearchCommand()->setOrderBy('name');
-        $accounts             = $this->accountManager->getAccounts($accountSearchCommand);
+        $searchRequest = new AccountSearchRequest()->setOrderBy('name');
+        $accounts      = $this->accountManager->getAccounts($searchRequest);
 
         return $this->render('domain/account/index.html.twig', [
             'accounts' => $accounts,

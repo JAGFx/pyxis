@@ -2,12 +2,12 @@
 
 namespace App\Domain\Budget\Controller\Back;
 
-use App\Domain\Budget\DTO\BudgetAccountBalance;
-use App\Domain\Budget\DTO\BudgetSearchCommand;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetAccountBalanceType;
 use App\Domain\Budget\Form\BudgetType;
 use App\Domain\Budget\Manager\BudgetManager;
+use App\Domain\Budget\Request\BudgetAccountBalanceRequest;
+use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
@@ -31,10 +31,10 @@ class BudgetController extends AbstractController
     #[Route(name: 'back_budget_list', methods: Request::METHOD_GET)]
     public function list(): Response
     {
-        $budgetSearchCommand = new BudgetSearchCommand()->setOrderBy('name');
+        $searchRequest = new BudgetSearchRequest()->setOrderBy('name');
 
         return $this->render('domain/budget/index.html.twig', [
-            'budgets' => $this->budgetManager->getBudgets($budgetSearchCommand),
+            'budgets' => $this->budgetManager->getBudgets($searchRequest),
             'config'  => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::BUDGET),
         ]);
     }
@@ -56,14 +56,14 @@ class BudgetController extends AbstractController
     #[IsGranted(BudgetVoter::BALANCE, 'budget')]
     public function balance(Request $request, Budget $budget): Response
     {
-        $budgetAccountBalance = new BudgetAccountBalance($budget);
+        $budgetAccountBalanceRequest = new BudgetAccountBalanceRequest($budget);
 
         $form = $this
-            ->createForm(BudgetAccountBalanceType::class, $budgetAccountBalance)
+            ->createForm(BudgetAccountBalanceType::class, $budgetAccountBalanceRequest)
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->budgetOperator->balancing($budgetAccountBalance);
+            $this->budgetOperator->balancing($budgetAccountBalanceRequest);
 
             return $this->redirectToRoute('back_budget_list');
         }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Assignment\Controller\Front;
 
-use App\Domain\Assignment\DTO\AssignmentSearchCommand;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentSearchType;
 use App\Domain\Assignment\Manager\AssignmentManager;
+use App\Domain\Assignment\Request\AssignmentSearchRequest;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,12 +38,12 @@ class AssignmentController extends AbstractController
     #[Route('/search', name: 'front_assignment_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $assignmentSearchCommand = new AssignmentSearchCommand()->setOrderBy('name');
+        $searchRequest = new AssignmentSearchRequest()->setOrderBy('name');
 
-        $this->createForm(AssignmentSearchType::class, $assignmentSearchCommand)
+        $this->createForm(AssignmentSearchType::class, $searchRequest)
             ->handleRequest($request);
 
-        $assignments = $this->assignmentManager->getAssignments($assignmentSearchCommand);
+        $assignments = $this->assignmentManager->getAssignments($searchRequest);
 
         return $this->renderTurboStream(
             $request,

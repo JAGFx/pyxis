@@ -2,8 +2,8 @@
 
 namespace App\Domain\PeriodicEntry\Twig\Components;
 
-use App\Domain\PeriodicEntry\DTO\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchType;
+use App\Domain\PeriodicEntry\Request\PeriodicEntrySearchRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -18,7 +18,7 @@ class PeriodicEntrySearchForm extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(PeriodicEntrySearchType::class, new PeriodicEntrySearchCommand(), [
+        return $this->createForm(PeriodicEntrySearchType::class, new PeriodicEntrySearchRequest(), [
             'action' => $this->generateUrl('front_periodic_entry_search'),
         ]);
     }

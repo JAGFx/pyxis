@@ -2,8 +2,8 @@
 
 namespace App\Domain\Entry\Twig\Components;
 
-use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Form\EntrySearchType;
+use App\Domain\Entry\Request\EntrySearchRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -18,7 +18,7 @@ class EntrySearchForm extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(EntrySearchType::class, new EntrySearchCommand(), [
+        return $this->createForm(EntrySearchType::class, new EntrySearchRequest(), [
             'action' => $this->generateUrl('front_entry_search'),
         ]);
     }

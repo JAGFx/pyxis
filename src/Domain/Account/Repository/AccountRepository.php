@@ -2,8 +2,8 @@
 
 namespace App\Domain\Account\Repository;
 
-use App\Domain\Account\DTO\AccountSearchCommand;
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Request\AccountSearchRequest;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,29 +18,29 @@ class AccountRepository extends ServiceEntityRepository
         parent::__construct($registry, Account::class);
     }
 
-    public function getAccountsQueryBuilder(AccountSearchCommand $command): QueryBuilder
+    public function getAccountsQueryBuilder(AccountSearchRequest $searchRequest): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('a');
-        if (null !== $command->isEnabled()) {
+        if (null !== $searchRequest->isEnabled()) {
             $queryBuilder
                 ->andWhere('a.enabled = :enable')
-                ->setParameter('enable', $command->isEnabled());
+                ->setParameter('enable', $searchRequest->isEnabled());
         }
 
-        if (null !== $command->getName()) {
+        if (null !== $searchRequest->getName()) {
             $queryBuilder
                 ->andWhere('a.name LIKE :name')
-                ->setParameter('name', '%' . $command->getName() . '%');
+                ->setParameter('name', '%' . $searchRequest->getName() . '%');
         }
 
-        if (true === $command->hasPositiveOrNegativeBalance()) {
+        if (true === $searchRequest->hasPositiveOrNegativeBalance()) {
             $queryBuilder = $queryBuilder
                 ->leftJoin('a.entries', 'e');
 
-            if (!is_null($command->getBudget())) {
+            if (!is_null($searchRequest->getBudget())) {
                 $queryBuilder
                     ->andWhere('e.budget = :budget')
-                    ->setParameter('budget', $command->getBudget());
+                    ->setParameter('budget', $searchRequest->getBudget());
             }
 
             $queryBuilder
@@ -48,12 +48,12 @@ class AccountRepository extends ServiceEntityRepository
                 ->having('SUM(e.amount) != 0');
         }
 
-        switch ($command->getOrderBy()) {
+        switch ($searchRequest->getOrderBy()) {
             case 'name':
-                $queryBuilder->orderBy('a.name', $command->getOrderDirection()->value);
+                $queryBuilder->orderBy('a.name', $searchRequest->getOrderDirection()->value);
                 break;
             default:
-                $queryBuilder->orderBy('a.id', $command->getOrderDirection()->value);
+                $queryBuilder->orderBy('a.id', $searchRequest->getOrderDirection()->value);
                 break;
         }
 

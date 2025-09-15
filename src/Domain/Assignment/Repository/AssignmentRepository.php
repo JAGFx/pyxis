@@ -2,8 +2,8 @@
 
 namespace App\Domain\Assignment\Repository;
 
-use App\Domain\Assignment\DTO\AssignmentSearchCommand;
 use App\Domain\Assignment\Entity\Assignment;
+use App\Domain\Assignment\Request\AssignmentSearchRequest;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,40 +18,40 @@ class AssignmentRepository extends ServiceEntityRepository
         parent::__construct($registry, Assignment::class);
     }
 
-    public function getAssignmentsQueryBuilder(AssignmentSearchCommand $command): QueryBuilder
+    public function getAssignmentsQueryBuilder(AssignmentSearchRequest $searchRequest): QueryBuilder
     {
         $queryBuilder = $this
             ->createQueryBuilder('a')
         ;
 
-        if (!is_null($command->getAccount())) {
+        if (!is_null($searchRequest->getAccount())) {
             $queryBuilder
                 ->andWhere('a.account = :account')
-                ->setParameter('account', $command->getAccount());
+                ->setParameter('account', $searchRequest->getAccount());
         }
 
-        if (!is_null($command->getName())) {
+        if (!is_null($searchRequest->getName())) {
             $queryBuilder
                 ->andWhere('a.name LIKE :name')
-                ->setParameter('name', '%' . $command->getName() . '%');
+                ->setParameter('name', '%' . $searchRequest->getName() . '%');
         }
 
-        switch ($command->getOrderBy()) {
+        switch ($searchRequest->getOrderBy()) {
             case 'name':
-                $queryBuilder->orderBy('a.name', $command->getOrderDirection()->value);
+                $queryBuilder->orderBy('a.name', $searchRequest->getOrderDirection()->value);
                 break;
             default:
-                $queryBuilder->orderBy('a.id', $command->getOrderDirection()->value);
+                $queryBuilder->orderBy('a.id', $searchRequest->getOrderDirection()->value);
                 break;
         }
 
         return $queryBuilder;
     }
 
-    public function balanceQueryBuilder(AssignmentSearchCommand $command): QueryBuilder
+    public function balanceQueryBuilder(AssignmentSearchRequest $searchRequest): QueryBuilder
     {
         return $this
-            ->getAssignmentsQueryBuilder($command)
+            ->getAssignmentsQueryBuilder($searchRequest)
             ->select('SUM(a.amount) as sum');
     }
 

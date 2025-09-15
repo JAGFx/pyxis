@@ -2,9 +2,9 @@
 
 namespace App\Domain\Entry\Manager;
 
-use App\Domain\Entry\DTO\EntrySearchCommand;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Repository\EntryRepository;
+use App\Domain\Entry\Request\EntrySearchRequest;
 use App\Domain\Entry\ValueObject\EntryBalance;
 use App\Shared\Utils\Statistics;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,11 +20,11 @@ readonly class EntryManager
     ) {
     }
 
-    public function balance(?EntrySearchCommand $command = null): EntryBalance
+    public function balance(?EntrySearchRequest $searchRequest = null): EntryBalance
     {
         /** @var array<string, mixed> $data */
         $data = $this->repository
-            ->balance($command ?? new EntrySearchCommand())
+            ->balance($searchRequest ?? new EntrySearchRequest())
             ->getQuery()
             ->getResult();
 
@@ -72,15 +72,15 @@ readonly class EntryManager
     /**
      * @return PaginationInterface<int, Entry>
      */
-    public function getPaginated(?EntrySearchCommand $command = null): PaginationInterface
+    public function getPaginated(?EntrySearchRequest $searchRequest = null): PaginationInterface
     {
-        $command ??= new EntrySearchCommand();
+        $searchRequest ??= new EntrySearchRequest();
 
         /** @var PaginationInterface<int, Entry> $pagination */
         $pagination = $this->paginator->paginate(
-            $this->repository->getEntriesQueryBuilder($command),
-            $command->getPage(),
-            $command->getPageSize()
+            $this->repository->getEntriesQueryBuilder($searchRequest),
+            $searchRequest->getPage(),
+            $searchRequest->getPageSize()
         );
 
         return $pagination;

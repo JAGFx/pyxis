@@ -2,9 +2,9 @@
 
 namespace App\Domain\PeriodicEntry\Manager;
 
-use App\Domain\PeriodicEntry\DTO\PeriodicEntrySearchCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
+use App\Domain\PeriodicEntry\Request\PeriodicEntrySearchRequest;
 use Doctrine\ORM\EntityManagerInterface;
 
 readonly class PeriodicEntryManager
@@ -41,13 +41,13 @@ readonly class PeriodicEntryManager
     }
 
     /** @return PeriodicEntry[] */
-    public function getPeriodicEntries(?PeriodicEntrySearchCommand $command = null): array
+    public function getPeriodicEntries(?PeriodicEntrySearchRequest $searchRequest = null): array
     {
-        $command ??= new PeriodicEntrySearchCommand();
+        $searchRequest ??= new PeriodicEntrySearchRequest();
 
         /** @var PeriodicEntry[] $periodicEntries */
         $periodicEntries = $this->repository
-            ->getPeriodicEntriesQueryBuilder($command)
+            ->getPeriodicEntriesQueryBuilder($searchRequest)
             ->getQuery()
             ->getResult();
 

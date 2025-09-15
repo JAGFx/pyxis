@@ -5,7 +5,7 @@ namespace App\Domain\Account\Entity;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Entry\Entity\Entry;
-use App\Shared\Entity\CollectionManagerTrait;
+use App\Shared\Entity\EntityCollectionTrait;
 use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
@@ -19,7 +19,7 @@ class Account
 {
     use TimestampableTrait;
     use NameableTrait;
-    use CollectionManagerTrait;
+    use EntityCollectionTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
