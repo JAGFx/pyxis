@@ -56,7 +56,8 @@ Nevertheless, AI is a powerful tool, not a replacement for critical thinking. I 
 ## 🖼️ Interface Showcase
 
 <p align="center">
-  <img src="public/img/img.png" width="250" alt="Home Screen">
-  <img src="public/img/img.png" width="250" alt="Budget View">
-  <img src="public/img/img.png" width="250" alt="Transactions">
+  <img src="ressources/capture4.jpg" width="200" alt="Statistics">
+  <img src="ressources/capture3.jpg" width="200" alt="Menu">
+  <img src="ressources/capture2.jpg" width="200" alt="Entries list">
+  <img src="ressources/capture1.jpg" width="200" alt="Entries search">
 </p>
