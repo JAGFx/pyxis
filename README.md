@@ -26,6 +26,12 @@
   </a>
 </p>
 
+<h2 align="center">
+  <a href="https://demo-pyxis.jagfx.fr/">
+    Live demo
+  </a>
+</h2>
+
 ## ⚡ Technical Overview
 
 This project primarily serves as a technical playground where I can take time to explore and refine my development practices. My objective is to make thoughtful technical choices while deepening my expertise with the technologies involved.
