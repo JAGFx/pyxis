@@ -64,3 +64,10 @@ entry:
 
 statistic:
   title: Statistiques
+
+entry_flag_enum:
+  options:
+    BALANCE: Équilibrage
+    TRANSFERT: Transfert
+    PERIODIC_ENTRY: Entrée périodique
+    HIDDEN: Caché

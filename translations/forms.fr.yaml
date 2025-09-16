@@ -95,6 +95,8 @@ entry:
       label: Nom
     type:
       label: Type
+    flags:
+      label: Étiquettes
     account:
       label: Compte
     budget:
@@ -105,3 +107,12 @@ entry_type_enum:
     options:
       TYPE_SPENT: Dépense
       TYPE_FORECAST: Provision
+
+entry_flag_enum:
+  form:
+    options:
+      UNFLAGGED: Sans étiquette
+      BALANCE: Équilibrage
+      TRANSFERT: Transfert
+      PERIODIC_ENTRY: Entrée périodique
+      HIDDEN: Caché

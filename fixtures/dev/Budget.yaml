@@ -2,7 +2,7 @@ App\Domain\Budget\Entity\Budget:
   budget_disabled:
     name: Budget disabled
     amount: <randomFloat(2, 15, 1500)>
-    enable: false
+    enabled: false
 
   budget_over:
     name: 'Budget Over'

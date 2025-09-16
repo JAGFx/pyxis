@@ -4,6 +4,7 @@ namespace App\Shared\Command;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
@@ -70,6 +71,7 @@ class ImportOlderDataCommand
                 'created_at' => new DateTimeImmutable(),
                 'updated_at' => new DateTimeImmutable(),
                 'account_id' => $account->getId(),
+                'flags'      => EntryFlagEnum::HIDDEN->value,
             ], [
                 'created_at' => Types::DATETIME_IMMUTABLE,
                 'updated_at' => Types::DATETIME_IMMUTABLE,
@@ -94,6 +96,7 @@ class ImportOlderDataCommand
                 'updated_at' => new DateTimeImmutable(),
                 'account_id' => $account->getId(),
                 'budget_id'  => $budget->getId(),
+                'flags'      => EntryFlagEnum::HIDDEN->value,
             ], [
                 'created_at' => Types::DATETIME_IMMUTABLE,
                 'updated_at' => Types::DATETIME_IMMUTABLE,
@@ -110,7 +113,7 @@ class ImportOlderDataCommand
         foreach ($accounts as $accountName) {
             $account = new Account()
                 ->setName($accountName)
-                ->setEnable(true);
+                ->setEnabled(true);
 
             $this->entityManager->persist($account);
         }
@@ -137,7 +140,7 @@ class ImportOlderDataCommand
             $budget = new Budget()
                 ->setName($oldBudget['name'])
                 ->setAmount($oldBudget['amount'])
-                ->setEnable($oldBudget['enable'])
+                ->setEnabled($oldBudget['enable'])
             ;
 
             $budget->setCreatedAt(new DateTimeImmutable($oldBudget['created_at'] ?? ''));
@@ -149,7 +152,7 @@ class ImportOlderDataCommand
         $budgetDefault = new Budget()
             ->setName(self::DEFAULT_BUDGET)
             ->setAmount(0)
-            ->setEnable(false)
+            ->setEnabled(false)
             ->setReadOnly(true)
         ;
 

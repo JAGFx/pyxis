@@ -15,29 +15,28 @@
             <twig:block name="detail">
                 {% import 'shared/_currency.macro.html.twig' as currency %}
 
-                <div>
-                    {{ currency.amount(entry.amount, true) }}
+                <div class="flex justify-start items-center space-x-2">
+                    <span>{{ currency.amount(entry.amount, true) }}</span>
+                    {% for flag in entry.flags %}
+                        <div class="flex bg-gradient-primary rounded-3xl px-2">
+                            <small>{{ flag.humanize | trans }}</small>
+                        </div>
+                    {% endfor %}
                 </div>
                 <div class="space-x-2">
                     {% if entry.isForecast %}
-                        <twig:List:EntityValueItem :icon="icons.forecast" label="{{ 'entry.list.type' | trans }}" color="secondary">
-                            {{ entry.type.humanize }}
+                        <twig:List:EntityValueItem :icon="icons.forecast" label="{{ entry.budget.name }}" color="secondary">
+                            {{ entry.type.humanize | trans }}
                         </twig:List:EntityValueItem>
                     {% else %}
                         <twig:List:EntityValueItem :icon="icons.spent" label="{{ 'entry.list.type' | trans }}" color="primary">
-                            {{ entry.type.humanize }}
+                            {{ entry.type.humanize | trans }}
                         </twig:List:EntityValueItem>
                     {% endif %}
 
                     <twig:List:EntityValueItem :icon="icons.account" label="{{ 'entry.list.account' | trans }}">
                         {{ entry.account.name }}
                     </twig:List:EntityValueItem>
-
-                    {% if entry.isForecast %}
-                        <twig:List:EntityValueItem :icon="icons.budget" label="{{ 'entry.list.budget' | trans }}">
-                            {{ entry.budget.name }}
-                        </twig:List:EntityValueItem>
-                    {% endif %}
                 </div>
             </twig:block>
         </twig:List:Item>

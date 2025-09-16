@@ -13,7 +13,7 @@ use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Entity\EntryKindEnum;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Utils\YearRange;
 use Doctrine\ORM\EntityManagerInterface;
@@ -96,15 +96,15 @@ readonly class BudgetOperator
         if ($budget->hasPositiveCashFlow() || $budget->hasNegativeCashFlow()) {
             $entryBalanceSpent = new Entry()
                 ->setAccount($account)
-                ->setName(sprintf('Équilibrage de %s', $budget->getName()))
-                ->setKind(EntryKindEnum::BALANCING)
+                ->setName($budget->getName())
+                ->addFlag(EntryFlagEnum::BALANCE)
                 ->setAmount($budget->getCashFlow());
 
             $entryBalanceForecast = new Entry()
                 ->setAccount($account)
                 ->setBudget($budget)
-                ->setName(sprintf('Équilibrage de %s', $budget->getName()))
-                ->setKind(EntryKindEnum::BALANCING)
+                ->setName($budget->getName())
+                ->addFlag(EntryFlagEnum::BALANCE)
                 ->setAmount(-$budget->getCashFlow());
 
             $budget->addEntry($entryBalanceForecast);

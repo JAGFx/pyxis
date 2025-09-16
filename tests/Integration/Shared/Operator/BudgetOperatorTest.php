@@ -9,7 +9,7 @@ use App\Domain\Budget\Request\BudgetAccountBalanceRequest;
 use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Entity\EntryKindEnum;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Operator\BudgetOperator;
 use App\Shared\Utils\YearRange;
@@ -457,8 +457,7 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertCount(2, $lastTwoById);
 
         foreach ($lastTwoById as $item) {
-            self::assertStringStartsWith('Équilibrage de', $item->getName());
-            self::assertSame(EntryKindEnum::BALANCING, $item->getKind());
+            self::assertSame([EntryFlagEnum::BALANCE], $item->getFlags());
         }
 
         // Test entry spent

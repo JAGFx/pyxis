@@ -10,7 +10,7 @@ use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Request\BudgetAccountBalanceRequest;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Entity\EntryKindEnum;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Operator\BudgetOperator;
 use App\Tests\Unit\Shared\BudgetTestTrait;
@@ -281,12 +281,12 @@ class BudgetOperatorTest extends TestCase
         $budgetManager->balancing(new BudgetAccountBalanceRequest($budget, new Account()));
 
         $balancingEntry = $budget->getEntries()
-            ->filter(fn (Entry $entry): bool => str_starts_with($entry->getName(), 'Équilibrage'))
+            ->filter(fn (Entry $entry): bool => $entry->getFlags() === [EntryFlagEnum::BALANCE])
             ->first();
 
         self::assertCount(2 + 1, $budget->getEntries());
         self::assertInstanceOf(Entry::class, $balancingEntry);
-        self::assertSame($balancingEntry->getKind(), EntryKindEnum::BALANCING);
+        self::assertSame([EntryFlagEnum::BALANCE], $balancingEntry->getFlags());
         self::assertSame(-$overflow, $balancingEntry->getAmount());
         self::assertSame(0.0, $budget->getCashFlow());
     }
@@ -319,12 +319,12 @@ class BudgetOperatorTest extends TestCase
         $budgetManager->balancing(new BudgetAccountBalanceRequest($budget, new Account()));
 
         $balancingEntry = $budget->getEntries()
-            ->filter(fn (Entry $entry): bool => str_starts_with($entry->getName(), 'Équilibrage'))
+            ->filter(fn (Entry $entry): bool => $entry->getFlags() === [EntryFlagEnum::BALANCE])
             ->first();
 
         self::assertCount(2 + 1, $budget->getEntries());
         self::assertInstanceOf(Entry::class, $balancingEntry);
-        self::assertSame($balancingEntry->getKind(), EntryKindEnum::BALANCING);
+        self::assertSame([EntryFlagEnum::BALANCE], $balancingEntry->getFlags());
         self::assertSame(-$overflow, $balancingEntry->getAmount());
         self::assertSame(0.0, $budget->getCashFlow());
     }

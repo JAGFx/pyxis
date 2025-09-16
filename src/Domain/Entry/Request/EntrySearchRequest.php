@@ -4,6 +4,7 @@ namespace App\Domain\Entry\Request;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
@@ -16,6 +17,8 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
     use PaginableTrait;
     use OrderableTrait;
 
+    public const int WITHOUT_FLAG_VALUE = -1;
+
     public function __construct(
         private ?Account $account = null,
         private ?DateTimeImmutable $startDate = null,
@@ -23,6 +26,10 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
         private ?string $name = null,
         private ?EntryTypeEnum $type = null,
         private ?Budget $budget = null,
+        /**
+         * @var array<int|EntryFlagEnum>
+         */
+        private array $flags = [self::WITHOUT_FLAG_VALUE],
     ) {
     }
 
@@ -94,6 +101,24 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
     public function setBudget(?Budget $budget): EntrySearchRequest
     {
         $this->budget = $budget;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int|EntryFlagEnum>
+     */
+    public function getFlags(): array
+    {
+        return $this->flags;
+    }
+
+    /**
+     * @param array<int|EntryFlagEnum> $flags
+     */
+    public function setFlags(array $flags): EntrySearchRequest
+    {
+        $this->flags = $flags;
 
         return $this;
     }

@@ -3,7 +3,7 @@
 namespace App\Shared\Operator;
 
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Entity\EntryKindEnum;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
@@ -43,9 +43,9 @@ readonly class PeriodicEntryOperator
         if ($periodicEntry->isSpent()) {
             $entry = new Entry()
                 ->setAmount($periodicEntry->getAmount() ?? 0.0)
-                ->setKind(EntryKindEnum::BALANCING)
                 ->setName($periodicEntry->getName())
                 ->setAccount($periodicEntry->getAccount())
+                ->addFlag(EntryFlagEnum::PERIODIC_ENTRY)
             ;
 
             $this->entryManager->create($entry);
@@ -60,9 +60,9 @@ readonly class PeriodicEntryOperator
                 $entry = new Entry()
                     ->setAmount($amount)
                     ->setBudget($budget)
-                    ->setKind(EntryKindEnum::BALANCING)
                     ->setName($periodicEntry->getName() . ' - ' . $budget->getName())
                     ->setAccount($periodicEntry->getAccount())
+                    ->addFlag(EntryFlagEnum::PERIODIC_ENTRY)
                 ;
                 $this->entryManager->create($entry);
             }

@@ -26,6 +26,12 @@ class Entry
     use TimestampableTrait;
     use NameableTrait;
     use EntityCollectionTrait;
+    public const array NON_EDITABLE_FLAGS = [
+        EntryFlagEnum::BALANCE,
+        EntryFlagEnum::TRANSFERT,
+        EntryFlagEnum::PERIODIC_ENTRY,
+        EntryFlagEnum::HIDDEN,
+    ];
 
     #[Id]
     #[GeneratedValue]
@@ -41,14 +47,45 @@ class Entry
     #[NotBlank(allowNull: true)]
     private ?Budget $budget = null;
 
-    #[Column(enumType: EntryKindEnum::class, options: ['default' => EntryKindEnum::DEFAULT])]
-    #[NotBlank]
-    private EntryKindEnum $kind = EntryKindEnum::DEFAULT;
-
     #[ManyToOne(inversedBy: 'entries')]
     #[JoinColumn(nullable: false)]
     #[NotNull]
     private ?Account $account = null;
+
+    /** @var EntryFlagEnum[] */
+    #[Column(type: Types::JSON, enumType: EntryFlagEnum::class)]
+    private array $flags = [];
+
+    public function getType(): EntryTypeEnum
+    {
+        return ($this->budget instanceof Budget)
+            ? EntryTypeEnum::TYPE_FORECAST
+            : EntryTypeEnum::TYPE_SPENT;
+    }
+
+    public function isForecast(): bool
+    {
+        return EntryTypeEnum::TYPE_FORECAST === $this->getType();
+    }
+
+    public function isSpent(): bool
+    {
+        return EntryTypeEnum::TYPE_SPENT === $this->getType();
+    }
+
+    public function isEditable(): bool
+    {
+        if ([] === $this->flags) {
+            return true;
+        }
+
+        return array_all(self::NON_EDITABLE_FLAGS, fn (EntryFlagEnum $nonEditableFlag): bool => !in_array($nonEditableFlag, $this->flags, true));
+    }
+
+    public function isBalancing(): bool
+    {
+        return in_array(EntryFlagEnum::BALANCE, $this->flags ?? [], true);
+    }
 
     public function __construct()
     {
@@ -72,23 +109,6 @@ class Entry
         return $this;
     }
 
-    public function getType(): EntryTypeEnum
-    {
-        return ($this->budget instanceof Budget)
-            ? EntryTypeEnum::TYPE_FORECAST
-            : EntryTypeEnum::TYPE_SPENT;
-    }
-
-    public function isForecast(): bool
-    {
-        return EntryTypeEnum::TYPE_FORECAST === $this->getType();
-    }
-
-    public function isSpent(): bool
-    {
-        return EntryTypeEnum::TYPE_SPENT === $this->getType();
-    }
-
     public function getBudget(): ?Budget
     {
         return $this->budget;
@@ -105,23 +125,6 @@ class Entry
         return $this;
     }
 
-    public function getKind(): EntryKindEnum
-    {
-        return $this->kind;
-    }
-
-    public function setKind(EntryKindEnum $kind): self
-    {
-        $this->kind = $kind;
-
-        return $this;
-    }
-
-    public function isABalancing(): bool
-    {
-        return EntryKindEnum::BALANCING === $this->kind;
-    }
-
     public function getAccount(): ?Account
     {
         return $this->account;
@@ -130,6 +133,33 @@ class Entry
     public function setAccount(?Account $account): Entry
     {
         $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return EntryFlagEnum[]
+     */
+    public function getFlags(): array
+    {
+        return $this->flags;
+    }
+
+    /**
+     * @param EntryFlagEnum[] $flags
+     */
+    public function setFlags(array $flags): Entry
+    {
+        $this->flags = $flags;
+
+        return $this;
+    }
+
+    public function addFlag(EntryFlagEnum $flag): self
+    {
+        if (!in_array($flag, $this->flags, true)) {
+            $this->flags[] = $flag;
+        }
 
         return $this;
     }

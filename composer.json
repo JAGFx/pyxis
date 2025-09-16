@@ -18,6 +18,7 @@
     "league/csv": "^9.24",
     "phpdocumentor/reflection-docblock": "^5.6",
     "phpstan/phpdoc-parser": "^1.33",
+    "scienta/doctrine-json-functions": "^6.3",
     "symfony/asset": "7.3.*",
     "symfony/console": "7.3.*",
     "symfony/doctrine-messenger": "7.3.*",

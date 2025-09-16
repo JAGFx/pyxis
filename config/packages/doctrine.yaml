@@ -55,6 +55,8 @@ doctrine:
             ifnull: DoctrineExtensions\Query\Mysql\IfNull
             if: DoctrineExtensions\Query\Mysql\IfElse
             YEAR: DoctrineExtensions\Query\Mysql\Year
+            JSON_LENGTH: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonLength
+            JSON_SEARCH: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonSearch
 
 when@dev:
   doctrine:

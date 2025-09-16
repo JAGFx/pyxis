@@ -176,7 +176,7 @@ class Budget
                     return true;
                 }
 
-                return $entry->isABalancing();
+                return $entry->isBalancing();
             }
         );
 

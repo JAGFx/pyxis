@@ -3,7 +3,7 @@
 namespace App\Shared\Operator;
 
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Entity\EntryKindEnum;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Request\TransferRequest;
 
@@ -20,18 +20,18 @@ readonly class HomeOperator
         $entryTargetName = $transfer->getBudgetTarget()?->getName() ?? 'Dépense';
 
         $entrySource = new Entry()
-            ->setKind(EntryKindEnum::BALANCING)
             ->setBudget($transfer->getBudgetSource())
             ->setAmount(-$transfer->getAmount())
             ->setAccount($transfer->getAccount())
-            ->setName(sprintf('TransferRequest depuis %s', $entrySourceName));
+            ->setName($entrySourceName)
+            ->addFlag(EntryFlagEnum::TRANSFERT);
 
         $entryTarget = new Entry()
-            ->setKind(EntryKindEnum::BALANCING)
             ->setBudget($transfer->getBudgetTarget())
             ->setAmount($transfer->getAmount())
             ->setAccount($transfer->getAccount())
-            ->setName(sprintf('TransferRequest vers %s', $entryTargetName));
+            ->setName($entryTargetName)
+            ->addFlag(EntryFlagEnum::TRANSFERT);
 
         $transfer
             ->getBudgetSource()

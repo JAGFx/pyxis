@@ -10,11 +10,13 @@ use App\Domain\Account\Request\AccountSearchRequest;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Budget\Request\BudgetSearchRequest;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\Entry\Request\EntrySearchRequest;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,6 +36,18 @@ class EntrySearchType extends AbstractType
                 'placeholder'  => 'shared.default.placeholders.all',
                 'choice_label' => 'label',
                 'expanded'     => true,
+            ])
+            ->add('flags', ChoiceType::class, [
+                'choices' => array_merge(
+                    ['entry_flag_enum.form.options.UNFLAGGED' => -1],
+                    array_combine(
+                        array_map(fn (EntryFlagEnum $flag): string => $flag->label(), EntryFlagEnum::cases()),
+                        EntryFlagEnum::cases()
+                    )
+                ),
+                'required'    => false,
+                'placeholder' => 'shared.default.placeholders.all',
+                'multiple'    => true,
             ])
             ->add('account', EntityType::class, [
                 'class'         => Account::class,

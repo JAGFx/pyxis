@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Domain\Entry\Repository;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\Entry\Repository\EntryRepository;
 use App\Domain\Entry\Request\EntrySearchRequest;
@@ -262,5 +264,189 @@ class EntryRepositoryTest extends KernelTestCase
 
         $this->assertCount(2, $entriesWithBudget, 'Should have 2 entries with budget');
         $this->assertCount(2, $entriesWithoutBudget, 'Should have 2 entries without budget');
+    }
+
+    private function populateDatabaseForFlagsUnion(): void
+    {
+        $account = AccountFactory::new()->create(['name' => self::ACCOUNT_1]);
+        $budget  = BudgetFactory::new()->create(['name' => self::BUDGET_1]);
+
+        // Entries with single flags
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => $budget,
+            'amount'  => 100.0,
+            'name'    => 'Entry with only BALANCE',
+            'flags'   => [EntryFlagEnum::BALANCE],
+        ]);
+
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => $budget,
+            'amount'  => 200.0,
+            'name'    => 'Entry with only TRANSFERT',
+            'flags'   => [EntryFlagEnum::TRANSFERT],
+        ]);
+
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => $budget,
+            'amount'  => 150.0,
+            'name'    => 'Entry with only HIDDEN',
+            'flags'   => [EntryFlagEnum::HIDDEN],
+        ]);
+
+        // Entries with exactly 2 flags
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => $budget,
+            'amount'  => 300.0,
+            'name'    => 'Entry with BALANCE and TRANSFERT',
+            'flags'   => [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT],
+        ]);
+
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => $budget,
+            'amount'  => 250.0,
+            'name'    => 'Entry with BALANCE and HIDDEN',
+            'flags'   => [EntryFlagEnum::BALANCE, EntryFlagEnum::HIDDEN],
+        ]);
+
+        // Entry with 3 flags
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => $budget,
+            'amount'  => 400.0,
+            'name'    => 'Entry with BALANCE, TRANSFERT and HIDDEN',
+            'flags'   => [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT, EntryFlagEnum::HIDDEN],
+        ]);
+
+        // Entry with all 4 flags
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => $budget,
+            'amount'  => 500.0,
+            'name'    => 'Entry with all flags',
+            'flags'   => [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT, EntryFlagEnum::HIDDEN, EntryFlagEnum::PERIODIC_ENTRY],
+        ]);
+
+        // Entry with empty flags
+        EntryFactory::new()->create([
+            'account' => $account,
+            'budget'  => $budget,
+            'amount'  => 50.0,
+            'name'    => 'Entry with empty flags',
+            'flags'   => [],
+        ]);
+    }
+
+    public function testFlagsUnionBehavior(): void
+    {
+        $this->populateDatabaseForFlagsUnion();
+
+        // Test search with multiple flags - OR logic (union)
+        $searchRequest = new EntrySearchRequest(flags: [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT]);
+        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
+
+        /** @var Entry[] $entries */
+        $entries = $queryBuilder->getQuery()->getResult();
+
+        // Should return all entries that have BALANCE OR TRANSFERT
+        self::assertCount(6, $entries, 'Should return 6 entries with BALANCE OR TRANSFERT flags');
+
+        $entryNames = array_map(fn ($entry) => $entry->getName(), $entries);
+        self::assertContains('Entry with only BALANCE', $entryNames);
+        self::assertContains('Entry with only TRANSFERT', $entryNames);
+        self::assertContains('Entry with BALANCE and TRANSFERT', $entryNames);
+        self::assertContains('Entry with BALANCE and HIDDEN', $entryNames);
+        self::assertContains('Entry with BALANCE, TRANSFERT and HIDDEN', $entryNames);
+        self::assertContains('Entry with all flags', $entryNames);
+    }
+
+    public function testFlagsUnionSingleFlag(): void
+    {
+        $this->populateDatabaseForFlagsUnion();
+
+        // Search for a single flag - should return all entries that contain this flag
+        $searchRequest = new EntrySearchRequest(flags: [EntryFlagEnum::HIDDEN]);
+        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
+        $entries       = $queryBuilder->getQuery()->getResult();
+
+        self::assertCount(4, $entries, 'Should return 4 entries containing HIDDEN flag');
+
+        $entryNames = array_map(fn ($entry) => $entry->getName(), $entries);
+        self::assertContains('Entry with only HIDDEN', $entryNames);
+        self::assertContains('Entry with BALANCE and HIDDEN', $entryNames);
+        self::assertContains('Entry with BALANCE, TRANSFERT and HIDDEN', $entryNames);
+        self::assertContains('Entry with all flags', $entryNames);
+    }
+
+    public function testFlagsUnionWithUnflagged(): void
+    {
+        $this->populateDatabaseForFlagsUnion();
+
+        // Test case [-1]: only entries without flags
+        $searchRequest = new EntrySearchRequest(flags: [-1]);
+        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
+        $entries       = $queryBuilder->getQuery()->getResult();
+
+        self::assertCount(1, $entries, 'Should return 1 entry with empty flags');
+
+        $entry = $entries[0];
+        self::assertEquals('Entry with empty flags', $entry->getName());
+        self::assertEmpty($entry->getFlags());
+    }
+
+    public function testFlagsUnionWithFlagsAndUnflagged(): void
+    {
+        $this->populateDatabaseForFlagsUnion();
+
+        // Test case [A, B, -1]: entries with flags A or B OR without flags
+        $searchRequest = new EntrySearchRequest(flags: [EntryFlagEnum::BALANCE, EntryFlagEnum::PERIODIC_ENTRY, -1]);
+        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
+        $entries       = $queryBuilder->getQuery()->getResult();
+
+        self::assertCount(6, $entries, 'Should return 6 entries with BALANCE OR PERIODIC_ENTRY OR empty flags');
+
+        $entryNames = array_map(fn ($entry) => $entry->getName(), $entries);
+        self::assertContains('Entry with only BALANCE', $entryNames);
+        self::assertContains('Entry with BALANCE and TRANSFERT', $entryNames);
+        self::assertContains('Entry with BALANCE and HIDDEN', $entryNames);
+        self::assertContains('Entry with BALANCE, TRANSFERT and HIDDEN', $entryNames);
+        self::assertContains('Entry with all flags', $entryNames);
+        self::assertContains('Entry with empty flags', $entryNames);
+    }
+
+    public function testFlagsUnionEmptyArray(): void
+    {
+        $this->populateDatabaseForFlagsUnion();
+
+        // Test case []: all entries
+        $searchRequest = new EntrySearchRequest(flags: []);
+        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
+        $entries       = $queryBuilder->getQuery()->getResult();
+
+        self::assertCount(8, $entries, 'Should return all 8 entries when flags array is empty');
+    }
+
+    public function testFlagsUnionThreeFlags(): void
+    {
+        $this->populateDatabaseForFlagsUnion();
+
+        // Test with 3 different flags - OR logic
+        $searchRequest = new EntrySearchRequest(flags: [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT, EntryFlagEnum::PERIODIC_ENTRY]);
+        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
+        $entries       = $queryBuilder->getQuery()->getResult();
+
+        self::assertCount(6, $entries, 'Should return 6 entries with any of the three flags');
+
+        $entryNames = array_map(fn ($entry) => $entry->getName(), $entries);
+        self::assertContains('Entry with only BALANCE', $entryNames);
+        self::assertContains('Entry with only TRANSFERT', $entryNames);
+        self::assertContains('Entry with BALANCE and TRANSFERT', $entryNames);
+        self::assertContains('Entry with BALANCE and HIDDEN', $entryNames);
+        self::assertContains('Entry with BALANCE, TRANSFERT and HIDDEN', $entryNames);
+        self::assertContains('Entry with all flags', $entryNames);
     }
 }

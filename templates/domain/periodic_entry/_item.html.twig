@@ -25,11 +25,11 @@
                 <div class="space-x-2">
                     {% if periodicEntry.isForecast %}
                         <twig:List:EntityValueItem :icon="icons.forecast" label="{{ 'periodic_entry.list.type' | trans }}" color="secondary">
-                            {{ periodicEntry.type.humanize }}
+                            {{ periodicEntry.type.humanize | trans }}
                         </twig:List:EntityValueItem>
                     {% else %}
                         <twig:List:EntityValueItem :icon="icons.spent" label="{{ 'periodic_entry.list.type' | trans }}" color="primary">
-                            {{ periodicEntry.type.humanize }}
+                            {{ periodicEntry.type.humanize | trans }}
                         </twig:List:EntityValueItem>
                     {% endif %}
 

@@ -3,6 +3,7 @@
 namespace App\Domain\Entry\Repository;
 
 use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\Entry\Request\EntrySearchRequest;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -86,6 +87,28 @@ class EntryRepository extends ServiceEntityRepository
             $queryBuilder
                 ->andWhere('e.budget = :budget')
                 ->setParameter('budget', $searchRequest->getBudget());
+        }
+
+        $flags = $searchRequest->getFlags();
+        if ([] !== $flags) {
+            $orConditions = [];
+            $paramIndex   = 0;
+
+            foreach ($flags as $flag) {
+                if (EntrySearchRequest::WITHOUT_FLAG_VALUE === $flag) {
+                    $orConditions[] = 'JSON_LENGTH(e.flags) = 0';
+                } else {
+                    if (!$flag instanceof EntryFlagEnum) {
+                        continue;
+                    }
+
+                    $orConditions[] = sprintf("JSON_SEARCH(e.flags, 'one', :flag_%d) IS NOT NULL", $paramIndex);
+                    $queryBuilder->setParameter('flag_' . $paramIndex, $flag->value);
+                    ++$paramIndex;
+                }
+            }
+
+            $queryBuilder->andWhere('(' . implode(' OR ', $orConditions) . ')');
         }
 
         switch ($searchRequest->getOrderBy()) {

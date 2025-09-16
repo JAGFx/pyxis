@@ -48,7 +48,7 @@ readonly class EntryManager
 
     public function update(Entry $entry, bool $flush = true): void
     {
-        if ($entry->isABalancing()) {
+        if ($entry->isEditable()) {
             return;
         }
 
@@ -59,7 +59,7 @@ readonly class EntryManager
 
     public function remove(Entry $entry, bool $flush = true): void
     {
-        if ($entry->isABalancing()) {
+        if ($entry->isEditable()) {
             return;
         }
 

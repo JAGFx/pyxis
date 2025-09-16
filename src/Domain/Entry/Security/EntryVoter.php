@@ -38,6 +38,6 @@ class EntryVoter extends Voter
 
     private function canManage(Entry $entry): bool
     {
-        return !$entry->isABalancing();
+        return !$entry->isEditable();
     }
 }

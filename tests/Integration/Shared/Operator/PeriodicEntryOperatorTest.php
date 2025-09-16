@@ -2,7 +2,8 @@
 
 namespace App\Tests\Integration\Shared\Operator;
 
-use App\Domain\Entry\Entity\EntryKindEnum;
+use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Shared\Operator\PeriodicEntryOperator;
 use App\Tests\Factory\AccountFactory;
@@ -27,7 +28,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
     {
         $account = AccountFactory::new()->create(['name' => 'Test Expense Account']);
 
-        /** @var PeriodicEntryFactory $periodicEntryFactory */
+        /** @var PeriodicEntry $periodicEntry */
         $periodicEntry = PeriodicEntryFactory::new()->create([
             'name'              => 'Monthly salary',
             'amount'            => 2500.0,
@@ -39,6 +40,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
 
         $this->periodicEntryOperator->addSplitForBudgets($periodicEntry);
 
+        /** @var Entry[] $createdEntries */
         $createdEntries = EntryFactory::repository()->findAll();
 
         self::assertCount(1, $createdEntries, 'Only one entry must be created for SPENT type');
@@ -47,7 +49,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
         self::assertEquals(2500.0, $entry->getAmount());
         self::assertEquals('Monthly salary', $entry->getName());
         self::assertEquals($account->_real(), $entry->getAccount());
-        self::assertEquals(EntryKindEnum::BALANCING, $entry->getKind());
+        self::assertEquals([EntryFlagEnum::PERIODIC_ENTRY], $entry->getFlags());
         self::assertNull($entry->getBudget(), 'SPENT type entry must not have a budget');
 
         // Verify that last execution date is updated
@@ -92,6 +94,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
 
         $this->periodicEntryOperator->addSplitForBudgets($periodicEntry);
 
+        /** @var Entry[] $createdEntries */
         $createdEntries = EntryFactory::repository()->findAll();
 
         self::assertCount(3, $createdEntries, 'Three entries must be created for the three budgets');
@@ -107,7 +110,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
             self::assertArrayHasKey($entry->getName(), $expectedAmounts);
             self::assertEquals($expectedAmounts[$entry->getName()], $entry->getAmount());
             self::assertEquals($account->_real(), $entry->getAccount());
-            self::assertEquals(EntryKindEnum::BALANCING, $entry->getKind());
+            self::assertEquals([EntryFlagEnum::PERIODIC_ENTRY], $entry->getFlags());
             self::assertNotNull($entry->getBudget(), 'FORECAST type entry must have a budget');
         }
 
@@ -159,6 +162,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
 
         $this->periodicEntryOperator->addSplitForBudgets($periodicEntry);
 
+        /** @var Entry[] $createdEntries */
         $createdEntries = EntryFactory::repository()->findAll();
 
         self::assertCount(2, $createdEntries, 'Only entries for active budgets with amount > 0 must be created');
