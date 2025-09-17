@@ -49,9 +49,9 @@
             label="{{ 'menu.main.statistics' | trans(domain: 'navigation') }}"
         />
         <twig:Overlay:GridActionButton
-            actionUrl="{{ path('back_account_list') }}"
-            :icon="icons.account"
-            label="{{ 'menu.main.accounts' | trans(domain: 'navigation') }}"
+            actionUrl="{{ path('back_entry_list') }}"
+            :icon="icons.entry"
+            label="{{ 'menu.main.entries' | trans(domain: 'navigation') }}"
         />
         <twig:Overlay:GridActionButton
             actionUrl="{{ path('back_budget_list') }}"
@@ -59,9 +59,9 @@
             label="{{ 'menu.main.budgets' | trans(domain: 'navigation') }}"
         />
         <twig:Overlay:GridActionButton
-            actionUrl="{{ path('back_entry_list') }}"
-            :icon="icons.entry"
-            label="{{ 'menu.main.entries' | trans(domain: 'navigation') }}"
+            actionUrl="{{ path('back_account_list') }}"
+            :icon="icons.account"
+            label="{{ 'menu.main.accounts' | trans(domain: 'navigation') }}"
         />
         <twig:Overlay:GridActionButton
             actionUrl="{{ path('back_periodic_entry_list') }}"

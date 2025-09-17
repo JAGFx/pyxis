@@ -5,7 +5,9 @@ namespace App\Shared\Command;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use DateInterval;
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
@@ -88,7 +90,7 @@ class OldBudgetSummaryCommand extends Command
                         AND b.name = :budgetName
                         AND a.id = :accountId
                     ')
-                    ->setParameter('entryName', ImportOlderDataCommand::DEFAULT_BUDGET_NAME_FORCAST)
+                    ->setParameter('entryName', ImportOlderDataCommand::DEFAULT_BUDGET_NAME_FORECAST)
                     ->setParameter('budgetName', ImportOlderDataCommand::DEFAULT_BUDGET)
                     ->setParameter('accountId', $account->getId())
                     ->getOneOrNullResult();
@@ -106,13 +108,14 @@ class OldBudgetSummaryCommand extends Command
                     'updated_at' => new DateTimeImmutable(),
                     'account_id' => $account->getId(),
                     'budget_id'  => $budget->getId(),
+                    'flags'      => '["' . EntryFlagEnum::BALANCE->value . '"]',
                 ], [
                     'created_at' => Types::DATETIME_IMMUTABLE,
                     'updated_at' => Types::DATETIME_IMMUTABLE,
                 ]);
 
                 $entryForecast->setAmount($entryForecast->getAmount() - $balanceToUpdate['balance']);
-                dump($entryForecast->getAmount(), $balanceToUpdate['balance']);
+
                 $this->connection->update('entry', [
                     'amount' => $entryForecast->getAmount(),
                 ], [
@@ -289,20 +292,20 @@ class OldBudgetSummaryCommand extends Command
         // Fetch budget info to check if it is disabled
         $budgetInfo   = $this->oldBugrManager->fetchAssociative('SELECT enable, updated_at FROM budget WHERE id = :id', ['id' => $budgetId]);
         $isDisabled   = 0 === (int) $budgetInfo['enable'];
-        $disabledDate = $isDisabled ? new DateTimeImmutable($budgetInfo['updated_at']) : null;
+        $disabledDate = $isDisabled ? new DateTime($budgetInfo['updated_at']) : null;
 
         foreach ($periods as $period) {
-            $startDate = new DateTimeImmutable($period['date_debut']);
-            $endDate   = $period['date_fin'] ? new DateTimeImmutable($period['date_fin']) : new DateTimeImmutable();
+            $startDate = new DateTime($period['date_debut']);
+            $endDate   = $period['date_fin'] ? new DateTime($period['date_fin']) : new DateTime();
 
             $currentStart = clone $startDate;
 
             while ($currentStart < $endDate) {
                 // Calculate end of current year (December 31)
-                $endOfYear = new DateTimeImmutable($currentStart->format('Y') . '-12-31 23:59:59');
+                $endOfYear = new DateTime($currentStart->format('Y') . '-12-31 23:59:59');
 
                 // If end of year exceeds actual end of period, use actual end
-                $currentEnd = $endOfYear > $endDate ? $endDate : $endOfYear;
+                $currentEnd = min($endOfYear, $endDate);
 
                 // Exclude current year
                 if ((int) $currentStart->format('Y') >= (int) date('Y')) {
@@ -344,14 +347,14 @@ class OldBudgetSummaryCommand extends Command
                 ];
 
                 // Move to the beginning of the next year (January 1st)
-                $currentStart = new DateTimeImmutable(($currentStart->format('Y') + 1) . '-01-01 00:00:00');
+                $currentStart = new DateTime(($currentStart->format('Y') + 1) . '-01-01 00:00:00');
             }
         }
 
         return $splitPeriods;
     }
 
-    private function calculateMonthsBetweenDates(DateTimeImmutable $startDate, DateTimeImmutable $endDate): float
+    private function calculateMonthsBetweenDates(DateTime $startDate, DateTime $endDate): float
     {
         $start = clone $startDate;
         $end   = clone $endDate;
@@ -381,7 +384,7 @@ class OldBudgetSummaryCommand extends Command
         return $months;
     }
 
-    private function getTotalSpentForPeriod(int $budgetId, DateTimeImmutable $startDate, DateTimeImmutable $endDate): float
+    private function getTotalSpentForPeriod(int $budgetId, DateTime $startDate, DateTime $endDate): float
     {
         $query  = 'SELECT SUM(amount) as total_spent FROM entry WHERE budget_id = :budget_id AND date >= :date_debut';
         $params = [

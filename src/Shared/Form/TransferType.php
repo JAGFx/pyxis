@@ -8,11 +8,11 @@ use App\Domain\Account\Request\AccountSearchRequest;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Budget\Request\BudgetSearchRequest;
+use App\Shared\Form\Type\MoneyType;
 use App\Shared\Request\TransferRequest;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

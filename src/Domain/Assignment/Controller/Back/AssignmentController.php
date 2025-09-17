@@ -52,7 +52,9 @@ class AssignmentController extends AbstractController
 
     private function handleForm(string $type, Request $request, ?Assignment $assignment = null): Response
     {
-        $assignment ??= new Assignment()->setName('');
+        $assignment ??= new Assignment()
+            ->setAmount(0.0)
+            ->setName('');
 
         $form = $this
             ->createForm(AssignmentType::class, $assignment)

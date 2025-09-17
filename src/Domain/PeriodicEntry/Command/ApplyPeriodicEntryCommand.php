@@ -17,12 +17,12 @@ use Throwable;
 
 #[AsCommand('bugr:periodic-entry:apply')]
 #[AsPeriodicTask('P1D', '14:00:00')]
-class ApplyPeriodicEntryCommand
+readonly class ApplyPeriodicEntryCommand
 {
     public function __construct(
-        private readonly LoggerInterface $logger,
-        private readonly PeriodicEntryOperator $periodicEntryOperator,
-        private readonly PeriodicEntryManager $periodicEntryManager,
+        private LoggerInterface $logger,
+        private PeriodicEntryOperator $periodicEntryOperator,
+        private PeriodicEntryManager $periodicEntryManager,
     ) {
     }
 

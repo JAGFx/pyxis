@@ -21,9 +21,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 #[AsCommand('bugr:old-data:import')]
 class ImportOlderDataCommand
 {
-    public const string DEFAULT_ACCOUNT             = 'Livret A';
-    public const string DEFAULT_BUDGET              = 'Budget par défaut';
-    public const string DEFAULT_BUDGET_NAME_FORCAST = 'Import des provisions';
+    public const string DEFAULT_ACCOUNT              = 'Livret A';
+    public const string DEFAULT_BUDGET               = 'Budget par défaut';
+    public const string DEFAULT_BUDGET_NAME_FORECAST = 'Import des provisions';
     private Connection $connection;
     private Connection $oldBugrManager;
 
@@ -64,21 +64,21 @@ class ImportOlderDataCommand
             return Command::FAILURE;
         }
 
-        if (!is_null($amountSpent)) {
+        if (!is_null($amountSpent) && $amountSpent > 0) {
             $this->connection->insert('entry', [
                 'name'       => 'Import des dépenses',
                 'amount'     => $amountSpent,
                 'created_at' => new DateTimeImmutable(),
                 'updated_at' => new DateTimeImmutable(),
                 'account_id' => $account->getId(),
-                'flags'      => EntryFlagEnum::HIDDEN->value,
+                'flags'      => '["' . EntryFlagEnum::HIDDEN->value . '"]',
             ], [
                 'created_at' => Types::DATETIME_IMMUTABLE,
                 'updated_at' => Types::DATETIME_IMMUTABLE,
             ]);
         }
 
-        if (!is_null($amountForecast)) {
+        if (!is_null($amountForecast) && $amountForecast > 0) {
             $budget = $this->entityManager
                 ->getRepository(Budget::class)
                 ->findOneBy(['name' => self::DEFAULT_BUDGET]);
@@ -90,13 +90,13 @@ class ImportOlderDataCommand
             }
 
             $this->connection->insert('entry', [
-                'name'       => self::DEFAULT_BUDGET_NAME_FORCAST,
+                'name'       => self::DEFAULT_BUDGET_NAME_FORECAST,
                 'amount'     => $amountForecast,
                 'created_at' => new DateTimeImmutable(),
                 'updated_at' => new DateTimeImmutable(),
                 'account_id' => $account->getId(),
                 'budget_id'  => $budget->getId(),
-                'flags'      => EntryFlagEnum::HIDDEN->value,
+                'flags'      => '["' . EntryFlagEnum::HIDDEN->value . '"]',
             ], [
                 'created_at' => Types::DATETIME_IMMUTABLE,
                 'updated_at' => Types::DATETIME_IMMUTABLE,

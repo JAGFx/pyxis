@@ -1,14 +1,16 @@
 {% if pageCount > 1 %}
     <nav>
+        {% set request = (app.request.request.all | first) | default(query) %}
         {% set classAlign = (align is not defined) ? '' : align=='center' ? ' justify-center' : (align=='right' ? ' justify-end' : '') %}
         {% set classSize = (size is not defined) ? '' : size=='large' ? ' text-lg' : (size=='small' ? ' text-sm' : '') %}
+
         <ul class="flex items-center{{ classAlign }}{{ classSize }} rounded-3xl bg-white/10 backdrop-blur-md border border-white/20">
             {% if previous is defined %}
                 <li>
                     <a data-turbo="true"
                        class="flex items-center justify-center px-3 py-2 text-white hover:text-primary hover:bg-blue-50 transition-colors duration-200"
                        rel="prev"
-                       href="{{ path(route, query|merge({(pageParameterName): previous})) }}">
+                       href="{{ path(route, request|merge({(pageParameterName): previous})) }}">
                         <i class="fa-solid fa-arrow-left"></i>
                     </a>
                 </li>
@@ -24,13 +26,13 @@
                 <li>
                     <a data-turbo="true"
                        class="flex items-center justify-center px-3 py-2 text-white hover:text-primary hover:bg-blue-50 transition-colors duration-200"
-                       href="{{ path(route, query|merge({(pageParameterName): 1})) }}">1</a>
+                       href="{{ path(route, request|merge({(pageParameterName): 1})) }}">1</a>
                 </li>
                 {% if startPage == 3 %}
                     <li>
                         <a data-turbo="true"
                            class="flex items-center justify-center px-3 py-2 text-white hover:text-primary hover:bg-blue-50 transition-colors duration-200"
-                           href="{{ path(route, query|merge({(pageParameterName): 2})) }}">2</a>
+                           href="{{ path(route, request|merge({(pageParameterName): 2})) }}">2</a>
                     </li>
                 {% elseif startPage != 2 %}
                     <li>
@@ -44,7 +46,7 @@
                     <li>
                         <a data-turbo="true"
                            class="flex items-center justify-center px-3 py-2 text-white hover:text-primary hover:bg-blue-50 transition-colors duration-200"
-                           href="{{ path(route, query|merge({(pageParameterName): page})) }}">{{ page }}</a>
+                           href="{{ path(route, request|merge({(pageParameterName): page})) }}">{{ page }}</a>
                     </li>
                 {% else %}
                     <li>
@@ -63,14 +65,14 @@
                         <li>
                             <a data-turbo="true"
                                class="flex items-center justify-center px-3 py-2 text-white hover:text-primary hover:bg-blue-50 transition-colors duration-200"
-                               href="{{ path(route, query|merge({(pageParameterName): (pageCount - 1)})) }}">{{ pageCount -1 }}</a>
+                               href="{{ path(route, request|merge({(pageParameterName): (pageCount - 1)})) }}">{{ pageCount -1 }}</a>
                         </li>
                     {% endif %}
                 {% endif %}
                 <li>
                     <a data-turbo="true"
                        class="flex items-center justify-center px-3 py-2 text-white hover:text-primary hover:bg-blue-50 transition-colors duration-200"
-                       href="{{ path(route, query|merge({(pageParameterName): pageCount})) }}">{{ pageCount }}</a>
+                       href="{{ path(route, request|merge({(pageParameterName): pageCount})) }}">{{ pageCount }}</a>
                 </li>
             {% endif %}
 
@@ -79,7 +81,7 @@
                     <a data-turbo="true"
                        class="flex items-center justify-center px-3 py-2 text-white hover:text-primary hover:bg-blue-50 transition-colors duration-200"
                        rel="next"
-                       href="{{ path(route, query|merge({(pageParameterName): next})) }}">
+                       href="{{ path(route, request|merge({(pageParameterName): next})) }}">
                         <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </li>

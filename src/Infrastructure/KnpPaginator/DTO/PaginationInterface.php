@@ -6,5 +6,7 @@ interface PaginationInterface
 {
     public function getPage(): int;
 
+    public function setPage(int $page): self;
+
     public function getPageSize(): int;
 }

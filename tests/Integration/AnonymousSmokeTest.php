@@ -23,6 +23,8 @@ class AnonymousSmokeTest extends WebTestCase
         yield ['/budgets'];
         yield ['/budgets/create'];
         yield ['/entries'];
+        yield ['/entries/search'];
+        yield ['/entries/search?page=2'];
         yield ['/entries/create'];
         yield ['/entries/balance'];
         yield ['/periodic_entries'];

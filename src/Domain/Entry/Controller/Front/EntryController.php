@@ -53,7 +53,7 @@ class EntryController extends AbstractController
         ]);
     }
 
-    #[Route('/search', name: 'front_entry_search', methods: [Request::METHOD_POST])]
+    #[Route('/search', name: 'front_entry_search', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function search(Request $request): Response
     {
         $searchRequest = new EntrySearchRequest()
@@ -62,7 +62,10 @@ class EntryController extends AbstractController
         ;
 
         $this->createForm(EntrySearchType::class, $searchRequest)
-            ->handleRequest($request);
+            ->submit(array_merge(
+                $request->query->all(),
+                $request->request->all(),
+            ));
 
         $entries = $this->entryManager->getPaginated($searchRequest);
 

@@ -61,7 +61,9 @@ class EntryController extends AbstractController
 
     private function handleForm(string $type, Request $request, ?Entry $entry = null): Response
     {
-        $entry ??= new Entry()->setName('');
+        $entry ??= new Entry()
+            ->setAmount(0.0)
+            ->setName('');
 
         $form = $this
             ->createForm(EntryType::class, $entry)

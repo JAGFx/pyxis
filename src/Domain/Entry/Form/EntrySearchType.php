@@ -13,6 +13,7 @@ use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\Entry\Request\EntrySearchRequest;
+use App\Infrastructure\KnpPaginator\Form\PaginationBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -26,6 +27,8 @@ class EntrySearchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        PaginationBuilder::buildForm($builder);
+
         $builder
             ->add('name', TextType::class, [
                 'required' => false,
@@ -39,7 +42,7 @@ class EntrySearchType extends AbstractType
             ])
             ->add('flags', ChoiceType::class, [
                 'choices' => array_merge(
-                    ['entry_flag_enum.form.options.UNFLAGGED' => -1],
+                    ['entry_flag_enum.form.options.UNFLAGGED' => EntrySearchRequest::WITHOUT_FLAG_VALUE],
                     array_combine(
                         array_map(fn (EntryFlagEnum $flag): string => $flag->label(), EntryFlagEnum::cases()),
                         EntryFlagEnum::cases()
