@@ -16,7 +16,6 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
 {
     use PaginableTrait;
     use OrderableTrait;
-
     public const int WITHOUT_FLAG_VALUE = -1;
 
     public function __construct(

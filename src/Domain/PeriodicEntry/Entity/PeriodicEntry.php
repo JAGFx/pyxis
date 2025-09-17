@@ -6,6 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
+use App\Shared\Entity\EntityCollectionTrait;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -25,6 +26,7 @@ use Symfony\Component\Validator\Constraints\When;
 class PeriodicEntry
 {
     use TimestampableTrait;
+    use EntityCollectionTrait;
     public const int MONTH_SPLIT = 12;
 
     #[ORM\Id]
@@ -70,6 +72,65 @@ class PeriodicEntry
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $lastExecutionDate = null;
 
+    public function getTotalAmount(): float
+    {
+        if ($this->isSpent()) {
+            return $this->amount ?? 0.0;
+        }
+
+        $amount = 0.0;
+
+        foreach ($this->getBudgets() as $budget) {
+            $budgetAmount = $this->getAmountFor($budget);
+
+            if ($budgetAmount <= 0.0) {
+                continue;
+            }
+
+            $amount += $budgetAmount;
+        }
+
+        return $amount;
+    }
+
+    public function getAmountFor(Budget $budgetTarget): float
+    {
+        if (false === $budgetTarget->isEnabled()) {
+            return 0.0;
+        }
+
+        /** @var ?Budget $budget */
+        $budget = $this->budgets->findFirst(fn (int $k, Budget $budget): bool => $budget === $budgetTarget); // @phpstan-ignore-line
+
+        if (is_null($budget)) {
+            return 0.0;
+        }
+
+        return round($budget->getAmount() / self::MONTH_SPLIT, 2);
+    }
+
+    public function getType(): EntryTypeEnum
+    {
+        return $this->budgets->isEmpty() && !is_null($this->amount)
+            ? EntryTypeEnum::TYPE_SPENT
+            : EntryTypeEnum::TYPE_FORECAST;
+    }
+
+    public function isForecast(): bool
+    {
+        return EntryTypeEnum::TYPE_FORECAST === $this->getType();
+    }
+
+    public function isSpent(): bool
+    {
+        return EntryTypeEnum::TYPE_SPENT === $this->getType();
+    }
+
+    public function countBudgets(): ?int
+    {
+        return $this->budgets->count();
+    }
+
     public function __construct()
     {
         $this->createdAt     = new DateTimeImmutable();
@@ -113,43 +174,6 @@ class PeriodicEntry
         return $this;
     }
 
-    public function getTotalAmount(): float
-    {
-        if ($this->isSpent()) {
-            return $this->amount ?? 0.0;
-        }
-
-        $amount = 0.0;
-
-        foreach ($this->getBudgets() as $budget) {
-            $budgetAmount = $this->getAmountFor($budget);
-
-            if ($budgetAmount <= 0.0) {
-                continue;
-            }
-
-            $amount += $budgetAmount;
-        }
-
-        return $amount;
-    }
-
-    public function getAmountFor(Budget $budgetTarget): float
-    {
-        if (false === $budgetTarget->isEnabled()) {
-            return 0.0;
-        }
-
-        /** @var ?Budget $budget */
-        $budget = $this->budgets->findFirst(fn (int $k, Budget $budget): bool => $budget === $budgetTarget); // @phpstan-ignore-line
-
-        if (is_null($budget)) {
-            return 0.0;
-        }
-
-        return round($budget->getAmount() / self::MONTH_SPLIT, 2);
-    }
-
     public function getExecutionDate(): DateTimeImmutable
     {
         return $this->executionDate;
@@ -182,18 +206,14 @@ class PeriodicEntry
 
     public function addBudget(Budget $budget): PeriodicEntry
     {
-        if (!$this->budgets->contains($budget)) {
-            $this->budgets->add($budget);
-        }
+        $this->addToCollection($this->budgets, $budget, null, $this);
 
         return $this;
     }
 
     public function removeBudget(Budget $budget): PeriodicEntry
     {
-        if ($this->budgets->contains($budget)) {
-            $this->budgets->removeElement($budget);
-        }
+        $this->removeFromCollection($this->budgets, $budget);
 
         return $this;
     }
@@ -220,27 +240,5 @@ class PeriodicEntry
         $this->lastExecutionDate = $lastExecutionDate;
 
         return $this;
-    }
-
-    public function getType(): EntryTypeEnum
-    {
-        return $this->budgets->isEmpty() && !is_null($this->amount)
-            ? EntryTypeEnum::TYPE_SPENT
-            : EntryTypeEnum::TYPE_FORECAST;
-    }
-
-    public function isForecast(): bool
-    {
-        return EntryTypeEnum::TYPE_FORECAST === $this->getType();
-    }
-
-    public function isSpent(): bool
-    {
-        return EntryTypeEnum::TYPE_SPENT === $this->getType();
-    }
-
-    public function countBudgets(): ?int
-    {
-        return $this->budgets->count();
     }
 }

@@ -15,12 +15,12 @@ trait EntityCollectionTrait
     protected function addToCollection(
         Collection $collection,
         object $item,
-        string $setterMethod,
+        ?string $setterMethod = null,
         mixed $ownerValue = null,
     ): void {
         if (!$collection->contains($item)) {
             $collection->add($item);
-            if ($setterMethod && method_exists($item, $setterMethod)) {
+            if (!is_null($setterMethod) && method_exists($item, $setterMethod)) {
                 $item->$setterMethod($ownerValue ?? $this);
             }
         }
@@ -35,10 +35,10 @@ trait EntityCollectionTrait
     protected function removeFromCollection(
         Collection $collection,
         object $item,
-        string $setterMethod,
+        ?string $setterMethod = null,
         mixed $nullValue = null,
     ): void {
-        if ($collection->removeElement($item) && ($setterMethod && method_exists($item, $setterMethod))) {
+        if ($collection->removeElement($item) && (!is_null($setterMethod) && method_exists($item, $setterMethod))) {
             $item->$setterMethod($nullValue);
         }
     }

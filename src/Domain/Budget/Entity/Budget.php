@@ -53,6 +53,48 @@ class Budget
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $readOnly = false;
 
+    public function getProgress(bool $showAsSpentOnly = false): float
+    {
+        return array_reduce(
+            $this->entries->toArray(),
+            static fn (float $currentSum, Entry $entry): float => $currentSum + (($showAsSpentOnly) ? 0 : $entry->getAmount()),
+            0
+        );
+    }
+
+    public function getCashFlow(?Account $account = null): float
+    {
+        $readableCollection = $this->entries->filter(
+            static function (Entry $entry) use ($account): bool {
+                if (!is_null($account) && $entry->getAccount() !== $account) {
+                    return false;
+                }
+
+                if ($entry->getCreatedAt() < YearRange::firstDayOf(YearRange::current())) {
+                    return true;
+                }
+
+                return $entry->isBalancing();
+            }
+        );
+
+        return array_reduce(
+            $readableCollection->toArray(),
+            static fn (float $cashFlow, Entry $entry): float => $cashFlow + $entry->getAmount(),
+            0.0
+        );
+    }
+
+    public function hasNegativeCashFlow(): bool
+    {
+        return round($this->getCashFlow(), 2) < 0.0;
+    }
+
+    public function hasPositiveCashFlow(): bool
+    {
+        return round($this->getCashFlow(), 2) > 0.0;
+    }
+
     public function __construct()
     {
         $this->createdAt       = new DateTimeImmutable();
@@ -153,47 +195,5 @@ class Budget
         $this->readOnly = $readOnly;
 
         return $this;
-    }
-
-    public function getProgress(bool $showAsSpentOnly = false): float
-    {
-        return array_reduce(
-            $this->entries->toArray(),
-            static fn (float $currentSum, Entry $entry): float => $currentSum + (($showAsSpentOnly) ? 0 : $entry->getAmount()),
-            0
-        );
-    }
-
-    public function getCashFlow(?Account $account = null): float
-    {
-        $readableCollection = $this->entries->filter(
-            static function (Entry $entry) use ($account): bool {
-                if (!is_null($account) && $entry->getAccount() !== $account) {
-                    return false;
-                }
-
-                if ($entry->getCreatedAt() < YearRange::firstDayOf(YearRange::current())) {
-                    return true;
-                }
-
-                return $entry->isBalancing();
-            }
-        );
-
-        return array_reduce(
-            $readableCollection->toArray(),
-            static fn (float $cashFlow, Entry $entry): float => $cashFlow + $entry->getAmount(),
-            0.0
-        );
-    }
-
-    public function hasNegativeCashFlow(): bool
-    {
-        return round($this->getCashFlow(), 2) < 0.0;
-    }
-
-    public function hasPositiveCashFlow(): bool
-    {
-        return round($this->getCashFlow(), 2) > 0.0;
     }
 }
