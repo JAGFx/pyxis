@@ -11,4 +11,6 @@ import './styles/bugr.css';
 // start the Stimulus application
 import 'flowbite';
 
+// TODO: Check why disable after render from  turbo response
+
 import './bootstrap';

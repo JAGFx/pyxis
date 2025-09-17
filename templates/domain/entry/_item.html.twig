@@ -18,7 +18,8 @@
                 <div class="flex justify-start items-center space-x-2">
                     <span>{{ currency.amount(entry.amount, true) }}</span>
                     {% for flag in entry.flags %}
-                        <div class="flex bg-gradient-primary rounded-3xl px-2">
+                        {# TODO: Make a component #}
+                        <div class="flex bg-gradient-primary rounded-3xl px-2 text-black/75">
                             <small>{{ flag.humanize | trans }}</small>
                         </div>
                     {% endfor %}

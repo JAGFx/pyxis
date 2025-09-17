@@ -3,6 +3,10 @@
 <twig:List:List>
     {% for entry in entries %}
         {% include 'domain/entry/_item.html.twig' %}
+    {% else %}
+        <twig:List:Item>
+            <div class="text-center">{{ 'no_data' | trans(domain: 'interface') }}</div>
+        </twig:List:Item>
     {% endfor %}
 
     <div class="mt-4 flex justify-center items-center">

@@ -5,5 +5,9 @@
 <twig:List:List>
     {% for periodicEntry in periodicEntries %}
         {% include 'domain/periodic_entry/_item.html.twig' %}
+    {% else %}
+        <twig:List:Item>
+            <div class="text-center">{{ 'no_data' | trans(domain: 'interface') }}</div>
+        </twig:List:Item>
     {% endfor %}
 </twig:List:List>
