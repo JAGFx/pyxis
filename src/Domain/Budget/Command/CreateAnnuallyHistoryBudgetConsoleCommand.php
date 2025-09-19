@@ -17,7 +17,7 @@ use Throwable;
 
 #[AsCommand('bugr:create_annually_history_budget')]
 #[AsPeriodicTask('P1Y', 'first day of january 01:00:00')]
-class CreateAnnuallyHistoryBudgetCommand extends Command
+class CreateAnnuallyHistoryBudgetConsoleCommand extends Command
 {
     public function __construct(
         private readonly LoggerInterface $logger,
