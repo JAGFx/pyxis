@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Assignment\Form;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Message\Query\AccountSearchQuery;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Account\Request\AccountSearchRequest;
 use App\Domain\Assignment\Request\AssignmentSearchRequest;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -24,9 +24,9 @@ class AssignmentSearchType extends AbstractType
                 'class'         => Account::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
-                    $searchRequest = new AccountSearchRequest(true)->setOrderBy('name');
+                    $searchQuery = new AccountSearchQuery(true)->setOrderBy('name');
 
-                    return $repository->getAccountsQueryBuilder($searchRequest);
+                    return $repository->getAccountsQueryBuilder($searchQuery);
                 },
                 'required'    => false,
                 'placeholder' => 'shared.default.placeholders.all',

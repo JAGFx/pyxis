@@ -3,8 +3,8 @@
 namespace App\Domain\Assignment\Form;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Message\Query\AccountSearchQuery;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Account\Request\AccountSearchRequest;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Shared\Form\Type\MoneyType;
 use Doctrine\ORM\QueryBuilder;
@@ -25,9 +25,9 @@ class AssignmentType extends AbstractType
                 'class'         => Account::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
-                    $searchRequest = new AccountSearchRequest(true)->setOrderBy('name');
+                    $searchQuery = new AccountSearchQuery(true)->setOrderBy('name');
 
-                    return $repository->getAccountsQueryBuilder($searchRequest);
+                    return $repository->getAccountsQueryBuilder($searchQuery);
                 },
             ])
             ->add('name', TextType::class)

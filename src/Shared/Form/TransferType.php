@@ -3,8 +3,8 @@
 namespace App\Shared\Form;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Message\Query\AccountSearchQuery;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Account\Request\AccountSearchRequest;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Budget\Request\BudgetSearchRequest;
@@ -25,9 +25,9 @@ class TransferType extends AbstractType
                 'class'         => Account::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
-                    $searchRequest = new AccountSearchRequest(true)->setOrderBy('name');
+                    $searchQuery = new AccountSearchQuery(true)->setOrderBy('name');
 
-                    return $repository->getAccountsQueryBuilder($searchRequest);
+                    return $repository->getAccountsQueryBuilder($searchQuery);
                 },
             ])
             ->add('budget_source', EntityType::class, [

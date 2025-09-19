@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Domain\Account\Repository;
 
+use App\Domain\Account\Message\Query\AccountSearchQuery;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Account\Request\AccountSearchRequest;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\EntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
@@ -41,9 +41,9 @@ class AccountRepositoryTest extends KernelTestCase
         // Account with no entries
         AccountFactory::new(['name' => 'Empty Account', 'enabled' => true])->create();
 
-        $searchRequest = new AccountSearchRequest()->setPositiveOrNegativeBalance(true);
+        $searchQuery = new AccountSearchQuery()->setPositiveOrNegativeBalance(true);
 
-        $queryBuilder = $this->accountRepository->getAccountsQueryBuilder($searchRequest);
+        $queryBuilder = $this->accountRepository->getAccountsQueryBuilder($searchQuery);
         $results      = $queryBuilder->getQuery()->getResult();
 
         $accountNames = array_map(fn ($account) => $account->getName(), $results);

@@ -3,9 +3,6 @@ FROM dunglas/frankenphp:php8.4-alpine AS base
 LABEL org.opencontainers.image.source=https://github.com/JAGFx/pyxis
 LABEL org.opencontainers.image.licenses=MIT
 
-ENV FRANKENPHP_CONFIG="worker ./public/index.php"
-ENV APP_RUNTIME="Runtime\\FrankenPhpSymfony\\Runtime"
-
 COPY docker/php/conf.d/override.ini /usr/local/etc/php/conf.d/override.ini
 
 RUN apk add --no-cache \
@@ -49,6 +46,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 WORKDIR /var/www/symfony
 
 FROM base AS prod
+
+ENV FRANKENPHP_CONFIG="worker ./public/index.php"
+ENV APP_RUNTIME="Runtime\\FrankenPhpSymfony\\Runtime"
 
 ARG USER=symfony
 

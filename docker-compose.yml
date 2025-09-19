@@ -20,6 +20,7 @@ services:
         client_host=host.docker.internal
       PHP_IDE_CONFIG: serverName=pyxis
       SERVER_NAME: pyxis.local
+      FRANKENPHP_CONFIG: ''
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

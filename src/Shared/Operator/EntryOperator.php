@@ -4,7 +4,7 @@ namespace App\Shared\Operator;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Domain\Assignment\Request\AssignmentSearchRequest;
+use App\Domain\Assignment\Message\Query\AssignmentSearchQuery;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\Entry\Request\EntrySearchRequest;
 use App\Shared\ValueObject\AmountBalance;
@@ -30,7 +30,7 @@ readonly class EntryOperator
         );
 
         $assignmentsBalance = $this->assignmentManager->balance(
-            is_null($account) ? null : new AssignmentSearchRequest($account)
+            is_null($account) ? null : new AssignmentSearchQuery($account)
         );
 
         $totalSpent = $entryBalance->getTotalSpent() - $assignmentsBalance;

@@ -3,15 +3,17 @@
 namespace App\Domain\Account\Controller\Back;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Form\AccountType;
+use App\Domain\Account\Form\AccountCreateOrUpdateType;
 use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Account\Request\AccountSearchRequest;
+use App\Domain\Account\Message\Command\AccountCreateOrUpdateCommand;
+use App\Domain\Account\Message\Query\AccountSearchQuery;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/accounts')]
@@ -20,14 +22,15 @@ class AccountController extends AbstractController
     public function __construct(
         private readonly AccountManager $accountManager,
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
+        private readonly ObjectMapperInterface $objectMapper,
     ) {
     }
 
     #[Route(name: 'back_account_list', methods: Request::METHOD_GET)]
     public function index(): Response
     {
-        $searchRequest = new AccountSearchRequest()->setOrderBy('name');
-        $accounts      = $this->accountManager->getAccounts($searchRequest);
+        $searchQuery = new AccountSearchQuery()->setOrderBy('name');
+        $accounts    = $this->accountManager->getAccounts($searchQuery);
 
         return $this->render('domain/account/index.html.twig', [
             'accounts' => $accounts,
@@ -51,15 +54,18 @@ class AccountController extends AbstractController
     {
         $account ??= new Account()->setName('');
 
+        $accountCommand = $this->objectMapper->map($account, AccountCreateOrUpdateCommand::class);
+
         $form = $this
-            ->createForm(AccountType::class, $account)
+            ->createForm(AccountCreateOrUpdateType::class, $accountCommand)
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (ControllerActionEnum::CREATE === $action) {
-                $this->accountManager->create($account);
+                $this->accountManager->create($accountCommand);
             } else {
-                $this->accountManager->update();
+                $accountCommand->setOrigin($account);
+                $this->accountManager->update($accountCommand);
             }
 
             return $this->redirectToRoute('back_account_list');

@@ -3,8 +3,8 @@
 namespace App\Domain\Budget\Form;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Message\Query\AccountSearchQuery;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Account\Request\AccountSearchRequest;
 use App\Domain\Budget\Request\BudgetAccountBalanceRequest;
 use Doctrine\ORM\QueryBuilder;
 use Override;
@@ -31,13 +31,13 @@ class BudgetAccountBalanceType extends AbstractType
                         'class'         => Account::class,
                         'choice_label'  => 'name',
                         'query_builder' => function (AccountRepository $repository) use ($budgetAccountBalanceRequest): QueryBuilder {
-                            $searchRequest = new AccountSearchRequest(true)
+                            $searchQuery = new AccountSearchQuery(true)
                                 ->setOrderBy('name')
                                 ->setBudget($budgetAccountBalanceRequest->getBudget())
                                 ->setPositiveOrNegativeBalance(true)
                             ;
 
-                            return $repository->getAccountsQueryBuilder($searchRequest);
+                            return $repository->getAccountsQueryBuilder($searchQuery);
                         },
                     ])
                 ;
