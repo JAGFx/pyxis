@@ -7,7 +7,7 @@ namespace App\Domain\Assignment\Form;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\AccountSearchQuery;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Assignment\Request\AssignmentSearchRequest;
+use App\Domain\Assignment\Message\Query\AssignmentSearchQuery;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -40,7 +40,7 @@ class AssignmentSearchType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => AssignmentSearchRequest::class,
+            'data_class'         => AssignmentSearchQuery::class,
             'label_format'       => 'assignment.search.%name%.label',
             'translation_domain' => 'forms',
         ]);

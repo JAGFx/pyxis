@@ -5,7 +5,7 @@ namespace App\Domain\Assignment\Form;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\AccountSearchQuery;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Assignment\Entity\Assignment;
+use App\Domain\Assignment\Message\Command\AssignmentCreateOrUpdateCommand;
 use App\Shared\Form\Type\MoneyType;
 use Doctrine\ORM\QueryBuilder;
 use Override;
@@ -15,7 +15,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AssignmentType extends AbstractType
+class AssignmentCreateOrUpdateType extends AbstractType
 {
     #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -39,7 +39,7 @@ class AssignmentType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => Assignment::class,
+            'data_class'         => AssignmentCreateOrUpdateCommand::class,
             'label_format'       => 'assignment.form.%name%.label',
             'translation_domain' => 'forms',
         ]);

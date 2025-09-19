@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Domain\Assignment\Request;
+namespace App\Domain\Assignment\Message\Query;
 
 use App\Domain\Account\Entity\Account;
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
+use App\Shared\Cqs\Message\Query\QueryInterface;
 
-class AssignmentSearchRequest implements OrderableInterface
+class AssignmentSearchQuery implements OrderableInterface, QueryInterface
 {
     use OrderableTrait;
 
@@ -21,7 +22,7 @@ class AssignmentSearchRequest implements OrderableInterface
         return $this->account;
     }
 
-    public function setAccount(?Account $account): AssignmentSearchRequest
+    public function setAccount(?Account $account): AssignmentSearchQuery
     {
         $this->account = $account;
 
@@ -33,7 +34,7 @@ class AssignmentSearchRequest implements OrderableInterface
         return $this->name;
     }
 
-    public function setName(?string $name): AssignmentSearchRequest
+    public function setName(?string $name): AssignmentSearchQuery
     {
         $this->name = $name;
 

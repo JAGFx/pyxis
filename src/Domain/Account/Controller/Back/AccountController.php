@@ -52,9 +52,9 @@ class AccountController extends AbstractController
 
     private function handleForm(ControllerActionEnum $action, Request $request, ?Account $account = null): Response
     {
-        $account ??= new Account()->setName('');
-
-        $accountCommand = $this->objectMapper->map($account, AccountCreateOrUpdateCommand::class);
+        $accountCommand = is_null($account)
+            ? new AccountCreateOrUpdateCommand()
+            : $this->objectMapper->map($account, AccountCreateOrUpdateCommand::class);
 
         $form = $this
             ->createForm(AccountCreateOrUpdateType::class, $accountCommand)

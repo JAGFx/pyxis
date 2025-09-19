@@ -3,7 +3,7 @@
 namespace App\Domain\Assignment\Repository;
 
 use App\Domain\Assignment\Entity\Assignment;
-use App\Domain\Assignment\Request\AssignmentSearchRequest;
+use App\Domain\Assignment\Message\Query\AssignmentSearchQuery;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,40 +18,40 @@ class AssignmentRepository extends ServiceEntityRepository
         parent::__construct($registry, Assignment::class);
     }
 
-    public function getAssignmentsQueryBuilder(AssignmentSearchRequest $searchRequest): QueryBuilder
+    public function getAssignmentsQueryBuilder(AssignmentSearchQuery $searchQuery): QueryBuilder
     {
         $queryBuilder = $this
             ->createQueryBuilder('a')
         ;
 
-        if (!is_null($searchRequest->getAccount())) {
+        if (!is_null($searchQuery->getAccount())) {
             $queryBuilder
                 ->andWhere('a.account = :account')
-                ->setParameter('account', $searchRequest->getAccount());
+                ->setParameter('account', $searchQuery->getAccount());
         }
 
-        if (!is_null($searchRequest->getName())) {
+        if (!is_null($searchQuery->getName())) {
             $queryBuilder
                 ->andWhere('a.name LIKE :name')
-                ->setParameter('name', '%' . $searchRequest->getName() . '%');
+                ->setParameter('name', '%' . $searchQuery->getName() . '%');
         }
 
-        switch ($searchRequest->getOrderBy()) {
+        switch ($searchQuery->getOrderBy()) {
             case 'name':
-                $queryBuilder->orderBy('a.name', $searchRequest->getOrderDirection()->value);
+                $queryBuilder->orderBy('a.name', $searchQuery->getOrderDirection()->value);
                 break;
             default:
-                $queryBuilder->orderBy('a.id', $searchRequest->getOrderDirection()->value);
+                $queryBuilder->orderBy('a.id', $searchQuery->getOrderDirection()->value);
                 break;
         }
 
         return $queryBuilder;
     }
 
-    public function balanceQueryBuilder(AssignmentSearchRequest $searchRequest): QueryBuilder
+    public function balanceQueryBuilder(AssignmentSearchQuery $searchQuery): QueryBuilder
     {
         return $this
-            ->getAssignmentsQueryBuilder($searchRequest)
+            ->getAssignmentsQueryBuilder($searchQuery)
             ->select('SUM(a.amount) as sum');
     }
 
