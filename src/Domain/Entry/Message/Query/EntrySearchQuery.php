@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Entry\Request;
+namespace App\Domain\Entry\Message\Query;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
@@ -10,9 +10,10 @@ use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 use App\Infrastructure\KnpPaginator\DTO\PaginableTrait;
 use App\Infrastructure\KnpPaginator\DTO\PaginationInterface;
+use App\Shared\Cqs\Message\Query\QueryInterface;
 use DateTimeImmutable;
 
-class EntrySearchRequest implements PaginationInterface, OrderableInterface
+class EntrySearchQuery implements PaginationInterface, OrderableInterface, QueryInterface
 {
     use PaginableTrait;
     use OrderableTrait;
@@ -37,7 +38,7 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
         return $this->account;
     }
 
-    public function setAccount(?Account $account): EntrySearchRequest
+    public function setAccount(?Account $account): EntrySearchQuery
     {
         $this->account = $account;
 
@@ -49,7 +50,7 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
         return $this->startDate;
     }
 
-    public function setStartDate(?DateTimeImmutable $startDate): EntrySearchRequest
+    public function setStartDate(?DateTimeImmutable $startDate): EntrySearchQuery
     {
         $this->startDate = $startDate;
 
@@ -61,7 +62,7 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
         return $this->endDate;
     }
 
-    public function setEndDate(?DateTimeImmutable $endDate): EntrySearchRequest
+    public function setEndDate(?DateTimeImmutable $endDate): EntrySearchQuery
     {
         $this->endDate = $endDate;
 
@@ -73,7 +74,7 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
         return $this->name;
     }
 
-    public function setName(?string $name): EntrySearchRequest
+    public function setName(?string $name): EntrySearchQuery
     {
         $this->name = $name;
 
@@ -85,7 +86,7 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
         return $this->type;
     }
 
-    public function setType(?EntryTypeEnum $type): EntrySearchRequest
+    public function setType(?EntryTypeEnum $type): EntrySearchQuery
     {
         $this->type = $type;
 
@@ -97,7 +98,7 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
         return $this->budget;
     }
 
-    public function setBudget(?Budget $budget): EntrySearchRequest
+    public function setBudget(?Budget $budget): EntrySearchQuery
     {
         $this->budget = $budget;
 
@@ -115,7 +116,7 @@ class EntrySearchRequest implements PaginationInterface, OrderableInterface
     /**
      * @param array<int|EntryFlagEnum> $flags
      */
-    public function setFlags(array $flags): EntrySearchRequest
+    public function setFlags(array $flags): EntrySearchQuery
     {
         $this->flags = $flags;
 

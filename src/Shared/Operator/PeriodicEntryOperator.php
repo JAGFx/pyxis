@@ -2,20 +2,20 @@
 
 namespace App\Shared\Operator;
 
-use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
-use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
 use DateMalformedStringException;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class PeriodicEntryOperator
 {
     public function __construct(
         private EntryManager $entryManager,
-        private PeriodicEntryManager $periodicEntryManager,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -41,14 +41,14 @@ readonly class PeriodicEntryOperator
         }
 
         if ($periodicEntry->isSpent()) {
-            $entry = new Entry()
-                ->setAmount($periodicEntry->getAmount() ?? 0.0)
-                ->setName($periodicEntry->getName())
-                ->setAccount($periodicEntry->getAccount())
-                ->addFlag(EntryFlagEnum::PERIODIC_ENTRY)
-            ;
+            $entryCommand = new EntryCreateOrUpdateCommand(
+                account: $periodicEntry->getAccount(),
+                name: $periodicEntry->getName(),
+                amount: $periodicEntry->getAmount() ?? 0.0,
+                flags: [EntryFlagEnum::PERIODIC_ENTRY],
+            );
 
-            $this->entryManager->create($entry);
+            $this->entryManager->create($entryCommand, false);
         } else {
             foreach ($periodicEntry->getBudgets() as $budget) {
                 $amount = $periodicEntry->getAmountFor($budget);
@@ -57,18 +57,19 @@ readonly class PeriodicEntryOperator
                     continue;
                 }
 
-                $entry = new Entry()
-                    ->setAmount($amount)
-                    ->setBudget($budget)
-                    ->setName($periodicEntry->getName() . ' - ' . $budget->getName())
-                    ->setAccount($periodicEntry->getAccount())
-                    ->addFlag(EntryFlagEnum::PERIODIC_ENTRY)
-                ;
-                $this->entryManager->create($entry);
+                $entryCommand = new EntryCreateOrUpdateCommand(
+                    account: $periodicEntry->getAccount(),
+                    name: $periodicEntry->getName() . ' - ' . $budget->getName(),
+                    amount: $amount,
+                    budget: $budget,
+                    flags: [EntryFlagEnum::PERIODIC_ENTRY],
+                );
+
+                $this->entryManager->create($entryCommand, false);
             }
         }
 
         $periodicEntry->setLastExecutionDate(new DateTimeImmutable());
-        $this->periodicEntryManager->update();
+        $this->entityManager->flush();
     }
 }

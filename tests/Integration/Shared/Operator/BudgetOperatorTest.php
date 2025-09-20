@@ -19,6 +19,8 @@ use App\Tests\Factory\EntryFactory;
 use App\Tests\Factory\HistoryBudgetFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use DateTimeImmutable;
+use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class BudgetOperatorTest extends KernelTestCase
 {
@@ -362,7 +364,7 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertEquals(400.0, $historicalResult[1]->getProgress());
     }
 
-    private function populateBalanceDatabase(): void
+    private function populateBalanceDatabase(float $cashFlowAmount = 500.0): void
     {
         /** @var Budget $budget */
         $budget = BudgetFactory::createOne([
@@ -378,7 +380,7 @@ class BudgetOperatorTest extends KernelTestCase
         EntryFactory::createSequence([
             [
                 'createdAt' => new DateTimeImmutable('-5 hour'),
-                'amount'    => 500,
+                'amount'    => $cashFlowAmount,
                 'budget'    => $budget,
                 'account'   => $account,
             ],
@@ -389,17 +391,6 @@ class BudgetOperatorTest extends KernelTestCase
                 'account'   => $account,
             ],
         ]);
-    }
-
-    private function getBudget(array $data = []): Budget
-    {
-        $searchRequest = new BudgetSearchRequest()->setName($data['name'] ?? null);
-
-        $result = $this->budgetManager->getBudgets($searchRequest);
-
-        self::assertCount(1, $result);
-
-        return reset($result);
     }
 
     public function testBalancingWithoutPositiveOrNegativeMistDoNothing(): void
@@ -428,16 +419,24 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertSame($initialBalance->getTotalForecast(), $newBalance->getTotalForecast());
     }
 
-    public function testBudgetWithPositiveCashFlowMustTransferToSpent(): void
+    public static function budgetBalancingDataset(): Generator
     {
-        $this->populateBalanceDatabase();
+        yield 'Positive cash flow' => [500.0];
+        yield 'Negative cash flow' => [-500.0];
+    }
+
+    #[DataProvider('budgetBalancingDataset')]
+    public function testBudgetCashFlowMustTransferToSpent(float $cashFlowAmount): void
+    {
+        $this->populateBalanceDatabase($cashFlowAmount);
 
         $initialBalance = $this->entryManager->balance();
         $overflow       = 200.0;
 
-        $budget = $this->getBudget([
+        /** @var Budget $budget */
+        $budget = BudgetFactory::find([
             'name' => self::BUDGET_BALANCE_NAME,
-        ]);
+        ])->_real();
 
         /** @var Account $account */
         $account = AccountFactory::first()->_real();
@@ -446,10 +445,12 @@ class BudgetOperatorTest extends KernelTestCase
             budget: $budget,
             account: $account,
         ));
+
         $newBalance = $this->entryManager->balance();
 
         self::assertSame($initialBalance->getTotalSpent() + $overflow, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() - $overflow, $newBalance->getTotalForecast());
+        self::assertSame(0.0, $budget->getCashFlow());
 
         /** @var Entry[] $lastTwoById */
         $lastTwoById = EntryFactory::repository()->findBy([], ['id' => 'ASC'], 2, 2);
@@ -469,5 +470,6 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertSame(-$overflow, $lastTwoById[1]->getAmount());
         self::assertSame($budget, $lastTwoById[1]->getBudget());
         self::assertSame($account, $lastTwoById[1]->getAccount());
+        self::assertSame($budget->getId(), $lastTwoById[1]->getBudget()?->getId());
     }
 }

@@ -5,7 +5,7 @@ namespace App\Domain\Entry\Repository;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
-use App\Domain\Entry\Request\EntrySearchRequest;
+use App\Domain\Entry\Message\Query\EntrySearchQuery;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -34,68 +34,68 @@ class EntryRepository extends ServiceEntityRepository
         return $this;
     }
 
-    public function balance(EntrySearchRequest $searchRequest): QueryBuilder
+    public function balance(EntrySearchQuery $searchQuery): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('e')
             ->select('SUM(e.amount) as sum, b.id')
             ->leftJoin('e.budget', 'b')
             ->groupBy('b.id');
 
-        if (!is_null($searchRequest->getAccount())) {
+        if (!is_null($searchQuery->getAccount())) {
             $queryBuilder
                 ->andWhere('e.account = :account')
-                ->setParameter('account', $searchRequest->getAccount());
+                ->setParameter('account', $searchQuery->getAccount());
         }
 
         return $queryBuilder;
     }
 
-    public function getEntriesQueryBuilder(EntrySearchRequest $searchRequest): QueryBuilder
+    public function getEntriesQueryBuilder(EntrySearchQuery $searchQuery): QueryBuilder
     {
         $queryBuilder = $this
             ->createQueryBuilder('e')
         ;
 
-        if (!is_null($searchRequest->getStartDate()) && !is_null($searchRequest->getEndDate())) {
+        if (!is_null($searchQuery->getStartDate()) && !is_null($searchQuery->getEndDate())) {
             $queryBuilder
                 ->andWhere('e.createdAt BETWEEN :startDate AND :endDate')
-                ->setParameter('startDate', $searchRequest->getStartDate()->format('Y-m-d'))
-                ->setParameter('endDate', $searchRequest->getEndDate()->format('Y-m-d'));
+                ->setParameter('startDate', $searchQuery->getStartDate()->format('Y-m-d'))
+                ->setParameter('endDate', $searchQuery->getEndDate()->format('Y-m-d'));
         }
 
-        if (!is_null($searchRequest->getName())) {
+        if (!is_null($searchQuery->getName())) {
             $queryBuilder
                 ->andWhere('e.name LIKE :name')
-                ->setParameter('name', '%' . $searchRequest->getName() . '%');
+                ->setParameter('name', '%' . $searchQuery->getName() . '%');
         }
 
-        if (EntryTypeEnum::TYPE_SPENT === $searchRequest->getType()) {
+        if (EntryTypeEnum::TYPE_SPENT === $searchQuery->getType()) {
             $queryBuilder
                 ->andWhere('e.budget IS NULL');
-        } elseif (EntryTypeEnum::TYPE_FORECAST === $searchRequest->getType()) {
+        } elseif (EntryTypeEnum::TYPE_FORECAST === $searchQuery->getType()) {
             $queryBuilder
                 ->andWhere('e.budget IS NOT NULL');
         }
 
-        if (!is_null($searchRequest->getAccount())) {
+        if (!is_null($searchQuery->getAccount())) {
             $queryBuilder
                 ->andWhere('e.account = :account')
-                ->setParameter('account', $searchRequest->getAccount());
+                ->setParameter('account', $searchQuery->getAccount());
         }
 
-        if (!is_null($searchRequest->getBudget())) {
+        if (!is_null($searchQuery->getBudget())) {
             $queryBuilder
                 ->andWhere('e.budget = :budget')
-                ->setParameter('budget', $searchRequest->getBudget());
+                ->setParameter('budget', $searchQuery->getBudget());
         }
 
-        $flags = $searchRequest->getFlags();
+        $flags = $searchQuery->getFlags();
         if ([] !== $flags) {
             $orConditions = [];
             $paramIndex   = 0;
 
             foreach ($flags as $flag) {
-                if (EntrySearchRequest::WITHOUT_FLAG_VALUE === $flag) {
+                if (EntrySearchQuery::WITHOUT_FLAG_VALUE === $flag) {
                     $orConditions[] = 'JSON_LENGTH(e.flags) = 0';
                 } else {
                     if (!$flag instanceof EntryFlagEnum) {
@@ -111,12 +111,12 @@ class EntryRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('(' . implode(' OR ', $orConditions) . ')');
         }
 
-        switch ($searchRequest->getOrderBy()) {
+        switch ($searchQuery->getOrderBy()) {
             case 'createdAt':
-                $queryBuilder->orderBy('e.createdAt', $searchRequest->getOrderDirection()->value);
+                $queryBuilder->orderBy('e.createdAt', $searchQuery->getOrderDirection()->value);
                 break;
             default:
-                $queryBuilder->orderBy('e.id', $searchRequest->getOrderDirection()->value);
+                $queryBuilder->orderBy('e.id', $searchQuery->getOrderDirection()->value);
                 break;
         }
 

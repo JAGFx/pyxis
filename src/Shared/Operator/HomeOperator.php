@@ -2,15 +2,17 @@
 
 namespace App\Shared\Operator;
 
-use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
 use App\Shared\Request\TransferRequest;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class HomeOperator
 {
     public function __construct(
         private EntryManager $entryManager,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -19,29 +21,25 @@ readonly class HomeOperator
         $entrySourceName = $transfer->getBudgetSource()?->getName() ?? 'Dépense';
         $entryTargetName = $transfer->getBudgetTarget()?->getName() ?? 'Dépense';
 
-        $entrySource = new Entry()
-            ->setBudget($transfer->getBudgetSource())
-            ->setAmount(-$transfer->getAmount())
-            ->setAccount($transfer->getAccount())
-            ->setName($entrySourceName)
-            ->addFlag(EntryFlagEnum::TRANSFERT);
+        $entrySourceCommand = new EntryCreateOrUpdateCommand(
+            account: $transfer->getAccount(),
+            name: $entrySourceName,
+            amount: -$transfer->getAmount(),
+            budget: $transfer->getBudgetSource(),
+            flags: [EntryFlagEnum::TRANSFERT],
+        );
 
-        $entryTarget = new Entry()
-            ->setBudget($transfer->getBudgetTarget())
-            ->setAmount($transfer->getAmount())
-            ->setAccount($transfer->getAccount())
-            ->setName($entryTargetName)
-            ->addFlag(EntryFlagEnum::TRANSFERT);
+        $entryTargetCommand = new EntryCreateOrUpdateCommand(
+            account: $transfer->getAccount(),
+            name: $entryTargetName,
+            amount: $transfer->getAmount(),
+            budget: $transfer->getBudgetTarget(),
+            flags: [EntryFlagEnum::TRANSFERT],
+        );
 
-        $transfer
-            ->getBudgetSource()
-            ?->addEntry($entrySource);
+        $this->entryManager->create($entrySourceCommand, false);
+        $this->entryManager->create($entryTargetCommand, false);
 
-        $transfer
-            ->getBudgetTarget()
-            ?->addEntry($entryTarget);
-
-        $this->entryManager->create($entrySource);
-        $this->entryManager->create($entryTarget);
+        $this->entityManager->flush();
     }
 }

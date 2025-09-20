@@ -6,7 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Manager\AssignmentManager;
 use App\Domain\Assignment\Message\Query\AssignmentSearchQuery;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Request\EntrySearchRequest;
+use App\Domain\Entry\Message\Query\EntrySearchQuery;
 use App\Shared\ValueObject\AmountBalance;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -26,7 +26,7 @@ readonly class EntryOperator
     public function getAmountBalance(?Account $account = null): AmountBalance
     {
         $entryBalance = $this->entryManager->balance(
-            is_null($account) ? null : new EntrySearchRequest($account)
+            is_null($account) ? null : new EntrySearchQuery($account)
         );
 
         $assignmentsBalance = $this->assignmentManager->balance(

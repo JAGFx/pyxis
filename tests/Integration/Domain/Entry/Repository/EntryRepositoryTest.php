@@ -8,8 +8,8 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
+use App\Domain\Entry\Message\Query\EntrySearchQuery;
 use App\Domain\Entry\Repository\EntryRepository;
-use App\Domain\Entry\Request\EntrySearchRequest;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
@@ -102,9 +102,9 @@ class EntryRepositoryTest extends KernelTestCase
     {
         $this->populateDatabaseBalance();
 
-        $searchRequest = new EntrySearchRequest();
+        $searchQuery = new EntrySearchQuery();
 
-        $queryBuilder   = $this->entryRepository->balance($searchRequest);
+        $queryBuilder   = $this->entryRepository->balance($searchQuery);
         $entriesBalance = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(3, $entriesBalance, 'Should return 3 groups (2 budgets + 1 null budget)');
@@ -130,9 +130,9 @@ class EntryRepositoryTest extends KernelTestCase
 
         $account1 = AccountFactory::repository()->findOneBy(['name' => self::ACCOUNT_1])->_real();
 
-        $searchRequest = new EntrySearchRequest(account: $account1);
+        $searchQuery = new EntrySearchQuery(account: $account1);
 
-        $queryBuilder   = $this->entryRepository->balance($searchRequest);
+        $queryBuilder   = $this->entryRepository->balance($searchQuery);
         $entriesBalance = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(3, $entriesBalance, 'Should return 3 groups for account 1');
@@ -159,9 +159,9 @@ class EntryRepositoryTest extends KernelTestCase
         /** @var Account $nonExistentAccount */
         $nonExistentAccount = AccountFactory::new()->create(['name' => 'Non Existent'])->_real();
 
-        $searchRequest = new EntrySearchRequest(account: $nonExistentAccount);
+        $searchQuery = new EntrySearchQuery(account: $nonExistentAccount);
 
-        $queryBuilder   = $this->entryRepository->balance($searchRequest);
+        $queryBuilder   = $this->entryRepository->balance($searchQuery);
         $entriesBalance = $queryBuilder->getQuery()->getResult();
 
         self::assertEmpty($entriesBalance, 'Should return empty array for account with no entries');
@@ -172,9 +172,9 @@ class EntryRepositoryTest extends KernelTestCase
         $this->populateDatabaseBalance(false);
 
         // Clear all entries
-        $searchRequest = new EntrySearchRequest();
+        $searchQuery = new EntrySearchQuery();
 
-        $queryBuilder   = $this->entryRepository->balance($searchRequest);
+        $queryBuilder   = $this->entryRepository->balance($searchQuery);
         $entriesBalance = $queryBuilder->getQuery()->getResult();
 
         self::assertEmpty($entriesBalance, 'Should return empty array when no entries exist');
@@ -218,9 +218,9 @@ class EntryRepositoryTest extends KernelTestCase
     {
         $this->populateDatabaseFiter();
 
-        $searchRequest = new EntrySearchRequest(type: EntryTypeEnum::TYPE_SPENT);
+        $searchQuery = new EntrySearchQuery(type: EntryTypeEnum::TYPE_SPENT);
 
-        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchQuery);
         $entries      = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(2, $entries, 'Should return only entries with null budget for TYPE_SPENT');
@@ -235,9 +235,9 @@ class EntryRepositoryTest extends KernelTestCase
     {
         $this->populateDatabaseFiter();
 
-        $searchRequest = new EntrySearchRequest(type: EntryTypeEnum::TYPE_FORECAST);
+        $searchQuery = new EntrySearchQuery(type: EntryTypeEnum::TYPE_FORECAST);
 
-        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchQuery);
         $entries      = $queryBuilder->getQuery()->getResult();
 
         $this->assertCount(2, $entries, 'Should return only entries with budget for TYPE_FORECAST');
@@ -252,9 +252,9 @@ class EntryRepositoryTest extends KernelTestCase
     {
         $this->populateDatabaseFiter();
 
-        $searchRequest = new EntrySearchRequest(type: null);
+        $searchQuery = new EntrySearchQuery(type: null);
 
-        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchQuery);
         $entries      = $queryBuilder->getQuery()->getResult();
 
         $this->assertCount(4, $entries, 'Should return all entries when type is null');
@@ -346,8 +346,8 @@ class EntryRepositoryTest extends KernelTestCase
         $this->populateDatabaseForFlagsUnion();
 
         // Test search with multiple flags - OR logic (union)
-        $searchRequest = new EntrySearchRequest(flags: [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT]);
-        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
+        $searchQuery  = new EntrySearchQuery(flags: [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT]);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchQuery);
 
         /** @var Entry[] $entries */
         $entries = $queryBuilder->getQuery()->getResult();
@@ -369,9 +369,9 @@ class EntryRepositoryTest extends KernelTestCase
         $this->populateDatabaseForFlagsUnion();
 
         // Search for a single flag - should return all entries that contain this flag
-        $searchRequest = new EntrySearchRequest(flags: [EntryFlagEnum::HIDDEN]);
-        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
-        $entries       = $queryBuilder->getQuery()->getResult();
+        $searchQuery  = new EntrySearchQuery(flags: [EntryFlagEnum::HIDDEN]);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchQuery);
+        $entries      = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(4, $entries, 'Should return 4 entries containing HIDDEN flag');
 
@@ -387,9 +387,9 @@ class EntryRepositoryTest extends KernelTestCase
         $this->populateDatabaseForFlagsUnion();
 
         // Test case [-1]: only entries without flags
-        $searchRequest = new EntrySearchRequest(flags: [-1]);
-        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
-        $entries       = $queryBuilder->getQuery()->getResult();
+        $searchQuery  = new EntrySearchQuery(flags: [-1]);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchQuery);
+        $entries      = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(1, $entries, 'Should return 1 entry with empty flags');
 
@@ -403,9 +403,9 @@ class EntryRepositoryTest extends KernelTestCase
         $this->populateDatabaseForFlagsUnion();
 
         // Test case [A, B, -1]: entries with flags A or B OR without flags
-        $searchRequest = new EntrySearchRequest(flags: [EntryFlagEnum::BALANCE, EntryFlagEnum::PERIODIC_ENTRY, -1]);
-        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
-        $entries       = $queryBuilder->getQuery()->getResult();
+        $searchQuery  = new EntrySearchQuery(flags: [EntryFlagEnum::BALANCE, EntryFlagEnum::PERIODIC_ENTRY, -1]);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchQuery);
+        $entries      = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(6, $entries, 'Should return 6 entries with BALANCE OR PERIODIC_ENTRY OR empty flags');
 
@@ -423,9 +423,9 @@ class EntryRepositoryTest extends KernelTestCase
         $this->populateDatabaseForFlagsUnion();
 
         // Test case []: all entries
-        $searchRequest = new EntrySearchRequest(flags: []);
-        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
-        $entries       = $queryBuilder->getQuery()->getResult();
+        $searchQuery  = new EntrySearchQuery(flags: []);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchQuery);
+        $entries      = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(8, $entries, 'Should return all 8 entries when flags array is empty');
     }
@@ -435,9 +435,9 @@ class EntryRepositoryTest extends KernelTestCase
         $this->populateDatabaseForFlagsUnion();
 
         // Test with 3 different flags - OR logic
-        $searchRequest = new EntrySearchRequest(flags: [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT, EntryFlagEnum::PERIODIC_ENTRY]);
-        $queryBuilder  = $this->entryRepository->getEntriesQueryBuilder($searchRequest);
-        $entries       = $queryBuilder->getQuery()->getResult();
+        $searchQuery  = new EntrySearchQuery(flags: [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT, EntryFlagEnum::PERIODIC_ENTRY]);
+        $queryBuilder = $this->entryRepository->getEntriesQueryBuilder($searchQuery);
+        $entries      = $queryBuilder->getQuery()->getResult();
 
         self::assertCount(6, $entries, 'Should return 6 entries with any of the three flags');
 

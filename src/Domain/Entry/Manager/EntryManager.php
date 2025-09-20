@@ -3,13 +3,16 @@
 namespace App\Domain\Entry\Manager;
 
 use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
+use App\Domain\Entry\Message\Command\EntryRemoveCommand;
+use App\Domain\Entry\Message\Query\EntrySearchQuery;
 use App\Domain\Entry\Repository\EntryRepository;
-use App\Domain\Entry\Request\EntrySearchRequest;
 use App\Domain\Entry\ValueObject\EntryBalance;
 use App\Shared\Utils\Statistics;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 readonly class EntryManager
 {
@@ -17,14 +20,15 @@ readonly class EntryManager
         private EntryRepository $repository,
         private PaginatorInterface $paginator,
         private EntityManagerInterface $entityManager,
+        private ObjectMapperInterface $objectMapper,
     ) {
     }
 
-    public function balance(?EntrySearchRequest $searchRequest = null): EntryBalance
+    public function balance(?EntrySearchQuery $searchQuery = null): EntryBalance
     {
         /** @var array<string, mixed> $data */
         $data = $this->repository
-            ->balance($searchRequest ?? new EntrySearchRequest())
+            ->balance($searchQuery ?? new EntrySearchQuery())
             ->getQuery()
             ->getResult();
 
@@ -37,19 +41,25 @@ readonly class EntryManager
         return new EntryBalance($spentAmount, $forecastAmount);
     }
 
-    public function create(Entry $entity, bool $flush = true): void
+    public function create(EntryCreateOrUpdateCommand $command, bool $flush = true): void
     {
-        $this->repository->create($entity);
+        /** @var Entry $entry */
+        $entry = $this->objectMapper->map($command, Entry::class);
+
+        $this->repository->create($entry);
 
         if ($flush) {
             $this->entityManager->flush();
         }
     }
 
-    public function update(Entry $entry, bool $flush = true): void
+    public function update(EntryCreateOrUpdateCommand $command, bool $flush = true): void
     {
+        /** @var Entry $entry */
+        $entry = $this->objectMapper->map($command, $command->getOrigin());
+
         if ($entry->isEditable()) {
-            return;
+            return; // TODO: Throw exception instead
         }
 
         if ($flush) {
@@ -57,8 +67,10 @@ readonly class EntryManager
         }
     }
 
-    public function remove(Entry $entry, bool $flush = true): void
+    public function remove(EntryRemoveCommand $command, bool $flush = true): void
     {
+        $entry = $command->getEntry();
+
         if ($entry->isEditable()) {
             return;
         }
@@ -72,15 +84,15 @@ readonly class EntryManager
     /**
      * @return PaginationInterface<int, Entry>
      */
-    public function getPaginated(?EntrySearchRequest $searchRequest = null): PaginationInterface
+    public function getPaginated(?EntrySearchQuery $searchQuery = null): PaginationInterface
     {
-        $searchRequest ??= new EntrySearchRequest();
+        $searchQuery ??= new EntrySearchQuery();
 
         /** @var PaginationInterface<int, Entry> $pagination */
         $pagination = $this->paginator->paginate(
-            $this->repository->getEntriesQueryBuilder($searchRequest),
-            $searchRequest->getPage(),
-            $searchRequest->getPageSize()
+            $this->repository->getEntriesQueryBuilder($searchQuery),
+            $searchQuery->getPage(),
+            $searchQuery->getPageSize()
         );
 
         return $pagination;

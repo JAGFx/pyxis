@@ -3,14 +3,15 @@
 namespace App\Tests\Unit\Domain\Entry\Manager;
 
 use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Entry\Message\Query\EntrySearchQuery;
 use App\Domain\Entry\Repository\EntryRepository;
-use App\Domain\Entry\Request\EntrySearchRequest;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Knp\Component\Pager\PaginatorInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 class EntryManagerTest extends TestCase
 {
@@ -28,11 +29,12 @@ class EntryManagerTest extends TestCase
         return new EntryManager(
             $this->entryRepository,
             $this->paginator,
-            $this->createMock(EntityManagerInterface::class)
+            $this->createMock(EntityManagerInterface::class),
+            $this->createMock(ObjectMapperInterface::class),
         );
     }
 
-    private function expectBalance(array $expectedData, ?EntrySearchRequest $searchRequest = null): void
+    private function expectBalance(array $expectedData, ?EntrySearchQuery $searchRequest = null): void
     {
         $query = $this->createMock(Query::class);
         $query->expects(self::once())
@@ -47,7 +49,7 @@ class EntryManagerTest extends TestCase
         $this->entryRepository
             ->expects(self::once())
             ->method('balance')
-            ->with($searchRequest ?? new EntrySearchRequest())
+            ->with($searchRequest ?? new EntrySearchQuery())
             ->willReturn($queryBuilder);
     }
 
@@ -68,7 +70,7 @@ class EntryManagerTest extends TestCase
 
     public function testBalanceWithProvidedCommand(): void
     {
-        $searchRequest = new EntrySearchRequest();
+        $searchRequest = new EntrySearchQuery();
         $expectedData  = [
             ['id' => null, 'sum' => 75.0], // spent entries
             ['id' => 1, 'sum' => 125.0],   // forecast entries

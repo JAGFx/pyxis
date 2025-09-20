@@ -5,7 +5,8 @@ namespace App\Domain\Entry\Controller\Front;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Request\EntrySearchRequest;
+use App\Domain\Entry\Message\Command\EntryRemoveCommand;
+use App\Domain\Entry\Message\Query\EntrySearchQuery;
 use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
@@ -45,29 +46,28 @@ class EntryController extends AbstractController
     #[IsGranted(EntryVoter::MANAGE, 'entry')]
     public function remove(Entry $entry, Request $request): Response
     {
-        $entryId = $entry->getId();
-        $this->entryManager->remove($entry);
+        $this->entryManager->remove(new EntryRemoveCommand($entry));
 
         return $this->renderTurboStream($request, 'domain/entry/turbo/remove.turbo.stream.html.twig', [
-            'entryId' => $entryId,
+            'entryId' => $entry->getId(),
         ]);
     }
 
     #[Route('/search', name: 'front_entry_search', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $searchRequest = new EntrySearchRequest()
+        $searchQuery = new EntrySearchQuery()
             ->setOrderBy('createdAt')
             ->setOrderDirection(OrderEnum::DESC)
         ;
 
-        $this->createForm(EntrySearchType::class, $searchRequest)
+        $this->createForm(EntrySearchType::class, $searchQuery)
             ->submit(array_merge(
                 $request->query->all(),
                 $request->request->all(),
             ));
 
-        $entries = $this->entryManager->getPaginated($searchRequest);
+        $entries = $this->entryManager->getPaginated($searchQuery);
 
         return $this->renderTurboStream(
             $request,

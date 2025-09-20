@@ -7,27 +7,27 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
-use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
 use App\Shared\Operator\PeriodicEntryOperator;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
 class PeriodicEntryOperatorTest extends TestCase
 {
     private EntryManager $entryManagerMock;
-    private PeriodicEntryManager $periodicEntryManagerMock;
+    private EntityManagerInterface $entityManagerMock;
 
     protected function setUp(): void
     {
-        $this->entryManagerMock         = $this->createMock(EntryManager::class);
-        $this->periodicEntryManagerMock = $this->createMock(PeriodicEntryManager::class);
+        $this->entryManagerMock  = $this->createMock(EntryManager::class);
+        $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
     }
 
     private function generatePeriodicEntryOperator(): PeriodicEntryOperator
     {
         return new PeriodicEntryOperator(
             $this->entryManagerMock,
-            $this->periodicEntryManagerMock
+            $this->entityManagerMock
         );
     }
 
@@ -46,9 +46,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::never())
             ->method('create');
 
-        $this->periodicEntryManagerMock
+        $this->entityManagerMock
             ->expects(self::never())
-            ->method('update');
+            ->method('flush');
 
         $this->generatePeriodicEntryOperator()
             ->addSplitForBudgets($periodicEntry);
@@ -72,9 +72,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::never())
             ->method('create');
 
-        $this->periodicEntryManagerMock
+        $this->entityManagerMock
             ->expects(self::never())
-            ->method('update');
+            ->method('flush');
 
         $this->generatePeriodicEntryOperator()
             ->addSplitForBudgets($periodicEntry);
@@ -96,9 +96,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::once())
             ->method('create');
 
-        $this->periodicEntryManagerMock
+        $this->entityManagerMock
             ->expects(self::once())
-            ->method('update');
+            ->method('flush');
 
         $this->generatePeriodicEntryOperator()
             ->addSplitForBudgets($periodicEntry);
@@ -130,9 +130,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::never())
             ->method('create');
 
-        $this->periodicEntryManagerMock
+        $this->entityManagerMock
             ->expects(self::once())
-            ->method('update');
+            ->method('flush');
 
         $this->generatePeriodicEntryOperator()
             ->addSplitForBudgets($periodicEntry);
@@ -158,9 +158,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::never())
             ->method('create');
 
-        $this->periodicEntryManagerMock
+        $this->entityManagerMock
             ->expects(self::once())
-            ->method('update');
+            ->method('flush');
 
         $this->generatePeriodicEntryOperator()
             ->addSplitForBudgets($periodicEntry);
@@ -182,9 +182,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::once())
             ->method('create');
 
-        $this->periodicEntryManagerMock
+        $this->entityManagerMock
             ->expects(self::once())
-            ->method('update');
+            ->method('flush');
 
         $this->generatePeriodicEntryOperator()
             ->addSplitForBudgets($periodicEntry, $customDate);
@@ -205,9 +205,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::once())
             ->method('create');
 
-        $this->periodicEntryManagerMock
+        $this->entityManagerMock
             ->expects(self::once())
-            ->method('update');
+            ->method('flush');
 
         $this->generatePeriodicEntryOperator()
             ->addSplitForBudgets($periodicEntry);
@@ -239,9 +239,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::exactly(2))
             ->method('create');
 
-        $this->periodicEntryManagerMock
+        $this->entityManagerMock
             ->expects(self::once())
-            ->method('update');
+            ->method('flush');
 
         $this->generatePeriodicEntryOperator()
             ->addSplitForBudgets($periodicEntry);
@@ -278,9 +278,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::exactly(2))
             ->method('create');
 
-        $this->periodicEntryManagerMock
+        $this->entityManagerMock
             ->expects(self::once())
-            ->method('update');
+            ->method('flush');
 
         $this->generatePeriodicEntryOperator()
             ->addSplitForBudgets($periodicEntry);

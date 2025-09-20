@@ -4,11 +4,13 @@ namespace App\Tests\Integration\Shared\Operator;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
+use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Operator\HomeOperator;
 use App\Shared\Request\TransferRequest;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
+use App\Tests\Factory\EntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 
 class HomeOperatorTest extends KernelTestCase
@@ -100,5 +102,29 @@ class HomeOperatorTest extends KernelTestCase
 
         self::assertSame(-self::BUDGET_AMOUNT, $budgetSource?->getProgress() ?? -self::BUDGET_AMOUNT);
         self::assertSame(self::BUDGET_AMOUNT, $budgetTarget?->getProgress() ?? self::BUDGET_AMOUNT);
+
+        // Add assert to get entries created of transfert and be sure count of them
+        $lastTwoById = EntryFactory::repository()->findBy([], ['id' => 'ASC'], 2);
+        self::assertCount(2, $lastTwoById);
+
+        foreach ($lastTwoById as $item) {
+            self::assertSame([EntryFlagEnum::TRANSFERT], $item->getFlags());
+        }
+
+        if (null !== $budgetSource) {
+            $entrySource = $lastTwoById[0];
+            self::assertSame($account, $entrySource->getAccount());
+            self::assertSame(-self::BUDGET_AMOUNT, $entrySource->getAmount());
+            self::assertSame($budgetSource, $entrySource->getBudget());
+            self::assertSame(self::BUDGET_SOURCE_NAME, $entrySource->getName());
+        }
+
+        if (null !== $budgetTarget) {
+            $entryTarget = $lastTwoById[1];
+            self::assertSame($account, $entryTarget->getAccount());
+            self::assertSame(self::BUDGET_AMOUNT, $entryTarget->getAmount());
+            self::assertSame($budgetTarget, $entryTarget->getBudget());
+            self::assertSame(self::BUDGET_TARGET_NAME, $entryTarget->getName());
+        }
     }
 }

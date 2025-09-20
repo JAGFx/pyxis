@@ -3,18 +3,21 @@
 namespace App\Domain\Entry\Controller\Back;
 
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Form\EntryPaginationType;
-use App\Domain\Entry\Form\EntryType;
+use App\Domain\Entry\Form\EntryCreateOrUpdateType;
+use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Request\EntrySearchRequest;
+use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
+use App\Domain\Entry\Message\Query\EntrySearchQuery;
 use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
+use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -22,26 +25,25 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class EntryController extends AbstractController
 {
     use PaginationFormHandlerTrait;
-    public const string HANDLE_FORM_CREATE = 'create';
-    public const string HANDLE_FORM_UPDATE = 'update';
 
     public function __construct(
         private readonly EntryManager $entryManager,
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
+        private readonly ObjectMapperInterface $objectMapper,
     ) {
     }
 
     #[Route(name: 'back_entry_list', methods: Request::METHOD_GET)]
     public function list(Request $request): Response
     {
-        $searchRequest = new EntrySearchRequest()
+        $searchQuery = new EntrySearchQuery()
             ->setOrderBy('createdAt')
             ->setOrderDirection(OrderEnum::DESC)
         ;
-        $this->handlePaginationForm($request, EntryPaginationType::class, $searchRequest);
+        $this->handlePaginationForm($request, EntrySearchType::class, $searchQuery);
 
         return $this->render('domain/entry/index.html.twig', [
-            'entries' => $this->entryManager->getPaginated($searchRequest),
+            'entries' => $this->entryManager->getPaginated($searchQuery),
             'config'  => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::ENTRY),
         ]);
     }
@@ -49,31 +51,31 @@ class EntryController extends AbstractController
     #[Route('/create', name: 'back_entry_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
-        return $this->handleForm(self::HANDLE_FORM_CREATE, $request);
+        return $this->handleForm(ControllerActionEnum::CREATE, $request);
     }
 
     #[Route('/{id}/update', name: 'back_entry_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     #[IsGranted(EntryVoter::MANAGE, 'entry')]
     public function edit(Entry $entry, Request $request): Response
     {
-        return $this->handleForm(self::HANDLE_FORM_UPDATE, $request, $entry);
+        return $this->handleForm(ControllerActionEnum::EDIT, $request, $entry);
     }
 
-    private function handleForm(string $type, Request $request, ?Entry $entry = null): Response
+    private function handleForm(ControllerActionEnum $type, Request $request, ?Entry $entry = null): Response
     {
-        $entry ??= new Entry()
-            ->setAmount(0.0)
-            ->setName('');
+        $entryCommand = is_null($entry)
+            ? new EntryCreateOrUpdateCommand()
+            : $this->objectMapper->map($entry, EntryCreateOrUpdateCommand::class);
 
         $form = $this
-            ->createForm(EntryType::class, $entry)
+            ->createForm(EntryCreateOrUpdateType::class, $entryCommand)
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (self::HANDLE_FORM_CREATE === $type) {
-                $this->entryManager->create($entry);
+            if (ControllerActionEnum::CREATE === $type) {
+                $this->entryManager->create($entryCommand);
             } else {
-                $this->entryManager->update($entry);
+                $this->entryManager->update($entryCommand);
             }
 
             return $this->redirectToRoute('back_entry_list');

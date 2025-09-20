@@ -9,8 +9,6 @@ use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Request\BudgetAccountBalanceRequest;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
-use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Operator\BudgetOperator;
 use App\Tests\Unit\Shared\BudgetTestTrait;
@@ -251,81 +249,5 @@ class BudgetOperatorTest extends TestCase
         self::assertCount(3, $budget->getEntries());
         self::assertSame($progress, $budget->getProgress());
         self::assertSame($cashFlow, $budget->getCashFlow());
-    }
-
-    public function testBudgetWithPositiveCashFlowMustTransferToSpent(): void
-    {
-        $overflow = 500.0;
-        $budget   = $this->generateBudget([
-            'amount'  => self::BUDGET_AMOUNT,
-            'entries' => [
-                [
-                    'entryName'      => 'Past year entry',
-                    'entryAmount'    => $overflow,
-                    'entryCreatedAt' => new DateTimeImmutable('-1 year'),
-                ],
-                [
-                    'entryAmount' => 200,
-                ],
-            ],
-        ]);
-
-        $this->entityManager
-            ->expects(self::once())
-            ->method('flush');
-
-        $budgetManager = $this->createBudgetOperator();
-
-        self::assertSame($overflow, $budget->getCashFlow());
-
-        $budgetManager->balancing(new BudgetAccountBalanceRequest($budget, new Account()));
-
-        $balancingEntry = $budget->getEntries()
-            ->filter(fn (Entry $entry): bool => $entry->getFlags() === [EntryFlagEnum::BALANCE])
-            ->first();
-
-        self::assertCount(2 + 1, $budget->getEntries());
-        self::assertInstanceOf(Entry::class, $balancingEntry);
-        self::assertSame([EntryFlagEnum::BALANCE], $balancingEntry->getFlags());
-        self::assertSame(-$overflow, $balancingEntry->getAmount());
-        self::assertSame(0.0, $budget->getCashFlow());
-    }
-
-    public function testBudgetWithNegativeCashFlowMustTransferToSpent(): void
-    {
-        $overflow = -500.0;
-        $budget   = $this->generateBudget([
-            'amount'  => self::BUDGET_AMOUNT,
-            'entries' => [
-                [
-                    'entryName'      => 'Past year entry',
-                    'entryAmount'    => $overflow,
-                    'entryCreatedAt' => new DateTimeImmutable('-1 year'),
-                ],
-                [
-                    'entryAmount' => 200,
-                ],
-            ],
-        ]);
-
-        $this->entityManager
-            ->expects(self::once())
-            ->method('flush');
-
-        $budgetManager = $this->createBudgetOperator();
-
-        self::assertSame($overflow, $budget->getCashFlow());
-
-        $budgetManager->balancing(new BudgetAccountBalanceRequest($budget, new Account()));
-
-        $balancingEntry = $budget->getEntries()
-            ->filter(fn (Entry $entry): bool => $entry->getFlags() === [EntryFlagEnum::BALANCE])
-            ->first();
-
-        self::assertCount(2 + 1, $budget->getEntries());
-        self::assertInstanceOf(Entry::class, $balancingEntry);
-        self::assertSame([EntryFlagEnum::BALANCE], $balancingEntry->getFlags());
-        self::assertSame(-$overflow, $balancingEntry->getAmount());
-        self::assertSame(0.0, $budget->getCashFlow());
     }
 }

@@ -12,7 +12,7 @@ use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
-use App\Domain\Entry\Request\EntrySearchRequest;
+use App\Domain\Entry\Message\Query\EntrySearchQuery;
 use App\Infrastructure\KnpPaginator\Form\PaginationBuilder;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -42,7 +42,7 @@ class EntrySearchType extends AbstractType
             ])
             ->add('flags', ChoiceType::class, [
                 'choices' => array_merge(
-                    ['entry_flag_enum.form.options.UNFLAGGED' => EntrySearchRequest::WITHOUT_FLAG_VALUE],
+                    ['entry_flag_enum.form.options.UNFLAGGED' => EntrySearchQuery::WITHOUT_FLAG_VALUE],
                     array_combine(
                         array_map(fn (EntryFlagEnum $flag): string => $flag->label(), EntryFlagEnum::cases()),
                         EntryFlagEnum::cases()
@@ -80,7 +80,7 @@ class EntrySearchType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => EntrySearchRequest::class,
+            'data_class'         => EntrySearchQuery::class,
             'label_format'       => 'entry.search.%name%.label',
             'translation_domain' => 'forms',
         ]);

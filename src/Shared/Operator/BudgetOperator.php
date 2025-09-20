@@ -12,9 +12,9 @@ use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
-use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
 use App\Shared\Utils\YearRange;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -94,22 +94,23 @@ readonly class BudgetOperator
         $account = $budgetAccountBalance->getAccount();
 
         if ($budget->hasPositiveCashFlow() || $budget->hasNegativeCashFlow()) {
-            $entryBalanceSpent = new Entry()
-                ->setAccount($account)
-                ->setName($budget->getName())
-                ->addFlag(EntryFlagEnum::BALANCE)
-                ->setAmount($budget->getCashFlow());
+            $spentCommand = new EntryCreateOrUpdateCommand(
+                account: $account,
+                name: $budget->getName(),
+                amount: $budget->getCashFlow(),
+                flags: [EntryFlagEnum::BALANCE],
+            );
 
-            $entryBalanceForecast = new Entry()
-                ->setAccount($account)
-                ->setBudget($budget)
-                ->setName($budget->getName())
-                ->addFlag(EntryFlagEnum::BALANCE)
-                ->setAmount(-$budget->getCashFlow());
+            $forecastCommand = new EntryCreateOrUpdateCommand(
+                account: $account,
+                name: $budget->getName(),
+                amount: -$budget->getCashFlow(),
+                budget: $budget,
+                flags: [EntryFlagEnum::BALANCE],
+            );
 
-            $budget->addEntry($entryBalanceForecast);
-
-            $this->entryManager->create($entryBalanceSpent);
+            $this->entryManager->create($spentCommand, false);
+            $this->entryManager->create($forecastCommand, false);
             $this->entityManager->flush();
         }
     }
