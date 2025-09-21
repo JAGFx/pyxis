@@ -3,52 +3,64 @@
 namespace App\Domain\Budget\Manager;
 
 use App\Domain\Budget\Entity\Budget;
+use App\Domain\Budget\Message\Command\BudgetCreateOrUpdateCommand;
+use App\Domain\Budget\Message\Command\BudgetToggleEnableCommand;
+use App\Domain\Budget\Message\Query\BudgetSearchQuery;
 use App\Domain\Budget\Repository\BudgetRepository;
-use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 readonly class BudgetManager
 {
     public function __construct(
         private BudgetRepository $repository,
         private EntityManagerInterface $entityManager,
+        private ObjectMapperInterface $objectMapper,
     ) {
     }
 
-    public function create(Budget $entity, bool $flush = true): void
+    public function create(BudgetCreateOrUpdateCommand $command, bool $flush = true): void
     {
-        $this->repository->create($entity);
+        /** @var Budget $budget */
+        $budget = $this->objectMapper->map($command, Budget::class);
+
+        $this->repository->create($budget);
 
         if ($flush) {
             $this->entityManager->flush();
         }
     }
 
-    public function update(bool $flush = true): void
+    public function update(BudgetCreateOrUpdateCommand $command, bool $flush = true): void
     {
+        $this->objectMapper->map($command, $command->getOrigin());
+
         if ($flush) {
             $this->entityManager->flush();
         }
     }
 
-    public function toggle(Budget $budget, bool $flush = true): void
+    public function toggle(BudgetToggleEnableCommand $command, bool $flush = true): void
     {
+        $budget = $command->getBudget();
         $budget->setEnabled(!$budget->isEnabled());
 
-        $this->update($flush);
+        if ($flush) {
+            $this->entityManager->flush();
+        }
     }
 
     /**
      * @return Budget[]
      */
-    public function getBudgets(?BudgetSearchRequest $searchRequest = null): array
+    public function getBudgets(?BudgetSearchQuery $searchQuery = null): array
     {
-        $searchRequest ??= new BudgetSearchRequest();
+        $searchQuery ??= new BudgetSearchQuery();
 
         /** @var Budget[] $result */
         $result = $this->repository
-            ->getBudgetsQueryBuilder($searchRequest)
+            ->getBudgetsQueryBuilder($searchQuery)
             ->getQuery()
             ->getResult();
 
@@ -58,13 +70,13 @@ readonly class BudgetManager
     /**
      * @return BudgetValueObject[]
      */
-    public function getBudgetValuesObject(?BudgetSearchRequest $searchRequest = null): array
+    public function getBudgetValuesObject(?BudgetSearchQuery $searchQuery = null): array
     {
-        $searchRequest ??= new BudgetSearchRequest();
+        $searchQuery ??= new BudgetSearchQuery();
 
         /** @var BudgetValueObject[] $result */
         $result = $this->repository
-            ->getBudgetValueObjectsQueryBuilder($searchRequest)
+            ->getBudgetValueObjectsQueryBuilder($searchQuery)
             ->getQuery()
             ->getResult();
 

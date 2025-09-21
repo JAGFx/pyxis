@@ -5,7 +5,7 @@ namespace App\Shared\Operator;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Request\BudgetSearchRequest;
+use App\Domain\Budget\Message\Query\BudgetSearchQuery;
 use App\Domain\Budget\Request\HistoryBudgetSearchRequest;
 use App\Shared\Utils\YearRange;
 use Psr\Log\LoggerInterface;
@@ -23,7 +23,7 @@ readonly class HistoryBudgetOperator
     public function generateHistoryBudgetsForYear(int $year): void
     {
         $budgetsValues = $this->budgetManager->getBudgetValuesObject(
-            new BudgetSearchRequest()
+            new BudgetSearchQuery()
                 ->setShowCredits(false)
                 ->setYear($year)
         );

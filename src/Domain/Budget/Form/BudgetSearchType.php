@@ -2,7 +2,7 @@
 
 namespace App\Domain\Budget\Form;
 
-use App\Domain\Budget\Request\BudgetSearchRequest;
+use App\Domain\Budget\Message\Query\BudgetSearchQuery;
 use App\Shared\Form\Type\YesNoType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -27,7 +27,7 @@ class BudgetSearchType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => BudgetSearchRequest::class,
+            'data_class'         => BudgetSearchQuery::class,
             'label_format'       => 'budget.search.%name%.label',
             'translation_domain' => 'forms',
         ]);

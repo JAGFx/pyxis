@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Integration\Domain\PeiodicEntry\Entity;
+namespace App\Tests\Integration\Domain\PeriodicEntry\Entity;
 
 use App\Tests\Integration\Shared\KernelTestCase;
 

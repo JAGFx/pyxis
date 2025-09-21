@@ -5,7 +5,8 @@ namespace App\Domain\Budget\Controller\Front;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Request\BudgetSearchRequest;
+use App\Domain\Budget\Message\Command\BudgetToggleEnableCommand;
+use App\Domain\Budget\Message\Query\BudgetSearchQuery;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\BudgetOperator;
@@ -30,7 +31,7 @@ class BudgetController extends AbstractController
     #[IsGranted(BudgetVoter::MANAGE, 'budget')]
     public function toggle(Request $request, Budget $budget): Response
     {
-        $this->budgetManager->toggle($budget);
+        $this->budgetManager->toggle(new BudgetToggleEnableCommand($budget));
 
         $message = 'Budget ';
         $message .= ($budget->isEnabled()) ? 'activé' : 'désactivé';
@@ -62,12 +63,12 @@ class BudgetController extends AbstractController
     #[Route('/search', name: 'front_budget_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $searchRequest = new BudgetSearchRequest()->setOrderBy('name');
+        $searchQuery = new BudgetSearchQuery()->setOrderBy('name');
 
-        $this->createForm(BudgetSearchType::class, $searchRequest)
+        $this->createForm(BudgetSearchType::class, $searchQuery)
             ->handleRequest($request);
 
-        $budgets = $this->budgetManager->getBudgets($searchRequest);
+        $budgets = $this->budgetManager->getBudgets($searchQuery);
 
         return $this->renderTurboStream(
             $request,

@@ -33,6 +33,7 @@ readonly class AccountManager
         return $accounts;
     }
 
+    // TODO: Create command
     public function toggle(Account $account): void
     {
         $account->setEnabled(!$account->isEnabled());

@@ -24,6 +24,7 @@ readonly class EntryManager
     ) {
     }
 
+    // TODO: Create dedicated query
     public function balance(?EntrySearchQuery $searchQuery = null): EntryBalance
     {
         /** @var array<string, mixed> $data */

@@ -3,7 +3,7 @@
 namespace App\Domain\Budget\Repository;
 
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Request\BudgetSearchRequest;
+use App\Domain\Budget\Message\Query\BudgetSearchQuery;
 use App\Domain\Budget\Request\HistoryBudgetSearchRequest;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -28,21 +28,21 @@ class HistoryBudgetRepository extends ServiceEntityRepository
             ->orderBy('year', 'DESC');
     }
 
-    public function getHistoryBudgetsQueryBuilder(BudgetSearchRequest|HistoryBudgetSearchRequest $searchRequest): QueryBuilder
+    public function getHistoryBudgetsQueryBuilder(BudgetSearchQuery|HistoryBudgetSearchRequest $searchQuery): QueryBuilder
     {
         $qb = $this->createQueryBuilder('hb');
 
-        if (!is_null($searchRequest->getYear())) {
+        if (!is_null($searchQuery->getYear())) {
             $qb
                 ->andWhere('hb.date BETWEEN :from AND :to')
-                ->setParameter('from', YearRange::firstDayOf($searchRequest->getYear())->format('Y-m-d H:i:s'))
-                ->setParameter('to', YearRange::lastDayOf($searchRequest->getYear())->format('Y-m-d H:i:s'));
+                ->setParameter('from', YearRange::firstDayOf($searchQuery->getYear())->format('Y-m-d H:i:s'))
+                ->setParameter('to', YearRange::lastDayOf($searchQuery->getYear())->format('Y-m-d H:i:s'));
         }
 
-        if ($searchRequest instanceof HistoryBudgetSearchRequest && !is_null($searchRequest->getBudget())) {
+        if ($searchQuery instanceof HistoryBudgetSearchRequest && !is_null($searchQuery->getBudget())) {
             $qb
                 ->andWhere('hb.budget = :budget')
-                ->setParameter('budget', $searchRequest->getBudget());
+                ->setParameter('budget', $searchQuery->getBudget());
         }
 
         return $qb;

@@ -7,7 +7,7 @@ use App\Domain\Account\Manager\AccountManager;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Request\BudgetAccountBalanceRequest;
+use App\Domain\Budget\Message\Command\BudgetAccountBalanceCommand;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Shared\Operator\BudgetOperator;
@@ -244,7 +244,7 @@ class BudgetOperatorTest extends TestCase
 
         $budgetManager = $this->createBudgetOperator();
 
-        $budgetManager->balancing(new BudgetAccountBalanceRequest($budget, new Account()));
+        $budgetManager->balancing(new BudgetAccountBalanceCommand($budget, new Account()));
 
         self::assertCount(3, $budget->getEntries());
         self::assertSame($progress, $budget->getProgress());

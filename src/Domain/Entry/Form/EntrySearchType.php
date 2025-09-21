@@ -8,8 +8,8 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\AccountSearchQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Budget\Entity\Budget;
+use App\Domain\Budget\Message\Query\BudgetSearchQuery;
 use App\Domain\Budget\Repository\BudgetRepository;
-use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\Entry\Message\Query\EntrySearchQuery;
@@ -67,9 +67,9 @@ class EntrySearchType extends AbstractType
                 'class'         => Budget::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (BudgetRepository $repository): QueryBuilder {
-                    $searchRequest = new BudgetSearchRequest(enabled: true)->setOrderBy('name');
+                    $searchQuery = new BudgetSearchQuery(enabled: true)->setOrderBy('name');
 
-                    return $repository->getBudgetsQueryBuilder($searchRequest);
+                    return $repository->getBudgetsQueryBuilder($searchQuery);
                 },
                 'required'    => false,
                 'placeholder' => 'shared.default.placeholders.all',

@@ -4,10 +4,11 @@ namespace App\Domain\Budget\Controller\Back;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetAccountBalanceType;
-use App\Domain\Budget\Form\BudgetType;
+use App\Domain\Budget\Form\BudgetCreateOrUpdateType;
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Request\BudgetAccountBalanceRequest;
-use App\Domain\Budget\Request\BudgetSearchRequest;
+use App\Domain\Budget\Message\Command\BudgetAccountBalanceCommand;
+use App\Domain\Budget\Message\Command\BudgetCreateOrUpdateCommand;
+use App\Domain\Budget\Message\Query\BudgetSearchQuery;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
@@ -16,6 +17,7 @@ use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -24,17 +26,19 @@ class BudgetController extends AbstractController
 {
     public function __construct(
         private readonly BudgetManager $budgetManager,
-        private readonly MenuConfigurationFactory $menuConfigurationFactory, private readonly BudgetOperator $budgetOperator,
+        private readonly MenuConfigurationFactory $menuConfigurationFactory,
+        private readonly BudgetOperator $budgetOperator,
+        private readonly ObjectMapperInterface $objectMapper,
     ) {
     }
 
     #[Route(name: 'back_budget_list', methods: Request::METHOD_GET)]
     public function list(): Response
     {
-        $searchRequest = new BudgetSearchRequest()->setOrderBy('name');
+        $searchQuery = new BudgetSearchQuery()->setOrderBy('name');
 
         return $this->render('domain/budget/index.html.twig', [
-            'budgets' => $this->budgetManager->getBudgets($searchRequest),
+            'budgets' => $this->budgetManager->getBudgets($searchQuery),
             'config'  => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::BUDGET),
         ]);
     }
@@ -56,14 +60,14 @@ class BudgetController extends AbstractController
     #[IsGranted(BudgetVoter::BALANCE, 'budget')]
     public function balance(Request $request, Budget $budget): Response
     {
-        $budgetAccountBalanceRequest = new BudgetAccountBalanceRequest($budget);
+        $budgetAccountBalanceCommand = new BudgetAccountBalanceCommand($budget);
 
         $form = $this
-            ->createForm(BudgetAccountBalanceType::class, $budgetAccountBalanceRequest)
+            ->createForm(BudgetAccountBalanceType::class, $budgetAccountBalanceCommand)
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->budgetOperator->balancing($budgetAccountBalanceRequest);
+            $this->budgetOperator->balancing($budgetAccountBalanceCommand);
 
             return $this->redirectToRoute('back_budget_list');
         }
@@ -76,18 +80,19 @@ class BudgetController extends AbstractController
 
     private function handleForm(ControllerActionEnum $action, Request $request, ?Budget $budget = null): Response
     {
-        $budget ??= new Budget()
-            ->setAmount(0.0)
-            ->setName('');
+        $budgetCommand = is_null($budget)
+            ? new BudgetCreateOrUpdateCommand()
+            : $this->objectMapper->map($budget, BudgetCreateOrUpdateCommand::class);
 
-        $form = $this->createForm(BudgetType::class, $budget)
+        $form = $this->createForm(BudgetCreateOrUpdateType::class, $budget)
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (ControllerActionEnum::CREATE === $action) {
-                $this->budgetManager->create($budget);
+                $this->budgetManager->create($budgetCommand);
             } else {
-                $this->budgetManager->update();
+                $budgetCommand->setOrigin($budget);
+                $this->budgetManager->update($budgetCommand);
             }
 
             return $this->redirectToRoute('back_budget_list');

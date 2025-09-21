@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Domain\Budget\Request;
+namespace App\Domain\Budget\Message\Query;
 
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 
-class BudgetSearchRequest implements OrderableInterface
+class BudgetSearchQuery implements OrderableInterface
 {
     use OrderableTrait;
 

@@ -2,7 +2,7 @@
 
 namespace App\Domain\Budget\Form;
 
-use App\Domain\Budget\Entity\Budget;
+use App\Domain\Budget\Message\Command\BudgetCreateOrUpdateCommand;
 use App\Shared\Form\Type\MoneyType;
 use App\Shared\Form\Type\YesNoType;
 use Symfony\Component\Form\AbstractType;
@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class BudgetType extends AbstractType
+class BudgetCreateOrUpdateType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -23,7 +23,7 @@ class BudgetType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => Budget::class,
+            'data_class'         => BudgetCreateOrUpdateCommand::class,
             'label_format'       => 'budget.form.%name%.label',
             'translation_domain' => 'forms',
         ]);

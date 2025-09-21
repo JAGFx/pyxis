@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Integration\Domain\PeiodicEntry\Repository;
+namespace App\Tests\Integration\Domain\PeriodicEntry\Repository;
 
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;

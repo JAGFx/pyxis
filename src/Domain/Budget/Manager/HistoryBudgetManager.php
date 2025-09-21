@@ -3,8 +3,8 @@
 namespace App\Domain\Budget\Manager;
 
 use App\Domain\Budget\Entity\HistoryBudget;
+use App\Domain\Budget\Message\Query\BudgetSearchQuery;
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
-use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\Budget\Request\HistoryBudgetSearchRequest;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -42,11 +42,11 @@ readonly class HistoryBudgetManager
     /**
      * @return HistoryBudget[]
      */
-    public function getHistories(BudgetSearchRequest|HistoryBudgetSearchRequest $searchRequest): array
+    public function getHistories(BudgetSearchQuery|HistoryBudgetSearchRequest $searchQuery): array
     {
         /** @var HistoryBudget[] $histories */
         $histories = $this->repository
-            ->getHistoryBudgetsQueryBuilder($searchRequest)
+            ->getHistoryBudgetsQueryBuilder($searchQuery)
             ->getQuery()
             ->getResult();
 

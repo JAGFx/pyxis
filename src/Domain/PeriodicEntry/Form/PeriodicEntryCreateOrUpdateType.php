@@ -6,8 +6,8 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\AccountSearchQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Budget\Entity\Budget;
+use App\Domain\Budget\Message\Query\BudgetSearchQuery;
 use App\Domain\Budget\Repository\BudgetRepository;
-use App\Domain\Budget\Request\BudgetSearchRequest;
 use App\Domain\PeriodicEntry\Message\Command\PeriodicEntryCreateOrUpdateCommand;
 use App\Shared\Form\Type\MoneyType;
 use Doctrine\ORM\QueryBuilder;
@@ -49,9 +49,9 @@ class PeriodicEntryCreateOrUpdateType extends AbstractType
                 'required'      => false,
                 'placeholder'   => 'periodic_entry.form.budgets.placeholder',
                 'query_builder' => static function (BudgetRepository $budgetRepository): QueryBuilder {
-                    $searchRequest = new BudgetSearchRequest(enabled: true)->setOrderBy('name');
+                    $searchQuery = new BudgetSearchQuery(enabled: true)->setOrderBy('name');
 
-                    return $budgetRepository->getBudgetsQueryBuilder($searchRequest);
+                    return $budgetRepository->getBudgetsQueryBuilder($searchQuery);
                 },
             ]);
     }
