@@ -3,8 +3,7 @@
 namespace App\Domain\Budget\Repository;
 
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Message\Query\BudgetSearchQuery;
-use App\Domain\Budget\Message\Query\HistoryBudgetSearchQuery;
+use App\Domain\Budget\Message\Query\FindHistoryBudgetsQuery;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -28,7 +27,7 @@ class HistoryBudgetRepository extends ServiceEntityRepository
             ->orderBy('year', 'DESC');
     }
 
-    public function getHistoryBudgetsQueryBuilder(BudgetSearchQuery|HistoryBudgetSearchQuery $searchQuery): QueryBuilder
+    public function getHistoryBudgetsQueryBuilder(FindHistoryBudgetsQuery $searchQuery): QueryBuilder
     {
         $qb = $this->createQueryBuilder('hb');
 
@@ -39,7 +38,7 @@ class HistoryBudgetRepository extends ServiceEntityRepository
                 ->setParameter('to', YearRange::lastDayOf($searchQuery->getYear())->format('Y-m-d H:i:s'));
         }
 
-        if ($searchQuery instanceof HistoryBudgetSearchQuery && !is_null($searchQuery->getBudget())) {
+        if (!is_null($searchQuery->getBudget())) {
             $qb
                 ->andWhere('hb.budget = :budget')
                 ->setParameter('budget', $searchQuery->getBudget());

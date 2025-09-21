@@ -13,7 +13,7 @@ use App\Infrastructure\KnpPaginator\DTO\PaginationInterface;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 use DateTimeImmutable;
 
-class EntrySearchQuery implements PaginationInterface, OrderableInterface, QueryInterface
+class FindEntriesQuery implements PaginationInterface, OrderableInterface, QueryInterface
 {
     use PaginableTrait;
     use OrderableTrait;
@@ -38,7 +38,7 @@ class EntrySearchQuery implements PaginationInterface, OrderableInterface, Query
         return $this->account;
     }
 
-    public function setAccount(?Account $account): EntrySearchQuery
+    public function setAccount(?Account $account): FindEntriesQuery
     {
         $this->account = $account;
 
@@ -50,7 +50,7 @@ class EntrySearchQuery implements PaginationInterface, OrderableInterface, Query
         return $this->startDate;
     }
 
-    public function setStartDate(?DateTimeImmutable $startDate): EntrySearchQuery
+    public function setStartDate(?DateTimeImmutable $startDate): FindEntriesQuery
     {
         $this->startDate = $startDate;
 
@@ -62,7 +62,7 @@ class EntrySearchQuery implements PaginationInterface, OrderableInterface, Query
         return $this->endDate;
     }
 
-    public function setEndDate(?DateTimeImmutable $endDate): EntrySearchQuery
+    public function setEndDate(?DateTimeImmutable $endDate): FindEntriesQuery
     {
         $this->endDate = $endDate;
 
@@ -74,7 +74,7 @@ class EntrySearchQuery implements PaginationInterface, OrderableInterface, Query
         return $this->name;
     }
 
-    public function setName(?string $name): EntrySearchQuery
+    public function setName(?string $name): FindEntriesQuery
     {
         $this->name = $name;
 
@@ -86,7 +86,7 @@ class EntrySearchQuery implements PaginationInterface, OrderableInterface, Query
         return $this->type;
     }
 
-    public function setType(?EntryTypeEnum $type): EntrySearchQuery
+    public function setType(?EntryTypeEnum $type): FindEntriesQuery
     {
         $this->type = $type;
 
@@ -98,7 +98,7 @@ class EntrySearchQuery implements PaginationInterface, OrderableInterface, Query
         return $this->budget;
     }
 
-    public function setBudget(?Budget $budget): EntrySearchQuery
+    public function setBudget(?Budget $budget): FindEntriesQuery
     {
         $this->budget = $budget;
 
@@ -116,7 +116,7 @@ class EntrySearchQuery implements PaginationInterface, OrderableInterface, Query
     /**
      * @param array<int|EntryFlagEnum> $flags
      */
-    public function setFlags(array $flags): EntrySearchQuery
+    public function setFlags(array $flags): FindEntriesQuery
     {
         $this->flags = $flags;
 

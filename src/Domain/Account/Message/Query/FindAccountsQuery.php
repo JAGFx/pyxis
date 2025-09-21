@@ -7,7 +7,7 @@ use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
-class AccountSearchQuery implements OrderableInterface, QueryInterface
+class FindAccountsQuery implements OrderableInterface, QueryInterface
 {
     use OrderableTrait;
 
@@ -24,7 +24,7 @@ class AccountSearchQuery implements OrderableInterface, QueryInterface
         return $this->enabled;
     }
 
-    public function setEnabled(?bool $enabled): AccountSearchQuery
+    public function setEnabled(?bool $enabled): FindAccountsQuery
     {
         $this->enabled = $enabled;
 
@@ -36,7 +36,7 @@ class AccountSearchQuery implements OrderableInterface, QueryInterface
         return $this->name;
     }
 
-    public function setName(?string $name): AccountSearchQuery
+    public function setName(?string $name): FindAccountsQuery
     {
         $this->name = $name;
 
@@ -48,7 +48,7 @@ class AccountSearchQuery implements OrderableInterface, QueryInterface
         return $this->budget;
     }
 
-    public function setBudget(?Budget $budget): AccountSearchQuery
+    public function setBudget(?Budget $budget): FindAccountsQuery
     {
         $this->budget = $budget;
 
@@ -60,7 +60,7 @@ class AccountSearchQuery implements OrderableInterface, QueryInterface
         return $this->positiveOrNegativeBalance;
     }
 
-    public function setPositiveOrNegativeBalance(?bool $positiveOrNegativeBalance): AccountSearchQuery
+    public function setPositiveOrNegativeBalance(?bool $positiveOrNegativeBalance): FindAccountsQuery
     {
         $this->positiveOrNegativeBalance = $positiveOrNegativeBalance;
 

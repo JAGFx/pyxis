@@ -5,8 +5,8 @@ namespace App\Domain\Entry\Controller\Front;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\EntryRemoveCommand;
-use App\Domain\Entry\Message\Query\EntrySearchQuery;
+use App\Domain\Entry\Message\Command\RemoveEntryCommand;
+use App\Domain\Entry\Message\Query\FindEntriesQuery;
 use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
@@ -46,7 +46,7 @@ class EntryController extends AbstractController
     #[IsGranted(EntryVoter::MANAGE, 'entry')]
     public function remove(Entry $entry, Request $request): Response
     {
-        $this->entryManager->remove(new EntryRemoveCommand($entry));
+        $this->entryManager->remove(new RemoveEntryCommand($entry));
 
         return $this->renderTurboStream($request, 'domain/entry/turbo/remove.turbo.stream.html.twig', [
             'entryId' => $entry->getId(),
@@ -56,7 +56,7 @@ class EntryController extends AbstractController
     #[Route('/search', name: 'front_entry_search', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $searchQuery = new EntrySearchQuery()
+        $searchQuery = new FindEntriesQuery()
             ->setOrderBy('createdAt')
             ->setOrderDirection(OrderEnum::DESC)
         ;

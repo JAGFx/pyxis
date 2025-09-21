@@ -3,9 +3,10 @@
 namespace App\Domain\Entry\Manager;
 
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
-use App\Domain\Entry\Message\Command\EntryRemoveCommand;
-use App\Domain\Entry\Message\Query\EntrySearchQuery;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
+use App\Domain\Entry\Message\Command\RemoveEntryCommand;
+use App\Domain\Entry\Message\Query\FindEntriesQuery;
+use App\Domain\Entry\Message\Query\GetEntryBalanceQuery;
 use App\Domain\Entry\Repository\EntryRepository;
 use App\Domain\Entry\ValueObject\EntryBalance;
 use App\Shared\Utils\Statistics;
@@ -24,12 +25,11 @@ readonly class EntryManager
     ) {
     }
 
-    // TODO: Create dedicated query
-    public function balance(?EntrySearchQuery $searchQuery = null): EntryBalance
+    public function balance(GetEntryBalanceQuery $query): EntryBalance
     {
         /** @var array<string, mixed> $data */
         $data = $this->repository
-            ->balance($searchQuery ?? new EntrySearchQuery())
+            ->balance($query)
             ->getQuery()
             ->getResult();
 
@@ -42,7 +42,7 @@ readonly class EntryManager
         return new EntryBalance($spentAmount, $forecastAmount);
     }
 
-    public function create(EntryCreateOrUpdateCommand $command, bool $flush = true): void
+    public function create(CreateOrUpdateEntryCommand $command, bool $flush = true): void
     {
         /** @var Entry $entry */
         $entry = $this->objectMapper->map($command, Entry::class);
@@ -54,7 +54,7 @@ readonly class EntryManager
         }
     }
 
-    public function update(EntryCreateOrUpdateCommand $command, bool $flush = true): void
+    public function update(CreateOrUpdateEntryCommand $command, bool $flush = true): void
     {
         /** @var Entry $entry */
         $entry = $this->objectMapper->map($command, $command->getOrigin());
@@ -68,7 +68,7 @@ readonly class EntryManager
         }
     }
 
-    public function remove(EntryRemoveCommand $command, bool $flush = true): void
+    public function remove(RemoveEntryCommand $command, bool $flush = true): void
     {
         $entry = $command->getEntry();
 
@@ -85,9 +85,9 @@ readonly class EntryManager
     /**
      * @return PaginationInterface<int, Entry>
      */
-    public function getPaginated(?EntrySearchQuery $searchQuery = null): PaginationInterface
+    public function getPaginated(?FindEntriesQuery $searchQuery = null): PaginationInterface
     {
-        $searchQuery ??= new EntrySearchQuery();
+        $searchQuery ??= new FindEntriesQuery();
 
         /** @var PaginationInterface<int, Entry> $pagination */
         $pagination = $this->paginator->paginate(

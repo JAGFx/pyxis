@@ -9,7 +9,7 @@ use DateTimeImmutable;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 
 #[Map(HistoryBudget::class)]
-class HistoryCreateCommand implements CommandInterface
+class CreateHistoryBudgetCommand implements CommandInterface
 {
     public function __construct(
         private Budget $budget,
@@ -25,7 +25,7 @@ class HistoryCreateCommand implements CommandInterface
         return $this->budget;
     }
 
-    public function setBudget(Budget $budget): HistoryCreateCommand
+    public function setBudget(Budget $budget): CreateHistoryBudgetCommand
     {
         $this->budget = $budget;
 
@@ -37,7 +37,7 @@ class HistoryCreateCommand implements CommandInterface
         return $this->amount;
     }
 
-    public function setAmount(float $amount): HistoryCreateCommand
+    public function setAmount(float $amount): CreateHistoryBudgetCommand
     {
         $this->amount = $amount;
 
@@ -49,7 +49,7 @@ class HistoryCreateCommand implements CommandInterface
         return $this->date;
     }
 
-    public function setDate(DateTimeImmutable $date): HistoryCreateCommand
+    public function setDate(DateTimeImmutable $date): CreateHistoryBudgetCommand
     {
         $this->date = $date;
 
@@ -61,7 +61,7 @@ class HistoryCreateCommand implements CommandInterface
         return $this->spent;
     }
 
-    public function setSpent(float $spent): HistoryCreateCommand
+    public function setSpent(float $spent): CreateHistoryBudgetCommand
     {
         $this->spent = $spent;
 
@@ -73,7 +73,7 @@ class HistoryCreateCommand implements CommandInterface
         return $this->relativeProgress;
     }
 
-    public function setRelativeProgress(float $relativeProgress): HistoryCreateCommand
+    public function setRelativeProgress(float $relativeProgress): CreateHistoryBudgetCommand
     {
         $this->relativeProgress = $relativeProgress;
 

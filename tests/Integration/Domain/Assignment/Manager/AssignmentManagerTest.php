@@ -5,7 +5,7 @@ namespace App\Tests\Integration\Domain\Assignment\Manager;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Domain\Assignment\Message\Command\AssignmentCreateOrUpdateCommand;
+use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignmentCommand;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\AssignmentFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
@@ -26,16 +26,14 @@ class AssignmentManagerTest extends KernelTestCase
 
     public function testCreateDoesNotThrowException(): void
     {
-        // Given
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
 
-        $command = new AssignmentCreateOrUpdateCommand();
+        $command = new CreateOrUpdateAssignmentCommand();
         $command->setName('Test Assignment');
         $command->setAccount($account);
         $command->setAmount(150.0);
 
-        // When & Then - Should not throw any exception
         $this->assignmentManager->create($command);
 
         $this->expectNotToPerformAssertions();
@@ -43,7 +41,6 @@ class AssignmentManagerTest extends KernelTestCase
 
     public function testUpdateDoesNotThrowException(): void
     {
-        // Given
         /** @var Assignment $existingAssignment */
         $existingAssignment = AssignmentFactory::new()->create([
             'name' => 'Original Assignment',
@@ -52,13 +49,12 @@ class AssignmentManagerTest extends KernelTestCase
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
 
-        $command = new AssignmentCreateOrUpdateCommand();
+        $command = new CreateOrUpdateAssignmentCommand();
         $command->setName('Updated Assignment');
         $command->setAccount($account);
         $command->setAmount(250.0);
         $command->setOrigin($existingAssignment);
 
-        // When & Then - Should not throw any exception
         $this->assignmentManager->update($command);
 
         $this->expectNotToPerformAssertions();
@@ -66,14 +62,12 @@ class AssignmentManagerTest extends KernelTestCase
 
     public function testObjectMapperMappingDoesNotThrowException(): void
     {
-        // Given - Création d'une entité Assignment
         /** @var Assignment $assignment */
         $assignment = AssignmentFactory::new()->create([
             'name' => 'Test Assignment for Mapping',
         ])->_real();
 
-        // When & Then - ObjectMapper mapping should not throw any exception
-        $this->objectMapper->map($assignment, AssignmentCreateOrUpdateCommand::class);
+        $this->objectMapper->map($assignment, CreateOrUpdateAssignmentCommand::class);
 
         $this->expectNotToPerformAssertions();
     }

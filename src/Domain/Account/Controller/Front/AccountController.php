@@ -7,7 +7,8 @@ namespace App\Domain\Account\Controller\Front;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountSearchType;
 use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Account\Message\Query\AccountSearchQuery;
+use App\Domain\Account\Message\Command\ToggleEnableAccountCommand;
+use App\Domain\Account\Message\Query\FindAccountsQuery;
 use App\Domain\Account\Security\AccountVoter;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\EntryOperator;
@@ -38,7 +39,7 @@ class AccountController extends AbstractController
             $this->denyAccessUnlessGranted(AccountVoter::ENABLE, $account);
         }
 
-        $this->accountManager->toggle($account);
+        $this->accountManager->toggle(new ToggleEnableAccountCommand($account));
 
         $message = 'Compte ';
         $message .= ($account->isEnabled()) ? 'activé' : 'désactivé';
@@ -76,7 +77,7 @@ class AccountController extends AbstractController
     #[Route('/search', name: 'front_account_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $searchQuery = new AccountSearchQuery()->setOrderBy('name');
+        $searchQuery = new FindAccountsQuery()->setOrderBy('name');
 
         $this->createForm(AccountSearchType::class, $searchQuery)
             ->handleRequest($request);

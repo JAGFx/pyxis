@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Account\Form;
 
-use App\Domain\Account\Message\Query\AccountSearchQuery;
+use App\Domain\Account\Message\Query\FindAccountsQuery;
 use App\Shared\Form\Type\YesNoType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -29,7 +29,7 @@ class AccountSearchType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => AccountSearchQuery::class,
+            'data_class'         => FindAccountsQuery::class,
             'label_format'       => 'account.search.%name%.label',
             'translation_domain' => 'forms',
         ]);

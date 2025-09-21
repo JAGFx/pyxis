@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
 
 #[Map(Budget::class)]
-class BudgetCreateOrUpdateCommand implements CommandInterface
+class CreateOrUpdateBudgetCommand implements CommandInterface
 {
     public function __construct(
         #[NotBlank]
@@ -30,7 +30,7 @@ class BudgetCreateOrUpdateCommand implements CommandInterface
         return $this->name;
     }
 
-    public function setName(string $name): BudgetCreateOrUpdateCommand
+    public function setName(string $name): CreateOrUpdateBudgetCommand
     {
         $this->name = $name;
 
@@ -42,7 +42,7 @@ class BudgetCreateOrUpdateCommand implements CommandInterface
         return $this->amount;
     }
 
-    public function setAmount(float $amount): BudgetCreateOrUpdateCommand
+    public function setAmount(float $amount): CreateOrUpdateBudgetCommand
     {
         $this->amount = $amount;
 
@@ -54,7 +54,7 @@ class BudgetCreateOrUpdateCommand implements CommandInterface
         return $this->enabled;
     }
 
-    public function setEnabled(bool $enabled): BudgetCreateOrUpdateCommand
+    public function setEnabled(bool $enabled): CreateOrUpdateBudgetCommand
     {
         $this->enabled = $enabled;
 
@@ -66,7 +66,7 @@ class BudgetCreateOrUpdateCommand implements CommandInterface
         return $this->origin;
     }
 
-    public function setOrigin(?Budget $origin): BudgetCreateOrUpdateCommand
+    public function setOrigin(?Budget $origin): CreateOrUpdateBudgetCommand
     {
         $this->origin = $origin;
 

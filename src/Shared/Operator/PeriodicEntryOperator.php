@@ -4,7 +4,7 @@ namespace App\Shared\Operator;
 
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use DateMalformedStringException;
@@ -41,7 +41,7 @@ readonly class PeriodicEntryOperator
         }
 
         if ($periodicEntry->isSpent()) {
-            $entryCommand = new EntryCreateOrUpdateCommand(
+            $entryCommand = new CreateOrUpdateEntryCommand(
                 account: $periodicEntry->getAccount(),
                 name: $periodicEntry->getName(),
                 amount: $periodicEntry->getAmount() ?? 0.0,
@@ -57,7 +57,7 @@ readonly class PeriodicEntryOperator
                     continue;
                 }
 
-                $entryCommand = new EntryCreateOrUpdateCommand(
+                $entryCommand = new CreateOrUpdateEntryCommand(
                     account: $periodicEntry->getAccount(),
                     name: $periodicEntry->getName() . ' - ' . $budget->getName(),
                     amount: $amount,

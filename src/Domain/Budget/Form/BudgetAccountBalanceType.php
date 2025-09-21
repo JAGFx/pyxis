@@ -3,9 +3,9 @@
 namespace App\Domain\Budget\Form;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Message\Query\AccountSearchQuery;
+use App\Domain\Account\Message\Query\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Budget\Message\Command\BudgetAccountBalanceCommand;
+use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use Doctrine\ORM\QueryBuilder;
 use Override;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -23,17 +23,17 @@ class BudgetAccountBalanceType extends AbstractType
         $builder
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
                 $form = $event->getForm();
-                /** @var BudgetAccountBalanceCommand $budgetAccountBalanceRequest */
-                $budgetAccountBalanceRequest = $event->getData();
+                /** @var GetBudgetAccountBalanceCommand $budgetAccountBalanceCommand */
+                $budgetAccountBalanceCommand = $event->getData();
 
                 $form
                     ->add('account', EntityType::class, [
                         'class'         => Account::class,
                         'choice_label'  => 'name',
-                        'query_builder' => function (AccountRepository $repository) use ($budgetAccountBalanceRequest): QueryBuilder {
-                            $searchQuery = new AccountSearchQuery(true)
+                        'query_builder' => function (AccountRepository $repository) use ($budgetAccountBalanceCommand): QueryBuilder {
+                            $searchQuery = new FindAccountsQuery(true)
                                 ->setOrderBy('name')
-                                ->setBudget($budgetAccountBalanceRequest->getBudget())
+                                ->setBudget($budgetAccountBalanceCommand->getBudget())
                                 ->setPositiveOrNegativeBalance(true)
                             ;
 
@@ -49,7 +49,7 @@ class BudgetAccountBalanceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => BudgetAccountBalanceCommand::class,
+            'data_class'         => GetBudgetAccountBalanceCommand::class,
             'label_format'       => 'budget.account_balance.%name%.label',
             'translation_domain' => 'forms',
         ]);

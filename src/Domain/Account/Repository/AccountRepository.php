@@ -3,7 +3,7 @@
 namespace App\Domain\Account\Repository;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Message\Query\AccountSearchQuery;
+use App\Domain\Account\Message\Query\FindAccountsQuery;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,7 +18,7 @@ class AccountRepository extends ServiceEntityRepository
         parent::__construct($registry, Account::class);
     }
 
-    public function getAccountsQueryBuilder(AccountSearchQuery $searchQuery): QueryBuilder
+    public function getAccountsQueryBuilder(FindAccountsQuery $searchQuery): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('a');
         if (null !== $searchQuery->isEnabled()) {

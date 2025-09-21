@@ -3,9 +3,9 @@
 namespace App\Domain\PeriodicEntry\Manager;
 
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Message\Command\PeriodicEntryCreateOrUpdateCommand;
-use App\Domain\PeriodicEntry\Message\Command\PeriodicEntryRemoveCommand;
-use App\Domain\PeriodicEntry\Message\Query\PeriodicEntrySearchQuery;
+use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntryCommand;
+use App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntryCommand;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -19,7 +19,7 @@ readonly class PeriodicEntryManager
     ) {
     }
 
-    public function create(PeriodicEntryCreateOrUpdateCommand $command, bool $flush = true): void
+    public function create(CreateOrUpdatePeriodicEntryCommand $command, bool $flush = true): void
     {
         /** @var PeriodicEntry $periodicEntry */
         $periodicEntry = $this->objectMapper->map($command, PeriodicEntry::class);
@@ -31,7 +31,7 @@ readonly class PeriodicEntryManager
         }
     }
 
-    public function update(PeriodicEntryCreateOrUpdateCommand $command, bool $flush = true): void
+    public function update(CreateOrUpdatePeriodicEntryCommand $command, bool $flush = true): void
     {
         $this->objectMapper->map($command, $command->getOrigin());
 
@@ -40,7 +40,7 @@ readonly class PeriodicEntryManager
         }
     }
 
-    public function remove(PeriodicEntryRemoveCommand $command, bool $flush = true): void
+    public function remove(RemovePeriodicEntryCommand $command, bool $flush = true): void
     {
         $this->repository->remove($command->getPeriodicEntry());
 
@@ -50,9 +50,9 @@ readonly class PeriodicEntryManager
     }
 
     /** @return PeriodicEntry[] */
-    public function getPeriodicEntries(?PeriodicEntrySearchQuery $searchQuery = null): array
+    public function getPeriodicEntries(?FindPeriodicEntriesQuery $searchQuery = null): array
     {
-        $searchQuery ??= new PeriodicEntrySearchQuery();
+        $searchQuery ??= new FindPeriodicEntriesQuery();
 
         /** @var PeriodicEntry[] $periodicEntries */
         $periodicEntries = $this->repository

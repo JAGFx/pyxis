@@ -6,8 +6,8 @@ use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntryCreateOrUpdateType;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
-use App\Domain\Entry\Message\Query\EntrySearchQuery;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
+use App\Domain\Entry\Message\Query\FindEntriesQuery;
 use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
@@ -36,7 +36,7 @@ class EntryController extends AbstractController
     #[Route(name: 'back_entry_list', methods: Request::METHOD_GET)]
     public function list(Request $request): Response
     {
-        $searchQuery = new EntrySearchQuery()
+        $searchQuery = new FindEntriesQuery()
             ->setOrderBy('createdAt')
             ->setOrderDirection(OrderEnum::DESC)
         ;
@@ -64,8 +64,8 @@ class EntryController extends AbstractController
     private function handleForm(ControllerActionEnum $type, Request $request, ?Entry $entry = null): Response
     {
         $entryCommand = is_null($entry)
-            ? new EntryCreateOrUpdateCommand()
-            : $this->objectMapper->map($entry, EntryCreateOrUpdateCommand::class);
+            ? new CreateOrUpdateEntryCommand()
+            : $this->objectMapper->map($entry, CreateOrUpdateEntryCommand::class);
 
         $form = $this
             ->createForm(EntryCreateOrUpdateType::class, $entryCommand)

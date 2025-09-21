@@ -4,7 +4,7 @@ namespace App\Domain\PeriodicEntry\Repository;
 
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Message\Query\PeriodicEntrySearchQuery;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -33,9 +33,9 @@ class PeriodicEntryRepository extends ServiceEntityRepository
         return $this;
     }
 
-    public function getPeriodicEntriesQueryBuilder(?PeriodicEntrySearchQuery $searchQuery = null): QueryBuilder
+    public function getPeriodicEntriesQueryBuilder(?FindPeriodicEntriesQuery $searchQuery = null): QueryBuilder
     {
-        $searchQuery ??= new PeriodicEntrySearchQuery();
+        $searchQuery ??= new FindPeriodicEntriesQuery();
 
         $queryBuilder = $this
             ->createQueryBuilder('p');

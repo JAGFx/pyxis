@@ -5,8 +5,8 @@ namespace App\Domain\PeriodicEntry\Controller\Back;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntryCreateOrUpdateType;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
-use App\Domain\PeriodicEntry\Message\Command\PeriodicEntryCreateOrUpdateCommand;
-use App\Domain\PeriodicEntry\Message\Query\PeriodicEntrySearchQuery;
+use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntryCommand;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
@@ -29,7 +29,7 @@ class PeriodicEntryController extends AbstractController
     #[Route(name: 'back_periodic_entry_list', methods: Request::METHOD_GET)]
     public function list(): Response
     {
-        $searchQuery = new PeriodicEntrySearchQuery()->setOrderBy('name');
+        $searchQuery = new FindPeriodicEntriesQuery()->setOrderBy('name');
 
         return $this->render('domain/periodic_entry/index.html.twig', [
             'periodicEntries' => $this->periodicEntryManager->getPeriodicEntries($searchQuery),
@@ -52,8 +52,8 @@ class PeriodicEntryController extends AbstractController
     private function handleRequest(ControllerActionEnum $type, Request $request, ?PeriodicEntry $periodicEntry = null): Response
     {
         $periodicEntryCommand = is_null($periodicEntry)
-            ? new PeriodicEntryCreateOrUpdateCommand()
-            : $this->objectMapper->map($periodicEntry, PeriodicEntryCreateOrUpdateCommand::class);
+            ? new CreateOrUpdatePeriodicEntryCommand()
+            : $this->objectMapper->map($periodicEntry, CreateOrUpdatePeriodicEntryCommand::class);
 
         $form = $this
             ->createForm(PeriodicEntryCreateOrUpdateType::class, $periodicEntryCommand)

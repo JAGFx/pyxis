@@ -2,7 +2,7 @@
 
 namespace App\Domain\Budget\Form;
 
-use App\Domain\Budget\Message\Query\BudgetSearchQuery;
+use App\Domain\Budget\Message\Query\FindBudgetsQuery;
 use App\Shared\Utils\YearRange;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -27,7 +27,7 @@ class BudgetBalanceSearchType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => BudgetSearchQuery::class,
+            'data_class' => FindBudgetsQuery::class,
         ]);
 
         $resolver->setRequired('years');

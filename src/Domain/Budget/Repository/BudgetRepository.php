@@ -3,7 +3,8 @@
 namespace App\Domain\Budget\Repository;
 
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Message\Query\BudgetSearchQuery;
+use App\Domain\Budget\Message\Query\FindBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindBudgetVOQuery;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -26,7 +27,7 @@ class BudgetRepository extends ServiceEntityRepository
         return $this;
     }
 
-    public function getBudgetsQueryBuilder(BudgetSearchQuery $searchQuery): QueryBuilder
+    public function getBudgetsQueryBuilder(FindBudgetsQuery $searchQuery): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('b')
             ->orderBy('b.name');
@@ -56,7 +57,7 @@ class BudgetRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
-    public function getBudgetValueObjectsQueryBuilder(BudgetSearchQuery $searchQuery): QueryBuilder
+    public function getBudgetValueObjectsQueryBuilder(FindBudgetVOQuery $searchQuery): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('b')
             ->select(

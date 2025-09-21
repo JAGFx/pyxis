@@ -4,7 +4,7 @@ namespace App\Tests\Integration\Domain\Account\Manager;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Account\Message\Command\AccountCreateOrUpdateCommand;
+use App\Domain\Account\Message\Command\CreateOrUpdateAccountCommand;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -24,11 +24,9 @@ class AccountManagerTest extends KernelTestCase
 
     public function testCreateDoesNotThrowException(): void
     {
-        // Given
-        $command = new AccountCreateOrUpdateCommand();
+        $command = new CreateOrUpdateAccountCommand();
         $command->setName('Test Account');
 
-        // When & Then - Should not throw any exception
         $this->accountManager->create($command);
 
         $this->expectNotToPerformAssertions();
@@ -36,17 +34,15 @@ class AccountManagerTest extends KernelTestCase
 
     public function testUpdateDoesNotThrowException(): void
     {
-        // Given
         /** @var Account $existingAccount */
         $existingAccount = AccountFactory::new()->create([
             'name' => 'Original Account',
         ])->_real();
 
-        $command = new AccountCreateOrUpdateCommand();
+        $command = new CreateOrUpdateAccountCommand();
         $command->setName('Updated Account');
         $command->setOrigin($existingAccount);
 
-        // When & Then - Should not throw any exception
         $this->accountManager->update($command);
 
         $this->expectNotToPerformAssertions();
@@ -54,14 +50,12 @@ class AccountManagerTest extends KernelTestCase
 
     public function testObjectMapperMappingDoesNotThrowException(): void
     {
-        // Given - Création d'une entité Account
         /** @var Account $account */
         $account = AccountFactory::new()->create([
             'name' => 'Test Account for Mapping',
         ])->_real();
 
-        // When & Then - ObjectMapper mapping should not throw any exception
-        $this->objectMapper->map($account, AccountCreateOrUpdateCommand::class);
+        $this->objectMapper->map($account, CreateOrUpdateAccountCommand::class);
 
         $this->expectNotToPerformAssertions();
     }

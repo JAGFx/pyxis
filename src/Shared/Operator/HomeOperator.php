@@ -4,7 +4,7 @@ namespace App\Shared\Operator;
 
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
 use App\Shared\Request\TransferRequest;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -21,7 +21,7 @@ readonly class HomeOperator
         $entrySourceName = $transfer->getBudgetSource()?->getName() ?? 'Dépense';
         $entryTargetName = $transfer->getBudgetTarget()?->getName() ?? 'Dépense';
 
-        $entrySourceCommand = new EntryCreateOrUpdateCommand(
+        $entrySourceCommand = new CreateOrUpdateEntryCommand(
             account: $transfer->getAccount(),
             name: $entrySourceName,
             amount: -$transfer->getAmount(),
@@ -29,7 +29,7 @@ readonly class HomeOperator
             flags: [EntryFlagEnum::TRANSFERT],
         );
 
-        $entryTargetCommand = new EntryCreateOrUpdateCommand(
+        $entryTargetCommand = new CreateOrUpdateEntryCommand(
             account: $transfer->getAccount(),
             name: $entryTargetName,
             amount: $transfer->getAmount(),

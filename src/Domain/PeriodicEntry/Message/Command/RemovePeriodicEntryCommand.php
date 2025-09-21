@@ -5,7 +5,7 @@ namespace App\Domain\PeriodicEntry\Message\Command;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 
-class PeriodicEntryRemoveCommand implements CommandInterface
+class RemovePeriodicEntryCommand implements CommandInterface
 {
     public function __construct(
         private PeriodicEntry $periodicEntry,
@@ -17,7 +17,7 @@ class PeriodicEntryRemoveCommand implements CommandInterface
         return $this->periodicEntry;
     }
 
-    public function setPeriodicEntry(PeriodicEntry $periodicEntry): PeriodicEntryRemoveCommand
+    public function setPeriodicEntry(PeriodicEntry $periodicEntry): RemovePeriodicEntryCommand
     {
         $this->periodicEntry = $periodicEntry;
 

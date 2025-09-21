@@ -4,11 +4,11 @@ namespace App\Domain\Budget\Message\Query;
 
 use App\Domain\Budget\Entity\Budget;
 
-class HistoryBudgetSearchQuery
+class FindHistoryBudgetsQuery
 {
     public function __construct(
-        private ?Budget $budget,
-        private ?int $year,
+        private ?Budget $budget = null,
+        private ?int $year = null,
     ) {
     }
 
@@ -17,7 +17,7 @@ class HistoryBudgetSearchQuery
         return $this->budget;
     }
 
-    public function setBudget(?Budget $budget): HistoryBudgetSearchQuery
+    public function setBudget(?Budget $budget): FindHistoryBudgetsQuery
     {
         $this->budget = $budget;
 
@@ -29,7 +29,7 @@ class HistoryBudgetSearchQuery
         return $this->year;
     }
 
-    public function setYear(?int $year): HistoryBudgetSearchQuery
+    public function setYear(?int $year): FindHistoryBudgetsQuery
     {
         $this->year = $year;
 

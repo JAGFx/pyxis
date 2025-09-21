@@ -8,7 +8,7 @@ use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[Map(Account::class)]
-class AccountCreateOrUpdateCommand implements CommandInterface
+class CreateOrUpdateAccountCommand implements CommandInterface
 {
     public function __construct(
         #[NotBlank]
@@ -24,7 +24,7 @@ class AccountCreateOrUpdateCommand implements CommandInterface
         return $this->name;
     }
 
-    public function setName(string $name): AccountCreateOrUpdateCommand
+    public function setName(string $name): CreateOrUpdateAccountCommand
     {
         $this->name = $name;
 
@@ -36,7 +36,7 @@ class AccountCreateOrUpdateCommand implements CommandInterface
         return $this->origin;
     }
 
-    public function setOrigin(?Account $origin): AccountCreateOrUpdateCommand
+    public function setOrigin(?Account $origin): CreateOrUpdateAccountCommand
     {
         $this->origin = $origin;
 

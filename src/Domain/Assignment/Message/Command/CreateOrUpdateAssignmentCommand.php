@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Positive;
 
 #[Map(Assignment::class)]
-class AssignmentCreateOrUpdateCommand implements CommandInterface
+class CreateOrUpdateAssignmentCommand implements CommandInterface
 {
     public function __construct(
         #[NotBlank]
@@ -31,7 +31,7 @@ class AssignmentCreateOrUpdateCommand implements CommandInterface
         return $this->name;
     }
 
-    public function setName(string $name): AssignmentCreateOrUpdateCommand
+    public function setName(string $name): CreateOrUpdateAssignmentCommand
     {
         $this->name = $name;
 
@@ -43,7 +43,7 @@ class AssignmentCreateOrUpdateCommand implements CommandInterface
         return $this->amount;
     }
 
-    public function setAmount(float $amount): AssignmentCreateOrUpdateCommand
+    public function setAmount(float $amount): CreateOrUpdateAssignmentCommand
     {
         $this->amount = $amount;
 
@@ -55,7 +55,7 @@ class AssignmentCreateOrUpdateCommand implements CommandInterface
         return $this->account;
     }
 
-    public function setAccount(?Account $account): AssignmentCreateOrUpdateCommand
+    public function setAccount(?Account $account): CreateOrUpdateAssignmentCommand
     {
         $this->account = $account;
 
@@ -67,7 +67,7 @@ class AssignmentCreateOrUpdateCommand implements CommandInterface
         return $this->origin;
     }
 
-    public function setOrigin(?Assignment $origin): AssignmentCreateOrUpdateCommand
+    public function setOrigin(?Assignment $origin): CreateOrUpdateAssignmentCommand
     {
         $this->origin = $origin;
 

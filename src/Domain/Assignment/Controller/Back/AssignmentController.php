@@ -7,8 +7,8 @@ namespace App\Domain\Assignment\Controller\Back;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentCreateOrUpdateType;
 use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Domain\Assignment\Message\Command\AssignmentCreateOrUpdateCommand;
-use App\Domain\Assignment\Message\Query\AssignmentSearchQuery;
+use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignmentCommand;
+use App\Domain\Assignment\Message\Query\FindAssignmentsQuery;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
@@ -31,7 +31,7 @@ class AssignmentController extends AbstractController
     #[Route(name: 'back_assignment_list', methods: [Request::METHOD_GET])]
     public function index(): Response
     {
-        $searchQuery = new AssignmentSearchQuery()->setOrderBy('name');
+        $searchQuery = new FindAssignmentsQuery()->setOrderBy('name');
 
         return $this->render('domain/assigment/index.html.twig', [
             'assignments' => $this->assignmentManager->getAssignments($searchQuery),
@@ -54,8 +54,8 @@ class AssignmentController extends AbstractController
     private function handleForm(ControllerActionEnum $type, Request $request, ?Assignment $assignment = null): Response
     {
         $assigmentCommand = is_null($assignment)
-            ? new AssignmentCreateOrUpdateCommand()
-            : $this->objectMapper->map($assignment, AssignmentCreateOrUpdateCommand::class);
+            ? new CreateOrUpdateAssignmentCommand()
+            : $this->objectMapper->map($assignment, CreateOrUpdateAssignmentCommand::class);
 
         $form = $this
             ->createForm(AssignmentCreateOrUpdateType::class, $assigmentCommand)

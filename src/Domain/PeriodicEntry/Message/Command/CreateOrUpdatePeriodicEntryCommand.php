@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\When;
 
 #[Map(PeriodicEntry::class)]
-class PeriodicEntryCreateOrUpdateCommand implements CommandInterface
+class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
 {
     use EntityCollectionTrait;
 
@@ -80,7 +80,7 @@ class PeriodicEntryCreateOrUpdateCommand implements CommandInterface
         return $this->account;
     }
 
-    public function setAccount(?Account $account): PeriodicEntryCreateOrUpdateCommand
+    public function setAccount(?Account $account): CreateOrUpdatePeriodicEntryCommand
     {
         $this->account = $account;
 
@@ -92,7 +92,7 @@ class PeriodicEntryCreateOrUpdateCommand implements CommandInterface
         return $this->name;
     }
 
-    public function setName(?string $name): PeriodicEntryCreateOrUpdateCommand
+    public function setName(?string $name): CreateOrUpdatePeriodicEntryCommand
     {
         $this->name = $name;
 
@@ -104,7 +104,7 @@ class PeriodicEntryCreateOrUpdateCommand implements CommandInterface
         return $this->amount;
     }
 
-    public function setAmount(?float $amount): PeriodicEntryCreateOrUpdateCommand
+    public function setAmount(?float $amount): CreateOrUpdatePeriodicEntryCommand
     {
         $this->amount = $amount;
 
@@ -116,7 +116,7 @@ class PeriodicEntryCreateOrUpdateCommand implements CommandInterface
         return $this->executionDate;
     }
 
-    public function setExecutionDate(?DateTimeImmutable $executionDate): PeriodicEntryCreateOrUpdateCommand
+    public function setExecutionDate(?DateTimeImmutable $executionDate): CreateOrUpdatePeriodicEntryCommand
     {
         $this->executionDate = $executionDate;
 
@@ -134,7 +134,7 @@ class PeriodicEntryCreateOrUpdateCommand implements CommandInterface
     /**
      * @param Collection<int, Budget> $budgets
      */
-    public function setBudgets(Collection $budgets): PeriodicEntryCreateOrUpdateCommand
+    public function setBudgets(Collection $budgets): CreateOrUpdatePeriodicEntryCommand
     {
         $this->budgets = $budgets;
 
@@ -146,7 +146,7 @@ class PeriodicEntryCreateOrUpdateCommand implements CommandInterface
         return $this->origin;
     }
 
-    public function setOrigin(?PeriodicEntry $origin): PeriodicEntryCreateOrUpdateCommand
+    public function setOrigin(?PeriodicEntry $origin): CreateOrUpdatePeriodicEntryCommand
     {
         $this->origin = $origin;
 

@@ -3,7 +3,7 @@
 namespace App\Domain\Budget\Twig\Components;
 
 use App\Domain\Budget\Form\BudgetSearchType;
-use App\Domain\Budget\Message\Query\BudgetSearchQuery;
+use App\Domain\Budget\Message\Query\FindBudgetsQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -18,7 +18,7 @@ class BudgetSearchForm extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(BudgetSearchType::class, new BudgetSearchQuery(), [
+        return $this->createForm(BudgetSearchType::class, new FindBudgetsQuery(), [
             'action' => $this->generateUrl('front_budget_search'),
         ]);
     }

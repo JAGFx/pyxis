@@ -7,7 +7,7 @@ use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
-class AssignmentSearchQuery implements OrderableInterface, QueryInterface
+class FindAssignmentsQuery implements OrderableInterface, QueryInterface
 {
     use OrderableTrait;
 
@@ -22,7 +22,7 @@ class AssignmentSearchQuery implements OrderableInterface, QueryInterface
         return $this->account;
     }
 
-    public function setAccount(?Account $account): AssignmentSearchQuery
+    public function setAccount(?Account $account): FindAssignmentsQuery
     {
         $this->account = $account;
 
@@ -34,7 +34,7 @@ class AssignmentSearchQuery implements OrderableInterface, QueryInterface
         return $this->name;
     }
 
-    public function setName(?string $name): AssignmentSearchQuery
+    public function setName(?string $name): FindAssignmentsQuery
     {
         $this->name = $name;
 

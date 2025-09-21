@@ -7,8 +7,8 @@ namespace App\Domain\Assignment\Controller\Front;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentSearchType;
 use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Domain\Assignment\Message\Command\AssigmentRemoveCommand;
-use App\Domain\Assignment\Message\Query\AssignmentSearchQuery;
+use App\Domain\Assignment\Message\Command\RemoveAssignmentCommand;
+use App\Domain\Assignment\Message\Query\FindAssignmentsQuery;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,7 +29,7 @@ class AssignmentController extends AbstractController
     public function remove(Assignment $assignment, Request $request): Response
     {
         $assignmentId = $assignment->getId();
-        $this->assignmentManager->remove(new AssigmentRemoveCommand($assignment));
+        $this->assignmentManager->remove(new RemoveAssignmentCommand($assignment));
 
         return $this->renderTurboStream($request, 'domain/assigment/turbo/remove.turbo.stream.html.twig', [
             'assignmentId' => $assignmentId,
@@ -39,7 +39,7 @@ class AssignmentController extends AbstractController
     #[Route('/search', name: 'front_assignment_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $searchQuery = new AssignmentSearchQuery()->setOrderBy('name');
+        $searchQuery = new FindAssignmentsQuery()->setOrderBy('name');
 
         $this->createForm(AssignmentSearchType::class, $searchQuery)
             ->handleRequest($request);

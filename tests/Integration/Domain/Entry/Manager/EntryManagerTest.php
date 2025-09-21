@@ -6,7 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
@@ -34,7 +34,7 @@ class EntryManagerTest extends KernelTestCase
         /** @var Budget $budget */
         $budget = BudgetFactory::new()->create()->_real();
 
-        $command = new EntryCreateOrUpdateCommand();
+        $command = new CreateOrUpdateEntryCommand();
         $command->setName('Test Entry');
         $command->setAccount($account);
         $command->setAmount(150.0);
@@ -59,7 +59,7 @@ class EntryManagerTest extends KernelTestCase
         /** @var Budget $budget */
         $budget = BudgetFactory::new()->create()->_real();
 
-        $command = new EntryCreateOrUpdateCommand();
+        $command = new CreateOrUpdateEntryCommand();
         $command->setName('Updated Entry');
         $command->setAccount($account);
         $command->setAmount(250.0);
@@ -82,7 +82,7 @@ class EntryManagerTest extends KernelTestCase
             'name'    => 'Test Entry for Mapping',
         ])->_real();
 
-        $this->objectMapper->map($entry, EntryCreateOrUpdateCommand::class);
+        $this->objectMapper->map($entry, CreateOrUpdateEntryCommand::class);
 
         $this->expectNotToPerformAssertions();
     }

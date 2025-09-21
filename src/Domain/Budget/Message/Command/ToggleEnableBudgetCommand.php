@@ -5,7 +5,7 @@ namespace App\Domain\Budget\Message\Command;
 use App\Domain\Budget\Entity\Budget;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 
-class BudgetToggleEnableCommand implements CommandInterface
+class ToggleEnableBudgetCommand implements CommandInterface
 {
     public function __construct(
         private Budget $budget,
@@ -17,7 +17,7 @@ class BudgetToggleEnableCommand implements CommandInterface
         return $this->budget;
     }
 
-    public function setBudget(Budget $budget): BudgetToggleEnableCommand
+    public function setBudget(Budget $budget): ToggleEnableBudgetCommand
     {
         $this->budget = $budget;
 

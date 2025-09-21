@@ -3,9 +3,10 @@
 namespace App\Domain\Assignment\Manager;
 
 use App\Domain\Assignment\Entity\Assignment;
-use App\Domain\Assignment\Message\Command\AssigmentRemoveCommand;
-use App\Domain\Assignment\Message\Command\AssignmentCreateOrUpdateCommand;
-use App\Domain\Assignment\Message\Query\AssignmentSearchQuery;
+use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignmentCommand;
+use App\Domain\Assignment\Message\Command\RemoveAssignmentCommand;
+use App\Domain\Assignment\Message\Query\FindAssignmentsQuery;
+use App\Domain\Assignment\Message\Query\GetAssignmentBalanceQuery;
 use App\Domain\Assignment\Repository\AssignmentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -25,11 +26,11 @@ readonly class AssignmentManager
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function balance(?AssignmentSearchQuery $searchQuery = null): float
+    public function balance(GetAssignmentBalanceQuery $query): float
     {
         /** @var ?float $data */
         $data = $this->repository
-            ->balanceQueryBuilder($searchQuery ?? new AssignmentSearchQuery())
+            ->balanceQueryBuilder($query)
             ->getQuery()
             ->getSingleScalarResult();
 
@@ -39,11 +40,11 @@ readonly class AssignmentManager
     /**
      * @return Assignment[]
      */
-    public function getAssignments(?AssignmentSearchQuery $searchQuery = null): array
+    public function getAssignments(?FindAssignmentsQuery $searchQuery = null): array
     {
         /** @var Assignment[] $assignments */
         $assignments = $this->repository
-            ->getAssignmentsQueryBuilder($searchQuery ?? new AssignmentSearchQuery())
+            ->getAssignmentsQueryBuilder($searchQuery ?? new FindAssignmentsQuery())
             ->getQuery()
             ->getResult()
         ;
@@ -51,7 +52,7 @@ readonly class AssignmentManager
         return $assignments;
     }
 
-    public function create(AssignmentCreateOrUpdateCommand $command, bool $flush = true): void
+    public function create(CreateOrUpdateAssignmentCommand $command, bool $flush = true): void
     {
         /** @var Assignment $assignment */
         $assignment = $this->objectMapper->map($command, Assignment::class);
@@ -63,7 +64,7 @@ readonly class AssignmentManager
         }
     }
 
-    public function update(AssignmentCreateOrUpdateCommand $command, bool $flush = true): void
+    public function update(CreateOrUpdateAssignmentCommand $command, bool $flush = true): void
     {
         $this->objectMapper->map($command, $command->getOrigin());
 
@@ -72,7 +73,7 @@ readonly class AssignmentManager
         }
     }
 
-    public function remove(AssigmentRemoveCommand $command, bool $flush = true): void
+    public function remove(RemoveAssignmentCommand $command, bool $flush = true): void
     {
         /** @var Assignment $assigment */
         $assigment = $command->getAssignment();

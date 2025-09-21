@@ -3,12 +3,12 @@
 namespace App\Domain\PeriodicEntry\Form;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Message\Query\AccountSearchQuery;
+use App\Domain\Account\Message\Query\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Message\Query\BudgetSearchQuery;
+use App\Domain\Budget\Message\Query\FindBudgetsQuery;
 use App\Domain\Budget\Repository\BudgetRepository;
-use App\Domain\PeriodicEntry\Message\Command\PeriodicEntryCreateOrUpdateCommand;
+use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntryCommand;
 use App\Shared\Form\Type\MoneyType;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -27,7 +27,7 @@ class PeriodicEntryCreateOrUpdateType extends AbstractType
                 'class'         => Account::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
-                    $searchQuery = new AccountSearchQuery(true)->setOrderBy('name');
+                    $searchQuery = new FindAccountsQuery(true)->setOrderBy('name');
 
                     return $repository->getAccountsQueryBuilder($searchQuery);
                 },
@@ -49,7 +49,7 @@ class PeriodicEntryCreateOrUpdateType extends AbstractType
                 'required'      => false,
                 'placeholder'   => 'periodic_entry.form.budgets.placeholder',
                 'query_builder' => static function (BudgetRepository $budgetRepository): QueryBuilder {
-                    $searchQuery = new BudgetSearchQuery(enabled: true)->setOrderBy('name');
+                    $searchQuery = new FindBudgetsQuery(enabled: true)->setOrderBy('name');
 
                     return $budgetRepository->getBudgetsQueryBuilder($searchQuery);
                 },
@@ -59,7 +59,7 @@ class PeriodicEntryCreateOrUpdateType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => PeriodicEntryCreateOrUpdateCommand::class,
+            'data_class'         => CreateOrUpdatePeriodicEntryCommand::class,
             'label_format'       => 'periodic_entry.form.%name%.label',
             'translation_domain' => 'forms',
         ]);

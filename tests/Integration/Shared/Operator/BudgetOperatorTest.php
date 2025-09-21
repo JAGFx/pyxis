@@ -4,12 +4,13 @@ namespace App\Tests\Integration\Shared\Operator;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Message\Command\BudgetAccountBalanceCommand;
-use App\Domain\Budget\Message\Query\BudgetSearchQuery;
+use App\Domain\Budget\Message\Query\FindBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Entry\Message\Query\GetEntryBalanceQuery;
+use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Operator\BudgetOperator;
 use App\Shared\Utils\YearRange;
 use App\Tests\Factory\AccountFactory;
@@ -44,7 +45,7 @@ class BudgetOperatorTest extends KernelTestCase
             'enabled' => true,
         ]);
 
-        $searchQuery = new BudgetSearchQuery()
+        $searchQuery = new FindBudgetsQuery()
             ->setShowCredits(false)
             ->setYear(YearRange::current());
 
@@ -85,7 +86,7 @@ class BudgetOperatorTest extends KernelTestCase
         ]);
 
         // Test current year
-        $searchQuery = new BudgetSearchQuery()
+        $searchQuery = new FindBudgetsQuery()
             ->setShowCredits(false)
             ->setYear(YearRange::current());
 
@@ -149,7 +150,7 @@ class BudgetOperatorTest extends KernelTestCase
         ]);
 
         // Test current year (should use entries, not history)
-        $currentYearSearchQuery = new BudgetSearchQuery()
+        $currentYearSearchQuery = new FindBudgetsQuery()
             ->setShowCredits(false)
             ->setYear(YearRange::current());
 
@@ -163,7 +164,7 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertEquals(550.0, $currentProgressVO->getProgress()); // abs(-300) + abs(-250) = 550 (from entries)
 
         // Test historical year 2024 (should use history)
-        $historicalSearchQuery2024 = new BudgetSearchQuery()
+        $historicalSearchQuery2024 = new FindBudgetsQuery()
             ->setShowCredits(false)
             ->setYear(2024);
 
@@ -178,7 +179,7 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertEquals(80.0, $historical2024ProgressVO->getTrueRelativeProgress());
 
         // Test historical year 2023 (should use history)
-        $historicalSearchQuery2023 = new BudgetSearchQuery()
+        $historicalSearchQuery2023 = new FindBudgetsQuery()
             ->setShowCredits(false)
             ->setYear(2023);
 
@@ -219,7 +220,7 @@ class BudgetOperatorTest extends KernelTestCase
         ]);
 
         // Test current year (should show budget with 0 progress since no entries)
-        $currentYearSearchQuery = new BudgetSearchQuery()
+        $currentYearSearchQuery = new FindBudgetsQuery()
             ->setShowCredits(false)
             ->setYear(YearRange::current());
 
@@ -229,7 +230,7 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertEmpty($currentResult);
 
         // Test historical year 2024 (should use history)
-        $historicalSearchQuery2024 = new BudgetSearchQuery()
+        $historicalSearchQuery2024 = new FindBudgetsQuery()
             ->setShowCredits(false)
             ->setYear(2024);
 
@@ -244,7 +245,7 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertEquals(75.0, $historical2024ProgressVO->getTrueRelativeProgress());
 
         // Test historical year 2023 (should use history)
-        $historicalSearchQuery2023 = new BudgetSearchQuery()
+        $historicalSearchQuery2023 = new FindBudgetsQuery()
             ->setShowCredits(false)
             ->setYear(2023);
 
@@ -319,7 +320,7 @@ class BudgetOperatorTest extends KernelTestCase
         ]);
 
         // Test current year
-        $currentYearSearchQuery = new BudgetSearchQuery()
+        $currentYearSearchQuery = new FindBudgetsQuery()
             ->setShowCredits(false)
             ->setYear(YearRange::current());
 
@@ -340,7 +341,7 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertEquals(150.0, $currentResult[1]->getProgress()); // abs(-150)
 
         // Test historical year 2024
-        $historicalSearchQuery = new BudgetSearchQuery()
+        $historicalSearchQuery = new FindBudgetsQuery()
             ->setShowCredits(false)
             ->setYear(2024);
 
@@ -403,14 +404,14 @@ class BudgetOperatorTest extends KernelTestCase
             ->createOne()
             ->_real();
 
-        $initialBalance = $this->entryManager->balance();
+        $initialBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
 
-        $this->budgetOperator->balancing(new BudgetAccountBalanceCommand(
+        $this->budgetOperator->balancing(new GetBudgetAccountBalanceCommand(
             budget: $budget,
             account: $account,
         ));
 
-        $newBalance = $this->entryManager->balance();
+        $newBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
 
         self::assertSame($initialBalance->getTotalSpent(), $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast(), $newBalance->getTotalForecast());
@@ -427,7 +428,7 @@ class BudgetOperatorTest extends KernelTestCase
     {
         $this->populateBalanceDatabase($cashFlowAmount);
 
-        $initialBalance = $this->entryManager->balance();
+        $initialBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
         $overflow       = 200.0;
 
         /** @var Budget $budget */
@@ -438,12 +439,12 @@ class BudgetOperatorTest extends KernelTestCase
         /** @var Account $account */
         $account = AccountFactory::first()->_real();
 
-        $this->budgetOperator->balancing(new BudgetAccountBalanceCommand(
+        $this->budgetOperator->balancing(new GetBudgetAccountBalanceCommand(
             budget: $budget,
             account: $account,
         ));
 
-        $newBalance = $this->entryManager->balance();
+        $newBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
 
         self::assertSame($initialBalance->getTotalSpent() + $overflow, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() - $overflow, $newBalance->getTotalForecast());

@@ -4,7 +4,7 @@ namespace App\Tests\Integration\Domain\PeriodicEntry\Repository;
 
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Message\Query\PeriodicEntrySearchQuery;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
@@ -63,7 +63,7 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
     {
         $periodicEntriesSpent = $this->periodicEntryRepository
             ->getPeriodicEntriesQueryBuilder(
-                new PeriodicEntrySearchQuery(EntryTypeEnum::TYPE_SPENT)
+                new FindPeriodicEntriesQuery(EntryTypeEnum::TYPE_SPENT)
             )
             ->getQuery()
             ->getResult()
@@ -83,7 +83,7 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
     {
         $periodicEntriesSpent = $this->periodicEntryRepository
             ->getPeriodicEntriesQueryBuilder(
-                new PeriodicEntrySearchQuery(EntryTypeEnum::TYPE_FORECAST)
+                new FindPeriodicEntriesQuery(EntryTypeEnum::TYPE_FORECAST)
             )
             ->getQuery()
             ->getResult()

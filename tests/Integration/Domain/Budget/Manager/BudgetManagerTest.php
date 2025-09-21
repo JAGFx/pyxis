@@ -4,7 +4,7 @@ namespace App\Tests\Integration\Domain\Budget\Manager;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Message\Command\BudgetCreateOrUpdateCommand;
+use App\Domain\Budget\Message\Command\CreateOrUpdateBudgetCommand;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -24,7 +24,7 @@ class BudgetManagerTest extends KernelTestCase
 
     public function testCreateDoesNotThrowException(): void
     {
-        $command = new BudgetCreateOrUpdateCommand(
+        $command = new CreateOrUpdateBudgetCommand(
             name: 'Complete Budget Test',
             amount: 1200.0,
             enabled: true
@@ -44,7 +44,7 @@ class BudgetManagerTest extends KernelTestCase
             'enabled' => true,
         ])->_real();
 
-        $command = new BudgetCreateOrUpdateCommand(
+        $command = new CreateOrUpdateBudgetCommand(
             name: 'Updated Complete Budget',
             amount: 1500.0,
             enabled: false
@@ -65,7 +65,7 @@ class BudgetManagerTest extends KernelTestCase
             'enabled' => true,
         ])->_real();
 
-        $this->objectMapper->map($budget, BudgetCreateOrUpdateCommand::class);
+        $this->objectMapper->map($budget, CreateOrUpdateBudgetCommand::class);
 
         $this->expectNotToPerformAssertions();
     }

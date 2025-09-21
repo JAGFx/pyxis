@@ -6,7 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
-use App\Domain\PeriodicEntry\Message\Command\PeriodicEntryCreateOrUpdateCommand;
+use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntryCommand;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
@@ -37,7 +37,7 @@ class PeriodicEntryManagerTest extends KernelTestCase
         /** @var Budget $budget2 */
         $budget2 = BudgetFactory::new()->create(['name' => 'Test Budget 2', 'amount' => 600.0])->_real();
 
-        $command = new PeriodicEntryCreateOrUpdateCommand(
+        $command = new CreateOrUpdatePeriodicEntryCommand(
             account: $account,
             name: 'Complete Periodic Entry Test',
             amount: null,
@@ -69,7 +69,7 @@ class PeriodicEntryManagerTest extends KernelTestCase
         /** @var Budget $budget2 */
         $budget2 = BudgetFactory::new()->create(['name' => 'Updated Budget 2', 'amount' => 400.0])->_real();
 
-        $command = new PeriodicEntryCreateOrUpdateCommand(
+        $command = new CreateOrUpdatePeriodicEntryCommand(
             account: $newAccount,
             name: 'Updated Complete Periodic Entry',
             amount: null,
@@ -94,7 +94,7 @@ class PeriodicEntryManagerTest extends KernelTestCase
             'name'    => 'Test Periodic Entry for Mapping',
         ])->_real();
 
-        $this->objectMapper->map($periodicEntry, PeriodicEntryCreateOrUpdateCommand::class);
+        $this->objectMapper->map($periodicEntry, CreateOrUpdatePeriodicEntryCommand::class);
 
         $this->expectNotToPerformAssertions();
     }

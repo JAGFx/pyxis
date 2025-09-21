@@ -4,9 +4,9 @@ namespace App\Shared\Operator;
 
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Message\Command\HistoryCreateCommand;
-use App\Domain\Budget\Message\Query\BudgetSearchQuery;
-use App\Domain\Budget\Message\Query\HistoryBudgetSearchQuery;
+use App\Domain\Budget\Message\Command\CreateHistoryBudgetCommand;
+use App\Domain\Budget\Message\Query\FindBudgetVOQuery;
+use App\Domain\Budget\Message\Query\FindHistoryBudgetsQuery;
 use App\Shared\Utils\YearRange;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -23,7 +23,7 @@ readonly class HistoryBudgetOperator
     public function generateHistoryBudgetsForYear(int $year): void
     {
         $budgetsValues = $this->budgetManager->getBudgetValuesObject(
-            new BudgetSearchQuery()
+            new FindBudgetVOQuery()
                 ->setShowCredits(false)
                 ->setYear($year)
         );
@@ -36,7 +36,7 @@ readonly class HistoryBudgetOperator
             }
 
             $historyBudgets = $this->historyBudgetManager->getHistories(
-                new HistoryBudgetSearchQuery(
+                new FindHistoryBudgetsQuery(
                     $budget,
                     $year
                 )
@@ -50,7 +50,7 @@ readonly class HistoryBudgetOperator
                 ? ($budgetValue->getProgress(true) / $budget->getAmount()) * 100
                 : 0.0;
 
-            $createCommand = new HistoryCreateCommand(
+            $createCommand = new CreateHistoryBudgetCommand(
                 $budget,
                 $budget->getAmount(),
                 YearRange::firstDayOf($year),

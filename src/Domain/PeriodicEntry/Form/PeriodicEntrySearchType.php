@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\PeriodicEntry\Form;
 
 use App\Domain\Entry\Entity\EntryTypeEnum;
-use App\Domain\PeriodicEntry\Message\Query\PeriodicEntrySearchQuery;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -34,7 +34,7 @@ class PeriodicEntrySearchType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => PeriodicEntrySearchQuery::class,
+            'data_class'         => FindPeriodicEntriesQuery::class,
             'label_format'       => 'periodic_entry.search.%name%.label',
             'translation_domain' => 'forms',
         ]);

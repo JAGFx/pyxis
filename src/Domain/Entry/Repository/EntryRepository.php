@@ -5,7 +5,8 @@ namespace App\Domain\Entry\Repository;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
-use App\Domain\Entry\Message\Query\EntrySearchQuery;
+use App\Domain\Entry\Message\Query\FindEntriesQuery;
+use App\Domain\Entry\Message\Query\GetEntryBalanceQuery;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -34,23 +35,23 @@ class EntryRepository extends ServiceEntityRepository
         return $this;
     }
 
-    public function balance(EntrySearchQuery $searchQuery): QueryBuilder
+    public function balance(GetEntryBalanceQuery $query): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('e')
             ->select('SUM(e.amount) as sum, b.id')
             ->leftJoin('e.budget', 'b')
             ->groupBy('b.id');
 
-        if (!is_null($searchQuery->getAccount())) {
+        if (!is_null($query->getAccount())) {
             $queryBuilder
                 ->andWhere('e.account = :account')
-                ->setParameter('account', $searchQuery->getAccount());
+                ->setParameter('account', $query->getAccount());
         }
 
         return $queryBuilder;
     }
 
-    public function getEntriesQueryBuilder(EntrySearchQuery $searchQuery): QueryBuilder
+    public function getEntriesQueryBuilder(FindEntriesQuery $searchQuery): QueryBuilder
     {
         $queryBuilder = $this
             ->createQueryBuilder('e')
@@ -95,7 +96,7 @@ class EntryRepository extends ServiceEntityRepository
             $paramIndex   = 0;
 
             foreach ($flags as $flag) {
-                if (EntrySearchQuery::WITHOUT_FLAG_VALUE === $flag) {
+                if (FindEntriesQuery::WITHOUT_FLAG_VALUE === $flag) {
                     $orConditions[] = 'JSON_LENGTH(e.flags) = 0';
                 } else {
                     if (!$flag instanceof EntryFlagEnum) {

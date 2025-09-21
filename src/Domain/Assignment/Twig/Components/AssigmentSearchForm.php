@@ -3,7 +3,7 @@
 namespace App\Domain\Assignment\Twig\Components;
 
 use App\Domain\Assignment\Form\AssignmentSearchType;
-use App\Domain\Assignment\Message\Query\AssignmentSearchQuery;
+use App\Domain\Assignment\Message\Query\FindAssignmentsQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -18,7 +18,7 @@ class AssigmentSearchForm extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(AssignmentSearchType::class, new AssignmentSearchQuery(), [
+        return $this->createForm(AssignmentSearchType::class, new FindAssignmentsQuery(), [
             'action' => $this->generateUrl('front_assignment_search'),
         ]);
     }

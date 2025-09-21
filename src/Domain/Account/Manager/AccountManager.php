@@ -3,8 +3,9 @@
 namespace App\Domain\Account\Manager;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Message\Command\AccountCreateOrUpdateCommand;
-use App\Domain\Account\Message\Query\AccountSearchQuery;
+use App\Domain\Account\Message\Command\CreateOrUpdateAccountCommand;
+use App\Domain\Account\Message\Command\ToggleEnableAccountCommand;
+use App\Domain\Account\Message\Query\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -21,11 +22,11 @@ readonly class AccountManager
     /**
      * @return Account[]
      */
-    public function getAccounts(?AccountSearchQuery $searchQuery = null): array
+    public function getAccounts(?FindAccountsQuery $searchQuery = null): array
     {
         /** @var Account[] $accounts */
         $accounts = $this->repository
-            ->getAccountsQueryBuilder($searchQuery ?? new AccountSearchQuery())
+            ->getAccountsQueryBuilder($searchQuery ?? new FindAccountsQuery())
             ->getQuery()
             ->getResult()
         ;
@@ -33,15 +34,15 @@ readonly class AccountManager
         return $accounts;
     }
 
-    // TODO: Create command
-    public function toggle(Account $account): void
+    public function toggle(ToggleEnableAccountCommand $command): void
     {
+        $account = $command->getAccount();
         $account->setEnabled(!$account->isEnabled());
 
         $this->entityManager->flush();
     }
 
-    public function create(AccountCreateOrUpdateCommand $command, bool $flush = true): void
+    public function create(CreateOrUpdateAccountCommand $command, bool $flush = true): void
     {
         /** @var Account $account */
         $account = $this->objectMapper->map($command, Account::class);
@@ -53,7 +54,7 @@ readonly class AccountManager
         }
     }
 
-    public function update(AccountCreateOrUpdateCommand $command, bool $flush = true): void
+    public function update(CreateOrUpdateAccountCommand $command, bool $flush = true): void
     {
         $this->objectMapper->map($command, $command->getOrigin());
 

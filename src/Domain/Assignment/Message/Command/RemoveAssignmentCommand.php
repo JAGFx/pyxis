@@ -6,7 +6,7 @@ use App\Domain\Assignment\Entity\Assignment;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use Symfony\Component\Validator\Constraints\NotNull;
 
-class AssigmentRemoveCommand implements CommandInterface
+class RemoveAssignmentCommand implements CommandInterface
 {
     public function __construct(
         #[NotNull]
@@ -19,7 +19,7 @@ class AssigmentRemoveCommand implements CommandInterface
         return $this->assignment;
     }
 
-    public function setAssignment(?Assignment $assignment): AssigmentRemoveCommand
+    public function setAssignment(?Assignment $assignment): RemoveAssignmentCommand
     {
         $this->assignment = $assignment;
 

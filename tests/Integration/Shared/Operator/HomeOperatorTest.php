@@ -6,6 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Entry\Message\Query\GetEntryBalanceQuery;
 use App\Shared\Operator\HomeOperator;
 use App\Shared\Request\TransferRequest;
 use App\Tests\Factory\AccountFactory;
@@ -37,10 +38,10 @@ class HomeOperatorTest extends KernelTestCase
             'amount' => 0,
         ])->_real();
 
-        $initialBalance = $this->entryManager->balance();
+        $initialBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
         $this->transfer(null, $budgetTarget);
 
-        $newBalance = $this->entryManager->balance();
+        $newBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
         self::assertSame($initialBalance->getTotalSpent() - self::BUDGET_AMOUNT, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() + self::BUDGET_AMOUNT, $newBalance->getTotalForecast());
         self::assertSame(
@@ -61,10 +62,10 @@ class HomeOperatorTest extends KernelTestCase
             'amount' => 0,
         ])->_real();
 
-        $initialBalance = $this->entryManager->balance();
+        $initialBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
         $this->transfer($budgetSource, $budgetTarget);
 
-        $newBalance = $this->entryManager->balance();
+        $newBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
         self::assertSame(
             $initialBalance->getTotalSpent() + $initialBalance->getTotalForecast(), $newBalance->getTotalSpent() + $newBalance->getTotalForecast());
     }
@@ -77,10 +78,10 @@ class HomeOperatorTest extends KernelTestCase
             'amount' => 0,
         ])->_real();
 
-        $initialBalance = $this->entryManager->balance();
+        $initialBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
         $this->transfer($budgetSource, null);
 
-        $newBalance = $this->entryManager->balance();
+        $newBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
         self::assertSame($initialBalance->getTotalSpent() + self::BUDGET_AMOUNT, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() - self::BUDGET_AMOUNT, $newBalance->getTotalForecast());
         self::assertSame(

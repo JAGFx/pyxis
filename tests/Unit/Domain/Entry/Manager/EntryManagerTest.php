@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Domain\Entry\Manager;
 
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Query\EntrySearchQuery;
+use App\Domain\Entry\Message\Query\GetEntryBalanceQuery;
 use App\Domain\Entry\Repository\EntryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
@@ -34,7 +34,7 @@ class EntryManagerTest extends TestCase
         );
     }
 
-    private function expectBalance(array $expectedData, ?EntrySearchQuery $searchRequest = null): void
+    private function expectBalance(array $expectedData, ?GetEntryBalanceQuery $getEntryBalanceQuery = null): void
     {
         $query = $this->createMock(Query::class);
         $query->expects(self::once())
@@ -49,7 +49,7 @@ class EntryManagerTest extends TestCase
         $this->entryRepository
             ->expects(self::once())
             ->method('balance')
-            ->with($searchRequest ?? new EntrySearchQuery())
+            ->with($getEntryBalanceQuery ?? new GetEntryBalanceQuery())
             ->willReturn($queryBuilder);
     }
 
@@ -62,7 +62,7 @@ class EntryManagerTest extends TestCase
         ];
 
         $this->expectBalance($expectedData);
-        $result = $this->createEntryManagerMock()->balance();
+        $result = $this->createEntryManagerMock()->balance(new GetEntryBalanceQuery());
 
         self::assertEquals(150.0, $result->getTotalSpent());
         self::assertEquals(500.0, $result->getTotalForecast()); // 300.0 + 200.0
@@ -70,14 +70,14 @@ class EntryManagerTest extends TestCase
 
     public function testBalanceWithProvidedCommand(): void
     {
-        $searchRequest = new EntrySearchQuery();
+        $searchRequest = new GetEntryBalanceQuery();
         $expectedData  = [
             ['id' => null, 'sum' => 75.0], // spent entries
             ['id' => 1, 'sum' => 125.0],   // forecast entries
         ];
 
         $this->expectBalance($expectedData, $searchRequest);
-        $result = $this->createEntryManagerMock()->balance();
+        $result = $this->createEntryManagerMock()->balance($searchRequest);
 
         self::assertEquals(75.0, $result->getTotalSpent());
         self::assertEquals(125.0, $result->getTotalForecast());
@@ -90,7 +90,7 @@ class EntryManagerTest extends TestCase
         ];
 
         $this->expectBalance($expectedData);
-        $result = $this->createEntryManagerMock()->balance();
+        $result = $this->createEntryManagerMock()->balance(new GetEntryBalanceQuery());
 
         self::assertEquals(250.0, $result->getTotalSpent());
         self::assertEquals(0.0, $result->getTotalForecast());
@@ -104,7 +104,7 @@ class EntryManagerTest extends TestCase
         ];
 
         $this->expectBalance($expectedData);
-        $result = $this->createEntryManagerMock()->balance();
+        $result = $this->createEntryManagerMock()->balance(new GetEntryBalanceQuery());
 
         self::assertEquals(0.0, $result->getTotalSpent());
         self::assertEquals(500.0, $result->getTotalForecast()); // 180.0 + 320.0
@@ -115,7 +115,7 @@ class EntryManagerTest extends TestCase
         $expectedData = [];
 
         $this->expectBalance($expectedData);
-        $result = $this->createEntryManagerMock()->balance();
+        $result = $this->createEntryManagerMock()->balance(new GetEntryBalanceQuery());
 
         self::assertEquals(0.0, $result->getTotalSpent());
         self::assertEquals(0.0, $result->getTotalForecast());

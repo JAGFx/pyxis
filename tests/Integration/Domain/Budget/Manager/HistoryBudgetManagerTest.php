@@ -5,7 +5,7 @@ namespace App\Tests\Integration\Domain\Budget\Manager;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Message\Command\HistoryCreateCommand;
+use App\Domain\Budget\Message\Command\CreateHistoryBudgetCommand;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\HistoryBudgetFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
@@ -34,7 +34,7 @@ class HistoryBudgetManagerTest extends KernelTestCase
             'enabled' => true,
         ])->_real();
 
-        $command = new HistoryCreateCommand(
+        $command = new CreateHistoryBudgetCommand(
             budget: $budget,
             amount: 1200.0,
             date: new DateTimeImmutable(),
@@ -65,7 +65,7 @@ class HistoryBudgetManagerTest extends KernelTestCase
             'budget'           => $budget,
         ])->_real();
 
-        $this->objectMapper->map($historyBudget, HistoryCreateCommand::class);
+        $this->objectMapper->map($historyBudget, CreateHistoryBudgetCommand::class);
 
         $this->expectNotToPerformAssertions();
     }

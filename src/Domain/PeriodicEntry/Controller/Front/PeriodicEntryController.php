@@ -5,8 +5,8 @@ namespace App\Domain\PeriodicEntry\Controller\Front;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchType;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
-use App\Domain\PeriodicEntry\Message\Command\PeriodicEntryRemoveCommand;
-use App\Domain\PeriodicEntry\Message\Query\PeriodicEntrySearchQuery;
+use App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntryCommand;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +26,7 @@ class PeriodicEntryController extends AbstractController
     #[Route('/{id}/remove', 'front_periodic_entry_remove', requirements: ['id' => '\d+'], methods: Request::METHOD_GET)]
     public function remove(PeriodicEntry $periodicEntry, Request $request): Response
     {
-        $this->periodicEntryManager->remove(new PeriodicEntryRemoveCommand($periodicEntry));
+        $this->periodicEntryManager->remove(new RemovePeriodicEntryCommand($periodicEntry));
 
         return $this->renderTurboStream($request, 'domain/periodic_entry/turbo/remove.turbo.stream.html.twig', [
             'periodicEntryId' => $periodicEntry->getId(),
@@ -36,7 +36,7 @@ class PeriodicEntryController extends AbstractController
     #[Route('/search', name: 'front_periodic_entry_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
-        $searchQuery = new PeriodicEntrySearchQuery()->setOrderBy('name');
+        $searchQuery = new FindPeriodicEntriesQuery()->setOrderBy('name');
 
         $this->createForm(PeriodicEntrySearchType::class, $searchQuery)
             ->handleRequest($request);

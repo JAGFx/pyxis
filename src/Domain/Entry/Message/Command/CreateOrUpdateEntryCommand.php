@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints\NotEqualTo;
 use Symfony\Component\Validator\Constraints\NotNull;
 
 #[Map(Entry::class)]
-class EntryCreateOrUpdateCommand implements CommandInterface
+class CreateOrUpdateEntryCommand implements CommandInterface
 {
     public function __construct(
         #[NotNull]
@@ -37,7 +37,7 @@ class EntryCreateOrUpdateCommand implements CommandInterface
         return $this->account;
     }
 
-    public function setAccount(?Account $account): EntryCreateOrUpdateCommand
+    public function setAccount(?Account $account): CreateOrUpdateEntryCommand
     {
         $this->account = $account;
 
@@ -49,7 +49,7 @@ class EntryCreateOrUpdateCommand implements CommandInterface
         return $this->name;
     }
 
-    public function setName(string $name): EntryCreateOrUpdateCommand
+    public function setName(string $name): CreateOrUpdateEntryCommand
     {
         $this->name = $name;
 
@@ -61,7 +61,7 @@ class EntryCreateOrUpdateCommand implements CommandInterface
         return $this->amount;
     }
 
-    public function setAmount(float $amount): EntryCreateOrUpdateCommand
+    public function setAmount(float $amount): CreateOrUpdateEntryCommand
     {
         $this->amount = $amount;
 
@@ -73,7 +73,7 @@ class EntryCreateOrUpdateCommand implements CommandInterface
         return $this->budget;
     }
 
-    public function setBudget(?Budget $budget): EntryCreateOrUpdateCommand
+    public function setBudget(?Budget $budget): CreateOrUpdateEntryCommand
     {
         $this->budget = $budget;
 
@@ -91,7 +91,7 @@ class EntryCreateOrUpdateCommand implements CommandInterface
     /**
      * @param EntryFlagEnum[] $flags
      */
-    public function setFlags(array $flags): EntryCreateOrUpdateCommand
+    public function setFlags(array $flags): CreateOrUpdateEntryCommand
     {
         $this->flags = $flags;
 
@@ -103,7 +103,7 @@ class EntryCreateOrUpdateCommand implements CommandInterface
         return $this->origin;
     }
 
-    public function setOrigin(?Entry $origin): EntryCreateOrUpdateCommand
+    public function setOrigin(?Entry $origin): CreateOrUpdateEntryCommand
     {
         $this->origin = $origin;
 

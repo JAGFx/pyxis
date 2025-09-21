@@ -5,8 +5,8 @@ namespace App\Domain\Account\Controller\Back;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountCreateOrUpdateType;
 use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Account\Message\Command\AccountCreateOrUpdateCommand;
-use App\Domain\Account\Message\Query\AccountSearchQuery;
+use App\Domain\Account\Message\Command\CreateOrUpdateAccountCommand;
+use App\Domain\Account\Message\Query\FindAccountsQuery;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
@@ -29,7 +29,7 @@ class AccountController extends AbstractController
     #[Route(name: 'back_account_list', methods: Request::METHOD_GET)]
     public function index(): Response
     {
-        $searchQuery = new AccountSearchQuery()->setOrderBy('name');
+        $searchQuery = new FindAccountsQuery()->setOrderBy('name');
         $accounts    = $this->accountManager->getAccounts($searchQuery);
 
         return $this->render('domain/account/index.html.twig', [
@@ -53,8 +53,8 @@ class AccountController extends AbstractController
     private function handleForm(ControllerActionEnum $action, Request $request, ?Account $account = null): Response
     {
         $accountCommand = is_null($account)
-            ? new AccountCreateOrUpdateCommand()
-            : $this->objectMapper->map($account, AccountCreateOrUpdateCommand::class);
+            ? new CreateOrUpdateAccountCommand()
+            : $this->objectMapper->map($account, CreateOrUpdateAccountCommand::class);
 
         $form = $this
             ->createForm(AccountCreateOrUpdateType::class, $accountCommand)

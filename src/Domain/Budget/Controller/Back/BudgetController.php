@@ -6,12 +6,12 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetAccountBalanceType;
 use App\Domain\Budget\Form\BudgetCreateOrUpdateType;
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Message\Command\BudgetAccountBalanceCommand;
-use App\Domain\Budget\Message\Command\BudgetCreateOrUpdateCommand;
-use App\Domain\Budget\Message\Query\BudgetSearchQuery;
+use App\Domain\Budget\Message\Command\CreateOrUpdateBudgetCommand;
+use App\Domain\Budget\Message\Query\FindBudgetsQuery;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Factory\MenuConfigurationFactory;
+use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Operator\BudgetOperator;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,7 +35,7 @@ class BudgetController extends AbstractController
     #[Route(name: 'back_budget_list', methods: Request::METHOD_GET)]
     public function list(): Response
     {
-        $searchQuery = new BudgetSearchQuery()->setOrderBy('name');
+        $searchQuery = new FindBudgetsQuery()->setOrderBy('name');
 
         return $this->render('domain/budget/index.html.twig', [
             'budgets' => $this->budgetManager->getBudgets($searchQuery),
@@ -60,14 +60,14 @@ class BudgetController extends AbstractController
     #[IsGranted(BudgetVoter::BALANCE, 'budget')]
     public function balance(Request $request, Budget $budget): Response
     {
-        $budgetAccountBalanceCommand = new BudgetAccountBalanceCommand($budget);
+        $getBudgetAccountBalanceCommand = new GetBudgetAccountBalanceCommand($budget);
 
         $form = $this
-            ->createForm(BudgetAccountBalanceType::class, $budgetAccountBalanceCommand)
+            ->createForm(BudgetAccountBalanceType::class, $getBudgetAccountBalanceCommand)
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->budgetOperator->balancing($budgetAccountBalanceCommand);
+            $this->budgetOperator->balancing($getBudgetAccountBalanceCommand);
 
             return $this->redirectToRoute('back_budget_list');
         }
@@ -81,8 +81,8 @@ class BudgetController extends AbstractController
     private function handleForm(ControllerActionEnum $action, Request $request, ?Budget $budget = null): Response
     {
         $budgetCommand = is_null($budget)
-            ? new BudgetCreateOrUpdateCommand()
-            : $this->objectMapper->map($budget, BudgetCreateOrUpdateCommand::class);
+            ? new CreateOrUpdateBudgetCommand()
+            : $this->objectMapper->map($budget, CreateOrUpdateBudgetCommand::class);
 
         $form = $this->createForm(BudgetCreateOrUpdateType::class, $budget)
             ->handleRequest($request);

@@ -2,7 +2,7 @@
 
 namespace App\Domain\Account\Form;
 
-use App\Domain\Account\Message\Command\AccountCreateOrUpdateCommand;
+use App\Domain\Account\Message\Command\CreateOrUpdateAccountCommand;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,7 +19,7 @@ class AccountCreateOrUpdateType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => AccountCreateOrUpdateCommand::class,
+            'data_class'         => CreateOrUpdateAccountCommand::class,
             'label_format'       => 'account.form.%name%.label',
             'translation_domain' => 'forms',
         ]);

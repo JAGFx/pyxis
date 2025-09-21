@@ -7,14 +7,16 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Message\Command\BudgetAccountBalanceCommand;
-use App\Domain\Budget\Message\Query\BudgetSearchQuery;
+use App\Domain\Budget\Message\Query\FindBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindBudgetVOQuery;
+use App\Domain\Budget\Message\Query\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\EntryCreateOrUpdateCommand;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
+use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Utils\YearRange;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -32,10 +34,14 @@ readonly class BudgetOperator
     /**
      * @return BudgetBalanceProgressValueObject[]
      */
-    public function getBudgetBalanceProgresses(BudgetSearchQuery $searchQuery): array
+    public function getBudgetBalanceProgresses(FindBudgetsQuery $searchQuery): array
     {
         if (YearRange::current() === $searchQuery->getYear()) {
-            $budgetsVO = $this->budgetManager->getBudgetValuesObject($searchQuery);
+            $budgetsVO = $this->budgetManager->getBudgetValuesObject(
+                new FindBudgetVOQuery()
+                    ->setShowCredits($searchQuery->getShowCredits())
+                    ->setYear(YearRange::current())
+            );
 
             return array_map(
                 fn (BudgetValueObject $budgetValueObject): BudgetBalanceProgressValueObject => new BudgetBalanceProgressValueObject(
@@ -49,7 +55,11 @@ readonly class BudgetOperator
             );
         }
 
-        $histories = $this->historyBudgetManager->getHistories($searchQuery);
+        $histories = $this->historyBudgetManager->getHistories(
+            new FindHistoryBudgetsQuery(
+                year: $searchQuery->getYear()
+            )
+        );
 
         return array_map(
             fn (HistoryBudget $history): BudgetBalanceProgressValueObject => new BudgetBalanceProgressValueObject(
@@ -88,20 +98,20 @@ readonly class BudgetOperator
         return $cashFlows;
     }
 
-    public function balancing(BudgetAccountBalanceCommand $budgetAccountBalance): void
+    public function balancing(GetBudgetAccountBalanceCommand $budgetAccountBalance): void
     {
         $budget  = $budgetAccountBalance->getBudget();
         $account = $budgetAccountBalance->getAccount();
 
         if ($budget->hasPositiveCashFlow() || $budget->hasNegativeCashFlow()) {
-            $spentCommand = new EntryCreateOrUpdateCommand(
+            $spentCommand = new CreateOrUpdateEntryCommand(
                 account: $account,
                 name: $budget->getName(),
                 amount: $budget->getCashFlow(),
                 flags: [EntryFlagEnum::BALANCE],
             );
 
-            $forecastCommand = new EntryCreateOrUpdateCommand(
+            $forecastCommand = new CreateOrUpdateEntryCommand(
                 account: $account,
                 name: $budget->getName(),
                 amount: -$budget->getCashFlow(),
