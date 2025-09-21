@@ -6,6 +6,7 @@ use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
 use App\Shared\Operator\PeriodicEntryOperator;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -23,6 +24,7 @@ readonly class ApplyPeriodicEntryConsoleCommand
         private LoggerInterface $logger,
         private PeriodicEntryOperator $periodicEntryOperator,
         private PeriodicEntryManager $periodicEntryManager,
+        private EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -38,7 +40,7 @@ readonly class ApplyPeriodicEntryConsoleCommand
                     $this->periodicEntryOperator->addSplitForBudgets($periodicEntry);
                     $periodicEntry->setLastExecutionDate(new DateTimeImmutable());
 
-                    $this->periodicEntryManager->update();
+                    $this->entityManager->flush();
                 } catch (PeriodicEntrySplitBudgetException $exception) {
                     $symfonyStyle->info($exception->getMessage());
                     $this->logger->info($exception->getMessage(), [

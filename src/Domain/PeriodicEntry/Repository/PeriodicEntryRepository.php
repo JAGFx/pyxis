@@ -4,7 +4,7 @@ namespace App\Domain\PeriodicEntry\Repository;
 
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Request\PeriodicEntrySearchRequest;
+use App\Domain\PeriodicEntry\Message\Query\PeriodicEntrySearchQuery;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -33,40 +33,40 @@ class PeriodicEntryRepository extends ServiceEntityRepository
         return $this;
     }
 
-    public function getPeriodicEntriesQueryBuilder(?PeriodicEntrySearchRequest $searchRequest = null): QueryBuilder
+    public function getPeriodicEntriesQueryBuilder(?PeriodicEntrySearchQuery $searchQuery = null): QueryBuilder
     {
-        $searchRequest ??= new PeriodicEntrySearchRequest();
+        $searchQuery ??= new PeriodicEntrySearchQuery();
 
         $queryBuilder = $this
             ->createQueryBuilder('p');
 
-        if (null !== $searchRequest->getName()) {
+        if (null !== $searchQuery->getName()) {
             $queryBuilder
                 ->andWhere('p.name LIKE :name')
-                ->setParameter('name', '%' . $searchRequest->getName() . '%')
+                ->setParameter('name', '%' . $searchQuery->getName() . '%')
             ;
         }
 
-        if (EntryTypeEnum::TYPE_SPENT === $searchRequest->getEntryTypeEnum()) {
+        if (EntryTypeEnum::TYPE_SPENT === $searchQuery->getEntryTypeEnum()) {
             $queryBuilder
                 ->andWhere('p.budgets IS EMPTY')
                 ->andWhere('p.amount IS NOT NULL')
             ;
         }
 
-        if (EntryTypeEnum::TYPE_FORECAST === $searchRequest->getEntryTypeEnum()) {
+        if (EntryTypeEnum::TYPE_FORECAST === $searchQuery->getEntryTypeEnum()) {
             $queryBuilder
                 ->andWhere('p.budgets IS NOT EMPTY')
                 ->andWhere('p.amount IS NULL')
             ;
         }
 
-        switch ($searchRequest->getOrderBy()) {
+        switch ($searchQuery->getOrderBy()) {
             case 'name':
-                $queryBuilder->orderBy('p.name', $searchRequest->getOrderDirection()->value);
+                $queryBuilder->orderBy('p.name', $searchQuery->getOrderDirection()->value);
                 break;
             default:
-                $queryBuilder->orderBy('p.id', $searchRequest->getOrderDirection()->value);
+                $queryBuilder->orderBy('p.id', $searchQuery->getOrderDirection()->value);
                 break;
         }
 

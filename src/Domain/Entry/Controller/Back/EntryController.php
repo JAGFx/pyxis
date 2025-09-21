@@ -75,6 +75,7 @@ class EntryController extends AbstractController
             if (ControllerActionEnum::CREATE === $type) {
                 $this->entryManager->create($entryCommand);
             } else {
+                $entryCommand->setOrigin($entry);
                 $this->entryManager->update($entryCommand);
             }
 
