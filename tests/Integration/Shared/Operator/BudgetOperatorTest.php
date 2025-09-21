@@ -4,7 +4,6 @@ namespace App\Tests\Integration\Shared\Operator;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Message\Command\BudgetAccountBalanceCommand;
 use App\Domain\Budget\Message\Query\BudgetSearchQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;

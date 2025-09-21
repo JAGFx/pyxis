@@ -2,11 +2,11 @@
 
 namespace App\Shared\Operator;
 
-use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
+use App\Domain\Budget\Message\Command\HistoryCreateCommand;
 use App\Domain\Budget\Message\Query\BudgetSearchQuery;
-use App\Domain\Budget\Request\HistoryBudgetSearchRequest;
+use App\Domain\Budget\Message\Query\HistoryBudgetSearchQuery;
 use App\Shared\Utils\YearRange;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -36,7 +36,7 @@ readonly class HistoryBudgetOperator
             }
 
             $historyBudgets = $this->historyBudgetManager->getHistories(
-                new HistoryBudgetSearchRequest(
+                new HistoryBudgetSearchQuery(
                     $budget,
                     $year
                 )
@@ -50,16 +50,16 @@ readonly class HistoryBudgetOperator
                 ? ($budgetValue->getProgress(true) / $budget->getAmount()) * 100
                 : 0.0;
 
-            $historyBudget = new HistoryBudget()
-                ->setBudget($budget)
-                ->setAmount($budget->getAmount())
-                ->setDate(YearRange::firstDayOf($year))
-                ->setSpent($budgetValue->getProgress(true))
-                ->setRelativeProgress($relativeProgress)
-            ;
+            $createCommand = new HistoryCreateCommand(
+                $budget,
+                $budget->getAmount(),
+                YearRange::firstDayOf($year),
+                $budgetValue->getProgress(true),
+                $relativeProgress,
+            );
 
             try {
-                $this->historyBudgetManager->create($historyBudget);
+                $this->historyBudgetManager->create($createCommand);
             } catch (Throwable $throwable) {
                 $this->logger->error($throwable->getMessage(), [
                     'budget_id' => $budget->getId(),

@@ -3,22 +3,28 @@
 namespace App\Domain\Budget\Manager;
 
 use App\Domain\Budget\Entity\HistoryBudget;
+use App\Domain\Budget\Message\Command\HistoryCreateCommand;
 use App\Domain\Budget\Message\Query\BudgetSearchQuery;
+use App\Domain\Budget\Message\Query\HistoryBudgetSearchQuery;
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
-use App\Domain\Budget\Request\HistoryBudgetSearchRequest;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 readonly class HistoryBudgetManager
 {
     public function __construct(
         private HistoryBudgetRepository $repository,
         private EntityManagerInterface $entityManager,
+        private ObjectMapperInterface $objectMapper,
     ) {
     }
 
-    public function create(HistoryBudget $entity, bool $flush = true): void
+    public function create(HistoryCreateCommand $command, bool $flush = true): void
     {
-        $this->repository->create($entity);
+        /** @var HistoryBudget $historyBudget */
+        $historyBudget = $this->objectMapper->map($command, HistoryBudget::class);
+
+        $this->repository->create($historyBudget);
 
         if ($flush) {
             $this->entityManager->flush();
@@ -42,7 +48,7 @@ readonly class HistoryBudgetManager
     /**
      * @return HistoryBudget[]
      */
-    public function getHistories(BudgetSearchQuery|HistoryBudgetSearchRequest $searchQuery): array
+    public function getHistories(BudgetSearchQuery|HistoryBudgetSearchQuery $searchQuery): array
     {
         /** @var HistoryBudget[] $histories */
         $histories = $this->repository
