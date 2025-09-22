@@ -3,8 +3,10 @@
 namespace App\Domain\Budget\Message\Query;
 
 use App\Domain\Budget\Entity\Budget;
+use App\Shared\Cqs\Message\Query\QueryInterface;
 
-class FindHistoryBudgetsQuery
+// TODO: Add a way to fail linter if implement right interface
+class FindHistoryBudgetsQuery implements QueryInterface
 {
     public function __construct(
         private ?Budget $budget = null,

@@ -2,7 +2,7 @@
 
 namespace App\Domain\Assignment\Validator;
 
-use App\Domain\Assignment\Entity\Assignment;
+use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignmentCommand;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -27,7 +27,7 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
             throw new InvalidArgumentException(sprintf('Expected instance of %s, got %s', AmountLessOrEqualTotalValueAccount::class, get_debug_type($constraint)));
         }
 
-        if (!$value instanceof Assignment) {
+        if (!$value instanceof CreateOrUpdateAssignmentCommand) {
             return;
         }
 

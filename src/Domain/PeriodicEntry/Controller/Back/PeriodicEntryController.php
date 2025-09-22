@@ -8,21 +8,27 @@ use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
 use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntryCommand;
 use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
 use App\Shared\Controller\ControllerActionEnum;
+use App\Shared\Controller\FormErrorMappingTrait;
 use App\Shared\Factory\MenuConfigurationFactory;
+use App\Shared\Validation\ValidationGroupEnum;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/periodic_entries')]
 class PeriodicEntryController extends AbstractController
 {
+    use FormErrorMappingTrait;
+
     public function __construct(
         private readonly PeriodicEntryManager $periodicEntryManager,
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly ObjectMapperInterface $objectMapper,
+        private readonly ValidatorInterface $validator,
     ) {
     }
 
@@ -60,14 +66,20 @@ class PeriodicEntryController extends AbstractController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (ControllerActionEnum::CREATE === $type) {
-                $this->periodicEntryManager->create($periodicEntryCommand);
-            } else {
-                $periodicEntryCommand->setOrigin($periodicEntry);
-                $this->periodicEntryManager->update($periodicEntryCommand);
+            $violations = $this->validator->validate($periodicEntryCommand, groups: [ValidationGroupEnum::Business->value]);
+
+            if (0 === $violations->count()) {
+                if (ControllerActionEnum::CREATE === $type) {
+                    $this->periodicEntryManager->create($periodicEntryCommand);
+                } else {
+                    $periodicEntryCommand->setOrigin($periodicEntry);
+                    $this->periodicEntryManager->update($periodicEntryCommand);
+                }
+
+                return $this->redirectToRoute('back_periodic_entry_list');
             }
 
-            return $this->redirectToRoute('back_periodic_entry_list');
+            $this->mapBusinessErrorsToForm($violations, $form);
         }
 
         return $this->render('domain/periodic_entry/form.html.twig', [

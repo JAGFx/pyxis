@@ -4,8 +4,9 @@ namespace App\Domain\Budget\Message\Query;
 
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
+use App\Shared\Cqs\Message\Query\QueryInterface;
 
-class FindBudgetsQuery implements OrderableInterface
+class FindBudgetsQuery implements OrderableInterface, QueryInterface
 {
     use OrderableTrait;
 

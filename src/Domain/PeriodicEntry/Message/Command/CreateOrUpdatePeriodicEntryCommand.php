@@ -8,6 +8,7 @@ use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use App\Shared\Entity\EntityCollectionTrait;
+use App\Shared\Validation\ValidationGroupEnum;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -35,13 +36,15 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
             constraints: [
                 new GreaterThan(0.0),
                 new NotNull(),
-            ]
+            ],
+            groups: [ValidationGroupEnum::Business->value]
         )]
         #[When(
             expression: 'this.isForecast()',
             constraints: [
                 new IsNull(),
-            ]
+            ],
+            groups: [ValidationGroupEnum::Business->value]
         )]
         private ?float $amount = null,
 

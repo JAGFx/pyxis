@@ -16,9 +16,6 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotEqualTo;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 #[Entity(repositoryClass: EntryRepository::class)]
 class Entry
@@ -39,17 +36,13 @@ class Entry
     private ?int $id = null;
 
     #[Column(type: Types::FLOAT)]
-    #[NotBlank]
-    #[NotEqualTo(0)]
     private float $amount = 0;
 
     #[ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'entries')]
-    #[NotBlank(allowNull: true)]
     private ?Budget $budget = null;
 
     #[ManyToOne(inversedBy: 'entries')]
     #[JoinColumn(nullable: false)]
-    #[NotNull]
     private ?Account $account = null;
 
     /** @var EntryFlagEnum[] */

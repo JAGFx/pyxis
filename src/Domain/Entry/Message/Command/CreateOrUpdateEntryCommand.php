@@ -18,15 +18,20 @@ class CreateOrUpdateEntryCommand implements CommandInterface
     public function __construct(
         #[NotNull]
         private ?Account $account = null,
+
         #[NotBlank]
         private string $name = '',
+
         #[NotEqualTo(0)]
         private float $amount = 0.0,
+
         private ?Budget $budget = null,
+
         /**
          * @var EntryFlagEnum[]
          */
         private array $flags = [],
+
         #[Map(if: false)]
         private ?Entry $origin = null,
     ) {

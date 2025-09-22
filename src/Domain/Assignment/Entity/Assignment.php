@@ -4,15 +4,10 @@ namespace App\Domain\Assignment\Entity;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Repository\AssignmentRepository;
-use App\Domain\Assignment\Validator\AmountLessOrEqualTotalValueAccount;
 use App\Shared\Entity\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\Positive;
 
 #[ORM\Entity(repositoryClass: AssignmentRepository::class)]
-#[AmountLessOrEqualTotalValueAccount]
 class Assignment
 {
     use TimestampableTrait;
@@ -23,17 +18,13 @@ class Assignment
     private ?int $id = null;
 
     #[ORM\Column]
-    #[NotBlank]
     private string $name;
 
     #[ORM\Column]
-    #[NotBlank]
-    #[Positive]
     private float $amount;
 
     #[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'assignments')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    #[NotNull]
     private Account $account;
 
     public function getId(): ?int

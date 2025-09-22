@@ -5,13 +5,13 @@ namespace App\Domain\Account\Message\Command;
 use App\Domain\Account\Entity\Account;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use Symfony\Component\ObjectMapper\Attribute\Map;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[Map(Account::class)]
 class CreateOrUpdateAccountCommand implements CommandInterface
 {
     public function __construct(
-        #[NotBlank]
+        #[Assert\NotBlank]
         private string $name = '',
 
         #[Map(if: false)]

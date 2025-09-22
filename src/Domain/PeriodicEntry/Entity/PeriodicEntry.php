@@ -15,11 +15,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
-use Symfony\Component\Validator\Constraints\GreaterThan;
-use Symfony\Component\Validator\Constraints\IsNull;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\When;
 
 // TODO: Add a suspend feature
 #[ORM\Entity(repositoryClass: PeriodicEntryRepository::class)]
@@ -35,27 +30,12 @@ class PeriodicEntry
     private ?int $id = null;
 
     #[ORM\Column]
-    #[NotBlank]
     private string $name;
 
     #[ORM\Column(type: Types::FLOAT, nullable: true)]
-    #[When(
-        expression: 'this.isSpent()',
-        constraints: [
-            new GreaterThan(0.0),
-            new NotBlank(),
-        ]
-    )]
-    #[When(
-        expression: 'this.isForecast()',
-        constraints: [
-            new IsNull(),
-        ]
-    )]
     private ?float $amount = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    #[NotBlank]
     private DateTimeImmutable $executionDate;
 
     /**
@@ -66,7 +46,6 @@ class PeriodicEntry
 
     #[ManyToOne(inversedBy: 'entries')]
     #[JoinColumn(nullable: false)]
-    #[NotNull]
     private ?Account $account = null;
 
     #[ORM\Column(nullable: true)]

@@ -4,23 +4,29 @@ namespace App\Domain\Assignment\Message\Command;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Entity\Assignment;
+use App\Domain\Assignment\Validator\AmountLessOrEqualTotalValueAccount;
 use App\Shared\Cqs\Message\Command\CommandInterface;
+use App\Shared\Validation\ValidationGroupEnum;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Positive;
 
 #[Map(Assignment::class)]
+#[AmountLessOrEqualTotalValueAccount(groups: [ValidationGroupEnum::Business->value])]
 class CreateOrUpdateAssignmentCommand implements CommandInterface
 {
     public function __construct(
         #[NotBlank]
         private string $name = '',
+
         #[NotBlank]
         #[Positive]
         private float $amount = 0.0,
+
         #[NotNull]
         private ?Account $account = null,
+
         #[Map(if: false)]
         private ?Assignment $origin = null,
     ) {
