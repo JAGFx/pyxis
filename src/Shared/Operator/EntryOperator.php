@@ -26,7 +26,7 @@ readonly class EntryOperator
         $entryBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery($account));
 
         /** @var float $assignmentsBalance */
-        $assignmentsBalance = $this->messageBus->dispatch(new GetAssignmentBalanceQuery($account));
+        $assignmentsBalance = $this->messageBus->dispatch(new GetAssignmentBalanceQuery($account?->getId()));
 
         $totalSpent = $entryBalance->getTotalSpent() - $assignmentsBalance;
 

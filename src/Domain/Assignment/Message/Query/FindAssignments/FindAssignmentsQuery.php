@@ -2,7 +2,6 @@
 
 namespace App\Domain\Assignment\Message\Query\FindAssignments;
 
-use App\Domain\Account\Entity\Account;
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 use App\Shared\Cqs\Message\Query\QueryInterface;
@@ -15,19 +14,19 @@ class FindAssignmentsQuery implements OrderableInterface, QueryInterface
     use OrderableTrait;
 
     public function __construct(
-        private ?Account $account = null,
+        private ?int $accountId = null,
         private ?string $name = null,
     ) {
     }
 
-    public function getAccount(): ?Account
+    public function getAccountId(): ?int
     {
-        return $this->account;
+        return $this->accountId;
     }
 
-    public function setAccount(?Account $account): FindAssignmentsQuery
+    public function setAccountId(?int $accountId): FindAssignmentsQuery
     {
-        $this->account = $account;
+        $this->accountId = $accountId;
 
         return $this;
     }

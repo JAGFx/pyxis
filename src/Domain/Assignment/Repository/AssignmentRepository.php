@@ -25,10 +25,10 @@ class AssignmentRepository extends ServiceEntityRepository
             ->createQueryBuilder('a')
         ;
 
-        if (!is_null($searchQuery->getAccount())) {
+        if (!is_null($searchQuery->getAccountId())) {
             $queryBuilder
                 ->andWhere('a.account = :account')
-                ->setParameter('account', $searchQuery->getAccount());
+                ->setParameter('account', $searchQuery->getAccountId());
         }
 
         if (!is_null($searchQuery->getName())) {
@@ -55,10 +55,10 @@ class AssignmentRepository extends ServiceEntityRepository
             ->createQueryBuilder('a')
             ->select('SUM(a.amount) as sum');
 
-        if (!is_null($query->getAccount())) {
+        if (!is_null($query->getAccountId())) {
             $queryBuilder
                 ->andWhere('a.account = :account')
-                ->setParameter('account', $query->getAccount());
+                ->setParameter('account', $query->getAccountId());
         }
 
         return $queryBuilder;

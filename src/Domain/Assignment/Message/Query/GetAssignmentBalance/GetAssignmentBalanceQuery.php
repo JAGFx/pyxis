@@ -2,7 +2,6 @@
 
 namespace App\Domain\Assignment\Message\Query\GetAssignmentBalance;
 
-use App\Domain\Account\Entity\Account;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
 /**
@@ -11,18 +10,18 @@ use App\Shared\Cqs\Message\Query\QueryInterface;
 class GetAssignmentBalanceQuery implements QueryInterface
 {
     public function __construct(
-        private ?Account $account = null,
+        private ?int $accountId = null,
     ) {
     }
 
-    public function getAccount(): ?Account
+    public function getAccountId(): ?int
     {
-        return $this->account;
+        return $this->accountId;
     }
 
-    public function setAccount(?Account $account): GetAssignmentBalanceQuery
+    public function setAccountId(?int $accountId): GetAssignmentBalanceQuery
     {
-        $this->account = $account;
+        $this->accountId = $accountId;
 
         return $this;
     }

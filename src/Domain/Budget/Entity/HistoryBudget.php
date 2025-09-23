@@ -3,21 +3,18 @@
 namespace App\Domain\Budget\Entity;
 
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
+use App\Shared\Entity\EntityIntIdentifierInterface;
+use App\Shared\Entity\EntityIntIdentifierTrait;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity(repositoryClass: HistoryBudgetRepository::class)]
-class HistoryBudget
+class HistoryBudget implements EntityIntIdentifierInterface
 {
-    #[Id]
-    #[Column]
-    #[GeneratedValue]
-    private ?int $id = null;
+    use EntityIntIdentifierTrait;
 
     #[Column(type: Types::DATE_IMMUTABLE)]
     private ?DateTimeImmutable $date = null;
@@ -37,11 +34,6 @@ class HistoryBudget
     public function getStatus(): BudgetStatusEnum
     {
         return BudgetStatusEnum::statusByProgress($this->relativeProgress ?? 0.0);
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getDate(): ?DateTimeImmutable

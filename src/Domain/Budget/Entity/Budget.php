@@ -8,6 +8,8 @@ use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Shared\Entity\EntityCollectionTrait;
+use App\Shared\Entity\EntityIntIdentifierInterface;
+use App\Shared\Entity\EntityIntIdentifierTrait;
 use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use App\Shared\Utils\YearRange;
@@ -18,17 +20,13 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
-class Budget
+class Budget implements EntityIntIdentifierInterface
 {
     use BudgetProgressTrait;
     use TimestampableTrait;
     use NameableTrait;
     use EntityCollectionTrait;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $id = null;
+    use EntityIntIdentifierTrait;
 
     #[ORM\Column(type: Types::FLOAT)]
     private float $amount;
@@ -98,11 +96,6 @@ class Budget
         $this->createdAt       = new DateTimeImmutable();
         $this->periodicEntries = new ArrayCollection();
         $this->entries         = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getAmount(): float

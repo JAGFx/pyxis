@@ -4,18 +4,16 @@ namespace App\Domain\Assignment\Entity;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Repository\AssignmentRepository;
+use App\Shared\Entity\EntityIntIdentifierInterface;
+use App\Shared\Entity\EntityIntIdentifierTrait;
 use App\Shared\Entity\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AssignmentRepository::class)]
-class Assignment
+class Assignment implements EntityIntIdentifierInterface
 {
     use TimestampableTrait;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    use EntityIntIdentifierTrait;
 
     #[ORM\Column]
     private string $name;
@@ -26,11 +24,6 @@ class Assignment
     #[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'assignments')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private Account $account;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getName(): string
     {

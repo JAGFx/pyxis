@@ -6,6 +6,8 @@ use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Entry\Entity\Entry;
 use App\Shared\Entity\EntityCollectionTrait;
+use App\Shared\Entity\EntityIntIdentifierInterface;
+use App\Shared\Entity\EntityIntIdentifierTrait;
 use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
@@ -15,16 +17,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
-class Account
+class Account implements EntityIntIdentifierInterface
 {
     use TimestampableTrait;
     use NameableTrait;
     use EntityCollectionTrait;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $id = null;
+    use EntityIntIdentifierTrait;
 
     /**
      * @var Collection<int, Entry>
@@ -46,11 +44,6 @@ class Account
         $this->createdAt   = new DateTimeImmutable();
         $this->entries     = new ArrayCollection();
         $this->assignments = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     /**

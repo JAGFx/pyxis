@@ -6,34 +6,30 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Repository\EntryRepository;
 use App\Shared\Entity\EntityCollectionTrait;
+use App\Shared\Entity\EntityIntIdentifierInterface;
+use App\Shared\Entity\EntityIntIdentifierTrait;
 use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\Mapping\GeneratedValue;
-use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity(repositoryClass: EntryRepository::class)]
-class Entry
+class Entry implements EntityIntIdentifierInterface
 {
     use TimestampableTrait;
     use NameableTrait;
     use EntityCollectionTrait;
+    use EntityIntIdentifierTrait;
     public const array NON_EDITABLE_FLAGS = [
         EntryFlagEnum::BALANCE,
         EntryFlagEnum::TRANSFERT,
         EntryFlagEnum::PERIODIC_ENTRY,
         EntryFlagEnum::HIDDEN,
     ];
-
-    #[Id]
-    #[GeneratedValue]
-    #[Column(type: Types::INTEGER)]
-    private ?int $id = null;
 
     #[Column(type: Types::FLOAT)]
     private float $amount = 0;
@@ -83,11 +79,6 @@ class Entry
     public function __construct()
     {
         $this->createdAt = new DateTimeImmutable();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getAmount(): ?float

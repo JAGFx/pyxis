@@ -7,6 +7,8 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
 use App\Shared\Entity\EntityCollectionTrait;
+use App\Shared\Entity\EntityIntIdentifierInterface;
+use App\Shared\Entity\EntityIntIdentifierTrait;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -18,16 +20,12 @@ use Doctrine\ORM\Mapping\ManyToOne;
 
 // TODO: Add a suspend feature
 #[ORM\Entity(repositoryClass: PeriodicEntryRepository::class)]
-class PeriodicEntry
+class PeriodicEntry implements EntityIntIdentifierInterface
 {
     use TimestampableTrait;
     use EntityCollectionTrait;
+    use EntityIntIdentifierTrait;
     public const int MONTH_SPLIT = 12;
-
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: Types::INTEGER)]
-    private ?int $id = null;
 
     #[ORM\Column]
     private string $name;
@@ -115,11 +113,6 @@ class PeriodicEntry
         $this->createdAt     = new DateTimeImmutable();
         $this->executionDate = new DateTimeImmutable();
         $this->budgets       = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function setId(?int $id): PeriodicEntry
