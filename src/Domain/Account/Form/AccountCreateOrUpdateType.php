@@ -2,7 +2,7 @@
 
 namespace App\Domain\Account\Form;
 
-use App\Domain\Account\Message\Command\CreateOrUpdateAccountCommand;
+use App\Domain\Account\Message\Command\CreateOrUpdateAccount\CreateOrUpdateAccountCommand;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;

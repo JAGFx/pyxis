@@ -6,8 +6,7 @@ namespace App\Domain\Account\Controller\Front;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountSearchType;
-use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Account\Message\Command\ToggleEnableAccountCommand;
+use App\Domain\Account\Message\Command\ToggleEnableAccount\ToggleEnableAccountCommand;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\Security\AccountVoter;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
@@ -27,12 +26,14 @@ class AccountController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly AccountManager $accountManager,
         private readonly EntryOperator $entryOperator,
         private readonly MessageBus $messageBus,
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/{id}/toggle', name: 'front_account_toggle', methods: [Request::METHOD_GET])]
     public function toggle(Request $request, Account $account): Response
     {
@@ -42,7 +43,7 @@ class AccountController extends AbstractController
             $this->denyAccessUnlessGranted(AccountVoter::ENABLE, $account);
         }
 
-        $this->accountManager->toggle(new ToggleEnableAccountCommand()->setOriginId($account->getId()));
+        $this->messageBus->dispatch(new ToggleEnableAccountCommand()->setOriginId($account->getId()));
 
         $message = 'Compte ';
         $message .= ($account->isEnabled()) ? 'activé' : 'désactivé';

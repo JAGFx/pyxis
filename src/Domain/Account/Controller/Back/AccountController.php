@@ -4,10 +4,8 @@ namespace App\Domain\Account\Controller\Back;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountCreateOrUpdateType;
-use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Account\Message\Command\CreateOrUpdateAccountCommand;
+use App\Domain\Account\Message\Command\CreateOrUpdateAccount\CreateOrUpdateAccountCommand;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
-use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
@@ -22,7 +20,6 @@ use Symfony\Component\Routing\Attribute\Route;
 class AccountController extends AbstractController
 {
     public function __construct(
-        private readonly AccountManager $accountManager,
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly ObjectMapperInterface $objectMapper,
         private readonly MessageBus $messageBus,
@@ -44,19 +41,28 @@ class AccountController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/create', name: 'back_account_new', methods: [Request::METHOD_POST, Request::METHOD_GET])]
     public function create(Request $request): Response
     {
-        return $this->handleForm(ControllerActionEnum::CREATE, $request);
+        return $this->handleForm($request);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/{id}/update', name: 'back_account_edit', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit(Request $request, Account $account): Response
     {
-        return $this->handleForm(ControllerActionEnum::EDIT, $request, $account);
+        return $this->handleForm($request, $account);
     }
 
-    private function handleForm(ControllerActionEnum $action, Request $request, ?Account $account = null): Response
+    /**
+     * @throws ExceptionInterface
+     */
+    private function handleForm(Request $request, ?Account $account = null): Response
     {
         $accountCommand = is_null($account)
             ? new CreateOrUpdateAccountCommand()
@@ -67,15 +73,11 @@ class AccountController extends AbstractController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // TODO: Refactor: Use is_null($account) to determinate the action
-            if (ControllerActionEnum::CREATE === $action) {
-                $this->accountManager->create($accountCommand);
-            } else {
-                /** @var int $accountId */
-                $accountId = $account?->getId();
-                $accountCommand->setOriginId($accountId);
-                $this->accountManager->update($accountCommand);
+            if (!is_null($account)) {
+                $accountCommand->setOriginId($account->getId());
             }
+
+            $this->messageBus->dispatch($accountCommand);
 
             return $this->redirectToRoute('back_account_list');
         }

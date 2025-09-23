@@ -1,25 +1,26 @@
 <?php
 
-namespace App\Tests\Integration\Domain\Account\Manager;
+namespace App\Tests\Integration\Domain\Account\Message\Command\CreateOrUpdateAccount;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Manager\AccountManager;
-use App\Domain\Account\Message\Command\CreateOrUpdateAccountCommand;
+use App\Domain\Account\Message\Command\CreateOrUpdateAccount\CreateOrUpdateAccountCommand;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
-class AccountManagerTest extends KernelTestCase
+class CreateOrUpdateAccountHandlerTest extends KernelTestCase
 {
-    private AccountManager $accountManager;
+    private MessageBus $messageBus;
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        $container            = static::getContainer();
-        $this->accountManager = $container->get(AccountManager::class);
-        $this->objectMapper   = $container->get(ObjectMapperInterface::class);
+        $container = static::getContainer();
+
+        $this->messageBus   = $container->get(MessageBus::class);
+        $this->objectMapper = $container->get(ObjectMapperInterface::class);
     }
 
     public function testCreateDoesNotThrowException(): void
@@ -27,7 +28,7 @@ class AccountManagerTest extends KernelTestCase
         $command = new CreateOrUpdateAccountCommand();
         $command->setName('Test Account');
 
-        $this->accountManager->create($command);
+        $this->messageBus->dispatch($command);
 
         $this->expectNotToPerformAssertions();
     }
@@ -43,7 +44,7 @@ class AccountManagerTest extends KernelTestCase
         $command->setName('Updated Account');
         $command->setOriginId($existingAccount->getId());
 
-        $this->accountManager->update($command);
+        $this->messageBus->dispatch($command);
 
         $this->expectNotToPerformAssertions();
     }
