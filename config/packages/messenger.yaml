@@ -2,6 +2,19 @@ framework:
   messenger:
     failure_transport: failed
 
+    # Bus par défaut pour les messages système (emails, notifications, etc.)
+    default_bus: command.bus
+
+    buses:
+      command.bus:
+        middleware:
+          - validation
+          - doctrine_transaction
+
+      query.bus:
+        middleware:
+          - validation
+
     transports:
       # https://symfony.com/doc/current/messenger.html#transport-configuration
       async:

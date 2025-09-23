@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Domain\Assignment\Message\Query;
+namespace App\Domain\Assignment\Message\Query\FindAssignments;
 
 use App\Domain\Account\Entity\Account;
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
+/**
+ * @see FindAssignmentsHandler
+ */
 class FindAssignmentsQuery implements OrderableInterface, QueryInterface
 {
     use OrderableTrait;

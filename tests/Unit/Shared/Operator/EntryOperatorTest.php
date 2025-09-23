@@ -2,9 +2,9 @@
 
 namespace App\Tests\Unit\Shared\Operator;
 
-use App\Domain\Assignment\Manager\AssignmentManager;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\Entry\ValueObject\EntryBalance;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\EntryOperator;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -13,19 +13,19 @@ use PHPUnit\Framework\TestCase;
 class EntryOperatorTest extends TestCase
 {
     private EntryManager $entryManagerMock;
-    private AssignmentManager $assignmentManagerMock;
+    private MessageBus $messageBusMock;
 
     protected function setUp(): void
     {
-        $this->entryManagerMock      = $this->createMock(EntryManager::class);
-        $this->assignmentManagerMock = $this->createMock(AssignmentManager::class);
+        $this->entryManagerMock = $this->createMock(EntryManager::class);
+        $this->messageBusMock   = $this->createMock(MessageBus::class);
     }
 
     private function generateEntryOperator(): EntryOperator
     {
         return new EntryOperator(
             $this->entryManagerMock,
-            $this->assignmentManagerMock
+            $this->messageBusMock
         );
     }
 
@@ -85,9 +85,9 @@ class EntryOperatorTest extends TestCase
                 $totalForecast ?? 0.0,
             ));
 
-        $this->assignmentManagerMock
+        $this->messageBusMock
             ->expects($this->once())
-            ->method('balance')
+            ->method('dispatch')
             ->willReturn($totalAssignments ?? 0.0);
 
         $entryOperator = $this->generateEntryOperator();

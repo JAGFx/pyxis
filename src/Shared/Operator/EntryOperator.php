@@ -3,25 +3,23 @@
 namespace App\Shared\Operator;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Domain\Assignment\Message\Query\GetAssignmentBalanceQuery;
+use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\Entry\Message\Query\GetEntryBalanceQuery;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\ValueObject\AmountBalance;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 readonly class EntryOperator
 {
     public function __construct(
         private EntryManager $entryManager,
-        private AssignmentManager $assignmentManager,
+        private MessageBus $messageBus,
     ) {
     }
 
     /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
+     * @throws ExceptionInterface
      */
     public function getAmountBalance(?Account $account = null): AmountBalance
     {
@@ -29,9 +27,8 @@ readonly class EntryOperator
             new GetEntryBalanceQuery($account)
         );
 
-        $assignmentsBalance = $this->assignmentManager->balance(
-            new GetAssignmentBalanceQuery($account)
-        );
+        /** @var float $assignmentsBalance */
+        $assignmentsBalance = $this->messageBus->dispatch(new GetAssignmentBalanceQuery($account));
 
         $totalSpent = $entryBalance->getTotalSpent() - $assignmentsBalance;
 

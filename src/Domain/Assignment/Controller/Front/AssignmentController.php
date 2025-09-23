@@ -8,11 +8,13 @@ use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentSearchType;
 use App\Domain\Assignment\Manager\AssignmentManager;
 use App\Domain\Assignment\Message\Command\RemoveAssignmentCommand;
-use App\Domain\Assignment\Message\Query\FindAssignmentsQuery;
+use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
+use App\Shared\Cqs\Bus\MessageBus;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/assignments')]
@@ -22,6 +24,7 @@ class AssignmentController extends AbstractController
 
     public function __construct(
         private readonly AssignmentManager $assignmentManager,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
@@ -36,6 +39,9 @@ class AssignmentController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/search', name: 'front_assignment_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
@@ -44,7 +50,7 @@ class AssignmentController extends AbstractController
         $this->createForm(AssignmentSearchType::class, $searchQuery)
             ->handleRequest($request);
 
-        $assignments = $this->assignmentManager->getAssignments($searchQuery);
+        $assignments = $this->messageBus->dispatch($searchQuery);
 
         return $this->renderTurboStream(
             $request,

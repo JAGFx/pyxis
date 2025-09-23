@@ -3,8 +3,8 @@
 namespace App\Domain\Assignment\Repository;
 
 use App\Domain\Assignment\Entity\Assignment;
-use App\Domain\Assignment\Message\Query\FindAssignmentsQuery;
-use App\Domain\Assignment\Message\Query\GetAssignmentBalanceQuery;
+use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
+use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;

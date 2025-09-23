@@ -8,15 +8,17 @@ use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentCreateOrUpdateType;
 use App\Domain\Assignment\Manager\AssignmentManager;
 use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignmentCommand;
-use App\Domain\Assignment\Message\Query\FindAssignmentsQuery;
+use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Controller\FormErrorMappingTrait;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\Validation\ValidationGroupEnum;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -31,16 +33,21 @@ class AssignmentController extends AbstractController
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly ObjectMapperInterface $objectMapper,
         private readonly ValidatorInterface $validator,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route(name: 'back_assignment_list', methods: [Request::METHOD_GET])]
     public function index(): Response
     {
         $searchQuery = new FindAssignmentsQuery()->setOrderBy('name');
+        $assignments = $this->messageBus->dispatch($searchQuery);
 
         return $this->render('domain/assigment/index.html.twig', [
-            'assignments' => $this->assignmentManager->getAssignments($searchQuery),
+            'assignments' => $assignments,
             'config'      => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::ASSIGNMENT),
         ]);
     }

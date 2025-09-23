@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Domain\Assignment\Message\Query;
+namespace App\Domain\Assignment\Message\Query\GetAssignmentBalance;
 
 use App\Domain\Account\Entity\Account;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
+/**
+ * @see GetAssignmentBalanceHandler
+ */
 class GetAssignmentBalanceQuery implements QueryInterface
 {
     public function __construct(

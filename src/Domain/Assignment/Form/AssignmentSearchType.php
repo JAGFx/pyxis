@@ -7,7 +7,7 @@ namespace App\Domain\Assignment\Form;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Domain\Assignment\Message\Query\FindAssignmentsQuery;
+use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
