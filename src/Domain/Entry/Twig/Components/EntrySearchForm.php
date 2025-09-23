@@ -3,7 +3,7 @@
 namespace App\Domain\Entry\Twig\Components;
 
 use App\Domain\Entry\Form\EntrySearchType;
-use App\Domain\Entry\Message\Query\FindEntriesQuery;
+use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;

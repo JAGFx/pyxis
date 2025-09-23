@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Domain\Entry\Message\Query;
+namespace App\Domain\Entry\Message\Query\GetEntryBalance;
 
 use App\Domain\Account\Entity\Account;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
+/**
+ * @see GetEntryBalanceHandler
+ */
 class GetEntryBalanceQuery implements QueryInterface
 {
     public function __construct(

@@ -6,16 +6,18 @@ use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\Entry\Message\Command\RemoveEntryCommand;
-use App\Domain\Entry\Message\Query\FindEntriesQuery;
+use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -27,6 +29,7 @@ class EntryController extends AbstractController
     public function __construct(
         private readonly EntryManager $entryManager,
         private readonly EntryOperator $entryOperator,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
@@ -53,6 +56,9 @@ class EntryController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/search', name: 'front_entry_search', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function search(Request $request): Response
     {
@@ -67,7 +73,7 @@ class EntryController extends AbstractController
                 $request->request->all(),
             ));
 
-        $entries = $this->entryManager->getPaginated($searchQuery);
+        $entries = $this->messageBus->dispatch($searchQuery);
 
         return $this->renderTurboStream(
             $request,

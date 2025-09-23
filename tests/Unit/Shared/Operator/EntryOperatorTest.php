@@ -2,29 +2,28 @@
 
 namespace App\Tests\Unit\Shared\Operator;
 
-use App\Domain\Entry\Manager\EntryManager;
+use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
+use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
 use App\Domain\Entry\ValueObject\EntryBalance;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\EntryOperator;
 use Generator;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EntryOperatorTest extends TestCase
 {
-    private EntryManager $entryManagerMock;
     private MessageBus $messageBusMock;
 
     protected function setUp(): void
     {
-        $this->entryManagerMock = $this->createMock(EntryManager::class);
-        $this->messageBusMock   = $this->createMock(MessageBus::class);
+        $this->messageBusMock = $this->createMock(MessageBus::class);
     }
 
     private function generateEntryOperator(): EntryOperator
     {
         return new EntryOperator(
-            $this->entryManagerMock,
             $this->messageBusMock
         );
     }
@@ -77,18 +76,21 @@ class EntryOperatorTest extends TestCase
         float $expectedSpent,
         float $expectedForecast,
     ): void {
-        $this->entryManagerMock
-            ->expects($this->once())
-            ->method('balance')
-            ->willReturn(new EntryBalance(
-                $totalSpent ?? 0.0,
-                $totalForecast ?? 0.0,
-            ));
-
         $this->messageBusMock
-            ->expects($this->once())
+            ->expects($this->exactly(2)) // 1 GetEntryBalanceQuery + 1 GetAssignmentBalanceQuery
             ->method('dispatch')
-            ->willReturn($totalAssignments ?? 0.0);
+            ->willReturnCallback(function ($query) use ($totalSpent, $totalForecast, $totalAssignments) {
+                if ($query instanceof GetEntryBalanceQuery) {
+                    return new EntryBalance(
+                        $totalSpent ?? 0.0,
+                        $totalForecast ?? 0.0,
+                    );
+                } elseif ($query instanceof GetAssignmentBalanceQuery) {
+                    return $totalAssignments ?? 0.0;
+                }
+
+                throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
+            });
 
         $entryOperator = $this->generateEntryOperator();
 

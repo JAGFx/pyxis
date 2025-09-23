@@ -4,8 +4,8 @@ namespace App\Shared\Operator;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Query\GetEntryBalanceQuery;
+use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
+use App\Domain\Entry\ValueObject\EntryBalance;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\ValueObject\AmountBalance;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
@@ -13,7 +13,6 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 readonly class EntryOperator
 {
     public function __construct(
-        private EntryManager $entryManager,
         private MessageBus $messageBus,
     ) {
     }
@@ -23,9 +22,8 @@ readonly class EntryOperator
      */
     public function getAmountBalance(?Account $account = null): AmountBalance
     {
-        $entryBalance = $this->entryManager->balance(
-            new GetEntryBalanceQuery($account)
-        );
+        /** @var EntryBalance $entryBalance */
+        $entryBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery($account));
 
         /** @var float $assignmentsBalance */
         $assignmentsBalance = $this->messageBus->dispatch(new GetAssignmentBalanceQuery($account));

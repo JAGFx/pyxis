@@ -7,16 +7,18 @@ use App\Domain\Entry\Form\EntryCreateOrUpdateType;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
-use App\Domain\Entry\Message\Query\FindEntriesQuery;
+use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Shared\Controller\ControllerActionEnum;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -30,9 +32,13 @@ class EntryController extends AbstractController
         private readonly EntryManager $entryManager,
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly ObjectMapperInterface $objectMapper,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route(name: 'back_entry_list', methods: Request::METHOD_GET)]
     public function list(Request $request): Response
     {
@@ -43,7 +49,7 @@ class EntryController extends AbstractController
         $this->handlePaginationForm($request, EntrySearchType::class, $searchQuery);
 
         return $this->render('domain/entry/index.html.twig', [
-            'entries' => $this->entryManager->getPaginated($searchQuery),
+            'entries' => $this->messageBus->dispatch($searchQuery),
             'config'  => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::ENTRY),
         ]);
     }

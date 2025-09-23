@@ -1,36 +1,28 @@
 <?php
 
-namespace App\Tests\Unit\Domain\Entry\Manager;
+namespace App\Tests\Unit\Domain\Entry\Message\Query;
 
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Query\GetEntryBalanceQuery;
+use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceHandler;
+use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
 use App\Domain\Entry\Repository\EntryRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Knp\Component\Pager\PaginatorInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
-class EntryManagerTest extends TestCase
+class GetEntryBalanceHandlerTest extends TestCase
 {
     private EntryRepository $entryRepository;
-    private PaginatorInterface $paginator;
 
     protected function setUp(): void
     {
         $this->entryRepository = $this->createMock(EntryRepository::class);
-        $this->paginator       = $this->createMock(PaginatorInterface::class);
     }
 
-    private function createEntryManagerMock(): EntryManager|MockObject
+    private function createGetEntryBalanceHandlerMock(): GetEntryBalanceHandler|MockObject
     {
-        return new EntryManager(
+        return new GetEntryBalanceHandler(
             $this->entryRepository,
-            $this->paginator,
-            $this->createMock(EntityManagerInterface::class),
-            $this->createMock(ObjectMapperInterface::class),
         );
     }
 
@@ -62,7 +54,7 @@ class EntryManagerTest extends TestCase
         ];
 
         $this->expectBalance($expectedData);
-        $result = $this->createEntryManagerMock()->balance(new GetEntryBalanceQuery());
+        $result = $this->createGetEntryBalanceHandlerMock()->__invoke(new GetEntryBalanceQuery());
 
         self::assertEquals(150.0, $result->getTotalSpent());
         self::assertEquals(500.0, $result->getTotalForecast()); // 300.0 + 200.0
@@ -77,7 +69,7 @@ class EntryManagerTest extends TestCase
         ];
 
         $this->expectBalance($expectedData, $searchRequest);
-        $result = $this->createEntryManagerMock()->balance($searchRequest);
+        $result = $this->createGetEntryBalanceHandlerMock()->__invoke($searchRequest);
 
         self::assertEquals(75.0, $result->getTotalSpent());
         self::assertEquals(125.0, $result->getTotalForecast());
@@ -90,7 +82,7 @@ class EntryManagerTest extends TestCase
         ];
 
         $this->expectBalance($expectedData);
-        $result = $this->createEntryManagerMock()->balance(new GetEntryBalanceQuery());
+        $result = $this->createGetEntryBalanceHandlerMock()->__invoke(new GetEntryBalanceQuery());
 
         self::assertEquals(250.0, $result->getTotalSpent());
         self::assertEquals(0.0, $result->getTotalForecast());
@@ -104,7 +96,7 @@ class EntryManagerTest extends TestCase
         ];
 
         $this->expectBalance($expectedData);
-        $result = $this->createEntryManagerMock()->balance(new GetEntryBalanceQuery());
+        $result = $this->createGetEntryBalanceHandlerMock()->__invoke(new GetEntryBalanceQuery());
 
         self::assertEquals(0.0, $result->getTotalSpent());
         self::assertEquals(500.0, $result->getTotalForecast()); // 180.0 + 320.0
@@ -115,7 +107,7 @@ class EntryManagerTest extends TestCase
         $expectedData = [];
 
         $this->expectBalance($expectedData);
-        $result = $this->createEntryManagerMock()->balance(new GetEntryBalanceQuery());
+        $result = $this->createGetEntryBalanceHandlerMock()->__invoke(new GetEntryBalanceQuery());
 
         self::assertEquals(0.0, $result->getTotalSpent());
         self::assertEquals(0.0, $result->getTotalForecast());

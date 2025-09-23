@@ -8,8 +8,8 @@ use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Query\GetEntryBalanceQuery;
+use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Operator\BudgetOperator;
 use App\Shared\Utils\YearRange;
@@ -27,14 +27,14 @@ class BudgetOperatorTest extends KernelTestCase
     private const string ACCOUNT_1           = 'Test Account';
     private const string BUDGET_BALANCE_NAME = 'Budget balance';
     private BudgetOperator $budgetOperator;
-    private EntryManager $entryManager;
+    private MessageBus $messageBus;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $container            = static::getContainer();
         $this->budgetOperator = $container->get(BudgetOperator::class);
-        $this->entryManager   = $container->get(EntryManager::class);
+        $this->messageBus     = $container->get(MessageBus::class);
     }
 
     public function testGetBudgetBalanceProgressesWithNoBudgetExpensesNorHistory(): void
@@ -404,14 +404,14 @@ class BudgetOperatorTest extends KernelTestCase
             ->createOne()
             ->_real();
 
-        $initialBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
+        $initialBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
 
         $this->budgetOperator->balancing(new GetBudgetAccountBalanceCommand(
             budget: $budget,
             account: $account,
         ));
 
-        $newBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
+        $newBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
 
         self::assertSame($initialBalance->getTotalSpent(), $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast(), $newBalance->getTotalForecast());
@@ -428,7 +428,7 @@ class BudgetOperatorTest extends KernelTestCase
     {
         $this->populateBalanceDatabase($cashFlowAmount);
 
-        $initialBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
+        $initialBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
         $overflow       = 200.0;
 
         /** @var Budget $budget */
@@ -444,7 +444,7 @@ class BudgetOperatorTest extends KernelTestCase
             account: $account,
         ));
 
-        $newBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
+        $newBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
 
         self::assertSame($initialBalance->getTotalSpent() + $overflow, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() - $overflow, $newBalance->getTotalForecast());

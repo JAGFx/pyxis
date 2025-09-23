@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Entry\Message\Query;
+namespace App\Domain\Entry\Message\Query\FindEntries;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
@@ -13,6 +13,9 @@ use App\Infrastructure\KnpPaginator\DTO\PaginationInterface;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 use DateTimeImmutable;
 
+/**
+ * @see FindEntriesHandler
+ */
 class FindEntriesQuery implements PaginationInterface, OrderableInterface, QueryInterface
 {
     use PaginableTrait;

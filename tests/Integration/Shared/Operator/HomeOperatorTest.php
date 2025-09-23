@@ -5,8 +5,8 @@ namespace App\Tests\Integration\Shared\Operator;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryFlagEnum;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Query\GetEntryBalanceQuery;
+use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\HomeOperator;
 use App\Shared\Request\TransferRequest;
 use App\Tests\Factory\AccountFactory;
@@ -20,14 +20,14 @@ class HomeOperatorTest extends KernelTestCase
     private const BUDGET_TARGET_NAME = 'Budget target name';
     private const BUDGET_AMOUNT      = 100.0;
     private HomeOperator $homeOperator;
-    private EntryManager $entryManager;
+    private MessageBus $messageBus;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->homeOperator = self::getContainer()->get(HomeOperator::class);
-        $this->entryManager = self::getContainer()->get(EntryManager::class);
+        $this->messageBus   = self::getContainer()->get(MessageBus::class);
     }
 
     public function testTransferMustMoveAmountFromSpentToBudgetSuccessfully(): void
@@ -38,10 +38,10 @@ class HomeOperatorTest extends KernelTestCase
             'amount' => 0,
         ])->_real();
 
-        $initialBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
+        $initialBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
         $this->transfer(null, $budgetTarget);
 
-        $newBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
+        $newBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
         self::assertSame($initialBalance->getTotalSpent() - self::BUDGET_AMOUNT, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() + self::BUDGET_AMOUNT, $newBalance->getTotalForecast());
         self::assertSame(
@@ -62,10 +62,10 @@ class HomeOperatorTest extends KernelTestCase
             'amount' => 0,
         ])->_real();
 
-        $initialBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
+        $initialBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
         $this->transfer($budgetSource, $budgetTarget);
 
-        $newBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
+        $newBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
         self::assertSame(
             $initialBalance->getTotalSpent() + $initialBalance->getTotalForecast(), $newBalance->getTotalSpent() + $newBalance->getTotalForecast());
     }
@@ -78,10 +78,10 @@ class HomeOperatorTest extends KernelTestCase
             'amount' => 0,
         ])->_real();
 
-        $initialBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
+        $initialBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
         $this->transfer($budgetSource, null);
 
-        $newBalance = $this->entryManager->balance(new GetEntryBalanceQuery());
+        $newBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
         self::assertSame($initialBalance->getTotalSpent() + self::BUDGET_AMOUNT, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() - self::BUDGET_AMOUNT, $newBalance->getTotalForecast());
         self::assertSame(
