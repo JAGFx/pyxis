@@ -2,8 +2,6 @@
 
 namespace App\Domain\Entry\Message\Query\FindEntries;
 
-use App\Domain\Account\Entity\Account;
-use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
@@ -23,12 +21,12 @@ class FindEntriesQuery implements PaginationInterface, OrderableInterface, Query
     public const int WITHOUT_FLAG_VALUE = -1;
 
     public function __construct(
-        private ?Account $account = null,
+        private ?int $accountId = null,
         private ?DateTimeImmutable $startDate = null,
         private ?DateTimeImmutable $endDate = null,
         private ?string $name = null,
         private ?EntryTypeEnum $type = null,
-        private ?Budget $budget = null,
+        private ?int $budgetId = null,
         /**
          * @var array<int|EntryFlagEnum>
          */
@@ -36,14 +34,14 @@ class FindEntriesQuery implements PaginationInterface, OrderableInterface, Query
     ) {
     }
 
-    public function getAccount(): ?Account
+    public function getAccountId(): ?int
     {
-        return $this->account;
+        return $this->accountId;
     }
 
-    public function setAccount(?Account $account): FindEntriesQuery
+    public function setAccountId(?int $accountId): FindEntriesQuery
     {
-        $this->account = $account;
+        $this->accountId = $accountId;
 
         return $this;
     }
@@ -96,14 +94,14 @@ class FindEntriesQuery implements PaginationInterface, OrderableInterface, Query
         return $this;
     }
 
-    public function getBudget(): ?Budget
+    public function getBudgetId(): ?int
     {
-        return $this->budget;
+        return $this->budgetId;
     }
 
-    public function setBudget(?Budget $budget): FindEntriesQuery
+    public function setBudgetId(?int $budgetId): FindEntriesQuery
     {
-        $this->budget = $budget;
+        $this->budgetId = $budgetId;
 
         return $this;
     }

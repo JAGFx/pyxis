@@ -42,10 +42,10 @@ class EntryRepository extends ServiceEntityRepository
             ->leftJoin('e.budget', 'b')
             ->groupBy('b.id');
 
-        if (!is_null($query->getAccount())) {
+        if (!is_null($query->getAccountId())) {
             $queryBuilder
                 ->andWhere('e.account = :account')
-                ->setParameter('account', $query->getAccount());
+                ->setParameter('account', $query->getAccountId());
         }
 
         return $queryBuilder;
@@ -78,16 +78,16 @@ class EntryRepository extends ServiceEntityRepository
                 ->andWhere('e.budget IS NOT NULL');
         }
 
-        if (!is_null($searchQuery->getAccount())) {
+        if (!is_null($searchQuery->getAccountId())) {
             $queryBuilder
                 ->andWhere('e.account = :account')
-                ->setParameter('account', $searchQuery->getAccount());
+                ->setParameter('account', $searchQuery->getAccountId());
         }
 
-        if (!is_null($searchQuery->getBudget())) {
+        if (!is_null($searchQuery->getBudgetId())) {
             $queryBuilder
                 ->andWhere('e.budget = :budget')
-                ->setParameter('budget', $searchQuery->getBudget());
+                ->setParameter('budget', $searchQuery->getBudgetId());
         }
 
         $flags = $searchQuery->getFlags();

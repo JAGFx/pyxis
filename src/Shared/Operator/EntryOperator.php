@@ -23,7 +23,7 @@ readonly class EntryOperator
     public function getAmountBalance(?Account $account = null): AmountBalance
     {
         /** @var EntryBalance $entryBalance */
-        $entryBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery($account));
+        $entryBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery($account?->getId()));
 
         /** @var float $assignmentsBalance */
         $assignmentsBalance = $this->messageBus->dispatch(new GetAssignmentBalanceQuery($account?->getId()));

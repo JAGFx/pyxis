@@ -129,9 +129,10 @@ class EntryRepositoryTest extends KernelTestCase
     {
         $this->populateDatabaseBalance();
 
+        /** @var Account $account1 */
         $account1 = AccountFactory::repository()->findOneBy(['name' => self::ACCOUNT_1])->_real();
 
-        $query = new GetEntryBalanceQuery(account: $account1);
+        $query = new GetEntryBalanceQuery(accountId: $account1->getId());
 
         $queryBuilder   = $this->entryRepository->balance($query);
         $entriesBalance = $queryBuilder->getQuery()->getResult();
@@ -160,7 +161,7 @@ class EntryRepositoryTest extends KernelTestCase
         /** @var Account $nonExistentAccount */
         $nonExistentAccount = AccountFactory::new()->create(['name' => 'Non Existent'])->_real();
 
-        $query = new GetEntryBalanceQuery(account: $nonExistentAccount);
+        $query = new GetEntryBalanceQuery(accountId: $nonExistentAccount->getId());
 
         $queryBuilder   = $this->entryRepository->balance($query);
         $entriesBalance = $queryBuilder->getQuery()->getResult();

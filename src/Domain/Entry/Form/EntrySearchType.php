@@ -14,8 +14,8 @@ use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Infrastructure\KnpPaginator\Form\PaginationBuilder;
+use App\Shared\Form\Type\EntityIdType;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -52,7 +52,8 @@ class EntrySearchType extends AbstractType
                 'placeholder' => 'shared.default.placeholders.all',
                 'multiple'    => true,
             ])
-            ->add('account', EntityType::class, [
+            ->add('account', EntityIdType::class, [
+                'property_path' => 'accountId',
                 'class'         => Account::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {
@@ -63,7 +64,8 @@ class EntrySearchType extends AbstractType
                 'required'    => false,
                 'placeholder' => 'shared.default.placeholders.all',
             ])
-            ->add('budget', EntityType::class, [
+            ->add('budget', EntityIdType::class, [
+                'property_path' => 'budgetId',
                 'class'         => Budget::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (BudgetRepository $repository): QueryBuilder {
