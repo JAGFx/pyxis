@@ -7,7 +7,7 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Shared\Cqs\Message\Command\CommandInterface;
-use App\Shared\Entity\EntityCollectionTrait;
+use App\Shared\Entity\HasCollectionTrait;
 use App\Shared\Validation\ValidationGroupEnum;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Constraints\When;
 #[Map(PeriodicEntry::class)]
 class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
 {
-    use EntityCollectionTrait;
+    use HasCollectionTrait;
 
     public function __construct(
         #[NotNull]

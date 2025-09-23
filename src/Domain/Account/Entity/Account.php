@@ -5,9 +5,9 @@ namespace App\Domain\Account\Entity;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Entry\Entity\Entry;
-use App\Shared\Entity\EntityCollectionTrait;
-use App\Shared\Entity\EntityIntIdentifierInterface;
-use App\Shared\Entity\EntityIntIdentifierTrait;
+use App\Shared\Entity\HasCollectionTrait;
+use App\Shared\Entity\HasIntIdentifierTrait;
+use App\Shared\Entity\IntIdentifierInterface;
 use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
@@ -17,12 +17,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
-class Account implements EntityIntIdentifierInterface
+class Account implements IntIdentifierInterface
 {
     use TimestampableTrait;
     use NameableTrait;
-    use EntityCollectionTrait;
-    use EntityIntIdentifierTrait;
+    use HasCollectionTrait;
+    use HasIntIdentifierTrait;
 
     /**
      * @var Collection<int, Entry>

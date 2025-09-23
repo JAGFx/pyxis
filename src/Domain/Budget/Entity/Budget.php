@@ -7,9 +7,9 @@ use App\Domain\Budget\Model\BudgetProgressTrait;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Shared\Entity\EntityCollectionTrait;
-use App\Shared\Entity\EntityIntIdentifierInterface;
-use App\Shared\Entity\EntityIntIdentifierTrait;
+use App\Shared\Entity\HasCollectionTrait;
+use App\Shared\Entity\HasIntIdentifierTrait;
+use App\Shared\Entity\IntIdentifierInterface;
 use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use App\Shared\Utils\YearRange;
@@ -20,13 +20,13 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
-class Budget implements EntityIntIdentifierInterface
+class Budget implements IntIdentifierInterface
 {
     use BudgetProgressTrait;
     use TimestampableTrait;
     use NameableTrait;
-    use EntityCollectionTrait;
-    use EntityIntIdentifierTrait;
+    use HasCollectionTrait;
+    use HasIntIdentifierTrait;
 
     #[ORM\Column(type: Types::FLOAT)]
     private float $amount;

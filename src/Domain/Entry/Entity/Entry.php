@@ -5,9 +5,9 @@ namespace App\Domain\Entry\Entity;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Repository\EntryRepository;
-use App\Shared\Entity\EntityCollectionTrait;
-use App\Shared\Entity\EntityIntIdentifierInterface;
-use App\Shared\Entity\EntityIntIdentifierTrait;
+use App\Shared\Entity\HasCollectionTrait;
+use App\Shared\Entity\HasIntIdentifierTrait;
+use App\Shared\Entity\IntIdentifierInterface;
 use App\Shared\Entity\NameableTrait;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
@@ -18,12 +18,12 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity(repositoryClass: EntryRepository::class)]
-class Entry implements EntityIntIdentifierInterface
+class Entry implements IntIdentifierInterface
 {
     use TimestampableTrait;
     use NameableTrait;
-    use EntityCollectionTrait;
-    use EntityIntIdentifierTrait;
+    use HasCollectionTrait;
+    use HasIntIdentifierTrait;
     public const array NON_EDITABLE_FLAGS = [
         EntryFlagEnum::BALANCE,
         EntryFlagEnum::TRANSFERT,

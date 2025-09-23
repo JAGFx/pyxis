@@ -6,9 +6,9 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
-use App\Shared\Entity\EntityCollectionTrait;
-use App\Shared\Entity\EntityIntIdentifierInterface;
-use App\Shared\Entity\EntityIntIdentifierTrait;
+use App\Shared\Entity\HasCollectionTrait;
+use App\Shared\Entity\HasIntIdentifierTrait;
+use App\Shared\Entity\IntIdentifierInterface;
 use App\Shared\Entity\TimestampableTrait;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,11 +20,11 @@ use Doctrine\ORM\Mapping\ManyToOne;
 
 // TODO: Add a suspend feature
 #[ORM\Entity(repositoryClass: PeriodicEntryRepository::class)]
-class PeriodicEntry implements EntityIntIdentifierInterface
+class PeriodicEntry implements IntIdentifierInterface
 {
     use TimestampableTrait;
-    use EntityCollectionTrait;
-    use EntityIntIdentifierTrait;
+    use HasCollectionTrait;
+    use HasIntIdentifierTrait;
     public const int MONTH_SPLIT = 12;
 
     #[ORM\Column]

@@ -4,16 +4,16 @@ namespace App\Domain\Assignment\Entity;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Repository\AssignmentRepository;
-use App\Shared\Entity\EntityIntIdentifierInterface;
-use App\Shared\Entity\EntityIntIdentifierTrait;
+use App\Shared\Entity\HasIntIdentifierTrait;
+use App\Shared\Entity\IntIdentifierInterface;
 use App\Shared\Entity\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AssignmentRepository::class)]
-class Assignment implements EntityIntIdentifierInterface
+class Assignment implements IntIdentifierInterface
 {
     use TimestampableTrait;
-    use EntityIntIdentifierTrait;
+    use HasIntIdentifierTrait;
 
     #[ORM\Column]
     private string $name;

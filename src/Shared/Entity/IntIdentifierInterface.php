@@ -2,7 +2,7 @@
 
 namespace App\Shared\Entity;
 
-interface EntityIntIdentifierInterface
+interface IntIdentifierInterface
 {
     public function getId(): ?int;
 }

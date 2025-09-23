@@ -5,7 +5,7 @@ namespace App\Shared\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-trait EntityIntIdentifierTrait
+trait HasIntIdentifierTrait
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

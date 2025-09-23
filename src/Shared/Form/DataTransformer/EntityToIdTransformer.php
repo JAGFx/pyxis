@@ -2,7 +2,7 @@
 
 namespace App\Shared\Form\DataTransformer;
 
-use App\Shared\Entity\EntityIntIdentifierInterface;
+use App\Shared\Entity\IntIdentifierInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -10,7 +10,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 /**
  * @implements DataTransformerInterface<int|null, object|null>
  *
- * @template T of EntityIntIdentifierInterface
+ * @template T of IntIdentifierInterface
  */
 readonly class EntityToIdTransformer implements DataTransformerInterface
 {
@@ -40,8 +40,8 @@ readonly class EntityToIdTransformer implements DataTransformerInterface
             return null;
         }
 
-        if (!$value instanceof EntityIntIdentifierInterface) {
-            throw new TransformationFailedException('Expected an instance of ' . EntityIntIdentifierInterface::class);
+        if (!$value instanceof IntIdentifierInterface) {
+            throw new TransformationFailedException('Expected an instance of ' . IntIdentifierInterface::class);
         }
 
         return $value->getId();

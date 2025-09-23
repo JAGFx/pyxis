@@ -3,8 +3,8 @@
 namespace App\Domain\Budget\Entity;
 
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
-use App\Shared\Entity\EntityIntIdentifierInterface;
-use App\Shared\Entity\EntityIntIdentifierTrait;
+use App\Shared\Entity\HasIntIdentifierTrait;
+use App\Shared\Entity\IntIdentifierInterface;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping\Column;
@@ -12,9 +12,9 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\ManyToOne;
 
 #[Entity(repositoryClass: HistoryBudgetRepository::class)]
-class HistoryBudget implements EntityIntIdentifierInterface
+class HistoryBudget implements IntIdentifierInterface
 {
-    use EntityIntIdentifierTrait;
+    use HasIntIdentifierTrait;
 
     #[Column(type: Types::DATE_IMMUTABLE)]
     private ?DateTimeImmutable $date = null;

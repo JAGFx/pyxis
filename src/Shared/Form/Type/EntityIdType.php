@@ -2,7 +2,7 @@
 
 namespace App\Shared\Form\Type;
 
-use App\Shared\Entity\EntityIntIdentifierInterface;
+use App\Shared\Entity\IntIdentifierInterface;
 use App\Shared\Form\DataTransformer\EntityToIdTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Override;
@@ -20,7 +20,7 @@ class EntityIdType extends AbstractType
     #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var class-string<EntityIntIdentifierInterface> $entityClass */
+        /** @var class-string<IntIdentifierInterface> $entityClass */
         $entityClass = $options['class'];
 
         $builder->addModelTransformer(new EntityToIdTransformer(
