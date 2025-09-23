@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Domain\Budget\Message\Query;
+namespace App\Domain\Budget\Message\Query\FindBudgets;
 
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
+/**
+ * @see FindBudgetsHandler
+ */
 class FindBudgetsQuery implements OrderableInterface, QueryInterface
 {
     use OrderableTrait;

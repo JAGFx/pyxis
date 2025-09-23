@@ -6,13 +6,15 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Message\Command\ToggleEnableBudgetCommand;
-use App\Domain\Budget\Message\Query\FindBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\BudgetOperator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -24,6 +26,7 @@ class BudgetController extends AbstractController
     public function __construct(
         private readonly BudgetManager $budgetManager,
         private readonly BudgetOperator $budgetOperator,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
@@ -60,6 +63,9 @@ class BudgetController extends AbstractController
         );
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/search', name: 'front_budget_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
@@ -68,7 +74,7 @@ class BudgetController extends AbstractController
         $this->createForm(BudgetSearchType::class, $searchQuery)
             ->handleRequest($request);
 
-        $budgets = $this->budgetManager->getBudgets($searchQuery);
+        $budgets = $this->messageBus->dispatch($searchQuery);
 
         return $this->renderTurboStream(
             $request,

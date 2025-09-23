@@ -4,7 +4,7 @@ namespace App\Domain\Budget\Twig\Components;
 
 use App\Domain\Budget\Form\BudgetBalanceSearchType;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Message\Query\FindBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Shared\Operator\BudgetOperator;
 use App\Shared\Utils\YearRange;

@@ -5,7 +5,6 @@ namespace App\Tests\Unit\Shared\Operator;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Manager\AccountManager;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Entry\Manager\EntryManager;
@@ -22,7 +21,6 @@ class BudgetOperatorTest extends TestCase
 {
     use BudgetTestTrait;
     private const float BUDGET_AMOUNT = 1000.0;
-    private BudgetManager $budgetManager;
     private HistoryBudgetManager $historyBudgetManager;
     private AccountManager $accountManager;
     private EntryManager $entryManager;
@@ -31,7 +29,6 @@ class BudgetOperatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->budgetManager        = $this->createMock(BudgetManager::class);
         $this->historyBudgetManager = $this->createMock(HistoryBudgetManager::class);
         $this->entryManager         = $this->createMock(EntryManager::class);
         $this->entityManager        = $this->createMock(EntityManagerInterface::class);
@@ -43,7 +40,6 @@ class BudgetOperatorTest extends TestCase
         return $this->getMockBuilder(BudgetOperator::class)
             ->onlyMethods($onlyMethods)
             ->setConstructorArgs([
-                $this->budgetManager,
                 $this->historyBudgetManager,
                 $this->entryManager,
                 $this->entityManager,

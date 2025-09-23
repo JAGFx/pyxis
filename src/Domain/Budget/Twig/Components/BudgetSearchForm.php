@@ -3,7 +3,7 @@
 namespace App\Domain\Budget\Twig\Components;
 
 use App\Domain\Budget\Form\BudgetSearchType;
-use App\Domain\Budget\Message\Query\FindBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;

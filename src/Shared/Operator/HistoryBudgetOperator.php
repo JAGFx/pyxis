@@ -5,10 +5,13 @@ namespace App\Shared\Operator;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Message\Command\CreateHistoryBudgetCommand;
-use App\Domain\Budget\Message\Query\FindBudgetVOQuery;
+use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Message\Query\FindHistoryBudgetsQuery;
+use App\Domain\Budget\ValueObject\BudgetValueObject;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Utils\YearRange;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Throwable;
 
 readonly class HistoryBudgetOperator
@@ -17,12 +20,17 @@ readonly class HistoryBudgetOperator
         private BudgetManager $budgetManager,
         private HistoryBudgetManager $historyBudgetManager,
         private LoggerInterface $logger,
+        private MessageBus $messageBus,
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     public function generateHistoryBudgetsForYear(int $year): void
     {
-        $budgetsValues = $this->budgetManager->getBudgetValuesObject(
+        /** @var BudgetValueObject[] $budgetsValues */
+        $budgetsValues = $this->messageBus->dispatch(
             new FindBudgetVOQuery()
                 ->setShowCredits(false)
                 ->setYear($year)

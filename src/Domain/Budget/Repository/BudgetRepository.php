@@ -3,8 +3,8 @@
 namespace App\Domain\Budget\Repository;
 
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Message\Query\FindBudgetsQuery;
-use App\Domain\Budget\Message\Query\FindBudgetVOQuery;
+use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;

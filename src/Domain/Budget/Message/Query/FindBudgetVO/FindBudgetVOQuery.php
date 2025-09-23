@@ -1,9 +1,12 @@
 <?php
 
-namespace App\Domain\Budget\Message\Query;
+namespace App\Domain\Budget\Message\Query\FindBudgetVO;
 
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
+/**
+ * @see FindBudgetVOHandler
+ */
 class FindBudgetVOQuery implements QueryInterface
 {
     public function __construct(

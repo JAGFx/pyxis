@@ -7,9 +7,10 @@ use App\Domain\Budget\Form\BudgetAccountBalanceType;
 use App\Domain\Budget\Form\BudgetCreateOrUpdateType;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Message\Command\CreateOrUpdateBudgetCommand;
-use App\Domain\Budget\Message\Query\FindBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Shared\Controller\ControllerActionEnum;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Operator\BudgetOperator;
@@ -17,6 +18,7 @@ use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -29,16 +31,20 @@ class BudgetController extends AbstractController
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly BudgetOperator $budgetOperator,
         private readonly ObjectMapperInterface $objectMapper,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route(name: 'back_budget_list', methods: Request::METHOD_GET)]
     public function list(): Response
     {
         $searchQuery = new FindBudgetsQuery()->setOrderBy('name');
 
         return $this->render('domain/budget/index.html.twig', [
-            'budgets' => $this->budgetManager->getBudgets($searchQuery),
+            'budgets' => $this->messageBus->dispatch($searchQuery),
             'config'  => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::BUDGET),
         ]);
     }

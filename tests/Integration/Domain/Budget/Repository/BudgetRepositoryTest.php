@@ -3,7 +3,7 @@
 namespace App\Tests\Integration\Domain\Budget\Repository;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Budget\Message\Query\FindBudgetVOQuery;
+use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Shared\Utils\YearRange;

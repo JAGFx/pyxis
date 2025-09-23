@@ -6,10 +6,9 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Message\Query\FindBudgetsQuery;
-use App\Domain\Budget\Message\Query\FindBudgetVOQuery;
+use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Message\Query\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
@@ -26,7 +25,6 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 readonly class BudgetOperator
 {
     public function __construct(
-        private BudgetManager $budgetManager,
         private HistoryBudgetManager $historyBudgetManager,
         private EntryManager $entryManager,
         private EntityManagerInterface $entityManager,
@@ -36,11 +34,14 @@ readonly class BudgetOperator
 
     /**
      * @return BudgetBalanceProgressValueObject[]
+     *
+     * @throws ExceptionInterface
      */
     public function getBudgetBalanceProgresses(FindBudgetsQuery $searchQuery): array
     {
         if (YearRange::current() === $searchQuery->getYear()) {
-            $budgetsVO = $this->budgetManager->getBudgetValuesObject(
+            /** @var BudgetValueObject[] $budgetsValues */
+            $budgetsValues = $this->messageBus->dispatch(
                 new FindBudgetVOQuery()
                     ->setShowCredits($searchQuery->getShowCredits())
                     ->setYear(YearRange::current())
@@ -54,7 +55,7 @@ readonly class BudgetOperator
                     $budgetValueObject->getAmount(),
                     $budgetValueObject->getRelativeProgress(true)
                 ),
-                $budgetsVO
+                $budgetsValues
             );
         }
 
