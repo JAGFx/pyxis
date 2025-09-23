@@ -4,7 +4,7 @@ namespace App\Domain\PeriodicEntry\Repository;
 
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;

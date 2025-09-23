@@ -5,7 +5,6 @@ namespace App\Domain\PeriodicEntry\Manager;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntryCommand;
 use App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntryCommand;
-use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -47,19 +46,5 @@ readonly class PeriodicEntryManager
         if ($flush) {
             $this->entityManager->flush();
         }
-    }
-
-    /** @return PeriodicEntry[] */
-    public function getPeriodicEntries(?FindPeriodicEntriesQuery $searchQuery = null): array
-    {
-        $searchQuery ??= new FindPeriodicEntriesQuery();
-
-        /** @var PeriodicEntry[] $periodicEntries */
-        $periodicEntries = $this->repository
-            ->getPeriodicEntriesQueryBuilder($searchQuery)
-            ->getQuery()
-            ->getResult();
-
-        return $periodicEntries;
     }
 }

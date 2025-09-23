@@ -6,15 +6,17 @@ use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntryCreateOrUpdateType;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
 use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntryCommand;
-use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
 use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Controller\FormErrorMappingTrait;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\Validation\ValidationGroupEnum;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -29,16 +31,20 @@ class PeriodicEntryController extends AbstractController
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly ObjectMapperInterface $objectMapper,
         private readonly ValidatorInterface $validator,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route(name: 'back_periodic_entry_list', methods: Request::METHOD_GET)]
     public function list(): Response
     {
         $searchQuery = new FindPeriodicEntriesQuery()->setOrderBy('name');
 
         return $this->render('domain/periodic_entry/index.html.twig', [
-            'periodicEntries' => $this->periodicEntryManager->getPeriodicEntries($searchQuery),
+            'periodicEntries' => $this->messageBus->dispatch($searchQuery),
             'config'          => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::PERIODIC_ENTRY),
         ]);
     }

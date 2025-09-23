@@ -3,7 +3,7 @@
 namespace App\Domain\PeriodicEntry\Twig\Components;
 
 use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchType;
-use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;

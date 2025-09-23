@@ -6,11 +6,13 @@ use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchType;
 use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
 use App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntryCommand;
-use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
+use App\Shared\Cqs\Bus\MessageBus;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/periodic_entries')]
@@ -20,6 +22,7 @@ class PeriodicEntryController extends AbstractController
 
     public function __construct(
         private readonly PeriodicEntryManager $periodicEntryManager,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
@@ -33,6 +36,9 @@ class PeriodicEntryController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/search', name: 'front_periodic_entry_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
@@ -41,7 +47,7 @@ class PeriodicEntryController extends AbstractController
         $this->createForm(PeriodicEntrySearchType::class, $searchQuery)
             ->handleRequest($request);
 
-        $periodicEntries = $this->periodicEntryManager->getPeriodicEntries($searchQuery);
+        $periodicEntries = $this->messageBus->dispatch($searchQuery);
 
         return $this->renderTurboStream(
             $request,

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\PeriodicEntry\Form;
 
 use App\Domain\Entry\Entity\EntryTypeEnum;
-use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntriesQuery;
+use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
