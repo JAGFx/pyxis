@@ -41,7 +41,7 @@ class AccountManagerTest extends KernelTestCase
 
         $command = new CreateOrUpdateAccountCommand();
         $command->setName('Updated Account');
-        $command->setOrigin($existingAccount);
+        $command->setOriginId($existingAccount->getId());
 
         $this->accountManager->update($command);
 

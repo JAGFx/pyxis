@@ -67,10 +67,13 @@ class AccountController extends AbstractController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // TODO: Refactor: Use is_null($account) to determinate the action
             if (ControllerActionEnum::CREATE === $action) {
                 $this->accountManager->create($accountCommand);
             } else {
-                $accountCommand->setOrigin($account);
+                /** @var int $accountId */
+                $accountId = $account?->getId();
+                $accountCommand->setOriginId($accountId);
                 $this->accountManager->update($accountCommand);
             }
 

@@ -42,7 +42,7 @@ class AccountController extends AbstractController
             $this->denyAccessUnlessGranted(AccountVoter::ENABLE, $account);
         }
 
-        $this->accountManager->toggle(new ToggleEnableAccountCommand($account));
+        $this->accountManager->toggle(new ToggleEnableAccountCommand()->setOriginId($account->getId()));
 
         $message = 'Compte ';
         $message .= ($account->isEnabled()) ? 'activé' : 'désactivé';

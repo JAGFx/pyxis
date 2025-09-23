@@ -7,6 +7,7 @@ use App\Domain\Account\Message\Command\CreateOrUpdateAccountCommand;
 use App\Domain\Account\Message\Command\ToggleEnableAccountCommand;
 use App\Domain\Account\Repository\AccountRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 readonly class AccountManager
@@ -20,8 +21,15 @@ readonly class AccountManager
 
     public function toggle(ToggleEnableAccountCommand $command): void
     {
-        $account = $command->getAccount();
-        $account->setEnabled(!$account->isEnabled());
+        $entity = $this->entityManager
+            ->getRepository(Account::class)
+            ->find($command->getOriginId());
+
+        if (!$entity instanceof Account) {
+            throw new LogicException('Account not found with id ' . $command->getOriginId());
+        }
+
+        $entity->setEnabled(!$entity->isEnabled());
 
         $this->entityManager->flush();
     }
@@ -40,7 +48,15 @@ readonly class AccountManager
 
     public function update(CreateOrUpdateAccountCommand $command, bool $flush = true): void
     {
-        $this->objectMapper->map($command, $command->getOrigin());
+        $entity = $this->entityManager
+            ->getRepository(Account::class)
+            ->find($command->getOriginId());
+
+        if (!$entity instanceof Account) {
+            throw new LogicException('Account not found with id ' . $command->getOriginId());
+        }
+
+        $this->objectMapper->map($command, $entity);
 
         if ($flush) {
             $this->entityManager->flush();
