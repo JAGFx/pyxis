@@ -6,9 +6,12 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
+use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
+use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\HistoryBudgetOperator;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -38,22 +41,25 @@ class HistoryBudgetOperatorTest extends TestCase
     public function testNotYetHistoryCreatedMustCreateOneSuccessfully(): void
     {
         $this->messageBusMock
-            ->expects($this->once())
+            ->expects($this->exactly(3)) // 1 FindBudgetVOQuery + 2 FindHistoryBudgetsQuery
             ->method('dispatch')
-            ->willReturn([
-                new BudgetValueObject(1, '#1', 20, true, 20),
-                new BudgetValueObject(2, '#2', 20, true, 20),
-            ]);
+            ->willReturnCallback(function ($query) {
+                if ($query instanceof FindBudgetVOQuery) {
+                    return [
+                        new BudgetValueObject(1, '#1', 20, true, 20),
+                        new BudgetValueObject(2, '#2', 20, true, 20),
+                    ];
+                } elseif ($query instanceof FindHistoryBudgetsQuery) {
+                    return [];
+                }
+
+                throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
+            });
 
         $this->budgetManagerMock
             ->expects($this->exactly(2))
             ->method('find')
             ->willReturn((new Budget())->setAmount(20));
-
-        $this->historyBudgetManagerMock
-            ->expects($this->exactly(2))
-            ->method('getHistories')
-            ->willReturn([]);
 
         $this->historyBudgetManagerMock
             ->expects($this->exactly(2))
@@ -67,22 +73,27 @@ class HistoryBudgetOperatorTest extends TestCase
     public function testAlreadyHistoryCreatedMustDoNothing(): void
     {
         $this->messageBusMock
-            ->expects($this->once())
+            ->expects($this->exactly(3)) // 1 FindBudgetVOQuery + 2 FindHistoryBudgetsQuery
             ->method('dispatch')
-            ->willReturn([
-                new BudgetValueObject(1, '#1', 20, true, 20),
-                new BudgetValueObject(2, '#2', 20, true, 20),
-            ]);
+            ->willReturnCallback(function ($query) {
+                if ($query instanceof FindBudgetVOQuery) {
+                    return [
+                        new BudgetValueObject(1, '#1', 20, true, 20),
+                        new BudgetValueObject(2, '#2', 20, true, 20),
+                    ];
+                } elseif ($query instanceof FindHistoryBudgetsQuery) {
+                    return [
+                        new HistoryBudget(),
+                    ];
+                }
+
+                throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
+            });
 
         $this->budgetManagerMock
             ->expects($this->exactly(2))
             ->method('find')
             ->willReturn((new Budget())->setAmount(20));
-
-        $this->historyBudgetManagerMock
-            ->expects($this->exactly(2))
-            ->method('getHistories')
-            ->willReturn([new HistoryBudget()]);
 
         $this->historyBudgetManagerMock
             ->expects($this->never())

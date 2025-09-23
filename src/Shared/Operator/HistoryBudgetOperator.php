@@ -6,7 +6,7 @@ use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Message\Command\CreateHistoryBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
-use App\Domain\Budget\Message\Query\FindHistoryBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Utils\YearRange;
@@ -43,12 +43,10 @@ readonly class HistoryBudgetOperator
                 continue;
             }
 
-            $historyBudgets = $this->historyBudgetManager->getHistories(
-                new FindHistoryBudgetsQuery(
-                    $budget,
-                    $year
-                )
-            );
+            $historyBudgets = $this->messageBus->dispatch(new FindHistoryBudgetsQuery(
+                $budget,
+                $year
+            ));
 
             if ([] !== $historyBudgets) {
                 continue;

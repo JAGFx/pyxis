@@ -6,10 +6,9 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
-use App\Domain\Budget\Message\Query\FindHistoryBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
@@ -25,7 +24,6 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 readonly class BudgetOperator
 {
     public function __construct(
-        private HistoryBudgetManager $historyBudgetManager,
         private EntryManager $entryManager,
         private EntityManagerInterface $entityManager,
         private MessageBus $messageBus,
@@ -59,11 +57,8 @@ readonly class BudgetOperator
             );
         }
 
-        $histories = $this->historyBudgetManager->getHistories(
-            new FindHistoryBudgetsQuery(
-                year: $searchQuery->getYear()
-            )
-        );
+        /** @var HistoryBudget[] $histories */
+        $histories = $this->messageBus->dispatch(new FindHistoryBudgetsQuery(year: $searchQuery->getYear()));
 
         return array_map(
             fn (HistoryBudget $history): BudgetBalanceProgressValueObject => new BudgetBalanceProgressValueObject(

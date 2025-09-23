@@ -3,7 +3,7 @@
 namespace App\Domain\Budget\Repository;
 
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Message\Query\FindHistoryBudgetsQuery;
+use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;

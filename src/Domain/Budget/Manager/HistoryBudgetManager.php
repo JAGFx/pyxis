@@ -4,7 +4,6 @@ namespace App\Domain\Budget\Manager;
 
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Message\Command\CreateHistoryBudgetCommand;
-use App\Domain\Budget\Message\Query\FindHistoryBudgetsQuery;
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -28,33 +27,5 @@ readonly class HistoryBudgetManager
         if ($flush) {
             $this->entityManager->flush();
         }
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getAvailableYears(): array
-    {
-        /** @var string[] $years */
-        $years = $this->repository
-            ->getAvailableYear()
-            ->getQuery()
-            ->getSingleColumnResult();
-
-        return $years;
-    }
-
-    /**
-     * @return HistoryBudget[]
-     */
-    public function getHistories(FindHistoryBudgetsQuery $searchQuery): array
-    {
-        /** @var HistoryBudget[] $histories */
-        $histories = $this->repository
-            ->getHistoryBudgetsQueryBuilder($searchQuery)
-            ->getQuery()
-            ->getResult();
-
-        return $histories;
     }
 }
