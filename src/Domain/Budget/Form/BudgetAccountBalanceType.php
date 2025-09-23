@@ -33,7 +33,7 @@ class BudgetAccountBalanceType extends AbstractType
                         'query_builder' => function (AccountRepository $repository) use ($budgetAccountBalanceCommand): QueryBuilder {
                             $searchQuery = new FindAccountsQuery(true)
                                 ->setOrderBy('name')
-                                ->setBudget($budgetAccountBalanceCommand->getBudget())
+                                ->setBudgetId($budgetAccountBalanceCommand->getBudget()->getId())
                                 ->setPositiveOrNegativeBalance(true)
                             ;
 

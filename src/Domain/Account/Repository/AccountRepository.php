@@ -37,10 +37,10 @@ class AccountRepository extends ServiceEntityRepository
             $queryBuilder = $queryBuilder
                 ->leftJoin('a.entries', 'e');
 
-            if (!is_null($searchQuery->getBudget())) {
+            if (!is_null($searchQuery->getBudgetId())) {
                 $queryBuilder
                     ->andWhere('e.budget = :budget')
-                    ->setParameter('budget', $searchQuery->getBudget());
+                    ->setParameter('budget', $searchQuery->getBudgetId());
             }
 
             $queryBuilder

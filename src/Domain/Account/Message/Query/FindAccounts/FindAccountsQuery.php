@@ -2,7 +2,6 @@
 
 namespace App\Domain\Account\Message\Query\FindAccounts;
 
-use App\Domain\Budget\Entity\Budget;
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 use App\Shared\Cqs\Message\Query\QueryInterface;
@@ -17,7 +16,7 @@ class FindAccountsQuery implements OrderableInterface, QueryInterface
     public function __construct(
         private ?bool $enabled = true,
         private ?string $name = null,
-        private ?Budget $budget = null,
+        private ?int $budgetId = null,
         private ?bool $positiveOrNegativeBalance = null,
     ) {
     }
@@ -46,14 +45,14 @@ class FindAccountsQuery implements OrderableInterface, QueryInterface
         return $this;
     }
 
-    public function getBudget(): ?Budget
+    public function getBudgetId(): ?int
     {
-        return $this->budget;
+        return $this->budgetId;
     }
 
-    public function setBudget(?Budget $budget): FindAccountsQuery
+    public function setBudgetId(?int $budgetId): FindAccountsQuery
     {
-        $this->budget = $budget;
+        $this->budgetId = $budgetId;
 
         return $this;
     }
