@@ -3,7 +3,7 @@
 namespace App\Domain\Entry\Form;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Message\Query\FindAccountsQuery;
+use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Message\Query\FindBudgetsQuery;

@@ -8,15 +8,17 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountSearchType;
 use App\Domain\Account\Manager\AccountManager;
 use App\Domain\Account\Message\Command\ToggleEnableAccountCommand;
-use App\Domain\Account\Message\Query\FindAccountsQuery;
+use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\Security\AccountVoter;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('accounts')]
@@ -27,6 +29,7 @@ class AccountController extends AbstractController
     public function __construct(
         private readonly AccountManager $accountManager,
         private readonly EntryOperator $entryOperator,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
@@ -74,6 +77,9 @@ class AccountController extends AbstractController
         );
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/search', name: 'front_account_search', methods: [Request::METHOD_POST])]
     public function search(Request $request): Response
     {
@@ -82,7 +88,7 @@ class AccountController extends AbstractController
         $this->createForm(AccountSearchType::class, $searchQuery)
             ->handleRequest($request);
 
-        $accounts = $this->accountManager->getAccounts($searchQuery);
+        $accounts = $this->messageBus->dispatch($searchQuery);
 
         return $this->renderTurboStream(
             $request,

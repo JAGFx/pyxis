@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Domain\Account\Repository;
 
-use App\Domain\Account\Message\Query\FindAccountsQuery;
+use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\EntryFactory;

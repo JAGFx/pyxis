@@ -3,7 +3,7 @@
 namespace App\Domain\Budget\Form;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Message\Query\FindAccountsQuery;
+use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use Doctrine\ORM\QueryBuilder;

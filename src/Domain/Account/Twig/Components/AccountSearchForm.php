@@ -3,7 +3,7 @@
 namespace App\Domain\Account\Twig\Components;
 
 use App\Domain\Account\Form\AccountSearchType;
-use App\Domain\Account\Message\Query\FindAccountsQuery;
+use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;

@@ -2,7 +2,8 @@
 
 namespace App\Shared\Operator;
 
-use App\Domain\Account\Manager\AccountManager;
+use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\BudgetManager;
@@ -16,18 +17,20 @@ use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Utils\YearRange;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 readonly class BudgetOperator
 {
     public function __construct(
         private BudgetManager $budgetManager,
         private HistoryBudgetManager $historyBudgetManager,
-        private AccountManager $accountManager,
         private EntryManager $entryManager,
         private EntityManagerInterface $entityManager,
+        private MessageBus $messageBus,
     ) {
     }
 
@@ -75,10 +78,13 @@ readonly class BudgetOperator
 
     /**
      * @return BudgetCashFlowByAccountValueObject[]
+     *
+     * @throws ExceptionInterface
      */
     public function getBudgetCashFlowsByAccount(Budget $budget): array
     {
-        $accounts = $this->accountManager->getAccounts();
+        /** @var Account[] $accounts */
+        $accounts = $this->messageBus->dispatch(new FindAccountsQuery());
 
         $cashFlows = [];
         foreach ($accounts as $account) {

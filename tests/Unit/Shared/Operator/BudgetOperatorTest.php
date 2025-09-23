@@ -9,6 +9,7 @@ use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Manager\HistoryBudgetManager;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Entry\Manager\EntryManager;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Operator\BudgetOperator;
 use App\Tests\Unit\Shared\BudgetTestTrait;
@@ -26,14 +27,15 @@ class BudgetOperatorTest extends TestCase
     private AccountManager $accountManager;
     private EntryManager $entryManager;
     private EntityManagerInterface $entityManager;
+    private MessageBus $messageBus;
 
     protected function setUp(): void
     {
         $this->budgetManager        = $this->createMock(BudgetManager::class);
         $this->historyBudgetManager = $this->createMock(HistoryBudgetManager::class);
-        $this->accountManager       = $this->createMock(AccountManager::class);
         $this->entryManager         = $this->createMock(EntryManager::class);
         $this->entityManager        = $this->createMock(EntityManagerInterface::class);
+        $this->messageBus           = $this->createMock(MessageBus::class);
     }
 
     private function createBudgetOperator(array $onlyMethods = []): BudgetOperator|MockObject
@@ -43,9 +45,9 @@ class BudgetOperatorTest extends TestCase
             ->setConstructorArgs([
                 $this->budgetManager,
                 $this->historyBudgetManager,
-                $this->accountManager,
                 $this->entryManager,
                 $this->entityManager,
+                $this->messageBus,
             ])
             ->getMock();
     }
@@ -61,9 +63,9 @@ class BudgetOperatorTest extends TestCase
 
     private function setupAccountManagerMock(array $accounts): void
     {
-        $this->accountManager
+        $this->messageBus
             ->expects(self::once())
-            ->method('getAccounts')
+            ->method('dispatch')
             ->willReturn($accounts);
     }
 

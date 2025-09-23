@@ -5,7 +5,6 @@ namespace App\Domain\Account\Manager;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Command\CreateOrUpdateAccountCommand;
 use App\Domain\Account\Message\Command\ToggleEnableAccountCommand;
-use App\Domain\Account\Message\Query\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -17,21 +16,6 @@ readonly class AccountManager
         private EntityManagerInterface $entityManager,
         private ObjectMapperInterface $objectMapper,
     ) {
-    }
-
-    /**
-     * @return Account[]
-     */
-    public function getAccounts(?FindAccountsQuery $searchQuery = null): array
-    {
-        /** @var Account[] $accounts */
-        $accounts = $this->repository
-            ->getAccountsQueryBuilder($searchQuery ?? new FindAccountsQuery())
-            ->getQuery()
-            ->getResult()
-        ;
-
-        return $accounts;
     }
 
     public function toggle(ToggleEnableAccountCommand $command): void

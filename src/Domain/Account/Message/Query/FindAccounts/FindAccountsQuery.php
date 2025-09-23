@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Domain\Account\Message\Query;
+namespace App\Domain\Account\Message\Query\FindAccounts;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Infrastructure\KnpPaginator\DTO\OrderableInterface;
 use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
+/**
+ * @see FindAccountsHandler
+ */
 class FindAccountsQuery implements OrderableInterface, QueryInterface
 {
     use OrderableTrait;

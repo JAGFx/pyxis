@@ -3,7 +3,7 @@
 namespace App\Domain\Assignment\Form;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Message\Query\FindAccountsQuery;
+use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignmentCommand;
 use App\Shared\Form\Type\MoneyType;
