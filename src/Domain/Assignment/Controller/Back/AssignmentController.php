@@ -6,22 +6,19 @@ namespace App\Domain\Assignment\Controller\Back;
 
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentCreateOrUpdateType;
-use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignmentCommand;
+use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment\CreateOrUpdateAssignmentCommand;
 use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
-use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Controller\FormErrorMappingTrait;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
-use App\Shared\Validation\ValidationGroupEnum;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/assignments')]
 class AssignmentController extends AbstractController
@@ -29,10 +26,8 @@ class AssignmentController extends AbstractController
     use FormErrorMappingTrait;
 
     public function __construct(
-        private readonly AssignmentManager $assignmentManager,
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly ObjectMapperInterface $objectMapper,
-        private readonly ValidatorInterface $validator,
         private readonly MessageBus $messageBus,
     ) {
     }
@@ -52,19 +47,28 @@ class AssignmentController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/create', name: 'back_assignment_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
-        return $this->handleForm(ControllerActionEnum::CREATE, $request);
+        return $this->handleForm($request);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/{id}/update', name: 'back_assignment_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit(Assignment $assignment, Request $request): Response
     {
-        return $this->handleForm(ControllerActionEnum::EDIT, $request, $assignment);
+        return $this->handleForm($request, $assignment);
     }
 
-    private function handleForm(ControllerActionEnum $type, Request $request, ?Assignment $assignment = null): Response
+    /**
+     * @throws ExceptionInterface
+     */
+    private function handleForm(Request $request, ?Assignment $assignment = null): Response
     {
         $assigmentCommand = is_null($assignment)
             ? new CreateOrUpdateAssignmentCommand()
@@ -75,20 +79,17 @@ class AssignmentController extends AbstractController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $violations = $this->validator->validate($assigmentCommand, groups: [ValidationGroupEnum::Business->value]);
-
-            if (0 === $violations->count()) {
-                if (ControllerActionEnum::CREATE === $type) {
-                    $this->assignmentManager->create($assigmentCommand);
-                } else {
-                    $assigmentCommand->setOrigin($assignment);
-                    $this->assignmentManager->update($assigmentCommand);
+            try {
+                if (!is_null($assignment)) {
+                    $assigmentCommand->setOriginId($assignment->getId());
                 }
 
-                return $this->redirectToRoute('back_assignment_list');
-            }
+                $this->messageBus->dispatch($assigmentCommand);
 
-            $this->mapBusinessErrorsToForm($violations, $form);
+                return $this->redirectToRoute('back_assignment_list');
+            } catch (ValidationFailedException $exception) {
+                $this->mapBusinessErrorsToForm($exception->getViolations(), $form);
+            }
         }
 
         return $this->render('domain/assigment/form.html.twig', [

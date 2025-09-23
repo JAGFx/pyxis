@@ -4,9 +4,12 @@ namespace App\Shared\Cqs\Bus;
 
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use App\Shared\Cqs\Message\Query\QueryInterface;
+use App\Shared\Validation\ValidationGroupEnum;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
+use Symfony\Component\Messenger\Stamp\ValidationStamp;
 
 readonly class MessageBus
 {
@@ -35,7 +38,9 @@ readonly class MessageBus
      */
     private function dispatchCommand(CommandInterface $command): void
     {
-        $this->commandBus->dispatch($command);
+        $message = new Envelope($command)
+            ->with(new ValidationStamp([ValidationGroupEnum::Business->value]));
+        $this->commandBus->dispatch($message);
     }
 
     /**
@@ -43,7 +48,9 @@ readonly class MessageBus
      */
     private function dispatchQuery(QueryInterface $query): mixed
     {
-        $envelope = $this->queryBus->dispatch($query);
+        $message = new Envelope($query)
+            ->with(new ValidationStamp([ValidationGroupEnum::Business->value]));
+        $envelope = $this->queryBus->dispatch($message);
 
         /** @var ?HandledStamp $handledStamp */
         $handledStamp = $envelope->last(HandledStamp::class);

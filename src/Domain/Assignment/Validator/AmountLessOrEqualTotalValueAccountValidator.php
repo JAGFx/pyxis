@@ -2,7 +2,7 @@
 
 namespace App\Domain\Assignment\Validator;
 
-use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignmentCommand;
+use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment\CreateOrUpdateAssignmentCommand;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;

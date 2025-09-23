@@ -5,6 +5,9 @@ namespace App\Domain\Assignment\Validator;
 use Attribute;
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * @see AmountLessOrEqualTotalValueAccountValidator
+ */
 #[Attribute]
 class AmountLessOrEqualTotalValueAccount extends Constraint
 {

@@ -6,8 +6,7 @@ namespace App\Domain\Assignment\Controller\Front;
 
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentSearchType;
-use App\Domain\Assignment\Manager\AssignmentManager;
-use App\Domain\Assignment\Message\Command\RemoveAssignmentCommand;
+use App\Domain\Assignment\Message\Command\RemoveAssignment\RemoveAssignmentCommand;
 use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Cqs\Bus\MessageBus;
@@ -16,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route('/assignments')]
 class AssignmentController extends AbstractController
@@ -23,16 +23,20 @@ class AssignmentController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly AssignmentManager $assignmentManager,
         private readonly MessageBus $messageBus,
     ) {
     }
 
-    #[Route('/{id}/remove', name: 'front_assignment_remove', methods: Request::METHOD_GET)]
+    /**
+     * @throws ExceptionInterface
+     */
+    #[Route('/{id}/remove', name: 'front_assignment_remove', requirements: ['id' => Requirement::DIGITS], methods: Request::METHOD_GET)]
     public function remove(Assignment $assignment, Request $request): Response
     {
+        /** @var int $assignmentId */
         $assignmentId = $assignment->getId();
-        $this->assignmentManager->remove(new RemoveAssignmentCommand($assignment));
+
+        $this->messageBus->dispatch(new RemoveAssignmentCommand($assignmentId));
 
         return $this->renderTurboStream($request, 'domain/assigment/turbo/remove.turbo.stream.html.twig', [
             'assignmentId' => $assignmentId,

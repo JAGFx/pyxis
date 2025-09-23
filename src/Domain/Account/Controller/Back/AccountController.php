@@ -6,6 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountCreateOrUpdateType;
 use App\Domain\Account\Message\Command\CreateOrUpdateAccount\CreateOrUpdateAccountCommand;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
+use App\Shared\Controller\FormErrorMappingTrait;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
@@ -13,12 +14,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/accounts')]
 class AccountController extends AbstractController
 {
+    use FormErrorMappingTrait;
+
     public function __construct(
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly ObjectMapperInterface $objectMapper,
@@ -73,11 +77,15 @@ class AccountController extends AbstractController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!is_null($account)) {
-                $accountCommand->setOriginId($account->getId());
-            }
+            try {
+                if (!is_null($account)) {
+                    $accountCommand->setOriginId($account->getId());
+                }
 
-            $this->messageBus->dispatch($accountCommand);
+                $this->messageBus->dispatch($accountCommand);
+            } catch (ValidationFailedException $exception) {
+                $this->mapBusinessErrorsToForm($exception->getViolations(), $form);
+            }
 
             return $this->redirectToRoute('back_account_list');
         }

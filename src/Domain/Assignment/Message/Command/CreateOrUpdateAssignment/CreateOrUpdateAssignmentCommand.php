@@ -1,21 +1,30 @@
 <?php
 
-namespace App\Domain\Assignment\Message\Command;
+namespace App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Validator\AmountLessOrEqualTotalValueAccount;
 use App\Shared\Cqs\Message\Command\CommandInterface;
+use App\Shared\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use App\Shared\Validation\ValidationGroupEnum;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Positive;
 
+/**
+ * TODO:
+ *  - Add resolver on ObjectMapper to map id to entity
+ *
+ * @see CreateOrUpdateAssignmentHandler
+ */
 #[Map(Assignment::class)]
 #[AmountLessOrEqualTotalValueAccount(groups: [ValidationGroupEnum::Business->value])]
 class CreateOrUpdateAssignmentCommand implements CommandInterface
 {
+    use HasOriginIntIdentifierTrait;
+
     public function __construct(
         #[NotBlank]
         private string $name = '',
@@ -26,9 +35,6 @@ class CreateOrUpdateAssignmentCommand implements CommandInterface
 
         #[NotNull]
         private ?Account $account = null,
-
-        #[Map(if: false)]
-        private ?Assignment $origin = null,
     ) {
     }
 
@@ -64,18 +70,6 @@ class CreateOrUpdateAssignmentCommand implements CommandInterface
     public function setAccount(?Account $account): CreateOrUpdateAssignmentCommand
     {
         $this->account = $account;
-
-        return $this;
-    }
-
-    public function getOrigin(): ?Assignment
-    {
-        return $this->origin;
-    }
-
-    public function setOrigin(?Assignment $origin): CreateOrUpdateAssignmentCommand
-    {
-        $this->origin = $origin;
 
         return $this;
     }
