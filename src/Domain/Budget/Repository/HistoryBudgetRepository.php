@@ -38,10 +38,10 @@ class HistoryBudgetRepository extends ServiceEntityRepository
                 ->setParameter('to', YearRange::lastDayOf($searchQuery->getYear())->format('Y-m-d H:i:s'));
         }
 
-        if (!is_null($searchQuery->getBudget())) {
+        if (!is_null($searchQuery->getBudgetId())) {
             $qb
                 ->andWhere('hb.budget = :budget')
-                ->setParameter('budget', $searchQuery->getBudget());
+                ->setParameter('budget', $searchQuery->getBudgetId());
         }
 
         return $qb;

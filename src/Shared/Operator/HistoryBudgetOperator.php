@@ -44,7 +44,7 @@ readonly class HistoryBudgetOperator
             }
 
             $historyBudgets = $this->messageBus->dispatch(new FindHistoryBudgetsQuery(
-                $budget,
+                $budget->getId(),
                 $year
             ));
 

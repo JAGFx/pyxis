@@ -2,7 +2,6 @@
 
 namespace App\Domain\Budget\Message\Query\FindHistoryBudgets;
 
-use App\Domain\Budget\Entity\Budget;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
 // TODO: Add a way to fail linter if implement right interface
@@ -13,19 +12,19 @@ use App\Shared\Cqs\Message\Query\QueryInterface;
 class FindHistoryBudgetsQuery implements QueryInterface
 {
     public function __construct(
-        private ?Budget $budget = null,
+        private ?int $budgetId = null,
         private ?int $year = null,
     ) {
     }
 
-    public function getBudget(): ?Budget
+    public function getBudgetId(): ?int
     {
-        return $this->budget;
+        return $this->budgetId;
     }
 
-    public function setBudget(?Budget $budget): FindHistoryBudgetsQuery
+    public function setBudgetId(?int $budgetId): FindHistoryBudgetsQuery
     {
-        $this->budget = $budget;
+        $this->budgetId = $budgetId;
 
         return $this;
     }
