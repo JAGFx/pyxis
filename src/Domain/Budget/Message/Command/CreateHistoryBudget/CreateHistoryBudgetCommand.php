@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Budget\Message\Command;
+namespace App\Domain\Budget\Message\Command\CreateHistoryBudget;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
@@ -8,6 +8,9 @@ use App\Shared\Cqs\Message\Command\CommandInterface;
 use DateTimeImmutable;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 
+/**
+ * @see CreateHistoryBudgetHandler
+ */
 #[Map(HistoryBudget::class)]
 class CreateHistoryBudgetCommand implements CommandInterface
 {

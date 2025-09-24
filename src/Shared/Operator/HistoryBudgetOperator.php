@@ -3,8 +3,7 @@
 namespace App\Shared\Operator;
 
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Message\Command\CreateHistoryBudgetCommand;
+use App\Domain\Budget\Message\Command\CreateHistoryBudget\CreateHistoryBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
@@ -18,7 +17,6 @@ readonly class HistoryBudgetOperator
 {
     public function __construct(
         private BudgetManager $budgetManager,
-        private HistoryBudgetManager $historyBudgetManager,
         private LoggerInterface $logger,
         private MessageBus $messageBus,
     ) {
@@ -65,7 +63,7 @@ readonly class HistoryBudgetOperator
             );
 
             try {
-                $this->historyBudgetManager->create($createCommand);
+                $this->messageBus->dispatch($createCommand);
             } catch (Throwable $throwable) {
                 $this->logger->error($throwable->getMessage(), [
                     'budget_id' => $budget->getId(),

@@ -1,28 +1,28 @@
 <?php
 
-namespace App\Tests\Integration\Domain\Budget\Manager;
+namespace App\Tests\Integration\Domain\Budget\Message\Command\CreateHistoryBudget;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Manager\HistoryBudgetManager;
-use App\Domain\Budget\Message\Command\CreateHistoryBudgetCommand;
+use App\Domain\Budget\Message\Command\CreateHistoryBudget\CreateHistoryBudgetCommand;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\HistoryBudgetFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use DateTimeImmutable;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
-class HistoryBudgetManagerTest extends KernelTestCase
+class CreateHistoryBudgetHandlerTest extends KernelTestCase
 {
-    private HistoryBudgetManager $historyBudgetManager;
+    private MessageBus $messageBus;
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        $container                  = static::getContainer();
-        $this->historyBudgetManager = $container->get(HistoryBudgetManager::class);
-        $this->objectMapper         = $container->get(ObjectMapperInterface::class);
+        $container          = static::getContainer();
+        $this->messageBus   = $container->get(MessageBus::class);
+        $this->objectMapper = $container->get(ObjectMapperInterface::class);
     }
 
     public function testCreateDoesNotThrowException(): void
@@ -42,7 +42,7 @@ class HistoryBudgetManagerTest extends KernelTestCase
             relativeProgress: 0.75,
         );
 
-        $this->historyBudgetManager->create($command);
+        $this->messageBus->dispatch($command);
 
         $this->expectNotToPerformAssertions();
     }

@@ -1,14 +1,17 @@
 <?php
 
-namespace App\Domain\Budget\Manager;
+namespace App\Domain\Budget\Message\Command\CreateHistoryBudget;
 
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Message\Command\CreateHistoryBudgetCommand;
 use App\Domain\Budget\Repository\HistoryBudgetRepository;
+use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
-readonly class HistoryBudgetManager
+/**
+ * @see CreateHistoryBudgetCommand
+ */
+readonly class CreateHistoryBudgetHandler implements CommandHandlerInterface
 {
     public function __construct(
         private HistoryBudgetRepository $repository,
@@ -17,15 +20,13 @@ readonly class HistoryBudgetManager
     ) {
     }
 
-    public function create(CreateHistoryBudgetCommand $command, bool $flush = true): void
+    public function __invoke(CreateHistoryBudgetCommand $command): void
     {
         /** @var HistoryBudget $historyBudget */
         $historyBudget = $this->objectMapper->map($command, HistoryBudget::class);
 
         $this->repository->create($historyBudget);
 
-        if ($flush) {
-            $this->entityManager->flush();
-        }
+        $this->entityManager->flush();
     }
 }

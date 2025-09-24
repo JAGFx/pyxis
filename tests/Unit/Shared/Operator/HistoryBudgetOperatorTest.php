@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Shared\Operator;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Manager\HistoryBudgetManager;
+use App\Domain\Budget\Message\Command\CreateHistoryBudget\CreateHistoryBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
@@ -18,21 +18,18 @@ use Psr\Log\LoggerInterface;
 class HistoryBudgetOperatorTest extends TestCase
 {
     private readonly BudgetManager $budgetManagerMock;
-    private readonly HistoryBudgetManager $historyBudgetManagerMock;
     private readonly MessageBus $messageBusMock;
 
     protected function setUp(): void
     {
-        $this->budgetManagerMock        = $this->createMock(BudgetManager::class);
-        $this->historyBudgetManagerMock = $this->createMock(HistoryBudgetManager::class);
-        $this->messageBusMock           = $this->createMock(MessageBus::class);
+        $this->budgetManagerMock = $this->createMock(BudgetManager::class);
+        $this->messageBusMock    = $this->createMock(MessageBus::class);
     }
 
     private function generateHistoryBudgetOperator(): HistoryBudgetOperator
     {
         return new HistoryBudgetOperator(
             $this->budgetManagerMock,
-            $this->historyBudgetManagerMock,
             $this->createMock(LoggerInterface::class),
             $this->messageBusMock
         );
@@ -41,7 +38,7 @@ class HistoryBudgetOperatorTest extends TestCase
     public function testNotYetHistoryCreatedMustCreateOneSuccessfully(): void
     {
         $this->messageBusMock
-            ->expects($this->exactly(3)) // 1 FindBudgetVOQuery + 2 FindHistoryBudgetsQuery
+            ->expects($this->exactly(1 + 2 + 2)) // 1 FindBudgetVOQuery + 2 FindHistoryBudgetsQuery + 2 CreateHistoryBudgetCommand
             ->method('dispatch')
             ->willReturnCallback(function ($query) {
                 if ($query instanceof FindBudgetVOQuery) {
@@ -51,6 +48,8 @@ class HistoryBudgetOperatorTest extends TestCase
                     ];
                 } elseif ($query instanceof FindHistoryBudgetsQuery) {
                     return [];
+                } elseif ($query instanceof CreateHistoryBudgetCommand) {
+                    return null;
                 }
 
                 throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
@@ -60,10 +59,6 @@ class HistoryBudgetOperatorTest extends TestCase
             ->expects($this->exactly(2))
             ->method('find')
             ->willReturn((new Budget())->setAmount(20));
-
-        $this->historyBudgetManagerMock
-            ->expects($this->exactly(2))
-            ->method('create');
 
         $this
             ->generateHistoryBudgetOperator()
@@ -94,10 +89,6 @@ class HistoryBudgetOperatorTest extends TestCase
             ->expects($this->exactly(2))
             ->method('find')
             ->willReturn((new Budget())->setAmount(20));
-
-        $this->historyBudgetManagerMock
-            ->expects($this->never())
-            ->method('create');
 
         $this
             ->generateHistoryBudgetOperator()
