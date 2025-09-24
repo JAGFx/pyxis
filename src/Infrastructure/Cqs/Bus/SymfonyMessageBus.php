@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Cqs\Bus;
+namespace App\Infrastructure\Cqs\Bus;
 
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use App\Shared\Cqs\Message\Query\QueryInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Messenger\Stamp\ValidationStamp;
 
-readonly class MessageBus
+readonly class SymfonyMessageBus
 {
     public function __construct(
         private MessageBusInterface $commandBus,

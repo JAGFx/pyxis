@@ -3,8 +3,8 @@
 namespace App\Domain\Account\Message\Command\ToggleEnableAccount;
 
 use App\Domain\Account\Entity\Account;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
-use App\Shared\Cqs\Handler\EntityFinderTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 
@@ -13,10 +13,9 @@ use ReflectionException;
  */
 readonly class ToggleEnableAccountHandler implements CommandHandlerInterface
 {
-    use EntityFinderTrait;
-
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private EntityFinder $entityFinder,
     ) {
     }
 
@@ -25,7 +24,7 @@ readonly class ToggleEnableAccountHandler implements CommandHandlerInterface
      */
     public function __invoke(ToggleEnableAccountCommand $command): void
     {
-        $entity = $this->findEntityByIntIdentifierOrFail(
+        $entity = $this->entityFinder->findByIntIdentifierOrFail(
             Account::class,
             $command->getOriginId()
         );

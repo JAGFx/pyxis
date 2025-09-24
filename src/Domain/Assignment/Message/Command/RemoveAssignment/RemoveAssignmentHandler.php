@@ -4,21 +4,20 @@ namespace App\Domain\Assignment\Message\Command\RemoveAssignment;
 
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Repository\AssignmentRepository;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
-use App\Shared\Cqs\Handler\EntityFinderTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 
 /**
  * @see RemoveAssignmentCommand
  */
-class RemoveAssignmentHandler implements CommandHandlerInterface
+readonly class RemoveAssignmentHandler implements CommandHandlerInterface
 {
-    use EntityFinderTrait;
-
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly AssignmentRepository $repository,
+        private EntityManagerInterface $entityManager,
+        private AssignmentRepository $repository,
+        private EntityFinder $entityFinder,
     ) {
     }
 
@@ -27,7 +26,7 @@ class RemoveAssignmentHandler implements CommandHandlerInterface
      */
     public function __invoke(RemoveAssignmentCommand $command): void
     {
-        $assigment = $this->findEntityByIntIdentifierOrFail(
+        $assigment = $this->entityFinder->findByIntIdentifierOrFail(
             Assignment::class,
             $command->getAssignmentId()
         );

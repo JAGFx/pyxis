@@ -8,10 +8,10 @@ use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Domain\Entry\Security\EntryVoter;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Shared\Controller\FormErrorMappingTrait;
-use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +33,7 @@ class EntryController extends AbstractController
     public function __construct(
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly ObjectMapperInterface $objectMapper,
-        private readonly MessageBus $messageBus,
+        private readonly SymfonyMessageBus $messageBus,
     ) {
     }
 

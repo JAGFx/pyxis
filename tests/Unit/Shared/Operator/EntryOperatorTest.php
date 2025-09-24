@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Shared\Operator;
 use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
 use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
 use App\Domain\Entry\ValueObject\EntryBalance;
-use App\Shared\Cqs\Bus\MessageBus;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Shared\Operator\EntryOperator;
 use Generator;
 use InvalidArgumentException;
@@ -14,11 +14,11 @@ use PHPUnit\Framework\TestCase;
 
 class EntryOperatorTest extends TestCase
 {
-    private MessageBus $messageBusMock;
+    private SymfonyMessageBus $messageBusMock;
 
     protected function setUp(): void
     {
-        $this->messageBusMock = $this->createMock(MessageBus::class);
+        $this->messageBusMock = $this->createMock(SymfonyMessageBus::class);
     }
 
     private function generateEntryOperator(): EntryOperator

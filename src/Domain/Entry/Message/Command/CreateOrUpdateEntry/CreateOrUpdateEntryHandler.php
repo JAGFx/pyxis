@@ -4,8 +4,8 @@ namespace App\Domain\Entry\Message\Command\CreateOrUpdateEntry;
 
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Repository\EntryRepository;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
-use App\Shared\Cqs\Handler\EntityFinderTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -15,12 +15,11 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
  */
 readonly class CreateOrUpdateEntryHandler implements CommandHandlerInterface
 {
-    use EntityFinderTrait;
-
     public function __construct(
         private EntryRepository $repository,
         private EntityManagerInterface $entityManager,
         private ObjectMapperInterface $objectMapper,
+        private EntityFinder $entityFinder,
     ) {
     }
 
@@ -37,7 +36,7 @@ readonly class CreateOrUpdateEntryHandler implements CommandHandlerInterface
             $this->repository->create($entry);
         } else {
             /** @var Entry $entry */
-            $entry = $this->findEntityByIntIdentifierOrFail(
+            $entry = $this->entityFinder->findByIntIdentifierOrFail(
                 Entry::class,
                 $command->getOriginId()
             );

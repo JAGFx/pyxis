@@ -8,8 +8,8 @@ use App\Domain\Budget\Form\BudgetCreateOrUpdateType;
 use App\Domain\Budget\Message\Command\CreateOrUpdateBudget\CreateOrUpdateBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Security\BudgetVoter;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Shared\Controller\FormErrorMappingTrait;
-use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Operator\BudgetOperator;
@@ -33,7 +33,7 @@ class BudgetController extends AbstractController
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly BudgetOperator $budgetOperator,
         private readonly ObjectMapperInterface $objectMapper,
-        private readonly MessageBus $messageBus,
+        private readonly SymfonyMessageBus $messageBus,
     ) {
     }
 

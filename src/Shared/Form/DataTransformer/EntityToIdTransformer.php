@@ -8,9 +8,9 @@ use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
 /**
- * @implements DataTransformerInterface<int|null, object|null>
+ * @template T of object
  *
- * @template T of IntIdentifierInterface
+ * @implements DataTransformerInterface<T|null, mixed|null>
  */
 readonly class EntityToIdTransformer implements DataTransformerInterface
 {
@@ -23,18 +23,10 @@ readonly class EntityToIdTransformer implements DataTransformerInterface
     ) {
     }
 
-    public function transform(mixed $value): ?object
-    {
-        if (null === $value) {
-            return null;
-        }
-
-        return $this->entityManager
-            ->getRepository($this->entityClass)
-            ->find($value);
-    }
-
-    public function reverseTransform(mixed $value): ?int
+    /**
+     * @param T|null $value
+     */
+    public function transform(mixed $value): ?int
     {
         if (null === $value) {
             return null;
@@ -45,5 +37,30 @@ readonly class EntityToIdTransformer implements DataTransformerInterface
         }
 
         return $value->getId();
+    }
+
+    /**
+     * @return T|null
+     */
+    public function reverseTransform(mixed $value): ?object
+    {
+        if (null === $value) {
+            return null;
+        }
+
+        if (!is_int($value)) {
+            throw new TransformationFailedException('Expected an integer');
+        }
+
+        /** @var T|null $entity */
+        $entity = $this->entityManager
+            ->getRepository($this->entityClass)
+            ->find($value);
+
+        if (null === $entity) {
+            throw new TransformationFailedException(sprintf('Entity %s with ID %d not found', $this->entityClass, $value));
+        }
+
+        return $entity;
     }
 }

@@ -5,7 +5,7 @@ namespace App\Domain\PeriodicEntry\Command;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
-use App\Shared\Cqs\Bus\MessageBus;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Shared\Operator\PeriodicEntryOperator;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +26,7 @@ readonly class ApplyPeriodicEntryConsoleCommand
         private LoggerInterface $logger,
         private PeriodicEntryOperator $periodicEntryOperator,
         private EntityManagerInterface $entityManager,
-        private MessageBus $messageBus,
+        private SymfonyMessageBus $messageBus,
     ) {
     }
 

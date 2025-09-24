@@ -6,7 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
-use App\Shared\Cqs\Bus\MessageBus;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Shared\Operator\PeriodicEntryOperator;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,12 +15,12 @@ use PHPUnit\Framework\TestCase;
 class PeriodicEntryOperatorTest extends TestCase
 {
     private EntityManagerInterface $entityManagerMock;
-    private MessageBus $messageBusMock;
+    private SymfonyMessageBus $messageBusMock;
 
     protected function setUp(): void
     {
         $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
-        $this->messageBusMock    = $this->createMock(MessageBus::class);
+        $this->messageBusMock    = $this->createMock(SymfonyMessageBus::class);
     }
 
     private function generatePeriodicEntryOperator(): PeriodicEntryOperator

@@ -6,7 +6,7 @@ use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
-use App\Shared\Cqs\Bus\MessageBus;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +16,7 @@ readonly class PeriodicEntryOperator
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MessageBus $messageBus,
+        private SymfonyMessageBus $messageBus,
     ) {
     }
 

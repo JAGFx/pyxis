@@ -6,7 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
-use App\Shared\Cqs\Bus\MessageBus;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Shared\Operator\HomeOperator;
 use App\Shared\Request\TransferRequest;
 use App\Tests\Factory\AccountFactory;
@@ -20,14 +20,14 @@ class HomeOperatorTest extends KernelTestCase
     private const BUDGET_TARGET_NAME = 'Budget target name';
     private const BUDGET_AMOUNT      = 100.0;
     private HomeOperator $homeOperator;
-    private MessageBus $messageBus;
+    private SymfonyMessageBus $messageBus;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->homeOperator = self::getContainer()->get(HomeOperator::class);
-        $this->messageBus   = self::getContainer()->get(MessageBus::class);
+        $this->messageBus   = self::getContainer()->get(SymfonyMessageBus::class);
     }
 
     public function testTransferMustMoveAmountFromSpentToBudgetSuccessfully(): void

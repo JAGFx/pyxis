@@ -4,7 +4,7 @@ namespace App\Shared\Operator;
 
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
-use App\Shared\Cqs\Bus\MessageBus;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Shared\Request\TransferRequest;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -12,7 +12,7 @@ readonly class HomeOperator
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MessageBus $messageBus,
+        private SymfonyMessageBus $messageBus,
     ) {
     }
 

@@ -9,8 +9,8 @@ use App\Domain\Account\Form\AccountSearchType;
 use App\Domain\Account\Message\Command\ToggleEnableAccount\ToggleEnableAccountCommand;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\Security\AccountVoter;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -28,7 +28,7 @@ class AccountController extends AbstractController
 
     public function __construct(
         private readonly EntryOperator $entryOperator,
-        private readonly MessageBus $messageBus,
+        private readonly SymfonyMessageBus $messageBus,
     ) {
     }
 

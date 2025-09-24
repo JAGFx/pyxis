@@ -4,12 +4,12 @@ namespace App\Tests\Unit\Shared\Operator;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Manager\BudgetManager;
 use App\Domain\Budget\Message\Command\CreateHistoryBudget\CreateHistoryBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
-use App\Shared\Cqs\Bus\MessageBus;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Operator\HistoryBudgetOperator;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
@@ -17,21 +17,21 @@ use Psr\Log\LoggerInterface;
 
 class HistoryBudgetOperatorTest extends TestCase
 {
-    private readonly BudgetManager $budgetManagerMock;
-    private readonly MessageBus $messageBusMock;
+    private readonly SymfonyMessageBus $messageBusMock;
+    private readonly EntityFinder $entityFinderMock;
 
     protected function setUp(): void
     {
-        $this->budgetManagerMock = $this->createMock(BudgetManager::class);
-        $this->messageBusMock    = $this->createMock(MessageBus::class);
+        $this->messageBusMock   = $this->createMock(SymfonyMessageBus::class);
+        $this->entityFinderMock = $this->createMock(EntityFinder::class);
     }
 
     private function generateHistoryBudgetOperator(): HistoryBudgetOperator
     {
         return new HistoryBudgetOperator(
-            $this->budgetManagerMock,
             $this->createMock(LoggerInterface::class),
-            $this->messageBusMock
+            $this->messageBusMock,
+            $this->entityFinderMock,
         );
     }
 
@@ -55,9 +55,9 @@ class HistoryBudgetOperatorTest extends TestCase
                 throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
             });
 
-        $this->budgetManagerMock
+        $this->entityFinderMock
             ->expects($this->exactly(2))
-            ->method('find')
+            ->method('findByIntIdentifier')
             ->willReturn((new Budget())->setAmount(20));
 
         $this
@@ -85,9 +85,9 @@ class HistoryBudgetOperatorTest extends TestCase
                 throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
             });
 
-        $this->budgetManagerMock
+        $this->entityFinderMock
             ->expects($this->exactly(2))
-            ->method('find')
+            ->method('findByIntIdentifier')
             ->willReturn((new Budget())->setAmount(20));
 
         $this

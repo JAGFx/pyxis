@@ -2,12 +2,13 @@
 
 namespace App\Shared\Operator;
 
-use App\Domain\Budget\Manager\BudgetManager;
+use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Message\Command\CreateHistoryBudget\CreateHistoryBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
-use App\Shared\Cqs\Bus\MessageBus;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Utils\YearRange;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
@@ -16,9 +17,9 @@ use Throwable;
 readonly class HistoryBudgetOperator
 {
     public function __construct(
-        private BudgetManager $budgetManager,
         private LoggerInterface $logger,
-        private MessageBus $messageBus,
+        private SymfonyMessageBus $messageBus,
+        private EntityFinder $entityFinder,
     ) {
     }
 
@@ -35,7 +36,10 @@ readonly class HistoryBudgetOperator
         );
 
         foreach ($budgetsValues as $budgetValue) {
-            $budget = $this->budgetManager->find($budgetValue->getId());
+            $budget = $this->entityFinder->findByIntIdentifier(
+                Budget::class,
+                $budgetValue->getId()
+            );
 
             if (is_null($budget)) {
                 continue;

@@ -9,7 +9,7 @@ use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
-use App\Shared\Cqs\Bus\MessageBus;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Operator\BudgetOperator;
 use App\Shared\Utils\YearRange;
@@ -27,14 +27,14 @@ class BudgetOperatorTest extends KernelTestCase
     private const string ACCOUNT_1           = 'Test Account';
     private const string BUDGET_BALANCE_NAME = 'Budget balance';
     private BudgetOperator $budgetOperator;
-    private MessageBus $messageBus;
+    private SymfonyMessageBus $messageBus;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $container            = static::getContainer();
         $this->budgetOperator = $container->get(BudgetOperator::class);
-        $this->messageBus     = $container->get(MessageBus::class);
+        $this->messageBus     = $container->get(SymfonyMessageBus::class);
     }
 
     public function testGetBudgetBalanceProgressesWithNoBudgetExpensesNorHistory(): void

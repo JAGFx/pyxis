@@ -5,7 +5,7 @@ namespace App\Tests\Integration\Domain\Assignment\Message\Command\CreateOrUpdate
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment\CreateOrUpdateAssignmentCommand;
-use App\Shared\Cqs\Bus\MessageBus;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\AssignmentFactory;
 use App\Tests\Factory\EntryFactory;
@@ -15,14 +15,14 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
 {
-    private MessageBus $messageBus;
+    private SymfonyMessageBus $messageBus;
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $container          = static::getContainer();
-        $this->messageBus   = $container->get(MessageBus::class);
+        $this->messageBus   = $container->get(SymfonyMessageBus::class);
         $this->objectMapper = $container->get(ObjectMapperInterface::class);
     }
 

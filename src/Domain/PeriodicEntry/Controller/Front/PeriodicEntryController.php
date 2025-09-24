@@ -6,8 +6,8 @@ use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchType;
 use App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntry\RemovePeriodicEntryCommand;
 use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\Cqs\Bus\MessageBus;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +21,7 @@ class PeriodicEntryController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly MessageBus $messageBus,
+        private readonly SymfonyMessageBus $messageBus,
     ) {
     }
 

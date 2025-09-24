@@ -8,8 +8,8 @@ use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentSearchType;
 use App\Domain\Assignment\Message\Command\RemoveAssignment\RemoveAssignmentCommand;
 use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\Cqs\Bus\MessageBus;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +23,7 @@ class AssignmentController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly MessageBus $messageBus,
+        private readonly SymfonyMessageBus $messageBus,
     ) {
     }
 

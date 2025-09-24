@@ -7,8 +7,8 @@ use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Message\Command\ToggleEnableBudget\ToggleEnableBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Security\BudgetVoter;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\BudgetOperator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +25,7 @@ class BudgetController extends AbstractController
 
     public function __construct(
         private readonly BudgetOperator $budgetOperator,
-        private readonly MessageBus $messageBus,
+        private readonly SymfonyMessageBus $messageBus,
     ) {
     }
 

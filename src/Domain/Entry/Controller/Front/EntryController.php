@@ -7,9 +7,9 @@ use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Message\Command\RemoveEntry\RemoveEntryCommand;
 use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Domain\Entry\Security\EntryVoter;
+use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -28,7 +28,7 @@ class EntryController extends AbstractController
 
     public function __construct(
         private readonly EntryOperator $entryOperator,
-        private readonly MessageBus $messageBus,
+        private readonly SymfonyMessageBus $messageBus,
     ) {
     }
 

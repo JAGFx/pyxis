@@ -4,8 +4,8 @@ namespace App\Domain\Account\Message\Command\CreateOrUpdateAccount;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Repository\AccountRepository;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
-use App\Shared\Cqs\Handler\EntityFinderTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
@@ -15,12 +15,11 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
  */
 readonly class CreateOrUpdateAccountHandler implements CommandHandlerInterface
 {
-    use EntityFinderTrait;
-
     public function __construct(
         private AccountRepository $repository,
         private EntityManagerInterface $entityManager,
         private ObjectMapperInterface $objectMapper,
+        private EntityFinder $entityFinder,
     ) {
     }
 
@@ -35,7 +34,7 @@ readonly class CreateOrUpdateAccountHandler implements CommandHandlerInterface
 
             $this->repository->create($account);
         } else {
-            $entity = $this->findEntityByIntIdentifierOrFail(
+            $entity = $this->entityFinder->findByIntIdentifierOrFail(
                 Account::class,
                 $command->getOriginId()
             );
