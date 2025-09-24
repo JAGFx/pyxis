@@ -3,7 +3,7 @@
 namespace App\Domain\Assignment\Message\Command\RemoveAssignment;
 
 use App\Domain\Assignment\Entity\Assignment;
-use App\Domain\Assignment\Repository\AssignmentRepository;
+use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,13 +16,13 @@ readonly class RemoveAssignmentHandler implements CommandHandlerInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private AssignmentRepository $repository,
         private EntityFinder $entityFinder,
     ) {
     }
 
     /**
      * @throws ReflectionException
+     * @throws EntityNotFoundException
      */
     public function __invoke(RemoveAssignmentCommand $command): void
     {
@@ -31,7 +31,7 @@ readonly class RemoveAssignmentHandler implements CommandHandlerInterface
             $command->getAssignmentId()
         );
 
-        $this->repository->remove($assigment);
+        $this->entityManager->remove($assigment);
 
         $this->entityManager->flush();
     }

@@ -3,7 +3,7 @@
 namespace App\Domain\Entry\Message\Command\RemoveEntry;
 
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Repository\EntryRepository;
+use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +15,6 @@ use ReflectionException;
 readonly class RemoveEntryHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private EntryRepository $repository,
         private EntityManagerInterface $entityManager,
         private EntityFinder $entityFinder,
     ) {
@@ -23,6 +22,7 @@ readonly class RemoveEntryHandler implements CommandHandlerInterface
 
     /**
      * @throws ReflectionException
+     * @throws EntityNotFoundException
      */
     public function __invoke(RemoveEntryCommand $command): void
     {
@@ -35,7 +35,7 @@ readonly class RemoveEntryHandler implements CommandHandlerInterface
             return;
         }
 
-        $this->repository->remove($entry);
+        $this->entityManager->remove($entry);
 
         $this->entityManager->flush();
     }

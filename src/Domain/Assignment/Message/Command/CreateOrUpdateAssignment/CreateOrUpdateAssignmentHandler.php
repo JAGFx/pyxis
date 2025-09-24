@@ -3,7 +3,7 @@
 namespace App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment;
 
 use App\Domain\Assignment\Entity\Assignment;
-use App\Domain\Assignment\Repository\AssignmentRepository;
+use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +16,6 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 readonly class CreateOrUpdateAssignmentHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private AssignmentRepository $repository,
         private EntityManagerInterface $entityManager,
         private ObjectMapperInterface $objectMapper,
         private EntityFinder $entityFinder,
@@ -25,13 +24,14 @@ readonly class CreateOrUpdateAssignmentHandler implements CommandHandlerInterfac
 
     /**
      * @throws ReflectionException
+     * @throws EntityNotFoundException
      */
     public function __invoke(CreateOrUpdateAssignmentCommand $command): void
     {
         if (null === $command->getOriginId()) {
             /** @var Assignment $assignment */
             $assignment = $this->objectMapper->map($command, Assignment::class);
-            $this->repository->create($assignment);
+            $this->entityManager->persist($assignment);
         } else {
             $entity = $this->entityFinder->findByIntIdentifierOrFail(
                 Assignment::class,

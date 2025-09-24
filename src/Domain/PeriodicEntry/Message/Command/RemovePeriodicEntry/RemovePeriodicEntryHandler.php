@@ -3,7 +3,7 @@
 namespace App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntry;
 
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
+use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +15,6 @@ use ReflectionException;
 readonly class RemovePeriodicEntryHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private PeriodicEntryRepository $repository,
         private EntityManagerInterface $entityManager,
         private EntityFinder $entityFinder,
     ) {
@@ -23,6 +22,7 @@ readonly class RemovePeriodicEntryHandler implements CommandHandlerInterface
 
     /**
      * @throws ReflectionException
+     * @throws EntityNotFoundException
      */
     public function __invoke(RemovePeriodicEntryCommand $command): void
     {
@@ -31,7 +31,7 @@ readonly class RemovePeriodicEntryHandler implements CommandHandlerInterface
             $command->getOriginId(),
         );
 
-        $this->repository->remove($entity);
+        $this->entityManager->remove($entity);
 
         $this->entityManager->flush();
     }

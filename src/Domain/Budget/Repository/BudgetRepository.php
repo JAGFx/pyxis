@@ -20,13 +20,6 @@ class BudgetRepository extends ServiceEntityRepository
         parent::__construct($registry, Budget::class);
     }
 
-    public function create(Budget $budget): self
-    {
-        $this->getEntityManager()->persist($budget);
-
-        return $this;
-    }
-
     public function getBudgetsQueryBuilder(FindBudgetsQuery $searchQuery): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('b')

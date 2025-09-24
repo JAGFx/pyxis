@@ -59,11 +59,4 @@ class AccountRepository extends ServiceEntityRepository
 
         return $queryBuilder;
     }
-
-    public function create(Account $account): self
-    {
-        $this->getEntityManager()->persist($account);
-
-        return $this;
-    }
 }

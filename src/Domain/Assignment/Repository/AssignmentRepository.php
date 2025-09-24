@@ -63,18 +63,4 @@ class AssignmentRepository extends ServiceEntityRepository
 
         return $queryBuilder;
     }
-
-    public function create(Assignment $entity): self
-    {
-        $this->getEntityManager()->persist($entity);
-
-        return $this;
-    }
-
-    public function remove(Assignment $entry): self
-    {
-        $this->getEntityManager()->remove($entry);
-
-        return $this;
-    }
 }

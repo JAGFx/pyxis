@@ -3,6 +3,7 @@
 namespace App\Domain\Account\Message\Command\ToggleEnableAccount;
 
 use App\Domain\Account\Entity\Account;
+use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +22,7 @@ readonly class ToggleEnableAccountHandler implements CommandHandlerInterface
 
     /**
      * @throws ReflectionException
+     * @throws EntityNotFoundException
      */
     public function __invoke(ToggleEnableAccountCommand $command): void
     {

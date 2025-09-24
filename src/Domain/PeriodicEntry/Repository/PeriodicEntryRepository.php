@@ -19,20 +19,6 @@ class PeriodicEntryRepository extends ServiceEntityRepository
         parent::__construct($registry, PeriodicEntry::class);
     }
 
-    public function create(PeriodicEntry $entity): self
-    {
-        $this->getEntityManager()->persist($entity);
-
-        return $this;
-    }
-
-    public function remove(PeriodicEntry $entry): self
-    {
-        $this->getEntityManager()->remove($entry);
-
-        return $this;
-    }
-
     public function getPeriodicEntriesQueryBuilder(?FindPeriodicEntriesQuery $searchQuery = null): QueryBuilder
     {
         $searchQuery ??= new FindPeriodicEntriesQuery();

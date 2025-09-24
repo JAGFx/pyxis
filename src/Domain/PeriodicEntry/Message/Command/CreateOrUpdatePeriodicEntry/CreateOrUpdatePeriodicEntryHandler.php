@@ -3,7 +3,7 @@
 namespace App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry;
 
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
+use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,7 +16,6 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 readonly class CreateOrUpdatePeriodicEntryHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private PeriodicEntryRepository $repository,
         private EntityManagerInterface $entityManager,
         private ObjectMapperInterface $objectMapper,
         private EntityFinder $entityFinder,
@@ -25,6 +24,7 @@ readonly class CreateOrUpdatePeriodicEntryHandler implements CommandHandlerInter
 
     /**
      * @throws ReflectionException
+     * @throws EntityNotFoundException
      */
     public function __invoke(CreateOrUpdatePeriodicEntryCommand $command): void
     {
@@ -32,7 +32,7 @@ readonly class CreateOrUpdatePeriodicEntryHandler implements CommandHandlerInter
             /** @var PeriodicEntry $periodicEntry */
             $periodicEntry = $this->objectMapper->map($command, PeriodicEntry::class);
 
-            $this->repository->create($periodicEntry);
+            $this->entityManager->persist($periodicEntry);
         } else {
             $entity = $this->entityFinder->findByIntIdentifierOrFail(
                 PeriodicEntry::class,

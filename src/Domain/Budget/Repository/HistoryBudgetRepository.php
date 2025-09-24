@@ -46,11 +46,4 @@ class HistoryBudgetRepository extends ServiceEntityRepository
 
         return $qb;
     }
-
-    public function create(HistoryBudget $historyBudget): self
-    {
-        $this->getEntityManager()->persist($historyBudget);
-
-        return $this;
-    }
 }
