@@ -39,7 +39,7 @@ readonly class MessageBus
     private function dispatchCommand(CommandInterface $command): void
     {
         $message = new Envelope($command)
-            ->with(new ValidationStamp([ValidationGroupEnum::Business->value]));
+            ->with(new ValidationStamp(['Default', ValidationGroupEnum::Business->value]));
         $this->commandBus->dispatch($message);
     }
 
@@ -49,7 +49,7 @@ readonly class MessageBus
     private function dispatchQuery(QueryInterface $query): mixed
     {
         $message = new Envelope($query)
-            ->with(new ValidationStamp([ValidationGroupEnum::Business->value]));
+            ->with(new ValidationStamp(['Default']));
         $envelope = $this->queryBus->dispatch($message);
 
         /** @var ?HandledStamp $handledStamp */

@@ -8,7 +8,7 @@ use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Repository\BudgetRepository;
-use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntryCommand;
+use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry\CreateOrUpdatePeriodicEntryCommand;
 use App\Shared\Form\Type\MoneyType;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

@@ -4,22 +4,19 @@ namespace App\Domain\PeriodicEntry\Controller\Back;
 
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntryCreateOrUpdateType;
-use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
-use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntryCommand;
+use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry\CreateOrUpdatePeriodicEntryCommand;
 use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
-use App\Shared\Controller\ControllerActionEnum;
 use App\Shared\Controller\FormErrorMappingTrait;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
-use App\Shared\Validation\ValidationGroupEnum;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/periodic_entries')]
 class PeriodicEntryController extends AbstractController
@@ -27,10 +24,8 @@ class PeriodicEntryController extends AbstractController
     use FormErrorMappingTrait;
 
     public function __construct(
-        private readonly PeriodicEntryManager $periodicEntryManager,
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly ObjectMapperInterface $objectMapper,
-        private readonly ValidatorInterface $validator,
         private readonly MessageBus $messageBus,
     ) {
     }
@@ -49,19 +44,28 @@ class PeriodicEntryController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/create', 'back_periodic_entry_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
-        return $this->handleRequest(ControllerActionEnum::CREATE, $request);
+        return $this->handleRequest($request);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/{id}/update', 'back_periodic_entry_edit', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function edit(PeriodicEntry $periodicEntry, Request $request): Response
     {
-        return $this->handleRequest(ControllerActionEnum::EDIT, $request, $periodicEntry);
+        return $this->handleRequest($request, $periodicEntry);
     }
 
-    private function handleRequest(ControllerActionEnum $type, Request $request, ?PeriodicEntry $periodicEntry = null): Response
+    /**
+     * @throws ExceptionInterface
+     */
+    private function handleRequest(Request $request, ?PeriodicEntry $periodicEntry = null): Response
     {
         $periodicEntryCommand = is_null($periodicEntry)
             ? new CreateOrUpdatePeriodicEntryCommand()
@@ -72,20 +76,17 @@ class PeriodicEntryController extends AbstractController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $violations = $this->validator->validate($periodicEntryCommand, groups: [ValidationGroupEnum::Business->value]);
-
-            if (0 === $violations->count()) {
-                if (ControllerActionEnum::CREATE === $type) {
-                    $this->periodicEntryManager->create($periodicEntryCommand);
-                } else {
-                    $periodicEntryCommand->setOrigin($periodicEntry);
-                    $this->periodicEntryManager->update($periodicEntryCommand);
+            try {
+                if (!is_null($periodicEntry)) {
+                    $periodicEntryCommand->setOriginId($periodicEntry->getId());
                 }
 
-                return $this->redirectToRoute('back_periodic_entry_list');
-            }
+                $this->messageBus->dispatch($periodicEntryCommand);
 
-            $this->mapBusinessErrorsToForm($violations, $form);
+                return $this->redirectToRoute('back_periodic_entry_list');
+            } catch (ValidationFailedException $exception) {
+                $this->mapBusinessErrorsToForm($exception->getViolations(), $form);
+            }
         }
 
         return $this->render('domain/periodic_entry/form.html.twig', [

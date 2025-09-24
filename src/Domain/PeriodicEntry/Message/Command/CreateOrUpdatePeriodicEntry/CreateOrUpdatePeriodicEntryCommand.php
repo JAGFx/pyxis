@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Domain\PeriodicEntry\Message\Command;
+namespace App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Shared\Cqs\Message\Command\CommandInterface;
+use App\Shared\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use App\Shared\Entity\HasCollectionTrait;
 use App\Shared\Validation\ValidationGroupEnum;
 use DateTimeImmutable;
@@ -19,10 +20,14 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\When;
 
+/**
+ * @see CreateOrUpdatePeriodicEntryHandler
+ */
 #[Map(PeriodicEntry::class)]
 class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
 {
     use HasCollectionTrait;
+    use HasOriginIntIdentifierTrait;
 
     public function __construct(
         #[NotNull]
@@ -55,9 +60,6 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
          * @var Collection<int, Budget>
          */
         private Collection $budgets = new ArrayCollection(),
-
-        #[Map(if: false)]
-        private ?PeriodicEntry $origin = null,
     ) {
     }
 
@@ -140,18 +142,6 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
     public function setBudgets(Collection $budgets): CreateOrUpdatePeriodicEntryCommand
     {
         $this->budgets = $budgets;
-
-        return $this;
-    }
-
-    public function getOrigin(): ?PeriodicEntry
-    {
-        return $this->origin;
-    }
-
-    public function setOrigin(?PeriodicEntry $origin): CreateOrUpdatePeriodicEntryCommand
-    {
-        $this->origin = $origin;
 
         return $this;
     }

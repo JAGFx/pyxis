@@ -4,8 +4,7 @@ namespace App\Domain\PeriodicEntry\Controller\Front;
 
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchType;
-use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
-use App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntryCommand;
+use App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntry\RemovePeriodicEntryCommand;
 use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Cqs\Bus\MessageBus;
@@ -21,15 +20,19 @@ class PeriodicEntryController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly PeriodicEntryManager $periodicEntryManager,
         private readonly MessageBus $messageBus,
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/{id}/remove', 'front_periodic_entry_remove', requirements: ['id' => '\d+'], methods: Request::METHOD_GET)]
     public function remove(PeriodicEntry $periodicEntry, Request $request): Response
     {
-        $this->periodicEntryManager->remove(new RemovePeriodicEntryCommand($periodicEntry));
+        $this->messageBus->dispatch(
+            new RemovePeriodicEntryCommand()->setOriginId($periodicEntry->getId())
+        );
 
         return $this->renderTurboStream($request, 'domain/periodic_entry/turbo/remove.turbo.stream.html.twig', [
             'periodicEntryId' => $periodicEntry->getId(),

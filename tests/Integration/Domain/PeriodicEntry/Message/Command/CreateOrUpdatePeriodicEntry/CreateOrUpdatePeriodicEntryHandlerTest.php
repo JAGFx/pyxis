@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Tests\Integration\Domain\PeriodicEntry\Manager;
+namespace App\Tests\Integration\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Domain\PeriodicEntry\Manager\PeriodicEntryManager;
-use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntryCommand;
+use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry\CreateOrUpdatePeriodicEntryCommand;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
@@ -15,17 +15,17 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
-class PeriodicEntryManagerTest extends KernelTestCase
+class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
 {
-    private PeriodicEntryManager $periodicEntryManager;
+    private MessageBus $messageBus;
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        $container                  = static::getContainer();
-        $this->periodicEntryManager = $container->get(PeriodicEntryManager::class);
-        $this->objectMapper         = $container->get(ObjectMapperInterface::class);
+        $container          = static::getContainer();
+        $this->messageBus   = $container->get(MessageBus::class);
+        $this->objectMapper = $container->get(ObjectMapperInterface::class);
     }
 
     public function testCreateDoesNotThrowException(): void
@@ -45,7 +45,7 @@ class PeriodicEntryManagerTest extends KernelTestCase
             budgets: new ArrayCollection([$budget1, $budget2])
         );
 
-        $this->periodicEntryManager->create($command);
+        $this->messageBus->dispatch($command);
 
         $this->expectNotToPerformAssertions();
     }
@@ -75,10 +75,11 @@ class PeriodicEntryManagerTest extends KernelTestCase
             amount: null,
             executionDate: new DateTimeImmutable('+1 month'),
             budgets: new ArrayCollection([$budget1, $budget2]),
-            origin: $existingPeriodicEntry
         );
 
-        $this->periodicEntryManager->update($command);
+        $command->setOriginId($existingPeriodicEntry->getId());
+
+        $this->messageBus->dispatch($command);
 
         $this->expectNotToPerformAssertions();
     }
