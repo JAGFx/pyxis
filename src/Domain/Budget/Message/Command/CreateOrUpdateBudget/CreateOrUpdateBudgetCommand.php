@@ -1,16 +1,22 @@
 <?php
 
-namespace App\Domain\Budget\Message\Command;
+namespace App\Domain\Budget\Message\Command\CreateOrUpdateBudget;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Shared\Cqs\Message\Command\CommandInterface;
+use App\Shared\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
 
+/**
+ * @see CreateOrUpdateBudgetHandler
+ */
 #[Map(Budget::class)]
 class CreateOrUpdateBudgetCommand implements CommandInterface
 {
+    use HasOriginIntIdentifierTrait;
+
     public function __construct(
         #[NotBlank]
         public string $name = '',
@@ -19,9 +25,6 @@ class CreateOrUpdateBudgetCommand implements CommandInterface
         public float $amount = 0.0,
 
         public bool $enabled = true,
-
-        #[Map(if: false)]
-        private ?Budget $origin = null,
     ) {
     }
 
@@ -57,18 +60,6 @@ class CreateOrUpdateBudgetCommand implements CommandInterface
     public function setEnabled(bool $enabled): CreateOrUpdateBudgetCommand
     {
         $this->enabled = $enabled;
-
-        return $this;
-    }
-
-    public function getOrigin(): ?Budget
-    {
-        return $this->origin;
-    }
-
-    public function setOrigin(?Budget $origin): CreateOrUpdateBudgetCommand
-    {
-        $this->origin = $origin;
 
         return $this;
     }

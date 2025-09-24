@@ -1,25 +1,25 @@
 <?php
 
-namespace App\Tests\Integration\Domain\Budget\Manager;
+namespace App\Tests\Integration\Domain\Budget\Message\Command\CreateOrUpdateBudget;
 
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Message\Command\CreateOrUpdateBudgetCommand;
+use App\Domain\Budget\Message\Command\CreateOrUpdateBudget\CreateOrUpdateBudgetCommand;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
-class BudgetManagerTest extends KernelTestCase
+class CreateOrUpdateBudgetHandlerTest extends KernelTestCase
 {
-    private BudgetManager $budgetManager;
+    private MessageBus $messageBus;
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        $container           = static::getContainer();
-        $this->budgetManager = $container->get(BudgetManager::class);
-        $this->objectMapper  = $container->get(ObjectMapperInterface::class);
+        $container          = static::getContainer();
+        $this->messageBus   = $container->get(MessageBus::class);
+        $this->objectMapper = $container->get(ObjectMapperInterface::class);
     }
 
     public function testCreateDoesNotThrowException(): void
@@ -30,7 +30,7 @@ class BudgetManagerTest extends KernelTestCase
             enabled: true
         );
 
-        $this->budgetManager->create($command);
+        $this->messageBus->dispatch($command);
 
         $this->expectNotToPerformAssertions();
     }
@@ -49,9 +49,9 @@ class BudgetManagerTest extends KernelTestCase
             amount: 1500.0,
             enabled: false
         );
-        $command->setOrigin($existingBudget);
+        $command->setOriginId($existingBudget->getId());
 
-        $this->budgetManager->update($command);
+        $this->messageBus->dispatch($command);
 
         $this->expectNotToPerformAssertions();
     }

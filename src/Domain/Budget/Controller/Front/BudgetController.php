@@ -4,8 +4,7 @@ namespace App\Domain\Budget\Controller\Front;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetSearchType;
-use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Message\Command\ToggleEnableBudgetCommand;
+use App\Domain\Budget\Message\Command\ToggleEnableBudget\ToggleEnableBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
@@ -24,17 +23,19 @@ class BudgetController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly BudgetManager $budgetManager,
         private readonly BudgetOperator $budgetOperator,
         private readonly MessageBus $messageBus,
     ) {
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/{id}/toggle', name: 'front_budget_toggle', methods: [Request::METHOD_GET])]
     #[IsGranted(BudgetVoter::MANAGE, 'budget')]
     public function toggle(Request $request, Budget $budget): Response
     {
-        $this->budgetManager->toggle(new ToggleEnableBudgetCommand($budget));
+        $this->messageBus->dispatch(new ToggleEnableBudgetCommand()->setOriginId($budget->getId()));
 
         $message = 'Budget ';
         $message .= ($budget->isEnabled()) ? 'activé' : 'désactivé';

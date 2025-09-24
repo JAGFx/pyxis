@@ -2,7 +2,7 @@
 
 namespace App\Domain\Budget\Form;
 
-use App\Domain\Budget\Message\Command\CreateOrUpdateBudgetCommand;
+use App\Domain\Budget\Message\Command\CreateOrUpdateBudget\CreateOrUpdateBudgetCommand;
 use App\Shared\Form\Type\MoneyType;
 use App\Shared\Form\Type\YesNoType;
 use Symfony\Component\Form\AbstractType;

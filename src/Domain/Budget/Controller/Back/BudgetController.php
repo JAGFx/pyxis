@@ -5,11 +5,10 @@ namespace App\Domain\Budget\Controller\Back;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetAccountBalanceType;
 use App\Domain\Budget\Form\BudgetCreateOrUpdateType;
-use App\Domain\Budget\Manager\BudgetManager;
-use App\Domain\Budget\Message\Command\CreateOrUpdateBudgetCommand;
+use App\Domain\Budget\Message\Command\CreateOrUpdateBudget\CreateOrUpdateBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Security\BudgetVoter;
-use App\Shared\Controller\ControllerActionEnum;
+use App\Shared\Controller\FormErrorMappingTrait;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
@@ -19,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -26,8 +26,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/budgets')]
 class BudgetController extends AbstractController
 {
+    use FormErrorMappingTrait;
+
     public function __construct(
-        private readonly BudgetManager $budgetManager,
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly BudgetOperator $budgetOperator,
         private readonly ObjectMapperInterface $objectMapper,
@@ -49,17 +50,23 @@ class BudgetController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/create', name: 'back_budget_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
-        return $this->handleForm(ControllerActionEnum::CREATE, $request);
+        return $this->handleForm($request);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/{id}/update', name: 'back_budget_edit', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
     #[IsGranted(BudgetVoter::MANAGE, 'budget')]
     public function edit(Request $request, Budget $budget): Response
     {
-        return $this->handleForm(ControllerActionEnum::EDIT, $request, $budget);
+        return $this->handleForm($request, $budget);
     }
 
     #[Route('/{id}/balance', name: 'back_budget_balance', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
@@ -84,7 +91,10 @@ class BudgetController extends AbstractController
         ]);
     }
 
-    private function handleForm(ControllerActionEnum $action, Request $request, ?Budget $budget = null): Response
+    /**
+     * @throws ExceptionInterface
+     */
+    private function handleForm(Request $request, ?Budget $budget = null): Response
     {
         $budgetCommand = is_null($budget)
             ? new CreateOrUpdateBudgetCommand()
@@ -94,14 +104,17 @@ class BudgetController extends AbstractController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (ControllerActionEnum::CREATE === $action) {
-                $this->budgetManager->create($budgetCommand);
-            } else {
-                $budgetCommand->setOrigin($budget);
-                $this->budgetManager->update($budgetCommand);
-            }
+            try {
+                if (!is_null($budget)) {
+                    $budgetCommand->setOriginId($budget->getId());
+                }
 
-            return $this->redirectToRoute('back_budget_list');
+                $this->messageBus->dispatch($budgetCommand);
+
+                return $this->redirectToRoute('back_budget_list');
+            } catch (ValidationFailedException $exception) {
+                $this->mapBusinessErrorsToForm($exception->getViolations(), $form);
+            }
         }
 
         return $this->render('domain/budget/form.html.twig', [
