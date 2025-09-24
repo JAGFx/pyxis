@@ -3,16 +3,16 @@
 namespace App\Shared\Operator;
 
 use App\Domain\Entry\Entity\EntryFlagEnum;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Request\TransferRequest;
 use Doctrine\ORM\EntityManagerInterface;
 
 readonly class HomeOperator
 {
     public function __construct(
-        private EntryManager $entryManager,
         private EntityManagerInterface $entityManager,
+        private MessageBus $messageBus,
     ) {
     }
 
@@ -37,8 +37,8 @@ readonly class HomeOperator
             flags: [EntryFlagEnum::TRANSFERT],
         );
 
-        $this->entryManager->create($entrySourceCommand, false);
-        $this->entryManager->create($entryTargetCommand, false);
+        $this->messageBus->dispatch($entrySourceCommand);
+        $this->messageBus->dispatch($entryTargetCommand);
 
         $this->entityManager->flush();
     }

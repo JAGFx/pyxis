@@ -3,25 +3,27 @@
 namespace App\Shared\Operator;
 
 use App\Domain\Entry\Entity\EntryFlagEnum;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
+use App\Shared\Cqs\Bus\MessageBus;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 readonly class PeriodicEntryOperator
 {
     public function __construct(
-        private EntryManager $entryManager,
         private EntityManagerInterface $entityManager,
+        private MessageBus $messageBus,
     ) {
     }
 
     /**
      * @throws DateMalformedStringException
      * @throws PeriodicEntrySplitBudgetException
+     * @throws ExceptionInterface
      */
     public function addSplitForBudgets(PeriodicEntry $periodicEntry, ?DateTimeImmutable $date = null): void
     {
@@ -48,7 +50,7 @@ readonly class PeriodicEntryOperator
                 flags: [EntryFlagEnum::PERIODIC_ENTRY],
             );
 
-            $this->entryManager->create($entryCommand, false);
+            $this->messageBus->dispatch($entryCommand);
         } else {
             foreach ($periodicEntry->getBudgets() as $budget) {
                 $amount = $periodicEntry->getAmountFor($budget);
@@ -65,7 +67,7 @@ readonly class PeriodicEntryOperator
                     flags: [EntryFlagEnum::PERIODIC_ENTRY],
                 );
 
-                $this->entryManager->create($entryCommand, false);
+                $this->messageBus->dispatch($entryCommand);
             }
         }
 

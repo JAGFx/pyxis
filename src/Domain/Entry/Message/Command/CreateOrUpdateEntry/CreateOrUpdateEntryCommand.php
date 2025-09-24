@@ -1,20 +1,26 @@
 <?php
 
-namespace App\Domain\Entry\Message\Command;
+namespace App\Domain\Entry\Message\Command\CreateOrUpdateEntry;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Shared\Cqs\Message\Command\CommandInterface;
+use App\Shared\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotEqualTo;
 use Symfony\Component\Validator\Constraints\NotNull;
 
+/**
+ * @see CreateOrUpdateEntryHandler
+ */
 #[Map(Entry::class)]
 class CreateOrUpdateEntryCommand implements CommandInterface
 {
+    use HasOriginIntIdentifierTrait;
+
     public function __construct(
         #[NotNull]
         private ?Account $account = null,
@@ -31,9 +37,6 @@ class CreateOrUpdateEntryCommand implements CommandInterface
          * @var EntryFlagEnum[]
          */
         private array $flags = [],
-
-        #[Map(if: false)]
-        private ?Entry $origin = null,
     ) {
     }
 
@@ -99,18 +102,6 @@ class CreateOrUpdateEntryCommand implements CommandInterface
     public function setFlags(array $flags): CreateOrUpdateEntryCommand
     {
         $this->flags = $flags;
-
-        return $this;
-    }
-
-    public function getOrigin(): ?Entry
-    {
-        return $this->origin;
-    }
-
-    public function setOrigin(?Entry $origin): CreateOrUpdateEntryCommand
-    {
-        $this->origin = $origin;
 
         return $this;
     }

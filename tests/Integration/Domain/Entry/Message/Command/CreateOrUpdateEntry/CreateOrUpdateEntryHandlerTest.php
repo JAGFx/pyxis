@@ -1,28 +1,28 @@
 <?php
 
-namespace App\Tests\Integration\Domain\Entry\Manager;
+namespace App\Tests\Integration\Domain\Entry\Message\Command\CreateOrUpdateEntry;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\Entry;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
-class EntryManagerTest extends KernelTestCase
+class CreateOrUpdateEntryHandlerTest extends KernelTestCase
 {
-    private EntryManager $entryManager;
+    private MessageBus $messageBus;
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $container          = static::getContainer();
-        $this->entryManager = $container->get(EntryManager::class);
+        $this->messageBus   = $container->get(MessageBus::class);
         $this->objectMapper = $container->get(ObjectMapperInterface::class);
     }
 
@@ -40,7 +40,7 @@ class EntryManagerTest extends KernelTestCase
         $command->setAmount(150.0);
         $command->setBudget($budget);
 
-        $this->entryManager->create($command);
+        $this->messageBus->dispatch($command);
 
         $this->expectNotToPerformAssertions();
     }
@@ -64,9 +64,9 @@ class EntryManagerTest extends KernelTestCase
         $command->setAccount($account);
         $command->setAmount(250.0);
         $command->setBudget($budget);
-        $command->setOrigin($existingEntry);
+        $command->setOriginId($existingEntry->getId());
 
-        $this->entryManager->update($command);
+        $this->messageBus->dispatch($command);
 
         $this->expectNotToPerformAssertions();
     }

@@ -5,13 +5,12 @@ namespace App\Domain\Entry\Controller\Back;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntryCreateOrUpdateType;
 use App\Domain\Entry\Form\EntrySearchType;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
-use App\Shared\Controller\ControllerActionEnum;
+use App\Shared\Controller\FormErrorMappingTrait;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
@@ -19,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -27,9 +27,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class EntryController extends AbstractController
 {
     use PaginationFormHandlerTrait;
+    use FormErrorMappingTrait;
 
     public function __construct(
-        private readonly EntryManager $entryManager,
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
         private readonly ObjectMapperInterface $objectMapper,
         private readonly MessageBus $messageBus,
@@ -54,20 +54,30 @@ class EntryController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/create', name: 'back_entry_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function create(Request $request): Response
     {
-        return $this->handleForm(ControllerActionEnum::CREATE, $request);
+        return $this->handleForm($request);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/{id}/update', name: 'back_entry_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    // TODO: add requirement and multiline parameters
     #[IsGranted(EntryVoter::MANAGE, 'entry')]
     public function edit(Entry $entry, Request $request): Response
     {
-        return $this->handleForm(ControllerActionEnum::EDIT, $request, $entry);
+        return $this->handleForm($request, $entry);
     }
 
-    private function handleForm(ControllerActionEnum $type, Request $request, ?Entry $entry = null): Response
+    /**
+     * @throws ExceptionInterface
+     */
+    private function handleForm(Request $request, ?Entry $entry = null): Response
     {
         $entryCommand = is_null($entry)
             ? new CreateOrUpdateEntryCommand()
@@ -78,14 +88,17 @@ class EntryController extends AbstractController
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (ControllerActionEnum::CREATE === $type) {
-                $this->entryManager->create($entryCommand);
-            } else {
-                $entryCommand->setOrigin($entry);
-                $this->entryManager->update($entryCommand);
-            }
+            try {
+                if (!is_null($entry)) {
+                    $entryCommand->setOriginId($entry->getId());
+                }
 
-            return $this->redirectToRoute('back_entry_list');
+                $this->messageBus->dispatch($entryCommand);
+
+                return $this->redirectToRoute('back_entry_list');
+            } catch (ValidationFailedException $exception) {
+                $this->mapBusinessErrorsToForm($exception->getViolations(), $form);
+            }
         }
 
         return $this->render('domain/entry/form.html.twig', [

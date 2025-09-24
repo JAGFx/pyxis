@@ -4,8 +4,7 @@ namespace App\Domain\Entry\Controller\Front;
 
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntrySearchType;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\RemoveEntryCommand;
+use App\Domain\Entry\Message\Command\RemoveEntry\RemoveEntryCommand;
 use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
@@ -27,7 +26,6 @@ class EntryController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly EntryManager $entryManager,
         private readonly EntryOperator $entryOperator,
         private readonly MessageBus $messageBus,
     ) {
@@ -45,11 +43,14 @@ class EntryController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route('/{id}/remove', name: 'front_entry_remove', methods: Request::METHOD_GET)]
     #[IsGranted(EntryVoter::MANAGE, 'entry')]
     public function remove(Entry $entry, Request $request): Response
     {
-        $this->entryManager->remove(new RemoveEntryCommand($entry));
+        $this->messageBus->dispatch(new RemoveEntryCommand()->setOriginId($entry->getId()));
 
         return $this->renderTurboStream($request, 'domain/entry/turbo/remove.turbo.stream.html.twig', [
             'entryId' => $entry->getId(),

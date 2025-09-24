@@ -4,9 +4,9 @@ namespace App\Tests\Unit\Shared\Operator;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
-use App\Domain\Entry\Manager\EntryManager;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
+use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Operator\PeriodicEntryOperator;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,20 +14,20 @@ use PHPUnit\Framework\TestCase;
 
 class PeriodicEntryOperatorTest extends TestCase
 {
-    private EntryManager $entryManagerMock;
     private EntityManagerInterface $entityManagerMock;
+    private MessageBus $messageBusMock;
 
     protected function setUp(): void
     {
-        $this->entryManagerMock  = $this->createMock(EntryManager::class);
         $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
+        $this->messageBusMock    = $this->createMock(MessageBus::class);
     }
 
     private function generatePeriodicEntryOperator(): PeriodicEntryOperator
     {
         return new PeriodicEntryOperator(
-            $this->entryManagerMock,
-            $this->entityManagerMock
+            $this->entityManagerMock,
+            $this->messageBusMock,
         );
     }
 
@@ -42,9 +42,9 @@ class PeriodicEntryOperatorTest extends TestCase
         $this->expectException(PeriodicEntrySplitBudgetException::class);
         $this->expectExceptionMessage('The periodic entry is not scheduled for today.');
 
-        $this->entryManagerMock
+        $this->messageBusMock
             ->expects(self::never())
-            ->method('create');
+            ->method('dispatch');
 
         $this->entityManagerMock
             ->expects(self::never())
@@ -68,9 +68,9 @@ class PeriodicEntryOperatorTest extends TestCase
         $this->expectException(PeriodicEntrySplitBudgetException::class);
         $this->expectExceptionMessage('A periodic entry has already been executed.');
 
-        $this->entryManagerMock
+        $this->messageBusMock
             ->expects(self::never())
-            ->method('create');
+            ->method('dispatch');
 
         $this->entityManagerMock
             ->expects(self::never())
@@ -92,9 +92,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->setName('Last month execution')
             ->setAccount(new Account());
 
-        $this->entryManagerMock
+        $this->messageBusMock
             ->expects(self::once())
-            ->method('create');
+            ->method('dispatch');
 
         $this->entityManagerMock
             ->expects(self::once())
@@ -126,9 +126,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->addBudget($disabledBudget1)
             ->addBudget($disabledBudget2);
 
-        $this->entryManagerMock
+        $this->messageBusMock
             ->expects(self::never())
-            ->method('create');
+            ->method('dispatch');
 
         $this->entityManagerMock
             ->expects(self::once())
@@ -154,9 +154,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->setAccount(new Account())
             ->addBudget($zeroBudget);
 
-        $this->entryManagerMock
+        $this->messageBusMock
             ->expects(self::never())
-            ->method('create');
+            ->method('dispatch');
 
         $this->entityManagerMock
             ->expects(self::once())
@@ -178,9 +178,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->setName('Custom date test')
             ->setAccount(new Account());
 
-        $this->entryManagerMock
+        $this->messageBusMock
             ->expects(self::once())
-            ->method('create');
+            ->method('dispatch');
 
         $this->entityManagerMock
             ->expects(self::once())
@@ -201,9 +201,9 @@ class PeriodicEntryOperatorTest extends TestCase
             ->setName('Spent Entry')
             ->setAccount(new Account());
 
-        $this->entryManagerMock
+        $this->messageBusMock
             ->expects(self::once())
-            ->method('create');
+            ->method('dispatch');
 
         $this->entityManagerMock
             ->expects(self::once())
@@ -235,9 +235,9 @@ class PeriodicEntryOperatorTest extends TestCase
                 ->setEnabled(true)
             );
 
-        $this->entryManagerMock
+        $this->messageBusMock
             ->expects(self::exactly(2))
-            ->method('create');
+            ->method('dispatch');
 
         $this->entityManagerMock
             ->expects(self::once())
@@ -274,9 +274,9 @@ class PeriodicEntryOperatorTest extends TestCase
                 ->setEnabled(false)
             );
 
-        $this->entryManagerMock
+        $this->messageBusMock
             ->expects(self::exactly(2))
-            ->method('create');
+            ->method('dispatch');
 
         $this->entityManagerMock
             ->expects(self::once())

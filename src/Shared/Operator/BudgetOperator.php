@@ -13,8 +13,7 @@ use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Domain\Entry\Entity\EntryFlagEnum;
-use App\Domain\Entry\Manager\EntryManager;
-use App\Domain\Entry\Message\Command\CreateOrUpdateEntryCommand;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Shared\Cqs\Bus\MessageBus;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Utils\YearRange;
@@ -24,7 +23,6 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 readonly class BudgetOperator
 {
     public function __construct(
-        private EntryManager $entryManager,
         private EntityManagerInterface $entityManager,
         private MessageBus $messageBus,
     ) {
@@ -100,6 +98,9 @@ readonly class BudgetOperator
         return $cashFlows;
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     public function balancing(GetBudgetAccountBalanceCommand $budgetAccountBalance): void
     {
         $budget  = $budgetAccountBalance->getBudget();
@@ -121,8 +122,10 @@ readonly class BudgetOperator
                 flags: [EntryFlagEnum::BALANCE],
             );
 
-            $this->entryManager->create($spentCommand, false);
-            $this->entryManager->create($forecastCommand, false);
+            // TODO: Add flushable props
+            $this->messageBus->dispatch($spentCommand);
+            $this->messageBus->dispatch($forecastCommand);
+
             $this->entityManager->flush();
         }
     }
