@@ -18,6 +18,7 @@ use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Throwable;
 
 #[Route('/periodic_entries')]
 class PeriodicEntryController extends AbstractController
@@ -33,6 +34,7 @@ class PeriodicEntryController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         name: 'back_periodic_entry_list',
@@ -50,6 +52,7 @@ class PeriodicEntryController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/create',
@@ -63,6 +66,7 @@ class PeriodicEntryController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/{id}/update',
@@ -77,6 +81,7 @@ class PeriodicEntryController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     private function handleRequest(Request $request, ?PeriodicEntry $periodicEntry = null): Response
     {

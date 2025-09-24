@@ -5,11 +5,15 @@ namespace App\Infrastructure\Cqs\Bus;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use App\Shared\Cqs\Message\Query\QueryInterface;
 use App\Shared\Validation\ValidationGroupEnum;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Messenger\Stamp\ValidationStamp;
+use Throwable;
 
 readonly class SymfonyMessageBus
 {
@@ -21,16 +25,29 @@ readonly class SymfonyMessageBus
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     public function dispatch(CommandInterface|QueryInterface $command): mixed
     {
-        if ($command instanceof QueryInterface) {
-            return $this->dispatchQuery($command);
+        try {
+            if ($command instanceof QueryInterface) {
+                return $this->dispatchQuery($command);
+            }
+
+            $this->dispatchCommand($command);
+
+            return null;
+        } catch (HandlerFailedException $handlerFailedException) {
+            $previous = $handlerFailedException->getPrevious();
+
+            if ($previous instanceof NotFoundHttpException
+                || $previous instanceof AccessDeniedHttpException
+            ) {
+                throw $previous;
+            }
+
+            throw $handlerFailedException;
         }
-
-        $this->dispatchCommand($command);
-
-        return null;
     }
 
     /**

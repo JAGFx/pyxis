@@ -6,7 +6,6 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Message\Command\ToggleEnableBudget\ToggleEnableBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
-use App\Domain\Budget\Security\BudgetVoter;
 use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\BudgetOperator;
@@ -16,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Throwable;
 
 #[Route('budgets')]
 class BudgetController extends AbstractController
@@ -31,6 +30,7 @@ class BudgetController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/{id}/toggle',
@@ -38,7 +38,6 @@ class BudgetController extends AbstractController
         requirements: ['id' => Requirement::DIGITS],
         methods: [Request::METHOD_GET]
     )]
-    #[IsGranted(BudgetVoter::MANAGE, 'budget')]
     public function toggle(Request $request, Budget $budget): Response
     {
         $this->messageBus->dispatch(new ToggleEnableBudgetCommand()->setOriginId($budget->getId()));
@@ -77,6 +76,7 @@ class BudgetController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/search',

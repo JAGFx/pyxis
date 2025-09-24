@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Throwable;
 
 #[Route('/entries')]
 class EntryController extends AbstractController
@@ -47,6 +48,7 @@ class EntryController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/{id}/remove',
@@ -65,6 +67,7 @@ class EntryController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/search',

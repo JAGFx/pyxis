@@ -2,12 +2,12 @@
 
 namespace App\Infrastructure\Doctrine\Service;
 
-use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use LogicException;
 use ReflectionClass;
 use ReflectionException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 readonly class EntityFinder
 {
@@ -46,7 +46,7 @@ readonly class EntityFinder
      * @return T
      *
      * @throws ReflectionException
-     * @throws EntityNotFoundException
+     * @throws NotFoundHttpException
      */
     public function findByIntIdentifierOrFail(string $entityClass, ?int $id): object
     {
@@ -54,7 +54,7 @@ readonly class EntityFinder
         $entity = $this->findByIntIdentifier($entityClass, $id);
 
         if (is_null($entity)) {
-            throw new EntityNotFoundException(new ReflectionClass($entityClass)->getShortName(), $id);
+            throw new NotFoundHttpException(sprintf('%s not found with id %s', new ReflectionClass($entityClass)->getShortName(), $id));
         }
 
         return $entity;

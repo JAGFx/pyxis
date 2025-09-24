@@ -3,11 +3,11 @@
 namespace App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry;
 
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 /**
@@ -24,7 +24,7 @@ readonly class CreateOrUpdatePeriodicEntryHandler implements CommandHandlerInter
 
     /**
      * @throws ReflectionException
-     * @throws EntityNotFoundException
+     * @throws NotFoundHttpException
      */
     public function __invoke(CreateOrUpdatePeriodicEntryCommand $command): void
     {

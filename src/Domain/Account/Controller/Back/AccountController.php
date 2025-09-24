@@ -18,6 +18,7 @@ use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Throwable;
 
 #[Route('/accounts')]
 class AccountController extends AbstractController
@@ -33,6 +34,7 @@ class AccountController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         name: 'back_account_list',
@@ -51,6 +53,7 @@ class AccountController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/create',
@@ -64,6 +67,7 @@ class AccountController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/{id}/update',
@@ -78,6 +82,7 @@ class AccountController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     private function handleForm(Request $request, ?Account $account = null): Response
     {

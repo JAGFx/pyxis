@@ -3,11 +3,11 @@
 namespace App\Domain\Assignment\Message\Command\RemoveAssignment;
 
 use App\Domain\Assignment\Entity\Assignment;
-use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @see RemoveAssignmentCommand
@@ -22,7 +22,7 @@ readonly class RemoveAssignmentHandler implements CommandHandlerInterface
 
     /**
      * @throws ReflectionException
-     * @throws EntityNotFoundException
+     * @throws NotFoundHttpException
      */
     public function __invoke(RemoveAssignmentCommand $command): void
     {

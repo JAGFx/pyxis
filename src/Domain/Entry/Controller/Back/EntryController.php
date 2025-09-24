@@ -21,6 +21,7 @@ use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Throwable;
 
 #[Route('/entries')]
 class EntryController extends AbstractController
@@ -37,6 +38,7 @@ class EntryController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         name: 'back_entry_list',
@@ -58,6 +60,7 @@ class EntryController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/create',
@@ -71,6 +74,7 @@ class EntryController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/{id}/update',
@@ -85,6 +89,7 @@ class EntryController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     private function handleForm(Request $request, ?Entry $entry = null): Response
     {

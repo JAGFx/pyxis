@@ -3,11 +3,11 @@
 namespace App\Domain\Account\Message\Command\CreateOrUpdateAccount;
 
 use App\Domain\Account\Entity\Account;
-use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 /**
@@ -24,7 +24,7 @@ readonly class CreateOrUpdateAccountHandler implements CommandHandlerInterface
 
     /**
      * @throws ReflectionException
-     * @throws EntityNotFoundException
+     * @throws NotFoundHttpException
      */
     public function __invoke(CreateOrUpdateAccountCommand $command): void
     {

@@ -3,11 +3,11 @@
 namespace App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment;
 
 use App\Domain\Assignment\Entity\Assignment;
-use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 /**
@@ -24,7 +24,7 @@ readonly class CreateOrUpdateAssignmentHandler implements CommandHandlerInterfac
 
     /**
      * @throws ReflectionException
-     * @throws EntityNotFoundException
+     * @throws NotFoundHttpException
      */
     public function __invoke(CreateOrUpdateAssignmentCommand $command): void
     {

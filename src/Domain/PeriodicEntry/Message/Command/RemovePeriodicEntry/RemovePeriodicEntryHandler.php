@@ -3,11 +3,11 @@
 namespace App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntry;
 
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @see RemovePeriodicEntryCommand
@@ -22,7 +22,7 @@ readonly class RemovePeriodicEntryHandler implements CommandHandlerInterface
 
     /**
      * @throws ReflectionException
-     * @throws EntityNotFoundException
+     * @throws NotFoundHttpException
      */
     public function __invoke(RemovePeriodicEntryCommand $command): void
     {

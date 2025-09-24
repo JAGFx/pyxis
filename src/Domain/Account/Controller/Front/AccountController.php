@@ -8,7 +8,6 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountSearchType;
 use App\Domain\Account\Message\Command\ToggleEnableAccount\ToggleEnableAccountCommand;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
-use App\Domain\Account\Security\AccountVoter;
 use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\EntryOperator;
@@ -20,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Throwable;
 
 #[Route('accounts')]
 class AccountController extends AbstractController
@@ -34,6 +34,7 @@ class AccountController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/{id}/toggle',
@@ -43,12 +44,6 @@ class AccountController extends AbstractController
     )]
     public function toggle(Request $request, Account $account): Response
     {
-        if ($account->isEnabled()) {
-            $this->denyAccessUnlessGranted(AccountVoter::DISABLE, $account);
-        } else {
-            $this->denyAccessUnlessGranted(AccountVoter::ENABLE, $account);
-        }
-
         $this->messageBus->dispatch(new ToggleEnableAccountCommand()->setOriginId($account->getId()));
 
         $message = 'Compte ';
@@ -91,6 +86,7 @@ class AccountController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/search',

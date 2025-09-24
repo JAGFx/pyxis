@@ -23,6 +23,7 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Throwable;
 
 #[Route('/budgets')]
 class BudgetController extends AbstractController
@@ -39,6 +40,7 @@ class BudgetController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         name: 'back_budget_list',
@@ -56,6 +58,7 @@ class BudgetController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/create',
@@ -69,6 +72,7 @@ class BudgetController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/{id}/update',
@@ -76,12 +80,14 @@ class BudgetController extends AbstractController
         requirements: ['id' => Requirement::DIGITS],
         methods: [Request::METHOD_GET, Request::METHOD_POST]
     )]
-    #[IsGranted(BudgetVoter::MANAGE, 'budget')]
     public function edit(Request $request, Budget $budget): Response
     {
         return $this->handleForm($request, $budget);
     }
 
+    /**
+     * @throws ExceptionInterface
+     */
     #[Route(
         '/{id}/balance',
         name: 'back_budget_balance',
@@ -111,6 +117,7 @@ class BudgetController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     private function handleForm(Request $request, ?Budget $budget = null): Response
     {

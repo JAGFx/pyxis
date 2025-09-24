@@ -20,6 +20,7 @@ use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Throwable;
 
 #[Route('/assignments')]
 class AssignmentController extends AbstractController
@@ -35,6 +36,7 @@ class AssignmentController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         name: 'back_assignment_list',
@@ -53,6 +55,7 @@ class AssignmentController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/create',
@@ -66,6 +69,7 @@ class AssignmentController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/{id}/update',
@@ -80,6 +84,7 @@ class AssignmentController extends AbstractController
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
     private function handleForm(Request $request, ?Assignment $assignment = null): Response
     {

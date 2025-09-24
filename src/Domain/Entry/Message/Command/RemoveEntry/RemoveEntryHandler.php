@@ -4,12 +4,12 @@ namespace App\Domain\Entry\Message\Command\RemoveEntry;
 
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Security\EntryVoter;
-use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use App\Shared\Security\AuthorizationChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @see RemoveEntryCommand
@@ -25,7 +25,7 @@ readonly class RemoveEntryHandler implements CommandHandlerInterface
 
     /**
      * @throws ReflectionException
-     * @throws EntityNotFoundException
+     * @throws NotFoundHttpException
      */
     public function __invoke(RemoveEntryCommand $command): void
     {

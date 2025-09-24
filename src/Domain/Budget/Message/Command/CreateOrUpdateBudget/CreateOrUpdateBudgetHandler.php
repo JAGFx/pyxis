@@ -3,11 +3,13 @@
 namespace App\Domain\Budget\Message\Command\CreateOrUpdateBudget;
 
 use App\Domain\Budget\Entity\Budget;
-use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
+use App\Domain\Budget\Security\BudgetVoter;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
+use App\Shared\Security\AuthorizationChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 /**
@@ -19,12 +21,13 @@ readonly class CreateOrUpdateBudgetHandler implements CommandHandlerInterface
         private EntityManagerInterface $entityManager,
         private ObjectMapperInterface $objectMapper,
         private EntityFinder $entityFinder,
+        private AuthorizationChecker $authorizationChecker,
     ) {
     }
 
     /**
      * @throws ReflectionException
-     * @throws EntityNotFoundException
+     * @throws NotFoundHttpException
      */
     public function __invoke(CreateOrUpdateBudgetCommand $command): void
     {
@@ -36,6 +39,11 @@ readonly class CreateOrUpdateBudgetHandler implements CommandHandlerInterface
             $entity = $this->entityFinder->findByIntIdentifierOrFail(
                 Budget::class,
                 $command->getOriginId(),
+            );
+
+            $this->authorizationChecker->denyAccessUnlessGranted(
+                BudgetVoter::MANAGE,
+                $entity
             );
 
             $this->objectMapper->map($command, $entity);
