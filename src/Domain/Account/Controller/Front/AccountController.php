@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route('accounts')]
 class AccountController extends AbstractController
@@ -34,7 +35,12 @@ class AccountController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/{id}/toggle', name: 'front_account_toggle', methods: [Request::METHOD_GET])]
+    #[Route(
+        '/{id}/toggle',
+        name: 'front_account_toggle',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: [Request::METHOD_GET]
+    )]
     public function toggle(Request $request, Account $account): Response
     {
         if ($account->isEnabled()) {
@@ -63,7 +69,12 @@ class AccountController extends AbstractController
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    #[Route('/{id}/cash-flow', name: 'front_account_cash_flow', methods: [Request::METHOD_GET])]
+    #[Route(
+        '/{id}/cash-flow',
+        name: 'front_account_cash_flow',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: [Request::METHOD_GET]
+    )]
     public function cashFlow(Request $request, Account $account): Response
     {
         $amountBalance = $this->entryOperator->getAmountBalance($account);
@@ -81,7 +92,11 @@ class AccountController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/search', name: 'front_account_search', methods: [Request::METHOD_POST])]
+    #[Route(
+        '/search',
+        name: 'front_account_search',
+        methods: [Request::METHOD_POST]
+    )]
     public function search(Request $request): Response
     {
         $searchQuery = new FindAccountsQuery()->setOrderBy('name');

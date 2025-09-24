@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/entries')]
@@ -35,7 +36,11 @@ class EntryController extends AbstractController
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    #[Route('/balance', name: 'front_entry_balance', methods: Request::METHOD_GET)]
+    #[Route(
+        '/balance',
+        name: 'front_entry_balance',
+        methods: Request::METHOD_GET
+    )]
     public function balance(Request $request): Response
     {
         return $this->renderTurboStream($request, 'domain/entry/turbo/balance.turbo.stream.html.twig', [
@@ -46,7 +51,12 @@ class EntryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/{id}/remove', name: 'front_entry_remove', methods: Request::METHOD_GET)]
+    #[Route(
+        '/{id}/remove',
+        name: 'front_entry_remove',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: Request::METHOD_GET
+    )]
     #[IsGranted(EntryVoter::MANAGE, 'entry')]
     public function remove(Entry $entry, Request $request): Response
     {
@@ -60,7 +70,11 @@ class EntryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/search', name: 'front_entry_search', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(
+        '/search',
+        name: 'front_entry_search',
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     public function search(Request $request): Response
     {
         $searchQuery = new FindEntriesQuery()

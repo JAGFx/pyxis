@@ -21,6 +21,7 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/entries')]
@@ -39,7 +40,10 @@ class EntryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route(name: 'back_entry_list', methods: Request::METHOD_GET)]
+    #[Route(
+        name: 'back_entry_list',
+        methods: Request::METHOD_GET
+    )]
     public function list(Request $request): Response
     {
         $searchQuery = new FindEntriesQuery()
@@ -57,7 +61,11 @@ class EntryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/create', name: 'back_entry_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(
+        '/create',
+        name: 'back_entry_create',
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     public function create(Request $request): Response
     {
         return $this->handleForm($request);
@@ -66,8 +74,12 @@ class EntryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/{id}/update', name: 'back_entry_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    // TODO: add requirement and multiline parameters
+    #[Route(
+        '/{id}/update',
+        name: 'back_entry_edit',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     #[IsGranted(EntryVoter::MANAGE, 'entry')]
     public function edit(Entry $entry, Request $request): Response
     {

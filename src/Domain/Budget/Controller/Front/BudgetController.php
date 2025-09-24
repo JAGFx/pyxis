@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('budgets')]
@@ -31,7 +32,12 @@ class BudgetController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/{id}/toggle', name: 'front_budget_toggle', methods: [Request::METHOD_GET])]
+    #[Route(
+        '/{id}/toggle',
+        name: 'front_budget_toggle',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: [Request::METHOD_GET]
+    )]
     #[IsGranted(BudgetVoter::MANAGE, 'budget')]
     public function toggle(Request $request, Budget $budget): Response
     {
@@ -51,7 +57,12 @@ class BudgetController extends AbstractController
         );
     }
 
-    #[Route('/{id}/cash-flow-account', name: 'front_budget_cash_flow_by_account', methods: [Request::METHOD_GET])]
+    #[Route(
+        '/{id}/cash-flow-account',
+        name: 'front_budget_cash_flow_by_account',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: [Request::METHOD_GET]
+    )]
     public function cashFlowByAccount(Request $request, Budget $budget): Response
     {
         return $this->renderTurboStream(
@@ -67,7 +78,11 @@ class BudgetController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/search', name: 'front_budget_search', methods: [Request::METHOD_POST])]
+    #[Route(
+        '/search',
+        name: 'front_budget_search',
+        methods: [Request::METHOD_POST]
+    )]
     public function search(Request $request): Response
     {
         $searchQuery = new FindBudgetsQuery()->setOrderBy('name');

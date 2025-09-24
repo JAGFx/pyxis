@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route('/periodic_entries')]
 class PeriodicEntryController extends AbstractController
@@ -27,7 +28,12 @@ class PeriodicEntryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/{id}/remove', 'front_periodic_entry_remove', requirements: ['id' => '\d+'], methods: Request::METHOD_GET)]
+    #[Route(
+        '/{id}/remove',
+        'front_periodic_entry_remove',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: Request::METHOD_GET
+    )]
     public function remove(PeriodicEntry $periodicEntry, Request $request): Response
     {
         $this->messageBus->dispatch(
@@ -42,7 +48,11 @@ class PeriodicEntryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/search', name: 'front_periodic_entry_search', methods: [Request::METHOD_POST])]
+    #[Route(
+        '/search',
+        name: 'front_periodic_entry_search',
+        methods: [Request::METHOD_POST]
+    )]
     public function search(Request $request): Response
     {
         $searchQuery = new FindPeriodicEntriesQuery()->setOrderBy('name');

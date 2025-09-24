@@ -19,6 +19,7 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route('/assignments')]
 class AssignmentController extends AbstractController
@@ -35,7 +36,10 @@ class AssignmentController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route(name: 'back_assignment_list', methods: [Request::METHOD_GET])]
+    #[Route(
+        name: 'back_assignment_list',
+        methods: [Request::METHOD_GET]
+    )]
     public function index(): Response
     {
         $searchQuery = new FindAssignmentsQuery()->setOrderBy('name');
@@ -50,7 +54,11 @@ class AssignmentController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/create', name: 'back_assignment_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(
+        '/create',
+        name: 'back_assignment_create',
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     public function create(Request $request): Response
     {
         return $this->handleForm($request);
@@ -59,7 +67,12 @@ class AssignmentController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/{id}/update', name: 'back_assignment_edit', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(
+        '/{id}/update',
+        name: 'back_assignment_edit',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     public function edit(Assignment $assignment, Request $request): Response
     {
         return $this->handleForm($request, $assignment);

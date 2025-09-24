@@ -21,6 +21,7 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/budgets')]
@@ -39,7 +40,10 @@ class BudgetController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route(name: 'back_budget_list', methods: Request::METHOD_GET)]
+    #[Route(
+        name: 'back_budget_list',
+        methods: Request::METHOD_GET
+    )]
     public function list(): Response
     {
         $searchQuery = new FindBudgetsQuery()->setOrderBy('name');
@@ -53,7 +57,11 @@ class BudgetController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/create', name: 'back_budget_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(
+        '/create',
+        name: 'back_budget_create',
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     public function create(Request $request): Response
     {
         return $this->handleForm($request);
@@ -62,14 +70,24 @@ class BudgetController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/{id}/update', name: 'back_budget_edit', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(
+        '/{id}/update',
+        name: 'back_budget_edit',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     #[IsGranted(BudgetVoter::MANAGE, 'budget')]
     public function edit(Request $request, Budget $budget): Response
     {
         return $this->handleForm($request, $budget);
     }
 
-    #[Route('/{id}/balance', name: 'back_budget_balance', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(
+        '/{id}/balance',
+        name: 'back_budget_balance',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     #[IsGranted(BudgetVoter::BALANCE, 'budget')]
     public function balance(Request $request, Budget $budget): Response
     {

@@ -30,7 +30,12 @@ class AssignmentController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/{id}/remove', name: 'front_assignment_remove', requirements: ['id' => Requirement::DIGITS], methods: Request::METHOD_GET)]
+    #[Route(
+        '/{id}/remove',
+        name: 'front_assignment_remove',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: Request::METHOD_GET
+    )]
     public function remove(Assignment $assignment, Request $request): Response
     {
         /** @var int $assignmentId */
@@ -46,7 +51,11 @@ class AssignmentController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/search', name: 'front_assignment_search', methods: [Request::METHOD_POST])]
+    #[Route(
+        '/search',
+        name: 'front_assignment_search',
+        methods: [Request::METHOD_POST]
+    )]
     public function search(Request $request): Response
     {
         $searchQuery = new FindAssignmentsQuery()->setOrderBy('name');

@@ -17,6 +17,7 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route('/periodic_entries')]
 class PeriodicEntryController extends AbstractController
@@ -33,7 +34,10 @@ class PeriodicEntryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route(name: 'back_periodic_entry_list', methods: Request::METHOD_GET)]
+    #[Route(
+        name: 'back_periodic_entry_list',
+        methods: Request::METHOD_GET
+    )]
     public function list(): Response
     {
         $searchQuery = new FindPeriodicEntriesQuery()->setOrderBy('name');
@@ -47,7 +51,11 @@ class PeriodicEntryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/create', 'back_periodic_entry_create', methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(
+        '/create',
+        'back_periodic_entry_create',
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     public function create(Request $request): Response
     {
         return $this->handleRequest($request);
@@ -56,7 +64,12 @@ class PeriodicEntryController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/{id}/update', 'back_periodic_entry_edit', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(
+        '/{id}/update',
+        'back_periodic_entry_edit',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     public function edit(PeriodicEntry $periodicEntry, Request $request): Response
     {
         return $this->handleRequest($request, $periodicEntry);

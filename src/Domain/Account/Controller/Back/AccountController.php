@@ -17,6 +17,7 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 
 #[Route('/accounts')]
 class AccountController extends AbstractController
@@ -33,7 +34,10 @@ class AccountController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route(name: 'back_account_list', methods: Request::METHOD_GET)]
+    #[Route(
+        name: 'back_account_list',
+        methods: Request::METHOD_GET
+    )]
     public function index(): Response
     {
         $searchQuery = new FindAccountsQuery()->setOrderBy('name');
@@ -48,7 +52,11 @@ class AccountController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/create', name: 'back_account_new', methods: [Request::METHOD_POST, Request::METHOD_GET])]
+    #[Route(
+        '/create',
+        name: 'back_account_new',
+        methods: [Request::METHOD_POST, Request::METHOD_GET]
+    )]
     public function create(Request $request): Response
     {
         return $this->handleForm($request);
@@ -57,7 +65,12 @@ class AccountController extends AbstractController
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/{id}/update', name: 'back_account_edit', requirements: ['id' => '\d+'], methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(
+        '/{id}/update',
+        name: 'back_account_edit',
+        requirements: ['id' => Requirement::DIGITS],
+        methods: [Request::METHOD_GET, Request::METHOD_POST]
+    )]
     public function edit(Request $request, Account $account): Response
     {
         return $this->handleForm($request, $account);
