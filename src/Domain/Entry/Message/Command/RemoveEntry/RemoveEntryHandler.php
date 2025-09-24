@@ -3,9 +3,11 @@
 namespace App\Domain\Entry\Message\Command\RemoveEntry;
 
 use App\Domain\Entry\Entity\Entry;
+use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\Doctrine\Exception\EntityNotFoundException;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
+use App\Shared\Security\AuthorizationChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 
@@ -17,6 +19,7 @@ readonly class RemoveEntryHandler implements CommandHandlerInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private EntityFinder $entityFinder,
+        private AuthorizationChecker $authorizationChecker,
     ) {
     }
 
@@ -31,9 +34,10 @@ readonly class RemoveEntryHandler implements CommandHandlerInterface
             $command->getOriginId()
         );
 
-        if (!$entry->isEditable()) {
-            return;
-        }
+        $this->authorizationChecker->denyAccessUnlessGranted(
+            EntryVoter::MANAGE,
+            $entry
+        );
 
         $this->entityManager->remove($entry);
 

@@ -118,7 +118,7 @@ class BudgetController extends AbstractController
             ? new CreateOrUpdateBudgetCommand()
             : $this->objectMapper->map($budget, CreateOrUpdateBudgetCommand::class);
 
-        $form = $this->createForm(BudgetCreateOrUpdateType::class, $budget)
+        $form = $this->createForm(BudgetCreateOrUpdateType::class, $budgetCommand)
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -2,11 +2,9 @@
 
 namespace App\Domain\Entry\Controller\Front;
 
-use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Message\Command\RemoveEntry\RemoveEntryCommand;
 use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
-use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
@@ -19,7 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/entries')]
 class EntryController extends AbstractController
@@ -57,13 +54,12 @@ class EntryController extends AbstractController
         requirements: ['id' => Requirement::DIGITS],
         methods: Request::METHOD_GET
     )]
-    #[IsGranted(EntryVoter::MANAGE, 'entry')]
-    public function remove(Entry $entry, Request $request): Response
+    public function remove(int $id, Request $request): Response
     {
-        $this->messageBus->dispatch(new RemoveEntryCommand()->setOriginId($entry->getId()));
+        $this->messageBus->dispatch(new RemoveEntryCommand()->setOriginId($id));
 
         return $this->renderTurboStream($request, 'domain/entry/turbo/remove.turbo.stream.html.twig', [
-            'entryId' => $entry->getId(),
+            'entryId' => $id,
         ]);
     }
 

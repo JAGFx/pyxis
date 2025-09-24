@@ -7,7 +7,6 @@ use App\Domain\Entry\Form\EntryCreateOrUpdateType;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
-use App\Domain\Entry\Security\EntryVoter;
 use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
@@ -22,7 +21,6 @@ use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/entries')]
 class EntryController extends AbstractController
@@ -80,7 +78,6 @@ class EntryController extends AbstractController
         requirements: ['id' => Requirement::DIGITS],
         methods: [Request::METHOD_GET, Request::METHOD_POST]
     )]
-    #[IsGranted(EntryVoter::MANAGE, 'entry')]
     public function edit(Entry $entry, Request $request): Response
     {
         return $this->handleForm($request, $entry);
