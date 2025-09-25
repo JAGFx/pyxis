@@ -6,7 +6,7 @@ use App\Domain\Budget\Form\BudgetBalanceSearchType;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Message\Query\GetHistoryAvailableYears\GetHistoryAvailableYearsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\Operator\BudgetOperator;
 use App\Shared\Utils\YearRange;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,7 +30,7 @@ class BudgetBalanceProgress extends AbstractController
 
     public function __construct(
         private readonly BudgetOperator $budgetOperator,
-        private readonly SymfonyMessageBus $messageBus,
+        private readonly MessageBus     $messageBus,
     ) {
     }
 

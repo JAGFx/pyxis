@@ -7,7 +7,7 @@ use App\Domain\Budget\Message\Command\CreateHistoryBudget\CreateHistoryBudgetCom
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Utils\YearRange;
 use Psr\Log\LoggerInterface;
@@ -18,8 +18,8 @@ readonly class HistoryBudgetOperator
 {
     public function __construct(
         private LoggerInterface $logger,
-        private SymfonyMessageBus $messageBus,
-        private EntityFinder $entityFinder,
+        private MessageBus      $messageBus,
+        private EntityFinder    $entityFinder,
     ) {
     }
 

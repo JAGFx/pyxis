@@ -6,7 +6,7 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Budget\Message\Command\ToggleEnableBudget\ToggleEnableBudgetCommand;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\BudgetOperator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,7 +24,7 @@ class BudgetController extends AbstractController
 
     public function __construct(
         private readonly BudgetOperator $budgetOperator,
-        private readonly SymfonyMessageBus $messageBus,
+        private readonly MessageBus     $messageBus,
     ) {
     }
 

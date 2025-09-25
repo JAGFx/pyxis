@@ -15,7 +15,7 @@ use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Messenger\Stamp\ValidationStamp;
 use Throwable;
 
-readonly class SymfonyMessageBus
+readonly class MessageBus
 {
     public function __construct(
         private MessageBusInterface $commandBus,
@@ -55,8 +55,12 @@ readonly class SymfonyMessageBus
      */
     private function dispatchCommand(CommandInterface $command): void
     {
-        $message = new Envelope($command)
-            ->with(new ValidationStamp(['Default', ValidationGroupEnum::Business->value]));
+        $message = new Envelope($command)->with(
+            new ValidationStamp([
+                ValidationGroupEnum::Default->value,
+                ValidationGroupEnum::Business->value
+            ]))
+        ;
         $this->commandBus->dispatch($message);
     }
 
@@ -65,8 +69,10 @@ readonly class SymfonyMessageBus
      */
     private function dispatchQuery(QueryInterface $query): mixed
     {
-        $message = new Envelope($query)
-            ->with(new ValidationStamp(['Default']));
+        $message = new Envelope($query)->with(
+            new ValidationStamp([ValidationGroupEnum::Default->value])
+        );
+
         $envelope = $this->queryBus->dispatch($message);
 
         /** @var ?HandledStamp $handledStamp */

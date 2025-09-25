@@ -4,14 +4,14 @@ namespace App\Tests\Integration\Domain\Account\Message\Command\CreateOrUpdateAcc
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Command\CreateOrUpdateAccount\CreateOrUpdateAccountCommand;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 class CreateOrUpdateAccountHandlerTest extends KernelTestCase
 {
-    private SymfonyMessageBus $messageBus;
+    private MessageBus $messageBus;
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void
@@ -19,7 +19,7 @@ class CreateOrUpdateAccountHandlerTest extends KernelTestCase
         self::bootKernel();
         $container = static::getContainer();
 
-        $this->messageBus   = $container->get(SymfonyMessageBus::class);
+        $this->messageBus   = $container->get(MessageBus::class);
         $this->objectMapper = $container->get(ObjectMapperInterface::class);
     }
 

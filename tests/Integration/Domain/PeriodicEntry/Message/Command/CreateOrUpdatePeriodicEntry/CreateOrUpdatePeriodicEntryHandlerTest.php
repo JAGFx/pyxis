@@ -6,7 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry\CreateOrUpdatePeriodicEntryCommand;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
@@ -17,14 +17,14 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
 {
-    private SymfonyMessageBus $messageBus;
+    private MessageBus $messageBus;
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $container          = static::getContainer();
-        $this->messageBus   = $container->get(SymfonyMessageBus::class);
+        $this->messageBus   = $container->get(MessageBus::class);
         $this->objectMapper = $container->get(ObjectMapperInterface::class);
     }
 

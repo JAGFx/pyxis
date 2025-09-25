@@ -8,7 +8,7 @@ use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Form\AssignmentCreateOrUpdateType;
 use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment\CreateOrUpdateAssignmentCommand;
 use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\Controller\FormErrorMappingTrait;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
@@ -29,8 +29,8 @@ class AssignmentController extends AbstractController
 
     public function __construct(
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
-        private readonly ObjectMapperInterface $objectMapper,
-        private readonly SymfonyMessageBus $messageBus,
+        private readonly ObjectMapperInterface    $objectMapper,
+        private readonly MessageBus               $messageBus,
     ) {
     }
 

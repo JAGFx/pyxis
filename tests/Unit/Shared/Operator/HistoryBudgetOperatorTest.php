@@ -8,7 +8,7 @@ use App\Domain\Budget\Message\Command\CreateHistoryBudget\CreateHistoryBudgetCom
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Operator\HistoryBudgetOperator;
 use InvalidArgumentException;
@@ -17,12 +17,12 @@ use Psr\Log\LoggerInterface;
 
 class HistoryBudgetOperatorTest extends TestCase
 {
-    private readonly SymfonyMessageBus $messageBusMock;
+    private readonly MessageBus $messageBusMock;
     private readonly EntityFinder $entityFinderMock;
 
     protected function setUp(): void
     {
-        $this->messageBusMock   = $this->createMock(SymfonyMessageBus::class);
+        $this->messageBusMock   = $this->createMock(MessageBus::class);
         $this->entityFinderMock = $this->createMock(EntityFinder::class);
     }
 

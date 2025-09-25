@@ -4,21 +4,21 @@ namespace App\Tests\Integration\Domain\Budget\Message\Command\CreateOrUpdateBudg
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Message\Command\CreateOrUpdateBudget\CreateOrUpdateBudgetCommand;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 class CreateOrUpdateBudgetHandlerTest extends KernelTestCase
 {
-    private SymfonyMessageBus $messageBus;
+    private MessageBus $messageBus;
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void
     {
         self::bootKernel();
         $container          = static::getContainer();
-        $this->messageBus   = $container->get(SymfonyMessageBus::class);
+        $this->messageBus   = $container->get(MessageBus::class);
         $this->objectMapper = $container->get(ObjectMapperInterface::class);
     }
 

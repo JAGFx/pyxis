@@ -14,7 +14,7 @@ use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Utils\YearRange;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +24,7 @@ readonly class BudgetOperator
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private SymfonyMessageBus $messageBus,
+        private MessageBus             $messageBus,
     ) {
     }
 

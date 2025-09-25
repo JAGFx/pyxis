@@ -5,7 +5,7 @@ namespace App\Domain\PeriodicEntry\Controller\Front;
 use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchType;
 use App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntry\RemovePeriodicEntryCommand;
 use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +21,7 @@ class PeriodicEntryController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly SymfonyMessageBus $messageBus,
+        private readonly MessageBus $messageBus,
     ) {
     }
 

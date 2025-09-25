@@ -7,7 +7,7 @@ namespace App\Domain\Assignment\Controller\Front;
 use App\Domain\Assignment\Form\AssignmentSearchType;
 use App\Domain\Assignment\Message\Command\RemoveAssignment\RemoveAssignmentCommand;
 use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +23,7 @@ class AssignmentController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly SymfonyMessageBus $messageBus,
+        private readonly MessageBus $messageBus,
     ) {
     }
 

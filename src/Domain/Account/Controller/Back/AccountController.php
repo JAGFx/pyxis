@@ -6,7 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountCreateOrUpdateType;
 use App\Domain\Account\Message\Command\CreateOrUpdateAccount\CreateOrUpdateAccountCommand;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\Controller\FormErrorMappingTrait;
 use App\Shared\Factory\MenuConfigurationFactory;
 use App\Shared\ValueObject\MenuConfigurationEntityEnum;
@@ -27,8 +27,8 @@ class AccountController extends AbstractController
 
     public function __construct(
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
-        private readonly ObjectMapperInterface $objectMapper,
-        private readonly SymfonyMessageBus $messageBus,
+        private readonly ObjectMapperInterface    $objectMapper,
+        private readonly MessageBus               $messageBus,
     ) {
     }
 

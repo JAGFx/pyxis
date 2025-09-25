@@ -6,14 +6,14 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
 use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
 use App\Domain\Entry\ValueObject\EntryBalance;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\ValueObject\AmountBalance;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 readonly class EntryOperator
 {
     public function __construct(
-        private SymfonyMessageBus $messageBus,
+        private MessageBus $messageBus,
     ) {
     }
 

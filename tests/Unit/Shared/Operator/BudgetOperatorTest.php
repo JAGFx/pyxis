@@ -5,7 +5,7 @@ namespace App\Tests\Unit\Shared\Operator;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Operator\BudgetOperator;
 use App\Tests\Unit\Shared\BudgetTestTrait;
@@ -19,12 +19,12 @@ class BudgetOperatorTest extends TestCase
     use BudgetTestTrait;
     private const float BUDGET_AMOUNT = 1000.0;
     private EntityManagerInterface $entityManager;
-    private SymfonyMessageBus $messageBus;
+    private MessageBus $messageBus;
 
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->messageBus    = $this->createMock(SymfonyMessageBus::class);
+        $this->messageBus    = $this->createMock(MessageBus::class);
     }
 
     private function createBudgetOperator(array $onlyMethods = []): BudgetOperator|MockObject

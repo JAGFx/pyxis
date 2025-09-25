@@ -5,7 +5,7 @@ namespace App\Domain\Entry\Controller\Front;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\Entry\Message\Command\RemoveEntry\RemoveEntryCommand;
 use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
-use App\Infrastructure\Cqs\Bus\SymfonyMessageBus;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Operator\EntryOperator;
@@ -26,7 +26,7 @@ class EntryController extends AbstractController
 
     public function __construct(
         private readonly EntryOperator $entryOperator,
-        private readonly SymfonyMessageBus $messageBus,
+        private readonly MessageBus    $messageBus,
     ) {
     }
 
