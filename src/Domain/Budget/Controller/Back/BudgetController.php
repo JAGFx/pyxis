@@ -32,9 +32,9 @@ class BudgetController extends AbstractController
 
     public function __construct(
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
-        private readonly BudgetOperator           $budgetOperator,
-        private readonly ObjectMapperInterface    $objectMapper,
-        private readonly MessageBus               $messageBus,
+        private readonly BudgetOperator $budgetOperator,
+        private readonly ObjectMapperInterface $objectMapper,
+        private readonly MessageBus $messageBus,
     ) {
     }
 

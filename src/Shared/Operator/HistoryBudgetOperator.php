@@ -18,8 +18,8 @@ readonly class HistoryBudgetOperator
 {
     public function __construct(
         private LoggerInterface $logger,
-        private MessageBus      $messageBus,
-        private EntityFinder    $entityFinder,
+        private MessageBus $messageBus,
+        private EntityFinder $entityFinder,
     ) {
     }
 

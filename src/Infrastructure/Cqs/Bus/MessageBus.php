@@ -58,7 +58,7 @@ readonly class MessageBus
         $message = new Envelope($command)->with(
             new ValidationStamp([
                 ValidationGroupEnum::Default->value,
-                ValidationGroupEnum::Business->value
+                ValidationGroupEnum::Business->value,
             ]))
         ;
         $this->commandBus->dispatch($message);

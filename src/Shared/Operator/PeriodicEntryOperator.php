@@ -16,7 +16,7 @@ readonly class PeriodicEntryOperator
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MessageBus             $messageBus,
+        private MessageBus $messageBus,
     ) {
     }
 

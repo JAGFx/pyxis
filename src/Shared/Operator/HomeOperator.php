@@ -12,7 +12,7 @@ readonly class HomeOperator
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private MessageBus             $messageBus,
+        private MessageBus $messageBus,
     ) {
     }
 

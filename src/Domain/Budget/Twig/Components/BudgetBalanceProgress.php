@@ -30,7 +30,7 @@ class BudgetBalanceProgress extends AbstractController
 
     public function __construct(
         private readonly BudgetOperator $budgetOperator,
-        private readonly MessageBus     $messageBus,
+        private readonly MessageBus $messageBus,
     ) {
     }
 

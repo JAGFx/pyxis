@@ -23,10 +23,10 @@ use Throwable;
 readonly class ApplyPeriodicEntryConsoleCommand
 {
     public function __construct(
-        private LoggerInterface        $logger,
-        private PeriodicEntryOperator  $periodicEntryOperator,
+        private LoggerInterface $logger,
+        private PeriodicEntryOperator $periodicEntryOperator,
         private EntityManagerInterface $entityManager,
-        private MessageBus             $messageBus,
+        private MessageBus $messageBus,
     ) {
     }
 

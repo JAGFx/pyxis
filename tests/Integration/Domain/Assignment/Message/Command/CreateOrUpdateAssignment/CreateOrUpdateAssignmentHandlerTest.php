@@ -41,7 +41,7 @@ class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
 
         $command = new CreateOrUpdateAssignmentCommand();
         $command->setName('Test Assignment');
-        $command->setAccount($account);
+        $command->setAccountId($account);
         $command->setAmount(150.0);
 
         $this->messageBus->dispatch($command);
@@ -69,7 +69,7 @@ class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
 
         $command = new CreateOrUpdateAssignmentCommand();
         $command->setName('Updated Assignment');
-        $command->setAccount($account);
+        $command->setAccountId($account);
         $command->setAmount(250.0);
         $command->setOriginId($existingAssignment->getId());
 

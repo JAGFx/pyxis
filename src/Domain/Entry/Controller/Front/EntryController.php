@@ -26,7 +26,7 @@ class EntryController extends AbstractController
 
     public function __construct(
         private readonly EntryOperator $entryOperator,
-        private readonly MessageBus    $messageBus,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
