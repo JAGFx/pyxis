@@ -8,9 +8,9 @@ use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
 /**
- * @template T of object
+ * @template T of IntIdentifierInterface
  *
- * @implements DataTransformerInterface<T|null, mixed|null>
+ * @implements DataTransformerInterface<T|null, int|string|null>
  */
 readonly class EntityToIdTransformer implements DataTransformerInterface
 {
@@ -24,32 +24,25 @@ readonly class EntityToIdTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param T|null $value
-     */
-    public function transform(mixed $value): ?int
-    {
-        if (null === $value) {
-            return null;
-        }
-
-        if (!$value instanceof IntIdentifierInterface) {
-            throw new TransformationFailedException('Expected an instance of ' . IntIdentifierInterface::class);
-        }
-
-        return $value->getId();
-    }
-
-    /**
+     * Transform ID to Entity (for initial data display in form)
+     *
+     * @param int|string|null $value
+     *
      * @return T|null
      */
-    public function reverseTransform(mixed $value): ?object
+    public function transform(mixed $value): ?object
     {
         if (null === $value) {
             return null;
+        }
+
+        // Convert string to int if needed
+        if (is_string($value) && is_numeric($value)) {
+            $value = (int) $value;
         }
 
         if (!is_int($value)) {
-            throw new TransformationFailedException('Expected an integer');
+            throw new TransformationFailedException('Expected an integer or numeric string');
         }
 
         /** @var T|null $entity */
@@ -62,5 +55,23 @@ readonly class EntityToIdTransformer implements DataTransformerInterface
         }
 
         return $entity;
+    }
+
+    /**
+     * Transform Entity to ID (for form submission to command)
+     *
+     * @param T|null $value
+     */
+    public function reverseTransform(mixed $value): ?int
+    {
+        if (null === $value) {
+            return null;
+        }
+
+        if (!$value instanceof IntIdentifierInterface) {
+            throw new TransformationFailedException('Expected an instance of ' . IntIdentifierInterface::class);
+        }
+
+        return $value->getId();
     }
 }
