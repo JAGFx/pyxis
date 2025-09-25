@@ -8,11 +8,13 @@ framework:
     buses:
       command.bus:
         middleware:
+          - App\Shared\Cqs\Middleware\CorrelationMiddleware
           - validation
           - doctrine_transaction
 
       query.bus:
         middleware:
+          - App\Shared\Cqs\Middleware\CorrelationMiddleware
           - validation
 
     transports:

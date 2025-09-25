@@ -10,7 +10,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 /**
  * @template T of IntIdentifierInterface
  *
- * @implements DataTransformerInterface<T|null, int|string|null>
+ * @implements DataTransformerInterface<T|mixed|null, int|string|null>
  */
 readonly class EntityToIdTransformer implements DataTransformerInterface
 {
@@ -60,7 +60,7 @@ readonly class EntityToIdTransformer implements DataTransformerInterface
     /**
      * Transform Entity to ID (for form submission to command)
      *
-     * @param T|null $value
+     * @param T|mixed|null $value
      */
     public function reverseTransform(mixed $value): ?int
     {
