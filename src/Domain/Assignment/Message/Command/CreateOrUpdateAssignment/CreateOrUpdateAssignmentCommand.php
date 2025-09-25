@@ -2,11 +2,11 @@
 
 namespace App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment;
 
-use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Validator\AmountLessOrEqualTotalValueAccount;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use App\Shared\Cqs\Message\Command\HasOriginIntIdentifierTrait;
+use App\Shared\ObjectMapper\EntityIdTransformer;
 use App\Shared\Validation\ValidationGroupEnum;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -34,7 +34,8 @@ class CreateOrUpdateAssignmentCommand implements CommandInterface
         private float $amount = 0.0,
 
         #[NotNull]
-        private ?Account $account = null,
+        #[Map(target: 'account', transform: EntityIdTransformer::class)]
+        private ?int $accountId = null,
     ) {
     }
 
@@ -62,14 +63,14 @@ class CreateOrUpdateAssignmentCommand implements CommandInterface
         return $this;
     }
 
-    public function getAccount(): ?Account
+    public function getAccountId(): ?int
     {
-        return $this->account;
+        return $this->accountId;
     }
 
-    public function setAccount(?Account $account): CreateOrUpdateAssignmentCommand
+    public function setAccountId(?int $accountId): CreateOrUpdateAssignmentCommand
     {
-        $this->account = $account;
+        $this->accountId = $accountId;
 
         return $this;
     }

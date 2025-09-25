@@ -2,7 +2,9 @@
 
 namespace App\Domain\Assignment\Validator;
 
+use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment\CreateOrUpdateAssignmentCommand;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Operator\EntryOperator;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -14,6 +16,7 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
 {
     public function __construct(
         private readonly EntryOperator $entryOperator,
+        private readonly EntityFinder $entityFinder,
     ) {
     }
 
@@ -31,7 +34,16 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
             return;
         }
 
-        $amountBalance = $this->entryOperator->getAmountBalance($value->getAccount());
+        $entity = $this->entityFinder->findByIntIdentifier(
+            Account::class,
+            $value->getAccountId()
+        );
+
+        if (null === $entity) {
+            return;
+        }
+
+        $amountBalance = $this->entryOperator->getAmountBalance($entity);
 
         // TODO: Add test for it
         if ($value->getAmount() > $amountBalance->getTotal()) {

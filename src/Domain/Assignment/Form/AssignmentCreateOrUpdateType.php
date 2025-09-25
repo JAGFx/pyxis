@@ -6,10 +6,10 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment\CreateOrUpdateAssignmentCommand;
+use App\Shared\Form\Type\EntityIdType;
 use App\Shared\Form\Type\MoneyType;
 use Doctrine\ORM\QueryBuilder;
 use Override;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,7 +21,8 @@ class AssignmentCreateOrUpdateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('account', EntityType::class, [
+            ->add('account', EntityIdType::class, [
+                'property_path' => 'accountId',
                 'class'         => Account::class,
                 'choice_label'  => 'name',
                 'query_builder' => function (AccountRepository $repository): QueryBuilder {

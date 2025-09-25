@@ -3,13 +3,16 @@
 namespace App\Domain\Assignment\Entity;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment\CreateOrUpdateAssignmentCommand;
 use App\Domain\Assignment\Repository\AssignmentRepository;
 use App\Shared\Entity\HasIntIdentifierTrait;
 use App\Shared\Entity\IntIdentifierInterface;
 use App\Shared\Entity\TimestampableTrait;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\ObjectMapper\Attribute\Map;
 
 #[ORM\Entity(repositoryClass: AssignmentRepository::class)]
+#[Map(source: CreateOrUpdateAssignmentCommand::class)]
 class Assignment implements IntIdentifierInterface
 {
     use TimestampableTrait;
