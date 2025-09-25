@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Shared\Form\Type;
+namespace App\Infrastructure\Cqs\Form\Type;
 
+use App\Infrastructure\Cqs\Form\DataTransformer\EntityToIdTransformer;
 use App\Shared\Entity\IntIdentifierInterface;
-use App\Shared\Form\DataTransformer\EntityToIdTransformer;
 use Doctrine\ORM\EntityManagerInterface;
 use Override;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;

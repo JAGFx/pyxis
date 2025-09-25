@@ -8,14 +8,16 @@ framework:
     buses:
       command.bus:
         middleware:
-          - App\Shared\Cqs\Middleware\CorrelationMiddleware
+          - App\Infrastructure\Cqs\Middleware\CorrelationMiddleware
           - validation
           - doctrine_transaction
+          - App\Infrastructure\Logging\LoggingMiddleware
 
       query.bus:
         middleware:
-          - App\Shared\Cqs\Middleware\CorrelationMiddleware
+          - App\Infrastructure\Cqs\Middleware\CorrelationMiddleware
           - validation
+          - App\Infrastructure\Logging\LoggingMiddleware
 
     transports:
       # https://symfony.com/doc/current/messenger.html#transport-configuration

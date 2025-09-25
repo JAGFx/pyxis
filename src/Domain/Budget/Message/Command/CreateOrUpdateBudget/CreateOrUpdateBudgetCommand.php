@@ -3,8 +3,8 @@
 namespace App\Domain\Budget\Message\Command\CreateOrUpdateBudget;
 
 use App\Domain\Budget\Entity\Budget;
+use App\Infrastructure\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use App\Shared\Cqs\Message\Command\CommandInterface;
-use App\Shared\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;

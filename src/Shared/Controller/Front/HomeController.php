@@ -3,7 +3,7 @@
 namespace App\Shared\Controller\Front;
 
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\ValueObject\MenuConfigurationEntityEnum;
+use App\Shared\MenuConfiguration\Enum\MenuConfigurationEntityEnum;
 use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

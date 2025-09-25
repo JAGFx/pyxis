@@ -9,11 +9,11 @@ use App\Domain\Budget\Message\Command\CreateOrUpdateBudget\CreateOrUpdateBudgetC
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Security\BudgetVoter;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Controller\FormErrorMappingTrait;
-use App\Shared\Factory\MenuConfigurationFactory;
+use App\Infrastructure\Cqs\Controller\FormErrorMappingTrait;
+use App\Shared\MenuConfiguration\Enum\MenuConfigurationEntityEnum;
+use App\Shared\MenuConfiguration\Factory\MenuConfigurationFactory;
 use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Operator\BudgetOperator;
-use App\Shared\ValueObject\MenuConfigurationEntityEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

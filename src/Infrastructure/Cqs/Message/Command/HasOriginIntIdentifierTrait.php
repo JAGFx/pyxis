@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Cqs\Message\Command;
+namespace App\Infrastructure\Cqs\Message\Command;
 
 use Symfony\Component\ObjectMapper\Attribute\Map;
 

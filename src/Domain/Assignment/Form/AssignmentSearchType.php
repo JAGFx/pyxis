@@ -8,7 +8,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
 use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
-use App\Shared\Form\Type\EntityIdType;
+use App\Infrastructure\Cqs\Form\Type\EntityIdType;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

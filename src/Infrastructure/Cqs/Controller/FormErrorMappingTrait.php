@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Controller;
+namespace App\Infrastructure\Cqs\Controller;
 
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;

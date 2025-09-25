@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Security;
+namespace App\Infrastructure\Cqs\Security;
 
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;

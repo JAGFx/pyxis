@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Cqs\EventListener;
+namespace App\Infrastructure\Cqs\EventListener;
 
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\RequestEvent;

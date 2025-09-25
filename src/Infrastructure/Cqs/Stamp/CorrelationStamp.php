@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Cqs\Stamp;
+namespace App\Infrastructure\Cqs\Stamp;
 
 use Symfony\Component\Messenger\Stamp\StampInterface;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\ValueObject;
+namespace App\Shared\MenuConfiguration\Enum;
 
 use App\Domain\Account\Form\AccountSearchType;
 use App\Domain\Assignment\Form\AssignmentSearchType;

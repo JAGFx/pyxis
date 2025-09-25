@@ -1,6 +1,8 @@
 monolog:
   channels:
-    - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+    - deprecation
+    - audit
+    - performance
 
 when@dev:
   monolog:
@@ -10,6 +12,18 @@ when@dev:
         path: "%kernel.logs_dir%/%kernel.environment%.log"
         level: debug
         channels: [ "!event" ]
+      audit:
+        type: stream
+        path: "%kernel.logs_dir%/audit.log"
+        level: info
+        channels: [ "audit" ]
+        formatter: 'monolog.formatter.json'
+      performance:
+        type: stream
+        path: "%kernel.logs_dir%/performance.log"
+        level: info
+        channels: [ "performance" ]
+        formatter: 'monolog.formatter.json'
       # uncomment to get logging in your browser
       # you may have to allow bigger header sizes in your Web server configuration
       #firephp:
@@ -49,8 +63,19 @@ when@prod:
       nested:
         type: stream
         path: php://stderr
-        level: debug
-        formatter: monolog.formatter.json
+        formatter: 'monolog.formatter.json'
+      audit:
+        type: stream
+        path: php://stderr
+        level: info
+        channels: [ "audit" ]
+        formatter: 'monolog.formatter.json'
+      performance:
+        type: stream
+        path: php://stderr
+        level: info
+        channels: [ "performance" ]
+        formatter: 'monolog.formatter.json'
       console:
         type: console
         process_psr_3_messages: false

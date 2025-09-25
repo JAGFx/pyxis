@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\ValueObject;
+namespace App\Shared\MenuConfiguration\ValueObject;
 
 readonly class MenuConfiguration
 {

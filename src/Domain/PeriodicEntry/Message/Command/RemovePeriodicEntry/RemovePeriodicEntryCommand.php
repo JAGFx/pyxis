@@ -2,8 +2,8 @@
 
 namespace App\Domain\PeriodicEntry\Message\Command\RemovePeriodicEntry;
 
+use App\Infrastructure\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use App\Shared\Cqs\Message\Command\CommandInterface;
-use App\Shared\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 
 /**
  * @see RemovePeriodicEntryHandler

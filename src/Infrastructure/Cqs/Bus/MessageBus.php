@@ -2,9 +2,9 @@
 
 namespace App\Infrastructure\Cqs\Bus;
 
+use App\Infrastructure\Cqs\Validation\ValidationGroupEnum;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use App\Shared\Cqs\Message\Query\QueryInterface;
-use App\Shared\Validation\ValidationGroupEnum;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\Envelope;

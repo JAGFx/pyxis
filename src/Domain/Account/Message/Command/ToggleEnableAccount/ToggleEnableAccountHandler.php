@@ -4,9 +4,9 @@ namespace App\Domain\Account\Message\Command\ToggleEnableAccount;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Security\AccountVoter;
+use App\Infrastructure\Cqs\Security\AuthorizationChecker;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
-use App\Shared\Security\AuthorizationChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

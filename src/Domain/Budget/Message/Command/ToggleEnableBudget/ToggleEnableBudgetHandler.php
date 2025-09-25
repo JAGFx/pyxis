@@ -4,9 +4,9 @@ namespace App\Domain\Budget\Message\Command\ToggleEnableBudget;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Security\BudgetVoter;
+use App\Infrastructure\Cqs\Security\AuthorizationChecker;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
-use App\Shared\Security\AuthorizationChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

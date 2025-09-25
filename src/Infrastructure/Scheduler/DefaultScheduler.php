@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Scheduler;
+namespace App\Infrastructure\Scheduler;
 
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\Schedule as SymfonySchedule;

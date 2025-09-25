@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Shared\Factory;
+namespace App\Shared\MenuConfiguration\Factory;
 
-use App\Shared\ValueObject\MenuConfiguration;
-use App\Shared\ValueObject\MenuConfigurationEntityEnum;
+use App\Shared\MenuConfiguration\Enum\MenuConfigurationEntityEnum;
+use App\Shared\MenuConfiguration\ValueObject\MenuConfiguration;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final readonly class MenuConfigurationFactory

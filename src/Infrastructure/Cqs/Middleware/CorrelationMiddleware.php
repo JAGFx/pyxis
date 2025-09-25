@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Shared\Cqs\Middleware;
+namespace App\Infrastructure\Cqs\Middleware;
 
-use App\Shared\Cqs\EventListener\CorrelationIdListener;
-use App\Shared\Cqs\Stamp\CorrelationStamp;
+use App\Infrastructure\Cqs\EventListener\CorrelationIdListener;
+use App\Infrastructure\Cqs\Stamp\CorrelationStamp;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\Envelope;

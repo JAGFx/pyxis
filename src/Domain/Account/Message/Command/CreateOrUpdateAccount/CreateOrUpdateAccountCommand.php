@@ -3,8 +3,8 @@
 namespace App\Domain\Account\Message\Command\CreateOrUpdateAccount;
 
 use App\Domain\Account\Entity\Account;
+use App\Infrastructure\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use App\Shared\Cqs\Message\Command\CommandInterface;
-use App\Shared\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use Symfony\Component\ObjectMapper\Attribute\Map;
 use Symfony\Component\Validator\Constraints as Assert;
 

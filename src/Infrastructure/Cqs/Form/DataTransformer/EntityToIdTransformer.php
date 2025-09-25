@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Form\DataTransformer;
+namespace App\Infrastructure\Cqs\Form\DataTransformer;
 
 use App\Shared\Entity\IntIdentifierInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -28,7 +28,7 @@ readonly class EntityToIdTransformer implements DataTransformerInterface
      *
      * @param int|string|null $value
      *
-     * @return T|null
+     * @return IntIdentifierInterface|null
      */
     public function transform(mixed $value): ?object
     {
@@ -45,7 +45,7 @@ readonly class EntityToIdTransformer implements DataTransformerInterface
             throw new TransformationFailedException('Expected an integer or numeric string');
         }
 
-        /** @var T|null $entity */
+        /** @var IntIdentifierInterface|null $entity */
         $entity = $this->entityManager
             ->getRepository($this->entityClass)
             ->find($value);
@@ -60,7 +60,7 @@ readonly class EntityToIdTransformer implements DataTransformerInterface
     /**
      * Transform Entity to ID (for form submission to command)
      *
-     * @param T|mixed|null $value
+     * @param IntIdentifierInterface|mixed|null $value
      */
     public function reverseTransform(mixed $value): ?int
     {

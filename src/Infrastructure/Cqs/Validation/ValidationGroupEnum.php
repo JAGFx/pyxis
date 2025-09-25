@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Validation;
+namespace App\Infrastructure\Cqs\Validation;
 
 enum ValidationGroupEnum: string
 {
