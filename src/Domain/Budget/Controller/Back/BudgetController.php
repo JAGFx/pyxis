@@ -12,7 +12,7 @@ use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Cqs\Controller\FormErrorMappingTrait;
 use App\Shared\MenuConfiguration\Enum\MenuConfigurationEntityEnum;
 use App\Shared\MenuConfiguration\Factory\MenuConfigurationFactory;
-use App\Shared\Message\Command\GetBudgetAccountBalance\GetBudgetAccountBalanceCommand;
+use App\Shared\Message\Command\ApplyBudgetAccountBalance\ApplyBudgetAccountBalanceCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -96,14 +96,14 @@ class BudgetController extends AbstractController
     #[IsGranted(BudgetVoter::BALANCE, 'budget')]
     public function balance(Request $request, Budget $budget): Response
     {
-        $getBudgetAccountBalanceCommand = new GetBudgetAccountBalanceCommand($budget);
+        $applyBudgetAccountBalanceCommand = new ApplyBudgetAccountBalanceCommand($budget);
 
         $form = $this
-            ->createForm(BudgetAccountBalanceType::class, $getBudgetAccountBalanceCommand)
+            ->createForm(BudgetAccountBalanceType::class, $applyBudgetAccountBalanceCommand)
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->messageBus->dispatch($getBudgetAccountBalanceCommand);
+            $this->messageBus->dispatch($applyBudgetAccountBalanceCommand);
 
             return $this->redirectToRoute('back_budget_list');
         }

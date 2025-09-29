@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Tests\Integration\Shared\Operator;
+namespace App\Tests\Integration\Shared\Message\Command\GetAmountBalance;
 
 use App\Domain\Account\Entity\Account;
-use App\Shared\Operator\EntryOperator;
+use App\Infrastructure\Cqs\Bus\MessageBus;
+use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
 use App\Shared\ValueObject\AmountBalance;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\AssignmentFactory;
@@ -11,21 +12,21 @@ use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 
-class EntryOperatorTest extends KernelTestCase
+class GetAmountBalanceHandlerTest extends KernelTestCase
 {
     private const string ACCOUNT_1 = 'Test Account 1';
     private const string ACCOUNT_2 = 'Test Account 2';
-    private EntryOperator $entryOperator;
+    private MessageBus $messageBus;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->entryOperator = self::getContainer()->get(EntryOperator::class);
+        $this->messageBus = self::getContainer()->get(MessageBus::class);
     }
 
     public function testGetAmountBalanceWithNoAccounts(): void
     {
-        $result = $this->entryOperator->getAmountBalance();
+        $result = $this->messageBus->dispatch(new GetAmountBalanceQuery());
 
         self::assertInstanceOf(AmountBalance::class, $result);
         self::assertEquals(0.0, $result->getTotalSpent());
@@ -38,7 +39,7 @@ class EntryOperatorTest extends KernelTestCase
     {
         AccountFactory::new()->create(['name' => self::ACCOUNT_1]);
 
-        $result = $this->entryOperator->getAmountBalance();
+        $result = $this->messageBus->dispatch(new GetAmountBalanceQuery());
 
         self::assertInstanceOf(AmountBalance::class, $result);
         self::assertEquals(0.0, $result->getTotalSpent());
@@ -75,7 +76,7 @@ class EntryOperatorTest extends KernelTestCase
             'name'    => 'Rent assignment',
         ]);
 
-        $result = $this->entryOperator->getAmountBalance();
+        $result = $this->messageBus->dispatch(new GetAmountBalanceQuery());
 
         self::assertInstanceOf(AmountBalance::class, $result);
 
@@ -142,7 +143,7 @@ class EntryOperatorTest extends KernelTestCase
             'name'    => 'Account 2 assignment',
         ]);
 
-        $result = $this->entryOperator->getAmountBalance($account1);
+        $result = $this->messageBus->dispatch(new GetAmountBalanceQuery($account1->getId()));
 
         self::assertInstanceOf(AmountBalance::class, $result);
 
@@ -197,7 +198,7 @@ class EntryOperatorTest extends KernelTestCase
             'name'    => 'Account 2 provision only',
         ]);
 
-        $result = $this->entryOperator->getAmountBalance();
+        $result = $this->messageBus->dispatch(new GetAmountBalanceQuery());
 
         self::assertInstanceOf(AmountBalance::class, $result);
 
@@ -226,7 +227,7 @@ class EntryOperatorTest extends KernelTestCase
             'name'    => 'Only forecast entry',
         ]);
 
-        $result = $this->entryOperator->getAmountBalance();
+        $result = $this->messageBus->dispatch(new GetAmountBalanceQuery());
 
         self::assertInstanceOf(AmountBalance::class, $result);
 

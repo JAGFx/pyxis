@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Message\Command\GetBudgetAccountBalance;
+namespace App\Shared\Message\Command\ApplyBudgetAccountBalance;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
@@ -8,9 +8,9 @@ use App\Shared\Cqs\Message\Command\CommandInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @see GetBudgetAccountBalanceHandler
+ * @see ApplyBudgetAccountBalanceHandler
  */
-class GetBudgetAccountBalanceCommand implements CommandInterface
+class ApplyBudgetAccountBalanceCommand implements CommandInterface
 {
     public function __construct(
         private Budget $budget,
@@ -25,7 +25,7 @@ class GetBudgetAccountBalanceCommand implements CommandInterface
         return $this->budget;
     }
 
-    public function setBudget(Budget $budget): GetBudgetAccountBalanceCommand
+    public function setBudget(Budget $budget): ApplyBudgetAccountBalanceCommand
     {
         $this->budget = $budget;
 
@@ -37,7 +37,7 @@ class GetBudgetAccountBalanceCommand implements CommandInterface
         return $this->account;
     }
 
-    public function setAccount(?Account $account): GetBudgetAccountBalanceCommand
+    public function setAccount(?Account $account): ApplyBudgetAccountBalanceCommand
     {
         $this->account = $account;
 

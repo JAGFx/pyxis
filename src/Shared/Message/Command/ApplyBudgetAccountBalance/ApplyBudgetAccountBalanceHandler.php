@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Message\Command\GetBudgetAccountBalance;
+namespace App\Shared\Message\Command\ApplyBudgetAccountBalance;
 
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
@@ -11,9 +11,9 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Throwable;
 
 /**
- * @see GetBudgetAccountBalanceCommand
+ * @see ApplyBudgetAccountBalanceCommand
  */
-readonly class GetBudgetAccountBalanceHandler implements CommandHandlerInterface
+readonly class ApplyBudgetAccountBalanceHandler implements CommandHandlerInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -25,7 +25,7 @@ readonly class GetBudgetAccountBalanceHandler implements CommandHandlerInterface
      * @throws Throwable
      * @throws ExceptionInterface
      */
-    public function __invoke(GetBudgetAccountBalanceCommand $command): void
+    public function __invoke(ApplyBudgetAccountBalanceCommand $command): void
     {
         $budget  = $command->getBudget();
         $account = $command->getAccount();

@@ -10,9 +10,7 @@ use App\Domain\Account\Message\Command\ToggleEnableAccount\ToggleEnableAccountCo
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\Operator\EntryOperator;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
+use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +25,6 @@ class AccountController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly EntryOperator $entryOperator,
         private readonly MessageBus $messageBus,
     ) {
     }
@@ -61,8 +58,8 @@ class AccountController extends AbstractController
     }
 
     /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
+     * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/{id}/cash-flow',
@@ -72,7 +69,7 @@ class AccountController extends AbstractController
     )]
     public function cashFlow(Request $request, Account $account): Response
     {
-        $amountBalance = $this->entryOperator->getAmountBalance($account);
+        $amountBalance = $this->messageBus->dispatch(new GetAmountBalanceQuery($account->getId()));
 
         return $this->renderTurboStream(
             $request,

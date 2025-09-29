@@ -26,7 +26,7 @@ readonly class EntityFinder
     public function findByIntIdentifier(string $entityClass, ?int $id): ?object
     {
         if (is_null($id)) {
-            throw new LogicException('An identifier is required. Null given.');
+            return null;
         }
 
         /** @var EntityRepository<T> $repository */
@@ -52,6 +52,10 @@ readonly class EntityFinder
     {
         /** @var T|null $entity */
         $entity = $this->findByIntIdentifier($entityClass, $id);
+
+        if (is_null($id)) {
+            throw new LogicException('An identifier is required. Null given.');
+        }
 
         if (is_null($entity)) {
             throw new NotFoundHttpException(sprintf('%s not found with id %s', new ReflectionClass($entityClass)->getShortName(), $id));

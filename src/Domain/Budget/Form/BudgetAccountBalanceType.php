@@ -5,7 +5,7 @@ namespace App\Domain\Budget\Form;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\Repository\AccountRepository;
-use App\Shared\Message\Command\GetBudgetAccountBalance\GetBudgetAccountBalanceCommand;
+use App\Shared\Message\Command\ApplyBudgetAccountBalance\ApplyBudgetAccountBalanceCommand;
 use Doctrine\ORM\QueryBuilder;
 use Override;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -23,7 +23,7 @@ class BudgetAccountBalanceType extends AbstractType
         $builder
             ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event): void {
                 $form = $event->getForm();
-                /** @var GetBudgetAccountBalanceCommand $budgetAccountBalanceCommand */
+                /** @var ApplyBudgetAccountBalanceCommand $budgetAccountBalanceCommand */
                 $budgetAccountBalanceCommand = $event->getData();
 
                 $form
@@ -49,7 +49,7 @@ class BudgetAccountBalanceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => GetBudgetAccountBalanceCommand::class,
+            'data_class'         => ApplyBudgetAccountBalanceCommand::class,
             'label_format'       => 'budget.account_balance.%name%.label',
             'translation_domain' => 'forms',
         ]);

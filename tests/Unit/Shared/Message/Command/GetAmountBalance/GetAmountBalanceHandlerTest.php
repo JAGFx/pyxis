@@ -1,30 +1,35 @@
 <?php
 
-namespace App\Tests\Unit\Shared\Operator;
+namespace App\Tests\Unit\Shared\Message\Command\GetAmountBalance;
 
 use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
 use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
 use App\Domain\Entry\ValueObject\EntryBalance;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Operator\EntryOperator;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
+use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceHandler;
+use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
+use App\Tests\Integration\Shared\KernelTestCase;
 use Generator;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
 
-class EntryOperatorTest extends TestCase
+class GetAmountBalanceHandlerTest extends KernelTestCase
 {
     private MessageBus $messageBusMock;
+    private EntityFinder $entityFinderMock;
 
     protected function setUp(): void
     {
-        $this->messageBusMock = $this->createMock(MessageBus::class);
+        $this->messageBusMock   = $this->createMock(MessageBus::class);
+        $this->entityFinderMock = $this->createMock(EntityFinder::class);
     }
 
-    private function generateEntryOperator(): EntryOperator
+    private function generateGetAmountBalanceHandler(): GetAmountBalanceHandler
     {
-        return new EntryOperator(
-            $this->messageBusMock
+        return new GetAmountBalanceHandler(
+            $this->messageBusMock,
+            $this->entityFinderMock,
         );
     }
 
@@ -92,9 +97,9 @@ class EntryOperatorTest extends TestCase
                 throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
             });
 
-        $entryOperator = $this->generateEntryOperator();
+        $amountBalanceHandler = $this->generateGetAmountBalanceHandler();
 
-        $amountBalance = $entryOperator->getAmountBalance();
+        $amountBalance = $amountBalanceHandler->__invoke(new GetAmountBalanceQuery());
         self::assertSame($expectedTotal, $amountBalance->getTotal());
         self::assertSame($expectedSpent, $amountBalance->getTotalSpent());
         self::assertSame($expectedForecast, $amountBalance->getTotalForecast());

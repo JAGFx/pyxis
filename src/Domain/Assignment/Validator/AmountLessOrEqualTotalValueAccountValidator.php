@@ -3,23 +3,25 @@
 namespace App\Domain\Assignment\Validator;
 
 use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment\CreateOrUpdateAssignmentCommand;
-use App\Shared\Operator\EntryOperator;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
+use App\Infrastructure\Cqs\Bus\MessageBus;
+use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
+use App\Shared\ValueObject\AmountBalance;
 use InvalidArgumentException;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Throwable;
 
 class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
 {
     public function __construct(
-        private readonly EntryOperator $entryOperator,
+        private readonly MessageBus $messageBus,
     ) {
     }
 
     /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
+     * @throws ExceptionInterface
+     * @throws Throwable
      */
     public function validate(mixed $value, Constraint $constraint): void
     {
@@ -31,7 +33,8 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
             return;
         }
 
-        $amountBalance = $this->entryOperator->getAmountBalance($value->getAccount());
+        /** @var AmountBalance $amountBalance */
+        $amountBalance = $this->messageBus->dispatch(new GetAmountBalanceQuery($value->getAccount()?->getId()));
 
         // TODO: Add test for it
         if ($value->getAmount() > $amountBalance->getTotal()) {

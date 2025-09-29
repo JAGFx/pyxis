@@ -8,7 +8,7 @@ use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Message\Command\GetBudgetAccountBalance\GetBudgetAccountBalanceCommand;
+use App\Shared\Message\Command\ApplyBudgetAccountBalance\ApplyBudgetAccountBalanceCommand;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
@@ -73,7 +73,7 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
 
         $initialBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
 
-        $this->messageBus->dispatch(new GetBudgetAccountBalanceCommand(
+        $this->messageBus->dispatch(new ApplyBudgetAccountBalanceCommand(
             budget: $budget,
             account: $account,
         ));
@@ -106,7 +106,7 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
         /** @var Account $account */
         $account = AccountFactory::first()->_real();
 
-        $this->messageBus->dispatch(new GetBudgetAccountBalanceCommand(
+        $this->messageBus->dispatch(new ApplyBudgetAccountBalanceCommand(
             budget: $budget,
             account: $account,
         ));

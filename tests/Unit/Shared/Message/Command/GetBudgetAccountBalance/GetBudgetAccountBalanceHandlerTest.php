@@ -4,7 +4,7 @@ namespace App\Tests\Unit\Shared\Message\Command\GetBudgetAccountBalance;
 
 use App\Domain\Account\Entity\Account;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Message\Command\GetBudgetAccountBalance\GetBudgetAccountBalanceCommand;
+use App\Shared\Message\Command\ApplyBudgetAccountBalance\ApplyBudgetAccountBalanceCommand;
 use App\Tests\Integration\Shared\KernelTestCase;
 use App\Tests\Unit\Shared\BudgetTestTrait;
 use DateTimeImmutable;
@@ -50,7 +50,7 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
              ->expects(self::never())
              ->method('flush');
 
-        $this->messageBus->dispatch(new GetBudgetAccountBalanceCommand($budget, new Account()));
+        $this->messageBus->dispatch(new ApplyBudgetAccountBalanceCommand($budget, new Account()));
 
         self::assertCount(3, $budget->getEntries());
         self::assertSame($progress, $budget->getProgress());

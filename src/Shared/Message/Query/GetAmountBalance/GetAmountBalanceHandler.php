@@ -1,27 +1,40 @@
 <?php
 
-namespace App\Shared\Operator;
+namespace App\Shared\Message\Query\GetAmountBalance;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
 use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
 use App\Domain\Entry\ValueObject\EntryBalance;
 use App\Infrastructure\Cqs\Bus\MessageBus;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
+use App\Shared\Cqs\Handler\QueryHandlerInterface;
 use App\Shared\ValueObject\AmountBalance;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Throwable;
 
-readonly class EntryOperator
+/**
+ * @see GetAmountBalanceQuery
+ */
+readonly class GetAmountBalanceHandler implements QueryHandlerInterface
 {
     public function __construct(
         private MessageBus $messageBus,
+        private EntityFinder $entityFinder,
     ) {
     }
 
     /**
      * @throws ExceptionInterface
+     * @throws Throwable
      */
-    public function getAmountBalance(?Account $account = null): AmountBalance
+    public function __invoke(GetAmountBalanceQuery $command): AmountBalance
     {
+        $account = $this->entityFinder->findByIntIdentifier(
+            Account::class,
+            $command->getAccountId()
+        );
+
         /** @var EntryBalance $entryBalance */
         $entryBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery($account?->getId()));
 

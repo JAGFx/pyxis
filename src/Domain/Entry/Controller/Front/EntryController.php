@@ -8,9 +8,7 @@ use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\Operator\EntryOperator;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
+use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,14 +23,13 @@ class EntryController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly EntryOperator $entryOperator,
         private readonly MessageBus $messageBus,
     ) {
     }
 
     /**
-     * @throws NonUniqueResultException
-     * @throws NoResultException
+     * @throws ExceptionInterface
+     * @throws Throwable
      */
     #[Route(
         '/balance',
@@ -42,7 +39,7 @@ class EntryController extends AbstractController
     public function balance(Request $request): Response
     {
         return $this->renderTurboStream($request, 'domain/entry/turbo/balance.turbo.stream.html.twig', [
-            'amountBalance' => $this->entryOperator->getAmountBalance(),
+            'amountBalance' => $this->messageBus->dispatch(new GetAmountBalanceQuery()),
         ]);
     }
 
