@@ -1,33 +1,30 @@
 <?php
 
-namespace App\Tests\Integration\Shared\Operator;
+namespace App\Tests\Integration\Shared\Message\Command\Transfer;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Operator\HomeOperator;
-use App\Shared\Request\TransferRequest;
+use App\Shared\Message\Command\Transfer\TransferCommand;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 
-class HomeOperatorTest extends KernelTestCase
+class TransferHandlerTest extends KernelTestCase
 {
-    private const BUDGET_SOURCE_NAME = 'Budget source name';
-    private const BUDGET_TARGET_NAME = 'Budget target name';
-    private const BUDGET_AMOUNT      = 100.0;
-    private HomeOperator $homeOperator;
+    private const string BUDGET_SOURCE_NAME = 'Budget source name';
+    private const string BUDGET_TARGET_NAME = 'Budget target name';
+    private const float BUDGET_AMOUNT       = 100.0;
     private MessageBus $messageBus;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->homeOperator = self::getContainer()->get(HomeOperator::class);
-        $this->messageBus   = self::getContainer()->get(MessageBus::class);
+        $this->messageBus = self::getContainer()->get(MessageBus::class);
     }
 
     public function testTransferMustMoveAmountFromSpentToBudgetSuccessfully(): void
@@ -93,13 +90,13 @@ class HomeOperatorTest extends KernelTestCase
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
 
-        $transfer = new TransferRequest()
+        $transfer = new TransferCommand()
             ->setAccount($account)
             ->setAmount(self::BUDGET_AMOUNT)
             ->setBudgetSource($budgetSource)
             ->setBudgetTarget($budgetTarget);
 
-        $this->homeOperator->transfer($transfer);
+        $this->messageBus->dispatch($transfer);
 
         self::assertSame(-self::BUDGET_AMOUNT, $budgetSource?->getProgress() ?? -self::BUDGET_AMOUNT);
         self::assertSame(self::BUDGET_AMOUNT, $budgetTarget?->getProgress() ?? self::BUDGET_AMOUNT);

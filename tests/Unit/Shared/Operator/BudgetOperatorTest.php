@@ -21,8 +21,7 @@ class BudgetOperatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->messageBus    = $this->createMock(MessageBus::class);
+        $this->messageBus = $this->createMock(MessageBus::class);
     }
 
     private function createBudgetOperator(array $onlyMethods = []): BudgetOperator|MockObject
@@ -30,7 +29,6 @@ class BudgetOperatorTest extends TestCase
         return $this->getMockBuilder(BudgetOperator::class)
             ->onlyMethods($onlyMethods)
             ->setConstructorArgs([
-                $this->entityManager,
                 $this->messageBus,
             ])
             ->getMock();

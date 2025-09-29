@@ -1,14 +1,19 @@
 <?php
 
-namespace App\Shared\Operator;
+namespace App\Shared\Message\Command\Transfer;
 
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Request\TransferRequest;
+use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Throwable;
 
-readonly class HomeOperator
+/**
+ * @see TransferCommand
+ */
+readonly class TransferHandler implements CommandHandlerInterface
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -16,7 +21,11 @@ readonly class HomeOperator
     ) {
     }
 
-    public function transfer(TransferRequest $transfer): void
+    /**
+     * @throws Throwable
+     * @throws ExceptionInterface
+     */
+    public function __invoke(TransferCommand $transfer): void
     {
         $entrySourceName = $transfer->getBudgetSource()?->getName() ?? 'Dépense';
         $entryTargetName = $transfer->getBudgetTarget()?->getName() ?? 'Dépense';

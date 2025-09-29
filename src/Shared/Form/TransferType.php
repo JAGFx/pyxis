@@ -9,7 +9,7 @@ use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Shared\Form\Type\MoneyType;
-use App\Shared\Request\TransferRequest;
+use App\Shared\Message\Command\Transfer\TransferCommand;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -58,7 +58,7 @@ class TransferType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class'         => TransferRequest::class,
+            'data_class'         => TransferCommand::class,
             'label_format'       => 'shared.transfer.%name%.label',
             'translation_domain' => 'forms',
         ]);

@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Shared\Request;
+namespace App\Shared\Message\Command\Transfer;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
+use App\Shared\Cqs\Message\Command\CommandInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Positive;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
-class TransferRequest
+/**
+ * @see TransferHandler
+ */
+class TransferCommand implements CommandInterface
 {
     #[NotNull]
     private ?Account $account     = null;
@@ -36,7 +40,7 @@ class TransferRequest
         return $this->account;
     }
 
-    public function setAccount(?Account $account): TransferRequest
+    public function setAccount(?Account $account): TransferCommand
     {
         $this->account = $account;
 
@@ -48,7 +52,7 @@ class TransferRequest
         return $this->budgetSource;
     }
 
-    public function setBudgetSource(?Budget $budgetSource): TransferRequest
+    public function setBudgetSource(?Budget $budgetSource): TransferCommand
     {
         $this->budgetSource = $budgetSource;
 
@@ -60,7 +64,7 @@ class TransferRequest
         return $this->budgetTarget;
     }
 
-    public function setBudgetTarget(?Budget $budgetTarget): TransferRequest
+    public function setBudgetTarget(?Budget $budgetTarget): TransferCommand
     {
         $this->budgetTarget = $budgetTarget;
 
@@ -72,7 +76,7 @@ class TransferRequest
         return $this->amount;
     }
 
-    public function setAmount(float $amount): TransferRequest
+    public function setAmount(float $amount): TransferCommand
     {
         $this->amount = $amount;
 
