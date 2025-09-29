@@ -6,10 +6,8 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Operator\BudgetOperator;
 use App\Tests\Unit\Shared\BudgetTestTrait;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -201,41 +199,5 @@ class BudgetOperatorTest extends TestCase
         self::assertContains(-0.01, $cashFlows);
         self::assertContains(1000.0, $cashFlows);
         self::assertNotContains(0.0, $cashFlows);
-    }
-
-    public function testBudgetWithBalancedCashFlowDoNothing(): void
-    {
-        $progress = 200.0;
-        $cashFlow = 0.0;
-        $budget   = $this->generateBudget([
-            'amount'  => self::BUDGET_AMOUNT,
-            'entries' => [
-                [
-                    'entryName'      => 'Past year entry',
-                    'entryAmount'    => -self::BUDGET_AMOUNT,
-                    'entryCreatedAt' => new DateTimeImmutable('-1 year'),
-                ],
-                [
-                    'entryName'      => 'Past year entry',
-                    'entryAmount'    => self::BUDGET_AMOUNT,
-                    'entryCreatedAt' => new DateTimeImmutable('-1 year -1 hour'),
-                ],
-                [
-                    'entryAmount' => 200,
-                ],
-            ],
-        ]);
-
-        $this->entityManager
-            ->expects(self::never())
-            ->method('flush');
-
-        $budgetManager = $this->createBudgetOperator();
-
-        $budgetManager->balancing(new GetBudgetAccountBalanceCommand($budget, new Account()));
-
-        self::assertCount(3, $budget->getEntries());
-        self::assertSame($progress, $budget->getProgress());
-        self::assertSame($cashFlow, $budget->getCashFlow());
     }
 }

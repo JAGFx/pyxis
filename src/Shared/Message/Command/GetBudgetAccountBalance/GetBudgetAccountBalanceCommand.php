@@ -1,12 +1,15 @@
 <?php
 
-namespace App\Shared\Message\Command;
+namespace App\Shared\Message\Command\GetBudgetAccountBalance;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @see GetBudgetAccountBalanceHandler
+ */
 class GetBudgetAccountBalanceCommand implements CommandInterface
 {
     public function __construct(

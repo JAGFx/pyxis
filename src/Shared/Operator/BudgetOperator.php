@@ -12,18 +12,13 @@ use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
-use App\Domain\Entry\Entity\EntryFlagEnum;
-use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Message\Command\GetBudgetAccountBalanceCommand;
 use App\Shared\Utils\YearRange;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 
 readonly class BudgetOperator
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private MessageBus $messageBus,
     ) {
     }
@@ -96,37 +91,5 @@ readonly class BudgetOperator
         }
 
         return $cashFlows;
-    }
-
-    /**
-     * @throws ExceptionInterface
-     */
-    public function balancing(GetBudgetAccountBalanceCommand $budgetAccountBalance): void
-    {
-        $budget  = $budgetAccountBalance->getBudget();
-        $account = $budgetAccountBalance->getAccount();
-
-        if ($budget->hasPositiveCashFlow() || $budget->hasNegativeCashFlow()) {
-            $spentCommand = new CreateOrUpdateEntryCommand(
-                account: $account,
-                name: $budget->getName(),
-                amount: $budget->getCashFlow(),
-                flags: [EntryFlagEnum::BALANCE],
-            );
-
-            $forecastCommand = new CreateOrUpdateEntryCommand(
-                account: $account,
-                name: $budget->getName(),
-                amount: -$budget->getCashFlow(),
-                budget: $budget,
-                flags: [EntryFlagEnum::BALANCE],
-            );
-
-            // TODO: Add flushable props
-            $this->messageBus->dispatch($spentCommand);
-            $this->messageBus->dispatch($forecastCommand);
-
-            $this->entityManager->flush();
-        }
     }
 }
