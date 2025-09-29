@@ -9,12 +9,12 @@ use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceHandler;
 use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
-use App\Tests\Integration\Shared\KernelTestCase;
 use Generator;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
-class GetAmountBalanceHandlerTest extends KernelTestCase
+class GetAmountBalanceHandlerTest extends TestCase
 {
     private MessageBus $messageBusMock;
     private EntityFinder $entityFinderMock;

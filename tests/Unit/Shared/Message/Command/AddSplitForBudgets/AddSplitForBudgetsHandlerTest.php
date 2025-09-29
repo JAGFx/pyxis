@@ -1,40 +1,45 @@
 <?php
 
-namespace App\Tests\Unit\Shared\Operator;
+namespace App\Tests\Unit\Shared\Message\Command\AddSplitForBudgets;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Operator\PeriodicEntryOperator;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
+use App\Shared\Message\Command\AddSplitForBudgets\AddSplitForBudgetsCommand;
+use App\Shared\Message\Command\AddSplitForBudgets\AddSplitForBudgetsHandler;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 
-class PeriodicEntryOperatorTest extends TestCase
+class AddSplitForBudgetsHandlerTest extends TestCase
 {
     private EntityManagerInterface $entityManagerMock;
     private MessageBus $messageBusMock;
+    private EntityFinder $entityFinderMock;
 
     protected function setUp(): void
     {
         $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
         $this->messageBusMock    = $this->createMock(MessageBus::class);
+        $this->entityFinderMock  = $this->createMock(EntityFinder::class);
     }
 
-    private function generatePeriodicEntryOperator(): PeriodicEntryOperator
+    private function generateAddSplitForBudgetsHandler(): AddSplitForBudgetsHandler
     {
-        return new PeriodicEntryOperator(
+        return new AddSplitForBudgetsHandler(
             $this->entityManagerMock,
             $this->messageBusMock,
+            $this->entityFinderMock,
         );
     }
 
     public function testAddSplitForBudgetsThrowsExceptionWhenNotScheduledForToday(): void
     {
         $tomorrow      = new DateTimeImmutable('+1 day');
-        $periodicEntry = (new PeriodicEntry())
+        $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($tomorrow)
             ->setName('Test Entry')
             ->setAccount(new Account());
@@ -50,8 +55,13 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::never())
             ->method('flush');
 
-        $this->generatePeriodicEntryOperator()
-            ->addSplitForBudgets($periodicEntry);
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
     }
 
     public function testSplitAlreadyDoneMustDoNothing(): void
@@ -59,7 +69,7 @@ class PeriodicEntryOperatorTest extends TestCase
         $today         = new DateTimeImmutable();
         $executionDate = new DateTimeImmutable('first day of this month +15 days 14:00:00');
 
-        $periodicEntry = (new PeriodicEntry())
+        $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($today)
             ->setLastExecutionDate($executionDate)
             ->setName('Already executed entry')
@@ -76,8 +86,13 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::never())
             ->method('flush');
 
-        $this->generatePeriodicEntryOperator()
-            ->addSplitForBudgets($periodicEntry);
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
     }
 
     public function testSplitExecutedLastMonthShouldAllow(): void
@@ -85,7 +100,7 @@ class PeriodicEntryOperatorTest extends TestCase
         $today              = new DateTimeImmutable();
         $lastMonthExecution = new DateTimeImmutable('first day of last month +15 days');
 
-        $periodicEntry = (new PeriodicEntry())
+        $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($today)
             ->setLastExecutionDate($lastMonthExecution)
             ->setAmount(200.0)
@@ -100,25 +115,30 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::once())
             ->method('flush');
 
-        $this->generatePeriodicEntryOperator()
-            ->addSplitForBudgets($periodicEntry);
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
     }
 
     public function testSplitForecastWithAllBudgetsDisabledCreatesNoEntries(): void
     {
         $today = new DateTimeImmutable();
 
-        $disabledBudget1 = (new Budget())
+        $disabledBudget1 = new Budget()
             ->setName('Disabled Budget 1')
             ->setAmount(100.0)
             ->setEnabled(false);
 
-        $disabledBudget2 = (new Budget())
+        $disabledBudget2 = new Budget()
             ->setName('Disabled Budget 2')
             ->setAmount(200.0)
             ->setEnabled(false);
 
-        $periodicEntry = (new PeriodicEntry())
+        $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($today)
             ->setLastExecutionDate(null)
             ->setName('All budgets disabled')
@@ -134,8 +154,13 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::once())
             ->method('flush');
 
-        $this->generatePeriodicEntryOperator()
-            ->addSplitForBudgets($periodicEntry);
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
     }
 
     public function testSplitForecastWithZeroAmountBudgetsCreatesNoEntries(): void
@@ -147,7 +172,7 @@ class PeriodicEntryOperatorTest extends TestCase
             ->setAmount(0.0)
             ->setEnabled(true);
 
-        $periodicEntry = (new PeriodicEntry())
+        $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($today)
             ->setLastExecutionDate(null)
             ->setName('Zero amount budgets')
@@ -162,8 +187,13 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::once())
             ->method('flush');
 
-        $this->generatePeriodicEntryOperator()
-            ->addSplitForBudgets($periodicEntry);
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
     }
 
     public function testSplitWithCustomDateParameter(): void
@@ -171,7 +201,7 @@ class PeriodicEntryOperatorTest extends TestCase
         $customDate           = new DateTimeImmutable('today 10:00:00');
         $executionDateSameDay = new DateTimeImmutable('today 14:00:00');
 
-        $periodicEntry = (new PeriodicEntry())
+        $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($executionDateSameDay)
             ->setLastExecutionDate(null)
             ->setAmount(300.0)
@@ -186,15 +216,20 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::once())
             ->method('flush');
 
-        $this->generatePeriodicEntryOperator()
-            ->addSplitForBudgets($periodicEntry, $customDate);
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId(), $customDate));
     }
 
     public function testSplitNotYetDoneForSpentMustCreateOnlyOneEntry(): void
     {
         $today = new DateTimeImmutable();
 
-        $periodicEntry = (new PeriodicEntry())
+        $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($today)
             ->setLastExecutionDate(null)
             ->setAmount(200.0)
@@ -209,8 +244,13 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::once())
             ->method('flush');
 
-        $this->generatePeriodicEntryOperator()
-            ->addSplitForBudgets($periodicEntry);
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
 
         self::assertNotNull($periodicEntry->getLastExecutionDate());
     }
@@ -219,17 +259,17 @@ class PeriodicEntryOperatorTest extends TestCase
     {
         $today = new DateTimeImmutable();
 
-        $periodicEntry = (new PeriodicEntry())
+        $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($today)
             ->setLastExecutionDate(null)
             ->setName('Forecast Entry')
             ->setAccount(new Account())
-            ->addBudget((new Budget())
+            ->addBudget(new Budget()
                 ->setName('Budget 1')
                 ->setAmount(200.0)
                 ->setEnabled(true)
             )
-            ->addBudget((new Budget())
+            ->addBudget(new Budget()
                 ->setName('Budget 2')
                 ->setAmount(300.0)
                 ->setEnabled(true)
@@ -243,8 +283,13 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::once())
             ->method('flush');
 
-        $this->generatePeriodicEntryOperator()
-            ->addSplitForBudgets($periodicEntry);
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
 
         self::assertNotNull($periodicEntry->getLastExecutionDate());
     }
@@ -253,22 +298,22 @@ class PeriodicEntryOperatorTest extends TestCase
     {
         $today = new DateTimeImmutable();
 
-        $periodicEntry = (new PeriodicEntry())
+        $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($today)
             ->setLastExecutionDate(null)
             ->setName('Mixed budgets')
             ->setAccount(new Account())
-            ->addBudget((new Budget())
+            ->addBudget(new Budget()
                 ->setName('Enabled Budget 1')
                 ->setAmount(200.0)
                 ->setEnabled(true)
             )
-            ->addBudget((new Budget())
+            ->addBudget(new Budget()
                 ->setName('Enabled Budget 2')
                 ->setAmount(300.0)
                 ->setEnabled(true)
             )
-            ->addBudget((new Budget())
+            ->addBudget(new Budget()
                 ->setName('Disabled Budget')
                 ->setAmount(150.0)
                 ->setEnabled(false)
@@ -282,8 +327,13 @@ class PeriodicEntryOperatorTest extends TestCase
             ->expects(self::once())
             ->method('flush');
 
-        $this->generatePeriodicEntryOperator()
-            ->addSplitForBudgets($periodicEntry);
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
 
         self::assertNotNull($periodicEntry->getLastExecutionDate());
     }

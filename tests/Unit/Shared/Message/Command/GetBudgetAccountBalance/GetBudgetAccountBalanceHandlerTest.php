@@ -5,12 +5,12 @@ namespace App\Tests\Unit\Shared\Message\Command\GetBudgetAccountBalance;
 use App\Domain\Account\Entity\Account;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\Message\Command\ApplyBudgetAccountBalance\ApplyBudgetAccountBalanceCommand;
-use App\Tests\Integration\Shared\KernelTestCase;
 use App\Tests\Unit\Shared\BudgetTestTrait;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\TestCase;
 
-class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
+class GetBudgetAccountBalanceHandlerTest extends TestCase
 {
     use BudgetTestTrait;
     private const float BUDGET_AMOUNT = 1000.0;

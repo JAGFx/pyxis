@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Tests\Integration\Shared\Operator;
+namespace App\Tests\Integration\Shared\Message\Command\AddSplitForBudgets;
 
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
-use App\Shared\Operator\PeriodicEntryOperator;
+use App\Infrastructure\Cqs\Bus\MessageBus;
+use App\Shared\Message\Command\AddSplitForBudgets\AddSplitForBudgetsCommand;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
@@ -13,15 +14,15 @@ use App\Tests\Factory\PeriodicEntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use DateTimeImmutable;
 
-class PeriodicEntryOperatorTest extends KernelTestCase
+class AddSplitForBudgetsHandlerTest extends KernelTestCase
 {
-    private PeriodicEntryOperator $periodicEntryOperator;
+    private MessageBus $messageBus;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        $container                   = static::getContainer();
-        $this->periodicEntryOperator = $container->get(PeriodicEntryOperator::class);
+        $container        = static::getContainer();
+        $this->messageBus = $container->get(MessageBus::class);
     }
 
     public function testAddSplitForBudgetsSpentTypeCreatesOneEntry(): void
@@ -38,7 +39,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
             'budgets'           => [], // No budget = SPENT type
         ])->_real();
 
-        $this->periodicEntryOperator->addSplitForBudgets($periodicEntry);
+        $this->messageBus->dispatch(new AddSplitForBudgetsCommand($periodicEntry->getId()));
 
         /** @var Entry[] $createdEntries */
         $createdEntries = EntryFactory::repository()->findAll();
@@ -55,7 +56,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
         // Verify that last execution date is updated
         self::assertNotNull($periodicEntry->getLastExecutionDate());
         self::assertEquals(
-            (new DateTimeImmutable())->format('Y-m-d'),
+            new DateTimeImmutable()->format('Y-m-d'),
             $periodicEntry->getLastExecutionDate()->format('Y-m-d')
         );
     }
@@ -92,7 +93,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
             'budgets'           => [$budget1, $budget2, $budget3],
         ])->_real();
 
-        $this->periodicEntryOperator->addSplitForBudgets($periodicEntry);
+        $this->messageBus->dispatch(new AddSplitForBudgetsCommand($periodicEntry->getId()));
 
         /** @var Entry[] $createdEntries */
         $createdEntries = EntryFactory::repository()->findAll();
@@ -117,7 +118,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
         // Verify that last execution date is updated
         self::assertNotNull($periodicEntry->getLastExecutionDate());
         self::assertEquals(
-            (new DateTimeImmutable())->format('Y-m-d'),
+            new DateTimeImmutable()->format('Y-m-d'),
             $periodicEntry->getLastExecutionDate()->format('Y-m-d')
         );
     }
@@ -160,7 +161,7 @@ class PeriodicEntryOperatorTest extends KernelTestCase
             'budgets'           => [$activeBudget1, $activeBudget2, $inactiveBudget, $zeroBudget],
         ])->_real();
 
-        $this->periodicEntryOperator->addSplitForBudgets($periodicEntry);
+        $this->messageBus->dispatch(new AddSplitForBudgetsCommand($periodicEntry->getId()));
 
         /** @var Entry[] $createdEntries */
         $createdEntries = EntryFactory::repository()->findAll();
