@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Budget\Command;
 
-use App\Shared\Operator\HistoryBudgetOperator;
+use App\Infrastructure\Cqs\Bus\MessageBus;
+use App\Shared\Message\Command\GenerateHistoryBudgetsForYear\GenerateHistoryBudgetsForYearCommand;
 use App\Shared\Utils\YearRange;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -21,7 +22,7 @@ class CreateAnnuallyHistoryBudgetConsoleCommand extends Command
 {
     public function __construct(
         private readonly LoggerInterface $logger,
-        private readonly HistoryBudgetOperator $historyBudgetOperator,
+        private readonly MessageBus $messageBus,
     ) {
         parent::__construct();
     }
@@ -32,7 +33,9 @@ class CreateAnnuallyHistoryBudgetConsoleCommand extends Command
 
         try {
             $this->logger->info('Creating annually history budgets for year {year}', ['year' => YearRange::current() - 1]);
-            $this->historyBudgetOperator->generateHistoryBudgetsForYear(YearRange::current() - 1);
+            $this->messageBus->dispatch(
+                new GenerateHistoryBudgetsForYearCommand(YearRange::current() - 1)
+            );
 
             return Command::SUCCESS;
         } catch (Throwable $throwable) {

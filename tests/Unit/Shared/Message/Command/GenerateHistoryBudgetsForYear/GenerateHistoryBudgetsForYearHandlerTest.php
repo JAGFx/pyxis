@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Unit\Shared\Operator;
+namespace App\Tests\Unit\Shared\Message\Command\GenerateHistoryBudgetsForYear;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
@@ -10,12 +10,13 @@ use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
-use App\Shared\Operator\HistoryBudgetOperator;
+use App\Shared\Message\Command\GenerateHistoryBudgetsForYear\GenerateHistoryBudgetsForYearCommand;
+use App\Shared\Message\Command\GenerateHistoryBudgetsForYear\GenerateHistoryBudgetsForYearHandler;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class HistoryBudgetOperatorTest extends TestCase
+class GenerateHistoryBudgetsForYearHandlerTest extends TestCase
 {
     private readonly MessageBus $messageBusMock;
     private readonly EntityFinder $entityFinderMock;
@@ -26,9 +27,9 @@ class HistoryBudgetOperatorTest extends TestCase
         $this->entityFinderMock = $this->createMock(EntityFinder::class);
     }
 
-    private function generateHistoryBudgetOperator(): HistoryBudgetOperator
+    private function generateGenerateHistoryBudgetsForYearHandler(): GenerateHistoryBudgetsForYearHandler
     {
-        return new HistoryBudgetOperator(
+        return new GenerateHistoryBudgetsForYearHandler(
             $this->createMock(LoggerInterface::class),
             $this->messageBusMock,
             $this->entityFinderMock,
@@ -58,11 +59,11 @@ class HistoryBudgetOperatorTest extends TestCase
         $this->entityFinderMock
             ->expects($this->exactly(2))
             ->method('findByIntIdentifier')
-            ->willReturn((new Budget())->setAmount(20));
+            ->willReturn(new Budget()->setAmount(20));
 
         $this
-            ->generateHistoryBudgetOperator()
-            ->generateHistoryBudgetsForYear(2023);
+            ->generateGenerateHistoryBudgetsForYearHandler()
+            ->__invoke(new GenerateHistoryBudgetsForYearCommand(2023));
     }
 
     public function testAlreadyHistoryCreatedMustDoNothing(): void
@@ -88,10 +89,10 @@ class HistoryBudgetOperatorTest extends TestCase
         $this->entityFinderMock
             ->expects($this->exactly(2))
             ->method('findByIntIdentifier')
-            ->willReturn((new Budget())->setAmount(20));
+            ->willReturn(new Budget()->setAmount(20));
 
         $this
-            ->generateHistoryBudgetOperator()
-            ->generateHistoryBudgetsForYear(2023);
+            ->generateGenerateHistoryBudgetsForYearHandler()
+            ->__invoke(new GenerateHistoryBudgetsForYearCommand(2023));
     }
 }

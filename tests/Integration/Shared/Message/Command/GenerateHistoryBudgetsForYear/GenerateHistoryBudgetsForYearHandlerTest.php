@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Tests\Integration\Shared\Operator;
+namespace App\Tests\Integration\Shared\Message\Command\GenerateHistoryBudgetsForYear;
 
-use App\Shared\Operator\HistoryBudgetOperator;
+use App\Infrastructure\Cqs\Bus\MessageBus;
+use App\Shared\Message\Command\GenerateHistoryBudgetsForYear\GenerateHistoryBudgetsForYearCommand;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
@@ -12,15 +13,15 @@ use DateTimeImmutable;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class HistoryBudgetOperatorTest extends KernelTestCase
+class GenerateHistoryBudgetsForYearHandlerTest extends KernelTestCase
 {
-    private HistoryBudgetOperator $historyBudgetOperator;
+    private MessageBus $messageBus;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->historyBudgetOperator = self::getContainer()->get(HistoryBudgetOperator::class);
+        $this->messageBus = self::getContainer()->get(MessageBus::class);
     }
 
     public function testBudgetWithoutEntriesDoesNotGenerateHistory(): void
@@ -50,7 +51,7 @@ class HistoryBudgetOperatorTest extends KernelTestCase
             'createdAt' => new DateTimeImmutable("$testYear-01-01"),
         ]);
 
-        $this->historyBudgetOperator->generateHistoryBudgetsForYear($testYear);
+        $this->messageBus->dispatch(new GenerateHistoryBudgetsForYearCommand($testYear));
 
         $historyBudgets = HistoryBudgetFactory::repository()->findAll();
 
@@ -127,7 +128,7 @@ class HistoryBudgetOperatorTest extends KernelTestCase
             }
         }
 
-        $this->historyBudgetOperator->generateHistoryBudgetsForYear($testYear);
+        $this->messageBus->dispatch(new GenerateHistoryBudgetsForYearCommand($testYear));
 
         $historyBudgets = HistoryBudgetFactory::repository()->findAll();
         self::assertCount($expectedHistoryCount, $historyBudgets, $description);
@@ -157,8 +158,8 @@ class HistoryBudgetOperatorTest extends KernelTestCase
             'createdAt' => new DateTimeImmutable("$testYear-01-01"),
         ]);
 
-        $this->historyBudgetOperator->generateHistoryBudgetsForYear($testYear);
-        $this->historyBudgetOperator->generateHistoryBudgetsForYear($testYear);
+        $this->messageBus->dispatch(new GenerateHistoryBudgetsForYearCommand($testYear));
+        $this->messageBus->dispatch(new GenerateHistoryBudgetsForYearCommand($testYear));
 
         $historyBudgets = HistoryBudgetFactory::repository()->findAll();
 
@@ -217,7 +218,7 @@ class HistoryBudgetOperatorTest extends KernelTestCase
             ]);
         }
 
-        $this->historyBudgetOperator->generateHistoryBudgetsForYear($testYear);
+        $this->messageBus->dispatch(new GenerateHistoryBudgetsForYearCommand($testYear));
 
         $historyBudgets = HistoryBudgetFactory::repository()->findAll();
         self::assertCount(1, $historyBudgets, "Should create history budget for $categoryName");

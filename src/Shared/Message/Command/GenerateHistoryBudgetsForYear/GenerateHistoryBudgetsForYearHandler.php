@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Operator;
+namespace App\Shared\Message\Command\GenerateHistoryBudgetsForYear;
 
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Message\Command\CreateHistoryBudget\CreateHistoryBudgetCommand;
@@ -9,12 +9,16 @@ use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
+use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use App\Shared\Utils\YearRange;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Throwable;
 
-readonly class HistoryBudgetOperator
+/**
+ * @see GenerateHistoryBudgetsForYearCommand
+ */
+readonly class GenerateHistoryBudgetsForYearHandler implements CommandHandlerInterface
 {
     public function __construct(
         private LoggerInterface $logger,
@@ -24,10 +28,13 @@ readonly class HistoryBudgetOperator
     }
 
     /**
+     * @throws Throwable
      * @throws ExceptionInterface
      */
-    public function generateHistoryBudgetsForYear(int $year): void
+    public function __invoke(GenerateHistoryBudgetsForYearCommand $command): void
     {
+        $year = $command->getYear();
+
         /** @var BudgetValueObject[] $budgetsValues */
         $budgetsValues = $this->messageBus->dispatch(
             new FindBudgetVOQuery()
