@@ -2,15 +2,11 @@
 
 namespace App\Shared\Operator;
 
-use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
-use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Entity\HistoryBudget;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
-use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\Utils\YearRange;
@@ -63,33 +59,5 @@ readonly class BudgetOperator
             ),
             $histories
         );
-    }
-
-    /**
-     * @return BudgetCashFlowByAccountValueObject[]
-     *
-     * @throws ExceptionInterface
-     */
-    public function getBudgetCashFlowsByAccount(Budget $budget): array
-    {
-        /** @var Account[] $accounts */
-        $accounts = $this->messageBus->dispatch(new FindAccountsQuery());
-
-        $cashFlows = [];
-        foreach ($accounts as $account) {
-            $cashFlow = $budget->getCashFlow($account);
-
-            if (0.0 === $cashFlow) {
-                continue;
-            }
-
-            $cashFlows[] = new BudgetCashFlowByAccountValueObject(
-                $budget,
-                $account,
-                $cashFlow
-            );
-        }
-
-        return $cashFlows;
     }
 }

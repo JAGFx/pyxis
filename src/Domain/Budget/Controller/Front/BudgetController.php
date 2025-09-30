@@ -8,7 +8,7 @@ use App\Domain\Budget\Message\Command\ToggleEnableBudget\ToggleEnableBudgetComma
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
-use App\Shared\Operator\BudgetOperator;
+use App\Shared\Message\Query\GetBudgetCashFlowsByAccount\GetBudgetCashFlowsByAccountQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +23,6 @@ class BudgetController extends AbstractController
     use TurboResponseTrait;
 
     public function __construct(
-        private readonly BudgetOperator $budgetOperator,
         private readonly MessageBus $messageBus,
     ) {
     }
@@ -69,7 +68,7 @@ class BudgetController extends AbstractController
             'domain/budget/turbo/cash_flow_account.turbo.stream.html.twig',
             [
                 'budget'    => $budget,
-                'cashFlows' => $this->budgetOperator->getBudgetCashFlowsByAccount($budget),
+                'cashFlows' => $this->messageBus->dispatch(new GetBudgetCashFlowsByAccountQuery($budget->getId())),
             ]
         );
     }

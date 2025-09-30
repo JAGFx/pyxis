@@ -1,35 +1,38 @@
 <?php
 
-namespace App\Tests\Unit\Shared\Operator;
+namespace App\Tests\Unit\Shared\Message\Query\GetBudgetCashFlowsByAccount;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Operator\BudgetOperator;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
+use App\Shared\Message\Query\GetBudgetCashFlowsByAccount\GetBudgetCashFlowsByAccountHandler;
+use App\Shared\Message\Query\GetBudgetCashFlowsByAccount\GetBudgetCashFlowsByAccountQuery;
 use App\Tests\Unit\Shared\BudgetTestTrait;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class BudgetOperatorTest extends TestCase
+class GetBudgetCashFlowsByAccountHandlerTest extends TestCase
 {
     use BudgetTestTrait;
     private const float BUDGET_AMOUNT = 1000.0;
-    private EntityManagerInterface $entityManager;
     private MessageBus $messageBus;
+    private EntityFinder $entityFinder;
 
     protected function setUp(): void
     {
-        $this->messageBus = $this->createMock(MessageBus::class);
+        $this->messageBus   = $this->createMock(MessageBus::class);
+        $this->entityFinder = $this->createMock(EntityFinder::class);
     }
 
-    private function createBudgetOperator(array $onlyMethods = []): BudgetOperator|MockObject
+    private function createGetBudgetCashFlowsByAccountHandler(array $onlyMethods = []): GetBudgetCashFlowsByAccountHandler|MockObject
     {
-        return $this->getMockBuilder(BudgetOperator::class)
+        return $this->getMockBuilder(GetBudgetCashFlowsByAccountHandler::class)
             ->onlyMethods($onlyMethods)
             ->setConstructorArgs([
                 $this->messageBus,
+                $this->entityFinder,
             ])
             ->getMock();
     }
@@ -72,8 +75,13 @@ class BudgetOperatorTest extends TestCase
                 };
             });
 
-        $result = $this->createBudgetOperator()
-            ->getBudgetCashFlowsByAccount($budgetMock);
+        $this->entityFinder
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($budgetMock);
+
+        $result = $this->createGetBudgetCashFlowsByAccountHandler()
+            ->__invoke(new GetBudgetCashFlowsByAccountQuery($budgetMock->getId()));
 
         self::assertIsArray($result);
         self::assertCount(2, $result); // Only accounts with non-zero cash flows
@@ -107,8 +115,13 @@ class BudgetOperatorTest extends TestCase
             ->method('getCashFlow')
             ->willReturn(0.0);
 
-        $result = $this->createBudgetOperator()
-            ->getBudgetCashFlowsByAccount($budgetMock);
+        $this->entityFinder
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($budgetMock);
+
+        $result = $this->createGetBudgetCashFlowsByAccountHandler()
+            ->__invoke(new GetBudgetCashFlowsByAccountQuery($budgetMock->getId()));
 
         self::assertIsArray($result);
         self::assertEmpty($result); // No accounts should be returned
@@ -124,8 +137,13 @@ class BudgetOperatorTest extends TestCase
         $budgetMock->expects(self::never())
             ->method('getCashFlow'); // Should not be called since no accounts
 
-        $result = $this->createBudgetOperator()
-            ->getBudgetCashFlowsByAccount($budgetMock);
+        $this->entityFinder
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($budgetMock);
+
+        $result = $this->createGetBudgetCashFlowsByAccountHandler()
+            ->__invoke(new GetBudgetCashFlowsByAccountQuery($budgetMock->getId()));
 
         self::assertIsArray($result);
         self::assertEmpty($result);
@@ -151,8 +169,13 @@ class BudgetOperatorTest extends TestCase
                 };
             });
 
-        $result = $this->createBudgetOperator()
-            ->getBudgetCashFlowsByAccount($budgetMock);
+        $this->entityFinder
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($budgetMock);
+
+        $result = $this->createGetBudgetCashFlowsByAccountHandler()
+            ->__invoke(new GetBudgetCashFlowsByAccountQuery($budgetMock->getId()));
 
         self::assertIsArray($result);
         self::assertCount(2, $result);
@@ -186,8 +209,13 @@ class BudgetOperatorTest extends TestCase
                 };
             });
 
-        $result = $this->createBudgetOperator()
-            ->getBudgetCashFlowsByAccount($budgetMock);
+        $this->entityFinder
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($budgetMock);
+
+        $result = $this->createGetBudgetCashFlowsByAccountHandler()
+            ->__invoke(new GetBudgetCashFlowsByAccountQuery($budgetMock->getId()));
 
         self::assertIsArray($result);
         self::assertCount(3, $result); // All except the zero one
