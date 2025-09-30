@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Tests\Integration\Shared\Operator;
+namespace App\Tests\Integration\Shared\Message\Query\GetBudgetBalanceProgresses;
 
-use App\Domain\Budget\Entity\Budget;
-use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Shared\Operator\BudgetOperator;
+use App\Shared\Message\Query\GetBudgetBalanceProgresses\GetBudgetBalanceProgressesQuery;
 use App\Shared\Utils\YearRange;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
@@ -15,17 +13,16 @@ use App\Tests\Factory\HistoryBudgetFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use DateTimeImmutable;
 
-class BudgetOperatorTest extends KernelTestCase
+class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
 {
     private const string ACCOUNT_1 = 'Test Account';
-    private BudgetOperator $budgetOperator;
+    private MessageBus $messageBus;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        $container            = static::getContainer();
-        $this->budgetOperator = $container->get(BudgetOperator::class);
-        $this->messageBus     = $container->get(MessageBus::class);
+        $container        = static::getContainer();
+        $this->messageBus = $container->get(MessageBus::class);
     }
 
     public function testGetBudgetBalanceProgressesWithNoBudgetExpensesNorHistory(): void
@@ -36,12 +33,10 @@ class BudgetOperatorTest extends KernelTestCase
             'enabled' => true,
         ]);
 
-        $searchQuery = new FindBudgetsQuery()
-            ->setShowCredits(false)
-            ->setYear(YearRange::current());
+        $searchQuery = new GetBudgetBalanceProgressesQuery(YearRange::current(), false);
 
         /** @var BudgetBalanceProgressValueObject[] $result */
-        $result = $this->budgetOperator->getBudgetBalanceProgresses($searchQuery);
+        $result = $this->messageBus->dispatch($searchQuery);
 
         self::assertIsArray($result);
         self::assertCount(0, $result);
@@ -76,12 +71,10 @@ class BudgetOperatorTest extends KernelTestCase
         ]);
 
         // Test current year
-        $searchQuery = new FindBudgetsQuery()
-            ->setShowCredits(false)
-            ->setYear(YearRange::current());
+        $searchQuery = new GetBudgetBalanceProgressesQuery(YearRange::current(), false);
 
         /** @var BudgetBalanceProgressValueObject[] $result */
-        $result = $this->budgetOperator->getBudgetBalanceProgresses($searchQuery);
+        $result = $this->messageBus->dispatch($searchQuery);
 
         self::assertIsArray($result);
         self::assertCount(1, $result);
@@ -140,12 +133,10 @@ class BudgetOperatorTest extends KernelTestCase
         ]);
 
         // Test current year (should use entries, not history)
-        $currentYearSearchQuery = new FindBudgetsQuery()
-            ->setShowCredits(false)
-            ->setYear(YearRange::current());
+        $currentYearSearchQuery = new GetBudgetBalanceProgressesQuery(YearRange::current(), false);
 
         /** @var BudgetBalanceProgressValueObject[] $currentResult */
-        $currentResult = $this->budgetOperator->getBudgetBalanceProgresses($currentYearSearchQuery);
+        $currentResult = $this->messageBus->dispatch($currentYearSearchQuery);
 
         self::assertCount(1, $currentResult);
         $currentProgressVO = $currentResult[0];
@@ -154,12 +145,10 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertEquals(550.0, $currentProgressVO->getProgress()); // abs(-300) + abs(-250) = 550 (from entries)
 
         // Test historical year 2024 (should use history)
-        $historicalSearchQuery2024 = new FindBudgetsQuery()
-            ->setShowCredits(false)
-            ->setYear(2024);
+        $historicalSearchQuery2024 = new GetBudgetBalanceProgressesQuery(2024, false);
 
         /** @var BudgetBalanceProgressValueObject[] $historical2024Result */
-        $historical2024Result = $this->budgetOperator->getBudgetBalanceProgresses($historicalSearchQuery2024);
+        $historical2024Result = $this->messageBus->dispatch($historicalSearchQuery2024);
 
         self::assertCount(1, $historical2024Result);
         $historical2024ProgressVO = $historical2024Result[0];
@@ -169,12 +158,10 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertEquals(80.0, $historical2024ProgressVO->getTrueRelativeProgress());
 
         // Test historical year 2023 (should use history)
-        $historicalSearchQuery2023 = new FindBudgetsQuery()
-            ->setShowCredits(false)
-            ->setYear(2023);
+        $historicalSearchQuery2023 = new GetBudgetBalanceProgressesQuery(2023, false);
 
         /** @var BudgetBalanceProgressValueObject[] $historical2023Result */
-        $historical2023Result = $this->budgetOperator->getBudgetBalanceProgresses($historicalSearchQuery2023);
+        $historical2023Result = $this->messageBus->dispatch($historicalSearchQuery2023);
 
         self::assertCount(1, $historical2023Result);
         $historical2023ProgressVO = $historical2023Result[0];
@@ -210,22 +197,18 @@ class BudgetOperatorTest extends KernelTestCase
         ]);
 
         // Test current year (should show budget with 0 progress since no entries)
-        $currentYearSearchQuery = new FindBudgetsQuery()
-            ->setShowCredits(false)
-            ->setYear(YearRange::current());
+        $currentYearSearchQuery = new GetBudgetBalanceProgressesQuery(YearRange::current(), false);
 
         /** @var BudgetBalanceProgressValueObject[] $currentResult */
-        $currentResult = $this->budgetOperator->getBudgetBalanceProgresses($currentYearSearchQuery);
+        $currentResult = $this->messageBus->dispatch($currentYearSearchQuery);
 
         self::assertEmpty($currentResult);
 
         // Test historical year 2024 (should use history)
-        $historicalSearchQuery2024 = new FindBudgetsQuery()
-            ->setShowCredits(false)
-            ->setYear(2024);
+        $historicalSearchQuery2024 = new GetBudgetBalanceProgressesQuery(2024, false);
 
         /** @var BudgetBalanceProgressValueObject[] $historical2024Result */
-        $historical2024Result = $this->budgetOperator->getBudgetBalanceProgresses($historicalSearchQuery2024);
+        $historical2024Result = $this->messageBus->dispatch($historicalSearchQuery2024);
 
         self::assertCount(1, $historical2024Result);
         $historical2024ProgressVO = $historical2024Result[0];
@@ -235,12 +218,10 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertEquals(75.0, $historical2024ProgressVO->getTrueRelativeProgress());
 
         // Test historical year 2023 (should use history)
-        $historicalSearchQuery2023 = new FindBudgetsQuery()
-            ->setShowCredits(false)
-            ->setYear(2023);
+        $historicalSearchQuery2023 = new GetBudgetBalanceProgressesQuery(2023, false);
 
         /** @var BudgetBalanceProgressValueObject[] $historical2023Result */
-        $historical2023Result = $this->budgetOperator->getBudgetBalanceProgresses($historicalSearchQuery2023);
+        $historical2023Result = $this->messageBus->dispatch($historicalSearchQuery2023);
 
         self::assertCount(1, $historical2023Result);
         $historical2023ProgressVO = $historical2023Result[0];
@@ -310,12 +291,10 @@ class BudgetOperatorTest extends KernelTestCase
         ]);
 
         // Test current year
-        $currentYearSearchQuery = new FindBudgetsQuery()
-            ->setShowCredits(false)
-            ->setYear(YearRange::current());
+        $currentYearSearchQuery = new GetBudgetBalanceProgressesQuery(YearRange::current(), false);
 
         /** @var BudgetBalanceProgressValueObject[] $currentResult */
-        $currentResult = $this->budgetOperator->getBudgetBalanceProgresses($currentYearSearchQuery);
+        $currentResult = $this->messageBus->dispatch($currentYearSearchQuery);
 
         self::assertCount(2, $currentResult);
 
@@ -331,12 +310,10 @@ class BudgetOperatorTest extends KernelTestCase
         self::assertEquals(150.0, $currentResult[1]->getProgress()); // abs(-150)
 
         // Test historical year 2024
-        $historicalSearchQuery = new FindBudgetsQuery()
-            ->setShowCredits(false)
-            ->setYear(2024);
+        $historicalSearchQuery = new GetBudgetBalanceProgressesQuery(2024, false);
 
         /** @var BudgetBalanceProgressValueObject[] $historicalResult */
-        $historicalResult = $this->budgetOperator->getBudgetBalanceProgresses($historicalSearchQuery);
+        $historicalResult = $this->messageBus->dispatch($historicalSearchQuery);
 
         self::assertCount(2, $historicalResult); // Only budgets with history for 2024
 

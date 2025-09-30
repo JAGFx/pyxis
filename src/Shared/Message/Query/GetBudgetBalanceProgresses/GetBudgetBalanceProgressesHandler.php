@@ -1,18 +1,22 @@
 <?php
 
-namespace App\Shared\Operator;
+namespace App\Shared\Message\Query\GetBudgetBalanceProgresses;
 
 use App\Domain\Budget\Entity\HistoryBudget;
-use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
 use App\Domain\Budget\Message\Query\FindHistoryBudgets\FindHistoryBudgetsQuery;
 use App\Domain\Budget\ValueObject\BudgetBalanceProgressValueObject;
 use App\Domain\Budget\ValueObject\BudgetValueObject;
 use App\Infrastructure\Cqs\Bus\MessageBus;
+use App\Shared\Cqs\Handler\QueryHandlerInterface;
 use App\Shared\Utils\YearRange;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Throwable;
 
-readonly class BudgetOperator
+/**
+ * @see GetBudgetBalanceProgressesQuery
+ */
+readonly class GetBudgetBalanceProgressesHandler implements QueryHandlerInterface
 {
     public function __construct(
         private MessageBus $messageBus,
@@ -22,15 +26,16 @@ readonly class BudgetOperator
     /**
      * @return BudgetBalanceProgressValueObject[]
      *
+     * @throws Throwable
      * @throws ExceptionInterface
      */
-    public function getBudgetBalanceProgresses(FindBudgetsQuery $searchQuery): array
+    public function __invoke(GetBudgetBalanceProgressesQuery $query): array
     {
-        if (YearRange::current() === $searchQuery->getYear()) {
+        if (YearRange::current() === $query->getYear()) {
             /** @var BudgetValueObject[] $budgetsValues */
             $budgetsValues = $this->messageBus->dispatch(
                 new FindBudgetVOQuery()
-                    ->setShowCredits($searchQuery->getShowCredits())
+                    ->setShowCredits($query->isShowCredits())
                     ->setYear(YearRange::current())
             );
 
@@ -47,7 +52,7 @@ readonly class BudgetOperator
         }
 
         /** @var HistoryBudget[] $histories */
-        $histories = $this->messageBus->dispatch(new FindHistoryBudgetsQuery(year: $searchQuery->getYear()));
+        $histories = $this->messageBus->dispatch(new FindHistoryBudgetsQuery(year: $query->getYear()));
 
         return array_map(
             fn (HistoryBudget $history): BudgetBalanceProgressValueObject => new BudgetBalanceProgressValueObject(
