@@ -16,7 +16,6 @@ use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Infrastructure\Cqs\Form\Type\EntityIdType;
 use App\Infrastructure\KnpPaginator\Form\PaginationBuilder;
 use Doctrine\ORM\QueryBuilder;
-use Override;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
@@ -87,11 +86,5 @@ class EntrySearchType extends AbstractType
             'label_format'       => 'entry.search.%name%.label',
             'translation_domain' => 'forms',
         ]);
-    }
-
-    #[Override]
-    public function getBlockPrefix(): string
-    {
-        return '';
     }
 }

@@ -13,7 +13,9 @@ export default class SearchFormController extends Controller {
         heightTransition: { type: String, default: 'height 500ms ease-in-out' },
         opacityTransition: { type: String, default: 'opacity 300ms ease-in-out' },
         combinedTransition: { type: String, default: 'height 500ms ease-in-out, opacity 300ms ease-in-out' },
-        contentTransition: { type: String, default: 'opacity 800ms ease-in-out, transform 500ms ease-in-out' }
+        contentTransition: { type: String, default: 'opacity 800ms ease-in-out, transform 500ms ease-in-out' },
+        actionVisibleTransition: { type: Array, default:['opacity-100', 'transition-all', 'duration-800', 'ease-in-out'] },
+        actionHiddenTransition: { type: Array, default: ['opacity-0', 'transition-all', 'duration-800', 'ease-in-out'] },
     }
     static classes = ["hidden", "visible", "actionHidden", "actionVisible"]
 

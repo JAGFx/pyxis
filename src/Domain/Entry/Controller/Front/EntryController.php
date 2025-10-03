@@ -79,10 +79,7 @@ class EntryController extends AbstractController
         ;
 
         $this->createForm(EntrySearchType::class, $searchQuery)
-            ->submit(array_merge(
-                $request->query->all(),
-                $request->request->all(),
-            ));
+            ->handleRequest($request);
 
         $entries = $this->messageBus->dispatch($searchQuery);
 

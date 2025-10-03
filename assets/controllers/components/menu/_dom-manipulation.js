@@ -23,16 +23,16 @@ export class SearchFormDomManipulation {
 
     hideAllActionButtons() {
         this.controller.actionsTargets.forEach((action) => {
-            action.classList.remove(...this.controller.actionVisibleClasses)
-            action.classList.add(...this.controller.actionHiddenClasses)
+            action.classList.remove(...this.controller.actionVisibleTransitionValue)
+            action.classList.add(...this.controller.actionHiddenTransitionValue)
             action.disabled = true
         })
     }
 
     showAllActionButtons() {
         this.controller.actionsTargets.forEach((action) => {
-            action.classList.remove(...this.controller.actionHiddenClasses)
-            action.classList.add(...this.controller.actionVisibleClasses)
+            action.classList.remove(...this.controller.actionHiddenTransitionValue)
+            action.classList.add(...this.controller.actionVisibleTransitionValue)
             action.disabled = false
         })
     }
