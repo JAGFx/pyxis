@@ -1,0 +1,9 @@
+{% extends 'shared/turbo/_stream.html.twig' %}
+
+{% block stream %}
+    <turbo-stream action="update" target="balance_by_account_list">
+        <template>
+            {% include 'domain/entry/_balance_by_account.html.twig' %}
+        </template>
+    </turbo-stream>
+{% endblock %}

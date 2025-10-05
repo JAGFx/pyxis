@@ -3,6 +3,7 @@
 namespace App\Domain\Account\Repository;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Message\Query\FindAccountIds\FindAccountIdsQuery;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -58,5 +59,36 @@ class AccountRepository extends ServiceEntityRepository
         }
 
         return $queryBuilder;
+    }
+
+    /**
+     * @return array<int>
+     */
+    public function getAccountIds(FindAccountIdsQuery $query): array
+    {
+        $queryBuilder = $this
+            ->createQueryBuilder('a')
+            ->select('a.id')
+            ->orderBy('a.name', 'ASC')
+        ;
+
+        if (!is_null($query->getMaxResults())) {
+            $queryBuilder->setMaxResults($query->getMaxResults());
+        }
+
+        /** @var int[] $ids */
+        $ids = $queryBuilder
+            ->getQuery()
+            ->getSingleColumnResult();
+
+        return $ids;
+    }
+
+    public function getTotalAccount(): int
+    {
+        return (int) $this->createQueryBuilder('a')
+            ->select('COUNT(a.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

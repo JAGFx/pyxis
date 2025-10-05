@@ -2,10 +2,11 @@
     <twig:Card class="p-0">
         {% import 'shared/_currency.macro.html.twig' as currency %}
 
-        <div class="text-center p-2">
+        <div class="text-center p-2 pb-1">
             <small class="text-muted">{{ 'balance' | trans }}</small>
             <div class="text-3xl">{{ currency.amount(amountBalance.total, false) }}</div>
         </div>
+        <turbo-frame src="{{ path('front_account_cash_flow_all') }}" id="balance_by_account_list"/>
         <div class="flex content-between items-center bg-black/10 p-2">
             <div class="flex content-center items-center flex-col flex-auto w-full">
                 <small class="text-muted">

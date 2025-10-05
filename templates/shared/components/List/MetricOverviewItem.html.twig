@@ -18,7 +18,7 @@
     },
 }) %}
 
-<div class="flex flex-col flex-auto w-full">
+<div class="{{ ('flex flex-col flex-auto w-full' ~ ' ' ~ attributes.render('class')) | tailwind_merge }}" {{ attributes.without('class') }}>
     <small class="text-muted">{{ title }}</small>
     <span class="{{ metricOverviewItemCva.apply({color}) }}">
         <i class="{{ icon }} text-sm"></i>

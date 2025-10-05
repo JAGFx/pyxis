@@ -99,9 +99,47 @@ class GetAmountBalanceHandlerTest extends TestCase
 
         $amountBalanceHandler = $this->generateGetAmountBalanceHandler();
 
-        $amountBalance = $amountBalanceHandler->__invoke(new GetAmountBalanceQuery());
+        $amountBalances = $amountBalanceHandler->__invoke(new GetAmountBalanceQuery());
+        self::assertCount(1, $amountBalances);
+
+        $amountBalance = reset($amountBalances);
+
         self::assertSame($expectedTotal, $amountBalance->getTotal());
         self::assertSame($expectedSpent, $amountBalance->getTotalSpent());
         self::assertSame($expectedForecast, $amountBalance->getTotalForecast());
+    }
+
+    public function testAmountBalanceWithSpecificAccountIds(): void
+    {
+        $accountIds              = [1, 2, 3];
+        $expectedCallsPerAccount = 2; // 1 GetEntryBalanceQuery + 1 GetAssignmentBalanceQuery per account
+        $totalExpectedCalls      = count($accountIds) * $expectedCallsPerAccount;
+
+        $this->messageBusMock
+            ->expects($this->exactly($totalExpectedCalls))
+            ->method('dispatch')
+            ->willReturnCallback(function ($query) {
+                if ($query instanceof GetEntryBalanceQuery) {
+                    return new EntryBalance(100.0, 50.0);
+                } elseif ($query instanceof GetAssignmentBalanceQuery) {
+                    return 25.0;
+                }
+
+                throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
+            });
+
+        $amountBalanceHandler = $this->generateGetAmountBalanceHandler();
+
+        $amountBalances = $amountBalanceHandler->__invoke(new GetAmountBalanceQuery($accountIds));
+
+        // Verify we have one balance per account
+        self::assertCount(count($accountIds), $amountBalances);
+
+        // Verify each balance has the correct calculations
+        foreach ($amountBalances as $amountBalance) {
+            self::assertSame(150.0, $amountBalance->getTotal()); // 100 + 50
+            self::assertSame(75.0, $amountBalance->getTotalSpent()); // 100 - 25 (assignment)
+            self::assertSame(50.0, $amountBalance->getTotalForecast());
+        }
     }
 }

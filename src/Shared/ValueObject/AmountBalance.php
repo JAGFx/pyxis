@@ -9,6 +9,7 @@ readonly class AmountBalance
         private float $totalSpent,
         private float $totalForecast,
         private float $assignments,
+        private ?string $accountName = null,
     ) {
     }
 
@@ -30,5 +31,10 @@ readonly class AmountBalance
     public function getAssignments(): float
     {
         return $this->assignments;
+    }
+
+    public function getAccountName(): ?string
+    {
+        return $this->accountName;
     }
 }

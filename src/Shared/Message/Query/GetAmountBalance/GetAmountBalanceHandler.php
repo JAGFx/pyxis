@@ -25,14 +25,39 @@ readonly class GetAmountBalanceHandler implements QueryHandlerInterface
     }
 
     /**
+     * @return array<AmountBalance>
+     *
      * @throws ExceptionInterface
      * @throws Throwable
      */
-    public function __invoke(GetAmountBalanceQuery $command): AmountBalance
+    public function __invoke(GetAmountBalanceQuery $command): array
+    {
+        /** @var array<int> $accountsIds */
+        $accountsIds    = array_filter($command->getAccountsId());
+        $amountBalances = [];
+
+        if ([] === $accountsIds) {
+            $amountBalances[] = $this->getBalance(null);
+
+            return $amountBalances;
+        }
+
+        foreach ($accountsIds as $accountId) {
+            $amountBalances[] = $this->getBalance($accountId);
+        }
+
+        return $amountBalances;
+    }
+
+    /**
+     * @throws Throwable
+     * @throws ExceptionInterface
+     */
+    private function getBalance(?int $accountId): AmountBalance
     {
         $account = $this->entityFinder->findByIntIdentifier(
             Account::class,
-            $command->getAccountId()
+            $accountId
         );
 
         /** @var EntryBalance $entryBalance */
@@ -47,7 +72,8 @@ readonly class GetAmountBalanceHandler implements QueryHandlerInterface
             $totalSpent + $entryBalance->getTotalForecast() + $assignmentsBalance,
             $totalSpent,
             $entryBalance->getTotalForecast(),
-            $assignmentsBalance
+            $assignmentsBalance,
+            $account?->getName()
         );
     }
 }

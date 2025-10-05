@@ -33,8 +33,10 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
             return;
         }
 
+        /** @var AmountBalance[] $amountBalances */
+        $amountBalances = $this->messageBus->dispatch(new GetAmountBalanceQuery([$value->getAccount()?->getId()]));
         /** @var AmountBalance $amountBalance */
-        $amountBalance = $this->messageBus->dispatch(new GetAmountBalanceQuery($value->getAccount()?->getId()));
+        $amountBalance = reset($amountBalances);
 
         // TODO: Add test for it
         if ($value->getAmount() > $amountBalance->getTotal()) {

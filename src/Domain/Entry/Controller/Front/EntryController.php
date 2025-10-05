@@ -9,6 +9,7 @@ use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
+use App\Shared\ValueObject\AmountBalance;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,8 +39,13 @@ class EntryController extends AbstractController
     )]
     public function balance(Request $request): Response
     {
+        /** @var array<AmountBalance> $amountBalances */
+        $amountBalances = $this->messageBus->dispatch(new GetAmountBalanceQuery());
+        /** @var AmountBalance $amountBalance */
+        $amountBalance = reset($amountBalances);
+
         return $this->renderTurboStream($request, 'domain/entry/turbo/balance.turbo.stream.html.twig', [
-            'amountBalance' => $this->messageBus->dispatch(new GetAmountBalanceQuery()),
+            'amountBalance' => $amountBalance,
         ]);
     }
 

@@ -7,10 +7,13 @@ namespace App\Domain\Account\Controller\Front;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Form\AccountSearchType;
 use App\Domain\Account\Message\Command\ToggleEnableAccount\ToggleEnableAccountCommand;
+use App\Domain\Account\Message\Query\FindAccountIds\FindAccountIdsQuery;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
+use App\Domain\Account\ValueObject\AccountIds;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
 use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
+use App\Shared\ValueObject\AmountBalance;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +26,7 @@ use Throwable;
 class AccountController extends AbstractController
 {
     use TurboResponseTrait;
+    private const int MAX_ACCOUNTS_CASH_FLOW = 3;
 
     public function __construct(
         private readonly MessageBus $messageBus,
@@ -69,7 +73,10 @@ class AccountController extends AbstractController
     )]
     public function cashFlow(Request $request, Account $account): Response
     {
-        $amountBalance = $this->messageBus->dispatch(new GetAmountBalanceQuery($account->getId()));
+        /** @var AmountBalance[] $amountBalances */
+        $amountBalances = $this->messageBus->dispatch(new GetAmountBalanceQuery([$account->getId()]));
+        /** @var AmountBalance $amountBalance */
+        $amountBalance = reset($amountBalances);
 
         return $this->renderTurboStream(
             $request,
@@ -105,5 +112,25 @@ class AccountController extends AbstractController
             [
                 'accounts' => $accounts,
             ]);
+    }
+
+    /**
+     * @throws Throwable
+     * @throws ExceptionInterface
+     */
+    #[Route(
+        '/cash-flow-all',
+        name: 'front_account_cash_flow_all',
+        methods: [Request::METHOD_GET]
+    )]
+    public function cashFlowAllAccount(Request $request): Response
+    {
+        /** @var AccountIds $accountIds */
+        $accountIds = $this->messageBus->dispatch(new FindAccountIdsQuery(self::MAX_ACCOUNTS_CASH_FLOW));
+
+        return $this->renderTurboStream($request, 'domain/entry/turbo/balance_by_account.stream.html.twig', [
+            'amountBalances' => $this->messageBus->dispatch(new GetAmountBalanceQuery($accountIds->getIds())),
+            'hasMore'        => $accountIds->getTotal() > self::MAX_ACCOUNTS_CASH_FLOW,
+        ]);
     }
 }

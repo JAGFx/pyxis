@@ -10,18 +10,25 @@ use App\Shared\Cqs\Message\Query\QueryInterface;
 class GetAmountBalanceQuery implements QueryInterface
 {
     public function __construct(
-        private ?int $accountId = null,
+        /** @var array<int|null> */
+        private array $accountsId = [],
     ) {
     }
 
-    public function getAccountId(): ?int
+    /**
+     * @return array<int|null>
+     */
+    public function getAccountsId(): array
     {
-        return $this->accountId;
+        return $this->accountsId;
     }
 
-    public function setAccountId(?int $accountId): GetAmountBalanceQuery
+    /**
+     * @param array<int|null> $accountsId
+     */
+    public function setAccountsId(array $accountsId): GetAmountBalanceQuery
     {
-        $this->accountId = $accountId;
+        $this->accountsId = $accountsId;
 
         return $this;
     }
