@@ -13,6 +13,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 use Throwable;
 
@@ -37,7 +38,11 @@ readonly class ApplyPeriodicEntryConsoleCommand
             foreach ($periodicEntries as $periodicEntry) {
                 try {
                     $this->messageBus->dispatch(new AddSplitForBudgetsCommand($periodicEntry->getId()));
-                } catch (PeriodicEntrySplitBudgetException $exception) {
+                } catch (HandlerFailedException $exception) {
+                    if (!$exception->getPrevious() instanceof PeriodicEntrySplitBudgetException) {
+                        throw $exception;
+                    }
+
                     $symfonyStyle->info($exception->getMessage());
                     $this->logger->info($exception->getMessage(), [
                         '$periodicEntry' => $periodicEntry->getId(),
