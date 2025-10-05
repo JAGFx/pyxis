@@ -42,11 +42,14 @@ readonly class AddSplitForBudgetsHandler implements CommandHandlerInterface
             $command->getPeriodicEntryId()
         );
 
-        if ($periodicEntry->getExecutionDate()->format('j') !== new DateTimeImmutable()->format('j')) {
+        // Use the date from command or current date if not provided
+        $currentDate = $command->getDate() ?? new DateTimeImmutable();
+
+        if ($periodicEntry->getExecutionDate()->format('j') !== $currentDate->format('j')) {
             throw new PeriodicEntrySplitBudgetException('The periodic entry is not scheduled for today.');
         }
 
-        $date                    = $command->getDate() ?? new DateTimeImmutable();
+        $date                    = $currentDate;
         $firstDateOfCurrentMonth = $date->modify('first day of this month 00:00:00');
         $lastDateOfCurrentMonth  = $date->modify('last day of this month 23:59:59');
 
@@ -86,7 +89,7 @@ readonly class AddSplitForBudgetsHandler implements CommandHandlerInterface
             }
         }
 
-        $periodicEntry->setLastExecutionDate(new DateTimeImmutable());
+        $periodicEntry->setLastExecutionDate($currentDate);
         $this->entityManager->flush();
     }
 }

@@ -7,8 +7,10 @@ use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\Message\Command\AddSplitForBudgets\AddSplitForBudgetsCommand;
+use DateTimeImmutable;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,8 +29,12 @@ readonly class ApplyPeriodicEntryConsoleCommand
     ) {
     }
 
-    public function __invoke(InputInterface $input, OutputInterface $output): int
-    {
+    public function __invoke(
+        InputInterface $input,
+        OutputInterface $output,
+        #[Option]
+        ?string $targetDate = null,
+    ): int {
         $symfonyStyle = new SymfonyStyle($input, $output);
 
         try {
@@ -37,7 +43,9 @@ readonly class ApplyPeriodicEntryConsoleCommand
 
             foreach ($periodicEntries as $periodicEntry) {
                 try {
-                    $this->messageBus->dispatch(new AddSplitForBudgetsCommand($periodicEntry->getId()));
+                    $date = (is_null($targetDate)) ? null : new DateTimeImmutable($targetDate);
+
+                    $this->messageBus->dispatch(new AddSplitForBudgetsCommand($periodicEntry->getId(), $date));
                 } catch (HandlerFailedException $exception) {
                     if (!$exception->getPrevious() instanceof PeriodicEntrySplitBudgetException) {
                         throw $exception;

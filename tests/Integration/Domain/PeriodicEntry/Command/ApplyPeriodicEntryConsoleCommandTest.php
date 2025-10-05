@@ -35,8 +35,9 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
 
     public static function periodicEntrySchedulingScenarios(): Generator
     {
-        $today             = new DateTimeImmutable();
-        $currentDayOfMonth = $today->format('j');
+        // Use a fixed date instead of dynamic 'now' to make tests deterministic
+        $fixedDate         = new DateTimeImmutable('2025-10-05'); // Fixed date for consistent testing
+        $currentDayOfMonth = $fixedDate->format('j'); // '5'
 
         // Create dates with different days of month
         $differentDayOfMonth = '1' === $currentDayOfMonth ? '2' : '1';
@@ -45,8 +46,8 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         yield 'different_day_and_same_day' => [
             'scenarioName' => 'Different Day + Same Day',
             'entryDates'   => [
-                $today->format('Y-m-') . $differentDayOfMonth, // Different day of month
-                'now', // Same day
+                $fixedDate->format('Y-m-') . $differentDayOfMonth, // Different day of month
+                $fixedDate->format('Y-m-d'), // Same day (fixed date)
             ],
             'expectedSuccessfulEntries' => 1,
         ];
@@ -54,9 +55,9 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         yield 'different_days_same_day_different_day' => [
             'scenarioName' => 'Different Days + Same Day + Different Day',
             'entryDates'   => [
-                $today->format('Y-m-') . $differentDayOfMonth, // Different day
-                'now', // Same day
-                $today->format('Y-m-') . $anotherDifferentDay, // Another different day
+                $fixedDate->format('Y-m-') . $differentDayOfMonth, // Different day
+                $fixedDate->format('Y-m-d'), // Same day (fixed date)
+                $fixedDate->format('Y-m-') . $anotherDifferentDay, // Another different day
             ],
             'expectedSuccessfulEntries' => 1,
         ];
@@ -64,8 +65,8 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         yield 'mixed_days_with_multiple_same_day' => [
             'scenarioName' => 'Mixed Days + Multiple Same Day',
             'entryDates'   => [
-                $today->format('Y-m-') . $differentDayOfMonth, // Different day
-                'now', // Same day
+                $fixedDate->format('Y-m-') . $differentDayOfMonth, // Different day
+                $fixedDate->format('Y-m-d'), // Same day (fixed date)
             ],
             'expectedSuccessfulEntries' => 1,
         ];
@@ -73,28 +74,32 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         yield 'same_day_different_months_years' => [
             'scenarioName' => 'Same Day Different Months/Years',
             'entryDates'   => [
-                'now', // Today
-                $today->modify('-1 month')->format('Y-m-') . $currentDayOfMonth, // Same day last month
-                $today->modify('+1 month')->format('Y-m-') . $currentDayOfMonth, // Same day next month
-                $today->modify('+1 year')->format('Y-m-') . $currentDayOfMonth, // Same day next year
+                $fixedDate->format('Y-m-d'), // Today (fixed date)
+                $fixedDate->modify('-1 month')->format('Y-m-') . $currentDayOfMonth, // Same day last month
+                $fixedDate->modify('+1 month')->format('Y-m-') . $currentDayOfMonth, // Same day next month
+                $fixedDate->modify('+1 year')->format('Y-m-') . $currentDayOfMonth, // Same day next year
             ],
             'expectedSuccessfulEntries' => 4, // All should pass as they have same day of month
         ];
 
         yield 'multiple_same_day_entries' => [
-            'scenarioName'              => 'Multiple Same Day Entries',
-            'entryDates'                => ['now', 'now', 'now'],
+            'scenarioName' => 'Multiple Same Day Entries',
+            'entryDates'   => [
+                $fixedDate->format('Y-m-d'),
+                $fixedDate->format('Y-m-d'),
+                $fixedDate->format('Y-m-d'),
+            ],
             'expectedSuccessfulEntries' => 3,
         ];
 
         yield 'mixed_day_schedule' => [
             'scenarioName' => 'Mixed Day Schedule',
             'entryDates'   => [
-                $today->format('Y-m-') . $differentDayOfMonth, // Different day
-                'now', // Same day
-                $today->format('Y-m-') . $anotherDifferentDay, // Different day
-                'now', // Same day
-                $today->format('Y-m-') . ('10' === $currentDayOfMonth ? '11' : '10'), // Another different day
+                $fixedDate->format('Y-m-') . $differentDayOfMonth, // Different day
+                $fixedDate->format('Y-m-d'), // Same day (fixed date)
+                $fixedDate->format('Y-m-') . $anotherDifferentDay, // Different day
+                $fixedDate->format('Y-m-d'), // Same day (fixed date)
+                $fixedDate->format('Y-m-') . ('10' === $currentDayOfMonth ? '11' : '10'), // Another different day
             ],
             'expectedSuccessfulEntries' => 2,
         ];
@@ -102,13 +107,13 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         yield 'complex_day_timeline' => [
             'scenarioName' => 'Complex Day Timeline',
             'entryDates'   => [
-                $today->modify('-1 year')->format('Y-m-') . $differentDayOfMonth, // Different day, last year
-                $today->modify('-1 month')->format('Y-m-') . $anotherDifferentDay, // Different day, last month
-                $today->modify('-1 week')->format('Y-m-') . $differentDayOfMonth, // Different day, last week
-                'now', // Same day, today
-                $today->modify('+1 week')->format('Y-m-') . $differentDayOfMonth, // Different day, next week
-                $today->modify('+1 month')->format('Y-m-') . $anotherDifferentDay, // Different day, next month
-                $today->modify('+1 year')->format('Y-m-') . $differentDayOfMonth, // Different day, next year
+                $fixedDate->modify('-1 year')->format('Y-m-') . $differentDayOfMonth, // Different day, last year
+                $fixedDate->modify('-1 month')->format('Y-m-') . $anotherDifferentDay, // Different day, last month
+                $fixedDate->modify('-1 week')->format('Y-m-') . $differentDayOfMonth, // Different day, last week
+                $fixedDate->format('Y-m-d'), // Same day, today (fixed date)
+                $fixedDate->modify('+1 week')->format('Y-m-') . $differentDayOfMonth, // Different day, next week
+                $fixedDate->modify('+1 month')->format('Y-m-') . $anotherDifferentDay, // Different day, next month
+                $fixedDate->modify('+1 year')->format('Y-m-') . $differentDayOfMonth, // Different day, next year
             ],
             'expectedSuccessfulEntries' => 1,
         ];
@@ -116,10 +121,10 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         yield 'same_day_different_times' => [
             'scenarioName' => 'Same Day Different Times',
             'entryDates'   => [
-                'now',
-                $today->format('Y-m-d') . ' 10:00:00',
-                $today->format('Y-m-d') . ' 15:30:00',
-                $today->format('Y-m-d') . ' 23:59:59',
+                $fixedDate->format('Y-m-d'),
+                $fixedDate->format('Y-m-d') . ' 10:00:00',
+                $fixedDate->format('Y-m-d') . ' 15:30:00',
+                $fixedDate->format('Y-m-d') . ' 23:59:59',
             ],
             'expectedSuccessfulEntries' => 4,
         ];
@@ -127,12 +132,12 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         yield 'alternating_day_pattern' => [
             'scenarioName' => 'Alternating Day Pattern',
             'entryDates'   => [
-                'now', // Same day
-                $today->format('Y-m-') . $differentDayOfMonth, // Different day
-                'now', // Same day
-                $today->format('Y-m-') . $anotherDifferentDay, // Different day
-                'now', // Same day
-                $today->format('Y-m-') . ('20' === $currentDayOfMonth ? '21' : '20'), // Different day
+                $fixedDate->format('Y-m-d'), // Same day (fixed date)
+                $fixedDate->format('Y-m-') . $differentDayOfMonth, // Different day
+                $fixedDate->format('Y-m-d'), // Same day (fixed date)
+                $fixedDate->format('Y-m-') . $anotherDifferentDay, // Different day
+                $fixedDate->format('Y-m-d'), // Same day (fixed date)
+                $fixedDate->format('Y-m-') . ('20' === $currentDayOfMonth ? '21' : '20'), // Different day
             ],
             'expectedSuccessfulEntries' => 3,
         ];
@@ -140,11 +145,11 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         yield 'no_entries_scheduled_for_today' => [
             'scenarioName' => 'No Entries Scheduled for Today',
             'entryDates'   => [
-                $today->format('Y-m-') . $differentDayOfMonth, // Different day
-                $today->format('Y-m-') . $anotherDifferentDay, // Different day
-                $today->format('Y-m-') . ('25' === $currentDayOfMonth ? '26' : '25'), // Different day
-                $today->format('Y-m-') . ('28' === $currentDayOfMonth ? '29' : '28'), // Different day
-                $today->format('Y-m-') . ('30' === $currentDayOfMonth ? '31' : '30'), // Different day
+                $fixedDate->format('Y-m-') . $differentDayOfMonth, // Different day
+                $fixedDate->format('Y-m-') . $anotherDifferentDay, // Different day
+                $fixedDate->format('Y-m-') . ('25' === $currentDayOfMonth ? '26' : '25'), // Different day
+                $fixedDate->format('Y-m-') . ('28' === $currentDayOfMonth ? '29' : '28'), // Different day
+                $fixedDate->format('Y-m-') . ('30' === $currentDayOfMonth ? '31' : '30'), // Different day
             ],
             'expectedSuccessfulEntries' => 0,
         ];
@@ -171,8 +176,6 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
             'enabled' => true,
         ])->_real();
 
-        $periodicEntries = [];
-
         // Create periodic entries based on the scenario
         foreach ($entryDates as $index => $dateModifier) {
             $executionDate = new DateTimeImmutable($dateModifier);
@@ -184,7 +187,6 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
                 'amount'        => null, // Forecast type entry
             ])->_real();
             $periodicEntry->addBudget($budget);
-            $periodicEntries[] = $periodicEntry;
 
             $this->entityManager->persist($periodicEntry);
         }
@@ -192,7 +194,7 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         $this->entityManager->flush();
 
         // Act - Execute the command
-        $exitCode = $this->commandTester->execute([]);
+        $exitCode = $this->commandTester->execute(['--target-date' => '2025-10-05']);
 
         // Assert - Verify that the command completed successfully
         $this->assertEquals(Command::SUCCESS, $exitCode);
