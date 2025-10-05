@@ -72,16 +72,16 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         ];
 
         // FIXME: Unexpected failure when command was run in CI environment
-//        yield 'same_day_different_months_years' => [
-//            'scenarioName' => 'Same Day Different Months/Years',
-//            'entryDates'   => [
-//                $fixedDate->format('Y-m-d'), // Today (fixed date)
-//                $fixedDate->modify('-1 month')->format('Y-m-') . str_pad($currentDayOfMonth, 2, '0', STR_PAD_LEFT), // Same day last month
-//                $fixedDate->modify('+1 month')->format('Y-m-') . str_pad($currentDayOfMonth, 2, '0', STR_PAD_LEFT), // Same day next month
-//                $fixedDate->modify('+1 year')->format('Y-m-') . str_pad($currentDayOfMonth, 2, '0', STR_PAD_LEFT), // Same day next year
-//            ],
-//            'expectedSuccessfulEntries' => 4, // All should pass as they have same day of month
-//        ];
+        //        yield 'same_day_different_months_years' => [
+        //            'scenarioName' => 'Same Day Different Months/Years',
+        //            'entryDates'   => [
+        //                $fixedDate->format('Y-m-d'), // Today (fixed date)
+        //                $fixedDate->modify('-1 month')->format('Y-m-') . str_pad($currentDayOfMonth, 2, '0', STR_PAD_LEFT), // Same day last month
+        //                $fixedDate->modify('+1 month')->format('Y-m-') . str_pad($currentDayOfMonth, 2, '0', STR_PAD_LEFT), // Same day next month
+        //                $fixedDate->modify('+1 year')->format('Y-m-') . str_pad($currentDayOfMonth, 2, '0', STR_PAD_LEFT), // Same day next year
+        //            ],
+        //            'expectedSuccessfulEntries' => 4, // All should pass as they have same day of month
+        //        ];
 
         yield 'multiple_same_day_entries' => [
             'scenarioName' => 'Multiple Same Day Entries',
