@@ -37,10 +37,10 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
     {
         // Use a fixed date instead of dynamic 'now' to make tests deterministic
         $fixedDate         = new DateTimeImmutable('2025-10-05'); // Fixed date for consistent testing
-        $currentDayOfMonth = $fixedDate->format('j'); // '5'
+        $currentDayOfMonth = $fixedDate->format('d'); // '5'
 
         // Create dates with different days of month
-        $differentDayOfMonth = '1' === $currentDayOfMonth ? '2' : '1';
+        $differentDayOfMonth = '01' === $currentDayOfMonth ? '02' : '01';
         $anotherDifferentDay = '15' === $currentDayOfMonth ? '16' : '15';
 
         yield 'different_day_and_same_day' => [
@@ -178,7 +178,7 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
 
         // Create periodic entries based on the scenario
         foreach ($entryDates as $index => $dateModifier) {
-            $executionDate = new DateTimeImmutable($dateModifier);
+            $executionDate = new DateTimeImmutable("$dateModifier");
             /** @var PeriodicEntry $periodicEntry */
             $periodicEntry = PeriodicEntryFactory::new()->create([
                 'name'          => "{$scenarioName} - Entry {$index} ({$dateModifier})",
@@ -194,7 +194,7 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         $this->entityManager->flush();
 
         // Act - Execute the command
-        $exitCode = $this->commandTester->execute(['--target-date' => '2025-10-05']);
+        $exitCode = $this->commandTester->execute(['--target-date' => '2025-10-05 02:00:00']);
 
         // Assert - Verify that the command completed successfully
         $this->assertEquals(Command::SUCCESS, $exitCode);
