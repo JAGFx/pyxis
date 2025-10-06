@@ -90,6 +90,9 @@ entry:
     budget:
       label: Budget
       placeholder: -- Pas de budget --
+    assignment:
+      label: Affectation à utiliser
+      placeholder: -- Pas d'affectation --
   search:
     name:
       label: Nom

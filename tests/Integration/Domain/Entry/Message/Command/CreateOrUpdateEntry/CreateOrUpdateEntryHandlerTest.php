@@ -3,27 +3,32 @@
 namespace App\Tests\Integration\Domain\Entry\Message\Command\CreateOrUpdateEntry;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Tests\Factory\AccountFactory;
+use App\Tests\Factory\AssignmentFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 class CreateOrUpdateEntryHandlerTest extends KernelTestCase
 {
     private MessageBus $messageBus;
     private ObjectMapperInterface $objectMapper;
+    private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        $container          = static::getContainer();
-        $this->messageBus   = $container->get(MessageBus::class);
-        $this->objectMapper = $container->get(ObjectMapperInterface::class);
+        $container           = static::getContainer();
+        $this->messageBus    = $container->get(MessageBus::class);
+        $this->objectMapper  = $container->get(ObjectMapperInterface::class);
+        $this->entityManager = $container->get(EntityManagerInterface::class);
     }
 
     public function testCreateDoesNotThrowException(): void
@@ -85,5 +90,39 @@ class CreateOrUpdateEntryHandlerTest extends KernelTestCase
         $this->objectMapper->map($entry, CreateOrUpdateEntryCommand::class);
 
         $this->expectNotToPerformAssertions();
+    }
+
+    public function testCreateEntryWithAssignmentUpdatesAssignmentAmount(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::new()->create([
+            'account' => $account,
+            'amount'  => 1000.0, // Initial assignment amount
+        ])->_real();
+
+        $initialAssignmentAmount = $assignment->getAmount();
+        $entryAmount             = -150.0; // Negative amount (expense)
+
+        $command = new CreateOrUpdateEntryCommand();
+        $command->setName('Test Entry with Assignment');
+        $command->setAccount($account);
+        $command->setAmount($entryAmount);
+        $command->setAssignment($assignment);
+
+        $this->messageBus->dispatch($command);
+
+        // Refresh the assignment from database to get updated amount
+        $this->entityManager->refresh($assignment);
+
+        $expectedAmount = $initialAssignmentAmount + $entryAmount; // 1000.0 + (-150.0) = 850.0
+
+        self::assertSame(
+            $expectedAmount,
+            $assignment->getAmount(),
+            'Assignment amount should be updated by adding the entry amount'
+        );
     }
 }

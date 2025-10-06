@@ -97,16 +97,16 @@ class EntryController extends AbstractController
             ? new CreateOrUpdateEntryCommand()
             : $this->objectMapper->map($entry, CreateOrUpdateEntryCommand::class);
 
+        if (!is_null($entry)) {
+            $entryCommand->setOriginId($entry->getId());
+        }
+
         $form = $this
             ->createForm(EntryCreateOrUpdateType::class, $entryCommand)
             ->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                if (!is_null($entry)) {
-                    $entryCommand->setOriginId($entry->getId());
-                }
-
                 $this->messageBus->dispatch($entryCommand);
 
                 return $this->redirectToRoute('back_entry_list');
@@ -116,8 +116,9 @@ class EntryController extends AbstractController
         }
 
         return $this->render('domain/entry/form.html.twig', [
-            'form'  => $form,
-            'entry' => $entry,
+            'form'         => $form,
+            'entry'        => $entry,
+            'entryCommand' => $entryCommand,
         ]);
     }
 }

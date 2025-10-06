@@ -1,3 +1,8 @@
 shared:
   transfer:
     same_budget_source_target: Le budget cible doivent être différent du budget source.
+
+entry:
+  create_or_update:
+    has_enough_amount_assignment: |
+     Le montant de l'affectation doit être inférieur ou égal au montant restant de l'affectation : %assignmentAmount%.

@@ -1,0 +1,20 @@
+<div {{ attributes }}>
+    <twig:Card color="acrylic" size="lg" class="shadow-lg">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.account) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.budget) }}
+        {{ form_row(form.amount) }}
+        {% if form.assignment is defined %}
+            {{ form_row(form.assignment) }}
+        {% endif %}
+
+        <div class="pt-4 pb-1 flex justify-end">
+            <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right" size="lg"/>
+        </div>
+
+        {{ form_end(form) }}
+    </twig:Card>
+</div>
