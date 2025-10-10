@@ -1,0 +1,13 @@
+{
+  "default_strategy": {
+    "type": "probabilistic",
+    "param": 1.0
+  },
+  "service_strategies": [
+    {
+      "service": "symfony-dev",
+      "type": "probabilistic",
+      "param": 1.0
+    }
+  ]
+}

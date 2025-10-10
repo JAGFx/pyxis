@@ -4,6 +4,8 @@ namespace App\Infrastructure\Cqs\Middleware;
 
 use App\Infrastructure\Cqs\EventListener\CorrelationIdListener;
 use App\Infrastructure\Cqs\Stamp\CorrelationStamp;
+use OpenTelemetry\API\Baggage\Baggage;
+use OpenTelemetry\API\Trace\Span;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\Envelope;
@@ -29,9 +31,20 @@ readonly class CorrelationMiddleware implements MiddlewareInterface
 
         /** @var ?string $correlationId */
         $correlationId = $request?->attributes->get(CorrelationIdListener::REQUEST_ATTRIBUTE_NAME);
-
         if (null !== $correlationId) {
             $envelope = $envelope->with(new CorrelationStamp($correlationId));
+        }
+
+        $span = Span::getCurrent();
+        if ($span->isRecording()) {
+            /** @var ?string $correlationId */
+            $correlationId = Baggage::getCurrent()
+                ->getEntry(CorrelationIdListener::OTEL_ATTRIBUTE_NAME)
+                ?->getValue();
+
+            if (null !== $correlationId) {
+                $span->setAttribute(CorrelationIdListener::OTEL_ATTRIBUTE_NAME, $correlationId);
+            }
         }
 
         return $stack->next()->handle($envelope, $stack);

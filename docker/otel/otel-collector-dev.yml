@@ -1,0 +1,100 @@
+receivers:
+  # Récepteur OTLP (OpenTelemetry Protocol)
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+        cors:
+          allowed_origins:
+            - "http://*"
+            - "https://*"
+
+processors:
+  # Limiter l'utilisation mémoire
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+  # Traitement par batch (regroupement pour performance)
+  batch:
+    timeout: 1s
+    send_batch_size: 100
+    send_batch_max_size: 1000
+
+  # Ajouter des attributs aux données
+  resource:
+    attributes:
+      - key: deployment.environment
+        value: development
+        action: insert
+      - key: service.instance.id
+        from_attribute: host.name
+        action: upsert
+
+  # Filtrer les attributs sensibles (optionnel)
+  attributes:
+    actions:
+      - key: http.request.header.authorization
+        action: delete
+      - key: http.request.header.cookie
+        action: delete
+
+exporters:
+  # Export vers Jaeger via OTLP
+  otlp/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+    compression: gzip
+    timeout: 30s
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
+
+  # Export debug pour voir les données en console
+  debug:
+    verbosity: detailed
+    sampling_initial: 10
+    sampling_thereafter: 100
+
+# Extensions pour le monitoring du collector
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+# Configuration du service collector lui-même
+service:
+  # Télémétrie du collector
+  telemetry:
+    logs:
+      level: debug
+    metrics:
+      level: detailed
+
+  # Configuration des extensions
+  extensions: [health_check]
+
+  # Pipelines de traitement
+  pipelines:
+    # Pipeline pour les traces
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource, attributes, batch]
+      exporters: [otlp/jaeger, debug]
+
+    # Pipeline pour les métriques
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+
+    # Pipeline pour les logs
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]

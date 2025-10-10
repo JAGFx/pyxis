@@ -12,12 +12,14 @@ framework:
           - validation
           - doctrine_transaction
           - App\Infrastructure\Logging\LoggingMiddleware
+          - App\Infrastructure\Cqs\Middleware\OpenTelemetryMessagingAttributesMiddleware
 
       query.bus:
         middleware:
           - App\Infrastructure\Cqs\Middleware\CorrelationMiddleware
           - validation
           - App\Infrastructure\Logging\LoggingMiddleware
+          - App\Infrastructure\Cqs\Middleware\OpenTelemetryMessagingAttributesMiddleware
 
     transports:
       # https://symfony.com/doc/current/messenger.html#transport-configuration

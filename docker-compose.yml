@@ -6,7 +6,7 @@ services:
 #      - app_network
 
   php:
-    image: pyxis-php:franken
+    image: pyxis-php:latest
     container_name: pyxis-php
     build:
       context: .
@@ -21,6 +21,15 @@ services:
       PHP_IDE_CONFIG: serverName=pyxis
       SERVER_NAME: pyxis.local
       FRANKENPHP_CONFIG: ''
+
+      # OpenTelemetry - Configuration simplifiée pour dev
+      OTEL_PHP_AUTOLOAD_ENABLED: "true"
+      OTEL_PHP_DISABLED_INSTRUMENTATIONS: ""
+      OTEL_PHP_DEBUG_SCOPES_DISABLED: true
+      OTEL_SERVICE_NAME: "symfony-app"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4317"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      OTEL_TRACES_SAMPLER: "always_on"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
@@ -30,6 +39,8 @@ services:
       - "443:443"
     networks:
       - app_network
+    depends_on:
+      - otel-collector
 
   db:
     image: mysql:8.2
@@ -45,6 +56,43 @@ services:
       - "3306:3306"
     networks:
       - app_network
+
+  # Collector simplifié pour dev
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel_collector_dev
+    command: [ "--config=/etc/otel-collector-dev.yml" ]
+    volumes:
+      - ./docker/otel/otel-collector-dev.yml:/etc/otel-collector-dev.yml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+#      - "4318:4318"   # OTLP HTTP
+#      - "8888:8888"   # Metrics du collector
+    depends_on:
+      - jaeger
+    networks:
+      - app_network
+
+  # Jaeger all-in-one pour dev (inclus UI + stockage in-memory)
+  jaeger:
+    image: jaegertracing/jaeger:2.11.0
+    container_name: jaeger_dev
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+      # Supprimer OTLP de Jaeger car on utilise le collector
+      # COLLECTOR_OTLP_ENABLED: "true"
+      # COLLECTOR_OTLP_GRPC_HOST_PORT: "0.0.0.0:4317"
+      # COLLECTOR_OTLP_HTTP_HOST_PORT: "0.0.0.0:4318"
+      # Pas de sampling en dev
+#      SAMPLING_STRATEGIES_FILE: /etc/jaeger/sampling_strategies.json
+#    volumes:
+#      - ./docker/jagger/jaeger-sampling.json:/etc/jaeger/sampling_strategies.json:ro
+    ports:
+      - "16686:16686" # UI Jaeger
+      - "14250:14250" # Jaeger gRPC pour le collector
+    networks:
+      - app_network
+
 
 volumes:
   db-data:
