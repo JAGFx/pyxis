@@ -2,7 +2,8 @@
 
 namespace App\Infrastructure\Cqs\Middleware;
 
-use App\Infrastructure\Cqs\EventListener\CorrelationIdListener;
+use App\Infrastructure\Cqs\EventListener\RequestCorrelationIdListener;
+use App\Infrastructure\Cqs\Service\CorrelationIdService;
 use App\Infrastructure\Cqs\Stamp\CorrelationStamp;
 use OpenTelemetry\API\Baggage\Baggage;
 use OpenTelemetry\API\Trace\Span;
@@ -30,7 +31,7 @@ readonly class CorrelationMiddleware implements MiddlewareInterface
         $request = $this->requestStack->getCurrentRequest();
 
         /** @var ?string $correlationId */
-        $correlationId = $request?->attributes->get(CorrelationIdListener::REQUEST_ATTRIBUTE_NAME);
+        $correlationId = $request?->attributes->get(RequestCorrelationIdListener::REQUEST_ATTRIBUTE_NAME);
         if (null !== $correlationId) {
             $envelope = $envelope->with(new CorrelationStamp($correlationId));
         }
@@ -39,11 +40,11 @@ readonly class CorrelationMiddleware implements MiddlewareInterface
         if ($span->isRecording()) {
             /** @var ?string $correlationId */
             $correlationId = Baggage::getCurrent()
-                ->getEntry(CorrelationIdListener::OTEL_ATTRIBUTE_NAME)
+                ->getEntry(CorrelationIdService::OTEL_ATTRIBUTE_NAME)
                 ?->getValue();
 
             if (null !== $correlationId) {
-                $span->setAttribute(CorrelationIdListener::OTEL_ATTRIBUTE_NAME, $correlationId);
+                $span->setAttribute(CorrelationIdService::OTEL_ATTRIBUTE_NAME, $correlationId);
             }
         }
 

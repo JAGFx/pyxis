@@ -4,12 +4,12 @@ receivers:
     protocols:
       grpc:
         endpoint: 0.0.0.0:4317
-      http:
-        endpoint: 0.0.0.0:4318
-        cors:
-          allowed_origins:
-            - "http://*"
-            - "https://*"
+#      http:
+#        endpoint: 0.0.0.0:4318
+#        cors:
+#          allowed_origins:
+#            - "http://*"
+#            - "https://*"
 
 processors:
   # Limiter l'utilisation mémoire
@@ -44,8 +44,10 @@ processors:
 
 exporters:
   # Export vers Jaeger via OTLP
-  otlp/jaeger:
-    endpoint: jaeger:4317
+#  otlp/jaeger:
+#    endpoint: jaeger:4317
+  otlp:
+    endpoint: tempo:4317
     tls:
       insecure: true
     compression: gzip
@@ -85,7 +87,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, resource, attributes, batch]
-      exporters: [otlp/jaeger, debug]
+#      exporters: [otlp/jaeger, debug]
+      exporters: [otlp, debug]
 
     # Pipeline pour les métriques
     metrics:

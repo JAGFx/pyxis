@@ -37,6 +37,7 @@ init: build
 	@echo "APP_ENV=dev" > .env.local
 	@$(MAKE) install
 	@$(MAKE) fixture
+	@docker network create -d bridge otel-network-bridge
 
 # -- End Environment
 

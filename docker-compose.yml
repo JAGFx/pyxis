@@ -102,4 +102,5 @@ networks:
   app_network:
     name: pyxis_network
   otel_network:
-    name: pyxis_otel_network
+    external: true
+    name:  otel-network-bridge
