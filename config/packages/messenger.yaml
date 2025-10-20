@@ -11,14 +11,14 @@ framework:
           - App\Infrastructure\Cqs\Middleware\CorrelationMiddleware
           - validation
           - doctrine_transaction
-          - App\Infrastructure\Logging\LoggingMiddleware
+          - App\Infrastructure\Cqs\Middleware\LoggingMiddleware
           - App\Infrastructure\OpenTelemetry\Cqs\Middleware\OpenTelemetryMessagingAttributesMiddleware
 
       query.bus:
         middleware:
           - App\Infrastructure\Cqs\Middleware\CorrelationMiddleware
           - validation
-          - App\Infrastructure\Logging\LoggingMiddleware
+          - App\Infrastructure\Cqs\Middleware\LoggingMiddleware
           - App\Infrastructure\OpenTelemetry\Cqs\Middleware\OpenTelemetryMessagingAttributesMiddleware
 
     transports:

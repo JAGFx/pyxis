@@ -37,7 +37,7 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
         private ?string $name = '',
 
         #[When(
-            expression: 'this.isSpent()',
+            expression: 'this.isSpent() == true',
             constraints: [
                 new GreaterThan(0.0),
                 new NotNull(),
@@ -45,7 +45,7 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
             groups: [ValidationGroupEnum::Business->value]
         )]
         #[When(
-            expression: 'this.isForecast()',
+            expression: 'this.isForecast() == true',
             constraints: [
                 new IsNull(),
             ],

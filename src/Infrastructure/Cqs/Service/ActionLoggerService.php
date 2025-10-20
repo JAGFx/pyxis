@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Logging;
+namespace App\Infrastructure\Cqs\Service;
 
-use App\Infrastructure\Cqs\Stamp\CorrelationStamp;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Envelope;
 use Throwable;
 
-final readonly class ActionLogger
+final readonly class ActionLoggerService
 {
     public function __construct(
         private LoggerInterface $auditLogger,
@@ -47,12 +45,5 @@ final readonly class ActionLogger
             'line'  => $error->getLine(),
             ...$context,
         ]);
-    }
-
-    public function extractCorrelationId(Envelope $envelope): ?string
-    {
-        $stamp = $envelope->last(CorrelationStamp::class);
-
-        return $stamp?->correlationId;
     }
 }

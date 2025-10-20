@@ -1,30 +1,26 @@
 receivers:
-  # Récepteur OTLP (OpenTelemetry Protocol)
   otlp:
     protocols:
       grpc:
         endpoint: 0.0.0.0:4317
-#      http:
-#        endpoint: 0.0.0.0:4318
-#        cors:
-#          allowed_origins:
-#            - "http://*"
-#            - "https://*"
+        max_recv_msg_size_mib: 4
+        max_concurrent_streams: 100
+        read_buffer_size: 524288  # 512KB
+        write_buffer_size: 524288
 
 processors:
-  # Limiter l'utilisation mémoire
+  # 1. Memory limiter en premier (protection)
   memory_limiter:
     check_interval: 1s
     limit_mib: 512
     spike_limit_mib: 128
 
-  # Traitement par batch (regroupement pour performance)
-  batch:
-    timeout: 1s
-    send_batch_size: 100
-    send_batch_max_size: 1000
+  # 2. Detection des attributs système
+  resourcedetection:
+    detectors: [env, system, docker]
+    timeout: 5s
 
-  # Ajouter des attributs aux données
+  # 3. Enrichissement resource
   resource:
     attributes:
       - key: deployment.environment
@@ -34,7 +30,7 @@ processors:
         from_attribute: host.name
         action: upsert
 
-  # Filtrer les attributs sensibles (optionnel)
+  # 4. Nettoyage attributs sensibles
   attributes:
     actions:
       - key: http.request.header.authorization
@@ -42,11 +38,15 @@ processors:
       - key: http.request.header.cookie
         action: delete
 
+  # 5. Batch en dernier (avant export)
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+    send_batch_max_size: 2048
+
 exporters:
-  # Export vers Jaeger via OTLP
-#  otlp/jaeger:
-#    endpoint: jaeger:4317
-  otlp:
+  # Tempo pour les traces
+  otlp/tempo:
     endpoint: tempo:4317
     tls:
       insecure: true
@@ -58,46 +58,49 @@ exporters:
       max_interval: 30s
       max_elapsed_time: 300s
 
-  # Export debug pour voir les données en console
+  # Loki pour les logs
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    tls:
+      insecure: true
+    timeout: 30s
+    compression: gzip
+
+  # Debug (désactive en prod)
   debug:
     verbosity: detailed
     sampling_initial: 10
     sampling_thereafter: 100
 
-# Extensions pour le monitoring du collector
 extensions:
   health_check:
     endpoint: 0.0.0.0:13133
 
-# Configuration du service collector lui-même
 service:
-  # Télémétrie du collector
   telemetry:
     logs:
-      level: debug
+      level: debug  # debug en dev, info en prod
     metrics:
       level: detailed
+#      address: 0.0.0.0:8888
 
-  # Configuration des extensions
   extensions: [health_check]
 
-  # Pipelines de traitement
   pipelines:
-    # Pipeline pour les traces
+    # Traces vers Tempo
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, resource, attributes, batch]
-#      exporters: [otlp/jaeger, debug]
-      exporters: [otlp, debug]
+      processors: [memory_limiter, resourcedetection, resource, attributes, batch]
+      exporters: [otlp/tempo]
 
-    # Pipeline pour les métriques
-    metrics:
-      receivers: [otlp]
-      processors: [memory_limiter, batch]
-      exporters: [debug]
-
-    # Pipeline pour les logs
+    # Logs vers Loki
     logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resourcedetection, resource, batch]
+      exporters: [loki, debug]
+
+    # Métriques (si tu en as)
+    metrics:
       receivers: [otlp]
       processors: [memory_limiter, batch]
       exporters: [debug]
