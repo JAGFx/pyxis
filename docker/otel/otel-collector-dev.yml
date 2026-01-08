@@ -8,6 +8,15 @@ receivers:
         read_buffer_size: 524288  # 512KB
         write_buffer_size: 524288
 
+  hostmetrics:
+    collection_interval: 5s  # Collecte toutes les 30 secondes
+    scrapers:
+      cpu:
+      memory:
+      disk:
+      filesystem:
+      network:
+
 processors:
   # 1. Memory limiter en premier (protection)
   memory_limiter:
@@ -44,6 +53,26 @@ processors:
     send_batch_size: 1024
     send_batch_max_size: 2048
 
+connectors:
+  spanmetrics:
+    histogram:
+      explicit:
+        buckets: [100us, 1ms, 2ms, 6ms, 10ms, 100ms, 250ms, 1s, 5s, 10s]
+    dimensions:
+      - name: http.method
+        default: GET
+      - name: http.status_code
+    exemplars:
+      enabled: true
+    dimensions_cache_size: 1000
+    aggregation_temporality: "AGGREGATION_TEMPORALITY_CUMULATIVE"
+    metrics_flush_interval: 15s
+    metrics_expiration: 5m
+    resource_metrics_key_attributes:
+      - service.name
+      - telemetry.sdk.language
+
+
 exporters:
   # Tempo pour les traces
   otlp/tempo:
@@ -65,6 +94,10 @@ exporters:
       insecure: true
     timeout: 30s
     compression: gzip
+
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: tempo_spanmetrics
 
   # Debug (désactive en prod)
   debug:
@@ -91,7 +124,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, resourcedetection, resource, attributes, batch]
-      exporters: [otlp/tempo]
+      exporters: [otlp/tempo, spanmetrics]
 
     # Logs vers Loki
     logs:
@@ -101,6 +134,7 @@ service:
 
     # Métriques (si tu en as)
     metrics:
-      receivers: [otlp]
+      receivers: [spanmetrics]
+#      receivers: [hostmetrics]
       processors: [memory_limiter, batch]
-      exporters: [debug]
+      exporters: [prometheus]

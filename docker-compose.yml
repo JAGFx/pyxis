@@ -70,6 +70,7 @@ services:
       - "4317:4317"   # OTLP gRPC
 #      - "4318:4318"   # OTLP HTTP
 #      - "8888:8888"   # Metrics du collector
+      - "8889:8889"   # Prometheus scrape spanmetrics
     environment:
      GOGC: 80  # Plus agressif sur le GC pour limiter la mémoire
     networks:

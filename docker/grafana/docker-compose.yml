@@ -28,7 +28,7 @@ services:
       - otel_network
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.7.1
     command:
       - --config.file=/etc/prometheus.yaml
       - --web.enable-remote-write-receiver
@@ -36,6 +36,7 @@ services:
       - --enable-feature=native-histograms
     volumes:
       - ./prometheus.yaml:/etc/prometheus.yaml
+      - prometheus-data:/prometheus
     ports:
       - "9090:9090"
     networks:
@@ -69,6 +70,7 @@ services:
 
 volumes:
   tempo-data:
+  prometheus-data:
   loki-data:
 
 networks:
