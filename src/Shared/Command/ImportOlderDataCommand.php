@@ -22,9 +22,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ImportOlderDataCommand
 {
     public const string DEFAULT_ACCOUNT              = 'Livret A';
+
     public const string DEFAULT_BUDGET               = 'Budget par défaut';
+
     public const string DEFAULT_BUDGET_NAME_FORECAST = 'Import des provisions';
+
     private Connection $connection;
+
     private Connection $oldBugrManager;
 
     public function __construct(

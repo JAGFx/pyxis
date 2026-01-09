@@ -5,6 +5,7 @@ namespace App\Infrastructure\KnpPaginator\DTO;
 trait OrderableTrait
 {
     protected ?string $orderBy          = null;
+
     protected OrderEnum $orderDirection = OrderEnum::ASC;
 
     public function getOrderBy(): ?string

@@ -8,6 +8,7 @@ trait PaginableTrait
 {
     #[GreaterThanOrEqual(1)]
     protected int $page     = 1;
+
     protected int $pageSize = 6;
 
     public function getPage(): int

@@ -14,6 +14,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class AccountVoter extends Voter
 {
     public const string DISABLE = 'ACCOUNT_DISABLE';
+
     public const string ENABLE  = 'ACCOUNT_ENABLE';
 
     protected function supports(string $attribute, mixed $subject): bool

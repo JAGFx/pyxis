@@ -26,6 +26,7 @@ use Throwable;
 class AccountController extends AbstractController
 {
     use TurboResponseTrait;
+
     private const int MAX_ACCOUNTS_CASH_FLOW = 3;
 
     public function __construct(

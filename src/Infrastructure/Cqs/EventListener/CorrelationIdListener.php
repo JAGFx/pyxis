@@ -10,6 +10,7 @@ use Symfony\Component\Uid\Ulid;
 class CorrelationIdListener
 {
     public const string HEADER_NAME            = 'X-Correlation-ID';
+
     public const string REQUEST_ATTRIBUTE_NAME = '_correlation_id';
 
     #[AsEventListener(event: RequestEvent::class, priority: 10)]

@@ -18,6 +18,7 @@ class FindEntriesQuery implements PaginationInterface, OrderableInterface, Query
 {
     use PaginableTrait;
     use OrderableTrait;
+
     public const int WITHOUT_FLAG_VALUE = -1;
 
     public function __construct(

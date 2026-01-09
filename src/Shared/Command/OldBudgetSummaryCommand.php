@@ -27,6 +27,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class OldBudgetSummaryCommand extends Command
 {
     private Connection $connection;
+
     private Connection $oldBugrManager;
 
     public function __construct(

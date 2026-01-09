@@ -18,7 +18,9 @@ class TransferCommand implements CommandInterface
 {
     #[NotNull]
     private ?Account $account     = null;
+
     private ?Budget $budgetSource = null;
+
     private ?Budget $budgetTarget = null;
 
     #[NotBlank]

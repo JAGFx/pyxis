@@ -25,6 +25,7 @@ class PeriodicEntry implements IntIdentifierInterface
     use TimestampableTrait;
     use HasCollectionTrait;
     use HasIntIdentifierTrait;
+
     public const int MONTH_SPLIT = 12;
 
     #[ORM\Column]

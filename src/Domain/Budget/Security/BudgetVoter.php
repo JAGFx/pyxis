@@ -14,8 +14,11 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class BudgetVoter extends Voter
 {
     public const string MANAGE  = 'BUDGET_MANAGE';
+
     public const string BALANCE = 'BUDGET_BALANCE';
+
     public const string ENABLE  = 'BUDGET_ENABLE';
+
     public const string DISABLE = 'BUDGET_DISABLE';
 
     protected function supports(string $attribute, mixed $subject): bool

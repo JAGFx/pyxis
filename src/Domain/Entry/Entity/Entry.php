@@ -24,6 +24,7 @@ class Entry implements IntIdentifierInterface
     use NameableTrait;
     use HasCollectionTrait;
     use HasIntIdentifierTrait;
+
     public const array NON_EDITABLE_FLAGS = [
         EntryFlagEnum::BALANCE,
         EntryFlagEnum::TRANSFERT,

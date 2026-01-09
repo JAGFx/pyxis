@@ -12,7 +12,7 @@ final class ImmutableDateTimeFaker extends Base
     public static function immutableDateTimeBetween(string $startDate = '-30 years', string $endDate = 'now'): DateTimeImmutable
     {
         return DateTimeImmutable::createFromMutable(
-            DateTime::dateTimeBetween($startDate, $endDate, null)
+            DateTime::dateTimeBetween($startDate, $endDate)
         );
     }
 
