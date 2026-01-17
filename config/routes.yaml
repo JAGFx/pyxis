@@ -5,3 +5,7 @@ shared:
 domain:
   type: attribute
   resource: '../src/Domain/**/Controller/**/*'
+
+module:
+  type: attribute
+  resource: '../src/Module/**/Controller/**/*'

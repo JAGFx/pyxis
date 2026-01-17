@@ -39,5 +39,12 @@ services:
       - '../src/**/Entity/'
       - '../src/Kernel.php'
 
+  App\Module\:
+    resource: '../src/Module/'
+    exclude:
+      - '../Module/**/*Bundle.php'
+      - '../Module/**/config/'
+      - '../Module/**/Domain/**/Entity/'
+
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
