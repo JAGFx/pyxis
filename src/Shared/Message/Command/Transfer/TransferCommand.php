@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Context\ExecutionContext;
 class TransferCommand implements CommandInterface
 {
     #[NotNull]
-    private ?Account $account     = null;
+    private ?Account $account = null;
 
     private ?Budget $budgetSource = null;
 

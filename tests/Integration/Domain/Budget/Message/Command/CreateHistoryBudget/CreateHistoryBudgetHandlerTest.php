@@ -15,6 +15,7 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 class CreateHistoryBudgetHandlerTest extends KernelTestCase
 {
     private MessageBus $messageBus;
+
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void

@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 trait PaginableTrait
 {
     #[GreaterThanOrEqual(1)]
-    protected int $page     = 1;
+    protected int $page = 1;
 
     protected int $pageSize = 6;
 

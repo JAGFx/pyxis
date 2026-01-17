@@ -17,6 +17,7 @@ use PHPUnit\Framework\TestCase;
 class GetAmountBalanceHandlerTest extends TestCase
 {
     private MessageBus $messageBusMock;
+
     private EntityFinder $entityFinderMock;
 
     protected function setUp(): void

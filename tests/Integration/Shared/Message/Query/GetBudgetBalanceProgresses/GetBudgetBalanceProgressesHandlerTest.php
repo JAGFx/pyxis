@@ -16,6 +16,7 @@ use DateTimeImmutable;
 class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
 {
     private const string ACCOUNT_1 = 'Test Account';
+
     private MessageBus $messageBus;
 
     protected function setUp(): void

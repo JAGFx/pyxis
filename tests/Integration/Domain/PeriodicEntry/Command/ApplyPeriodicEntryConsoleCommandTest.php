@@ -20,6 +20,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
 {
     private CommandTester $commandTester;
+
     private EntityManagerInterface $entityManager;
 
     protected function setUp(): void

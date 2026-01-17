@@ -19,6 +19,7 @@ use Psr\Log\LoggerInterface;
 class GenerateHistoryBudgetsForYearHandlerTest extends TestCase
 {
     private readonly MessageBus $messageBusMock;
+
     private readonly EntityFinder $entityFinderMock;
 
     protected function setUp(): void

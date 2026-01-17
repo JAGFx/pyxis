@@ -30,7 +30,8 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/*.php',
     ]);
 
-    $rectorConfig->parallel(maxNumberOfProcess: (int) ($_ENV['RECTOR_MAX_PROCESS'] ?? Defaults::PARALLEL_MAX_NUMBER_OF_PROCESS));
+    $rectorConfig->parallel(maxNumberOfProcess: 1);
+//    $rectorConfig->parallel(maxNumberOfProcess: (int) ($_ENV['RECTOR_MAX_PROCESS'] ?? Defaults::PARALLEL_MAX_NUMBER_OF_PROCESS));
     $rectorConfig->importNames();
 
     /// Sets

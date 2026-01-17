@@ -1,6 +1,6 @@
 <?php
 
-$finder = (new PhpCsFixer\Finder())
+$finder = new PhpCsFixer\Finder()
     ->in([
         __DIR__ . '/src',
         __DIR__ . '/tests',
@@ -11,7 +11,8 @@ $finder = (new PhpCsFixer\Finder())
     ])
     ->name('*.php');
 
-return (new PhpCsFixer\Config())
+return new PhpCsFixer\Config()
+    ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
     ->setRules([
         '@Symfony' => true,
         'binary_operator_spaces' => [
@@ -25,9 +26,9 @@ return (new PhpCsFixer\Config())
         ],
         'class_attributes_separation' => [
             'elements' => [
-                'const' => 'only_if_meta',
+                'const' => 'one',
                 'method' => 'one',
-                'property' => 'only_if_meta',
+                'property' => 'one',
                 'trait_import' => 'none',
                 'case' => 'none',
             ],

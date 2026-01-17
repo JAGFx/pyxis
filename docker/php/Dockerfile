@@ -9,18 +9,25 @@ RUN apk add --no-cache \
     icu-dev \
     libzip-dev \
     zip \
-    unzip \
-    && docker-php-ext-install zip pdo pdo_mysql opcache intl
+    unzip
 
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS \
-    && pecl install apcu \
-    && docker-php-ext-enable apcu \
-    && apk del $PHPIZE_DEPS \
-    && pecl clear-cache \
-    && apk del .build-dependencies
+    && install-php-extensions opentelemetry protobuf opcache pdo pdo_mysql intl zip apcu
 
-RUN rm -rf /var/cache/apk/* \
-    && rm -rf /tmp/pear
+# Fatest way than install via install-php-extensions
+RUN apk add --no-cache git grpc-cpp grpc-dev \
+    && GRPC_VERSION=$(apk info grpc -d | grep grpc | cut -d- -f2) \
+    && git clone --depth 1 -b v${GRPC_VERSION} https://github.com/grpc/grpc /tmp/grpc \
+    && cd /tmp/grpc/src/php/ext/grpc \
+    && phpize \
+    && ./configure \
+    && make \
+    && make install \
+    && docker-php-ext-enable grpc \
+    && rm -rf /tmp/grpc
+
+RUN apk del grpc-dev git $PHPIZE_DEPS .build-dependencies  \
+    && rm -rf /var/cache/apk/*
 
 FROM base AS dev
 
@@ -30,13 +37,8 @@ COPY docker/php/conf.d/opcache.dev.ini $PHP_INI_DIR/opcache.ini
 COPY docker/php/conf.d/xdebug.ini $PHP_INI_DIR/docker-php-ext-xdebug.ini
 
 RUN apk add --update linux-headers \
-    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug \
-    && pecl clear-cache \
-    && apk del .build-dependencies \
-    && rm -rf /var/cache/apk/* \
-    && rm -rf /tmp/pear
+    && install-php-extensions xdebug \
+    && rm -rf /var/cache/apk/*
 
 RUN curl -L https://cs.symfony.com/download/php-cs-fixer-v3.phar -o php-cs-fixer \
     && chmod a+x php-cs-fixer \

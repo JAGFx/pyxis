@@ -19,6 +19,7 @@ use function Zenstruck\Foundry\faker;
 class BudgetRepositoryTest extends KernelTestCase
 {
     private const string BUDGET_NAME = 'Budget spent Current year';
+
     private BudgetRepository $budgetRepository;
 
     /**

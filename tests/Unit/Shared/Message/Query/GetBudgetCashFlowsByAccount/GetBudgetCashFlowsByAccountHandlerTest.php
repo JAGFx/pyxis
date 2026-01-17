@@ -16,8 +16,11 @@ use PHPUnit\Framework\TestCase;
 class GetBudgetCashFlowsByAccountHandlerTest extends TestCase
 {
     use BudgetTestTrait;
+
     private const float BUDGET_AMOUNT = 1000.0;
+
     private MessageBus $messageBus;
+
     private EntityFinder $entityFinder;
 
     protected function setUp(): void

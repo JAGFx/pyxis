@@ -20,6 +20,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
 {
     private const string BUDGET_BALANCE_NAME = 'Budget balance';
+
     private MessageBus $messageBus;
 
     protected function setUp(): void

@@ -16,8 +16,11 @@ use App\Tests\Integration\Shared\KernelTestCase;
 class TransferHandlerTest extends KernelTestCase
 {
     private const string BUDGET_SOURCE_NAME = 'Budget source name';
+
     private const string BUDGET_TARGET_NAME = 'Budget target name';
-    private const float BUDGET_AMOUNT       = 100.0;
+
+    private const float BUDGET_AMOUNT = 100.0;
+
     private MessageBus $messageBus;
 
     protected function setUp(): void

@@ -16,6 +16,7 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
 {
     private MessageBus $messageBus;
+
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void

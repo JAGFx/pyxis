@@ -15,7 +15,9 @@ use App\Tests\Integration\Shared\KernelTestCase;
 class GetAmountBalanceHandlerTest extends KernelTestCase
 {
     private const string ACCOUNT_1 = 'Test Account 1';
+
     private const string ACCOUNT_2 = 'Test Account 2';
+
     private MessageBus $messageBus;
 
     protected function setUp(): void

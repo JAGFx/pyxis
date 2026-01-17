@@ -12,6 +12,7 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 class CreateOrUpdateBudgetHandlerTest extends KernelTestCase
 {
     private MessageBus $messageBus;
+
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void

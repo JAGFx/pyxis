@@ -17,7 +17,9 @@ use PHPUnit\Framework\TestCase;
 class AddSplitForBudgetsHandlerTest extends TestCase
 {
     private EntityManagerInterface $entityManagerMock;
+
     private MessageBus $messageBusMock;
+
     private EntityFinder $entityFinderMock;
 
     protected function setUp(): void

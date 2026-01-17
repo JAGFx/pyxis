@@ -6,7 +6,7 @@ services:
 #      - app_network
 
   php:
-    image: pyxis-php:franken
+    image: pyxis-php:latest
     container_name: pyxis-php
     build:
       context: .

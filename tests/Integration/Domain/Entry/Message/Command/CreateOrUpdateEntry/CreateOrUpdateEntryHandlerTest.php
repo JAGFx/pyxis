@@ -19,7 +19,9 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 class CreateOrUpdateEntryHandlerTest extends KernelTestCase
 {
     private MessageBus $messageBus;
+
     private ObjectMapperInterface $objectMapper;
+
     private EntityManagerInterface $entityManager;
 
     protected function setUp(): void

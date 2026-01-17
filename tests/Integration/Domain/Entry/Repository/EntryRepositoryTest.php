@@ -19,9 +19,13 @@ use App\Tests\Integration\Shared\KernelTestCase;
 class EntryRepositoryTest extends KernelTestCase
 {
     private const string ACCOUNT_1 = 'Account 1';
+
     private const string ACCOUNT_2 = 'Account 2';
-    private const string BUDGET_1  = 'Budget 1';
-    private const string BUDGET_2  = 'Budget 2';
+
+    private const string BUDGET_1 = 'Budget 1';
+
+    private const string BUDGET_2 = 'Budget 2';
+
     private EntryRepository $entryRepository;
 
     protected function setUp(): void

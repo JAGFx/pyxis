@@ -20,6 +20,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class HasEnoughAmountAssignmentValidatorTest extends TestCase
 {
     private HasEnoughAmountAssignmentValidator $validator;
+
     private ExecutionContextInterface $context;
 
     protected function setUp(): void

@@ -18,6 +18,7 @@ use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
 {
     private MessageBus $messageBus;
+
     private ObjectMapperInterface $objectMapper;
 
     protected function setUp(): void

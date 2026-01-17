@@ -13,8 +13,11 @@ use PHPUnit\Framework\TestCase;
 class GetBudgetAccountBalanceHandlerTest extends TestCase
 {
     use BudgetTestTrait;
+
     private const float BUDGET_AMOUNT = 1000.0;
+
     private EntityManagerInterface $entityManager;
+
     private MessageBus $messageBus;
 
     protected function setUp(): void
