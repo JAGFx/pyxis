@@ -1654,7 +1654,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  * @psalm-type LiveComponentConfig = array{
  *     secret?: scalar|null|Param, // The secret used to compute fingerprints and checksums // Default: "%kernel.secret%"
  * }
- * @psalm-type ExportConfig = array{
+ * @psalm-type ExporterConfig = array{
  *     enabled?: bool|Param, // Enable or disable the Export module // Default: true
  * }
  * @psalm-type ConfigType = array{
@@ -1674,7 +1674,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     stimulus?: StimulusConfig,
  *     twig_component?: TwigComponentConfig,
  *     live_component?: LiveComponentConfig,
- *     export?: ExportConfig,
+ *     exporter?: ExporterConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1699,7 +1699,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         stimulus?: StimulusConfig,
  *         twig_component?: TwigComponentConfig,
  *         live_component?: LiveComponentConfig,
- *         export?: ExportConfig,
+ *         exporter?: ExporterConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1718,7 +1718,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         stimulus?: StimulusConfig,
  *         twig_component?: TwigComponentConfig,
  *         live_component?: LiveComponentConfig,
- *         export?: ExportConfig,
+ *         exporter?: ExporterConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1743,7 +1743,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         stimulus?: StimulusConfig,
  *         twig_component?: TwigComponentConfig,
  *         live_component?: LiveComponentConfig,
- *         export?: ExportConfig,
+ *         exporter?: ExporterConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

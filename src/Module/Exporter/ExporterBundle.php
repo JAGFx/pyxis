@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Module\Export;
+namespace App\Module\Exporter;
 
 use Override;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 
-class ExportBundle extends AbstractBundle
+class ExporterBundle extends AbstractBundle
 {
     #[Override]
     public function configure(DefinitionConfigurator $definition): void

@@ -26,5 +26,5 @@ return [
     Symfony\UX\LiveComponent\LiveComponentBundle::class => ['all' => true],
     Zenstruck\Messenger\Test\ZenstruckMessengerTestBundle::class => ['test' => true],
 
-    App\Module\Export\ExportBundle::class => ['all' => true],
+    App\Module\Exporter\ExporterBundle::class => ['all' => true],
 ];
