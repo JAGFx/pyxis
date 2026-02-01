@@ -16,6 +16,7 @@ use League\Csv\Writer;
 use Override;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 
 class CsvAccountDocumentFactory implements DocumentFactoryInterface
@@ -24,6 +25,7 @@ class CsvAccountDocumentFactory implements DocumentFactoryInterface
 
     public function __construct(
         private readonly MessageBus $messageBus,
+        private readonly TranslatorInterface $translator,
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
     ) {
@@ -47,7 +49,10 @@ class CsvAccountDocumentFactory implements DocumentFactoryInterface
         /** @var Account[] $accounts */
         $accounts = $this->messageBus->dispatch(new FindAccountsQuery());
 
-        $header  = ['ID', 'Name'];
+        $header = [
+            $this->translator->trans('account.csv.headers.id', domain: 'document'),
+            $this->translator->trans('account.csv.headers.name', domain: 'document'),
+        ];
         $records = array_map(
             fn (Account $account): array => [
                 $account->getId(),
