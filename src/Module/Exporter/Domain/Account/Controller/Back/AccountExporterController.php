@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Module\Exporter\Domain\Account\Controller\Back;
 
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Module\Exporter\Domain\Account\Message\Query\ExportAccountData\ExportAccountDataQuery;
+use App\Module\Exporter\Domain\Account\Message\Query\ExportListAccount\ExportListAccountQuery;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentInterface;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentTypeEnum;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,14 +28,14 @@ class AccountExporterController extends AbstractController
      * @throws ExceptionInterface
      */
     #[Route(
-        '/accounts',
-        name: 'back_export_accounts',
+        '/accounts/list',
+        name: 'back_export_list_accounts',
         methods: Request::METHOD_GET
     )]
-    public function index(): Response
+    public function exportList(): Response
     {
         /** @var DocumentInterface $document */
-        $document = $this->messageBus->dispatch(new ExportAccountDataQuery(DocumentTypeEnum::CSV));
+        $document = $this->messageBus->dispatch(new ExportListAccountQuery(DocumentTypeEnum::CSV));
 
         return $this->file(
             $document->getPath(),

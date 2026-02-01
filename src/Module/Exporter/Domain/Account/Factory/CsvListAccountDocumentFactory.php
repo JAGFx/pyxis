@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 
-class CsvAccountDocumentFactory implements DocumentFactoryInterface
+class CsvListAccountDocumentFactory implements DocumentFactoryInterface
 {
     private const string TEMP_DIR = '/exports';
 
@@ -50,8 +50,8 @@ class CsvAccountDocumentFactory implements DocumentFactoryInterface
         $accounts = $this->messageBus->dispatch(new FindAccountsQuery());
 
         $header = [
-            $this->translator->trans('account.csv.headers.id', domain: 'document'),
-            $this->translator->trans('account.csv.headers.name', domain: 'document'),
+            $this->translator->trans('exporters.account.list.csv.headers.id', domain: 'document'),
+            $this->translator->trans('exporters.account.list.csv.headers.name', domain: 'document'),
         ];
         $records = array_map(
             fn (Account $account): array => [

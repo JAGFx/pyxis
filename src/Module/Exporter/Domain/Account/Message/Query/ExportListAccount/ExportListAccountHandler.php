@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Module\Exporter\Domain\Account\Message\Query\ExportAccountData;
+namespace App\Module\Exporter\Domain\Account\Message\Query\ExportListAccount;
 
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentFactoryResolver;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentInterface;
 use App\Shared\Cqs\Handler\QueryHandlerInterface;
 
 /**
- * @see ExportAccountDataQuery
+ * @see ExportListAccountQuery
  */
-readonly class ExportAccountDataHandler implements QueryHandlerInterface
+readonly class ExportListAccountHandler implements QueryHandlerInterface
 {
     public function __construct(
         private DocumentFactoryResolver $factoryResolver,
     ) {
     }
 
-    public function __invoke(ExportAccountDataQuery $query): DocumentInterface
+    public function __invoke(ExportListAccountQuery $query): DocumentInterface
     {
         $factory = $this->factoryResolver->resolve(
             $query->getTarget(),

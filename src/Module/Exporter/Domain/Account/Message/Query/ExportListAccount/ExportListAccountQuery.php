@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Module\Exporter\Domain\Account\Message\Query\ExportAccountData;
+namespace App\Module\Exporter\Domain\Account\Message\Query\ExportListAccount;
 
 use App\Domain\Account\Entity\Account;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentTypeEnum;
@@ -8,9 +8,9 @@ use App\Module\Exporter\Infrastructure\Document\Message\Query\ExporterQueryInter
 use App\Shared\Cqs\Message\Query\QueryInterface;
 
 /**
- * @see ExportAccountDataHandler
+ * @see ExportListAccountHandler
  */
-class ExportAccountDataQuery implements QueryInterface, ExporterQueryInterface
+class ExportListAccountQuery implements QueryInterface, ExporterQueryInterface
 {
     public function __construct(
         private DocumentTypeEnum $documentType,
@@ -27,7 +27,7 @@ class ExportAccountDataQuery implements QueryInterface, ExporterQueryInterface
         return $this->documentType;
     }
 
-    public function setDocumentType(DocumentTypeEnum $documentType): ExportAccountDataQuery
+    public function setDocumentType(DocumentTypeEnum $documentType): ExportListAccountQuery
     {
         $this->documentType = $documentType;
 
