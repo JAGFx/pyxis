@@ -8,6 +8,8 @@ use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\MountManager;
+use SensitiveParameter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +19,23 @@ final readonly class StorageSystem
     public function __construct(
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
+
+        #[Autowire(env: 'EXPORTER_FILE_SYSTEM_PATH')]
+        private string $fileSystemPath,
+
+        #[Autowire(env: 'EXPORTER_S3_REGION')]
+        private string $s3Region,
+
+        #[SensitiveParameter]
+        #[Autowire(env: 'EXPORTER_S3_KEY')]
+        private string $s3Key,
+
+        #[SensitiveParameter]
+        #[Autowire(env: 'EXPORTER_S3_SECRET')]
+        private string $s3Secret,
+
+        #[Autowire(env: 'EXPORTER_S3_BUCKET')]
+        private string $s3Bucket,
     ) {
     }
 
@@ -25,20 +44,20 @@ final readonly class StorageSystem
      *
      * @throws FilesystemException
      */
-    public function write(StorageEnum $storage, string $location, string $contents, array $config): void
+    public function write(DocumentInterface $document, string $contents, ?array $config = null): void
     {
-        $storage = $this->findAdapter($storage);
-        $storage->write($location, $contents, $config);
+        $this->getMountManager()->write($document->getPath(), $contents, $config ?? [
+            'visibility'           => 'private',
+            'directory_visibility' => 'private',
+        ]);
     }
 
     /**
      * @throws FilesystemException
      */
-    public function read(StorageEnum $storage, string $location): string
+    public function read(DocumentInterface $document): string
     {
-        $storage = $this->findAdapter($storage);
-
-        return $storage->read($location);
+        return $this->getMountManager()->read($document->getPath());
     }
 
     /**
@@ -46,10 +65,7 @@ final readonly class StorageSystem
      */
     public function getHttpStreamResponse(DocumentInterface $document): Response
     {
-        $content = $this->read(
-            $document->getStorage(),
-            $document->getPath()
-        );
+        $content = $this->read($document);
 
         $response = new Response($content);
         $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(
@@ -60,26 +76,33 @@ final readonly class StorageSystem
         return $response;
     }
 
-    private function findAdapter(StorageEnum $storage): Filesystem
+    private function getMountManager(): MountManager
     {
-        return new Filesystem(match ($storage) {
-            StorageEnum::FILE_SYSTEM => $this->getFileSystemAdapter(),
-            StorageEnum::S3          => $this->getS3Adapter(),
-        });
+        return new MountManager([
+            StorageEnum::FILE_SYSTEM->value => new Filesystem($this->getFileSystemAdapter()),
+            StorageEnum::S3->value          => new Filesystem($this->getS3Adapter()),
+        ]);
     }
 
     private function getFileSystemAdapter(): LocalFilesystemAdapter
     {
-        return new LocalFilesystemAdapter($this->projectDir . '/private/');
+        return new LocalFilesystemAdapter($this->projectDir . '/' . $this->fileSystemPath);
     }
 
     private function getS3Adapter(): AwsS3V3Adapter
     {
-        $s3Client = new S3Client([]);
+        $s3Client = new S3Client([
+            'version'     => 'latest',
+            'region'      => $this->s3Region,
+            'credentials' => [
+                'key'    => $this->s3Key,
+                'secret' => $this->s3Secret,
+            ],
+        ]);
 
         return new AwsS3V3Adapter(
             $s3Client,
-            'bucket-name'
+            $this->s3Bucket
         );
     }
 }

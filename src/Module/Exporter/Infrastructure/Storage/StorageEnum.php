@@ -2,8 +2,8 @@
 
 namespace App\Module\Exporter\Infrastructure\Storage;
 
-enum StorageEnum
+enum StorageEnum: string
 {
-    case FILE_SYSTEM;
-    case S3;
+    case FILE_SYSTEM = 'local';
+    case S3          = 's3';
 }

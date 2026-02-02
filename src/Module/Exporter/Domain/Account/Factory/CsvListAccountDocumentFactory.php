@@ -49,24 +49,23 @@ readonly class CsvListAccountDocumentFactory implements DocumentFactoryInterface
         $csv->insertOne($header);
         $csv->insertAll($records);
 
-        $content = $csv->toString();
-
+        $content  = $csv->toString();
         $filename = sprintf('accounts_%s.csv', date('YmdHis'));
-        $path     = 'exports/' . $filename;
+        $path     = 'account/list/' . $filename;
 
-        $this->storageSystem->write(
-            $query->getStorage(),
-            $path,
-            $content,
-            ['visibility' => 'private', 'directory_visibility' => 'private']
-        );
-
-        return new Document(
+        $document = new Document(
             $path,
             $filename,
             DocumentTypeEnum::CSV,
             $query->getStorage()
         );
+
+        $this->storageSystem->write(
+            $document,
+            $content
+        );
+
+        return $document;
     }
 
     /**

@@ -37,7 +37,7 @@ class AccountExporterController extends AbstractController
     )]
     public function exportList(): Response
     {
-        $exportListAccountQuery = new ExportListAccountQuery(DocumentTypeEnum::CSV, StorageEnum::FILE_SYSTEM);
+        $exportListAccountQuery = new ExportListAccountQuery(DocumentTypeEnum::CSV, StorageEnum::S3);
 
         /** @var DocumentInterface $document */
         $document = $this->messageBus->dispatch($exportListAccountQuery);

@@ -18,7 +18,8 @@ readonly class Document implements DocumentInterface
 
     public function getPath(): string
     {
-        return $this->path;
+        /* @see https://flysystem.thephpleague.com/docs/advanced/mount-manager/ */
+        return $this->storage->value . '://' . $this->path;
     }
 
     public function getFileName(): string
