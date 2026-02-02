@@ -5,17 +5,20 @@ namespace App\Module\Exporter\Infrastructure\Document\Factory;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 
-class DocumentFactoryResolver
+final readonly class DocumentFactoryResolver
 {
     public const string FACTORY_TAG = 'app.module.document_factory';
 
     public function __construct(
         /** @var iterable<DocumentFactoryInterface> */
         #[TaggedIterator(self::FACTORY_TAG)]
-        private readonly iterable $factories,
+        private iterable $factories,
     ) {
     }
 
+    /**
+     * @throws RuntimeException
+     */
     public function resolve(string $targetClass, DocumentTypeEnum $documentType): DocumentFactoryInterface
     {
         foreach ($this->factories as $factory) {

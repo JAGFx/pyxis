@@ -8,26 +8,23 @@ use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentFactoryInterface;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentInterface;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentTypeEnum;
-use App\Module\Exporter\Infrastructure\Document\Factory\FileSystemDocument;
 use App\Module\Exporter\Infrastructure\Document\Message\Query\ExporterQueryInterface;
+use App\Module\Exporter\Infrastructure\Document\Model\Document;
+use App\Module\Exporter\Infrastructure\Storage\StorageSystem;
 use League\Csv\CannotInsertRecord;
 use League\Csv\Exception;
 use League\Csv\Writer;
 use Override;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Throwable;
 
-class CsvListAccountDocumentFactory implements DocumentFactoryInterface
+readonly class CsvListAccountDocumentFactory implements DocumentFactoryInterface
 {
-    private const string TEMP_DIR = '/exports';
-
     public function __construct(
-        private readonly MessageBus $messageBus,
-        private readonly TranslatorInterface $translator,
-        #[Autowire('%kernel.project_dir%')]
-        private readonly string $projectDir,
+        private MessageBus $messageBus,
+        private TranslatorInterface $translator,
+        private StorageSystem $storageSystem,
     ) {
     }
 
@@ -46,6 +43,40 @@ class CsvListAccountDocumentFactory implements DocumentFactoryInterface
     #[Override]
     public function createDocument(ExporterQueryInterface $query): DocumentInterface
     {
+        [$header, $records] = $this->getRawData();
+
+        $csv = Writer::fromString();
+        $csv->insertOne($header);
+        $csv->insertAll($records);
+
+        $content = $csv->toString();
+
+        $filename = sprintf('accounts_%s.csv', date('YmdHis'));
+        $path     = 'exports/' . $filename;
+
+        $this->storageSystem->write(
+            $query->getStorage(),
+            $path,
+            $content,
+            ['visibility' => 'private', 'directory_visibility' => 'private']
+        );
+
+        return new Document(
+            $path,
+            $filename,
+            DocumentTypeEnum::CSV,
+            $query->getStorage()
+        );
+    }
+
+    /**
+     * @return array{string[], array<array{int|null, string}>}
+     *
+     * @throws Throwable
+     * @throws ExceptionInterface
+     */
+    public function getRawData(): array
+    {
         /** @var Account[] $accounts */
         $accounts = $this->messageBus->dispatch(new FindAccountsQuery());
 
@@ -61,28 +92,6 @@ class CsvListAccountDocumentFactory implements DocumentFactoryInterface
             $accounts
         );
 
-        $csv = Writer::fromString();
-        $csv->insertOne($header);
-        $csv->insertAll($records);
-
-        // ------- TODO: Temporary. To try it's working
-        $content  = $csv->toString();
-        $filename = sprintf('accounts_%s.csv', date('YmdHis'));
-
-        $tempDir = $this->projectDir . '/private/' . self::TEMP_DIR;
-        if (!is_dir($tempDir)) {
-            mkdir($tempDir, 0755, true);
-        }
-
-        // Sauvegarder le fichier
-        $filePath = $tempDir . '/' . $filename;
-        file_put_contents($filePath, $content);
-        // -------
-
-        return new FileSystemDocument(
-            $filePath,
-            $filename,
-            DocumentTypeEnum::CSV
-        );
+        return [$header, $records];
     }
 }
