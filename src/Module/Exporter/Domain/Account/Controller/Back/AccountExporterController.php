@@ -42,6 +42,6 @@ class AccountExporterController extends AbstractController
         /** @var DocumentInterface $document */
         $document = $this->messageBus->dispatch($exportListAccountQuery);
 
-        return $this->storageSystem->getHttpStreamResponse($document);
+        return $this->storageSystem->generateHttpStreamResponse($document);
     }
 }

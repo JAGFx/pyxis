@@ -12,10 +12,12 @@ use League\Flysystem\MountManager;
 use SensitiveParameter;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 final readonly class StorageSystem
 {
+    private MountManager $mountManager;
+
     public function __construct(
         #[Autowire('%kernel.project_dir%')]
         private string $projectDir,
@@ -37,6 +39,10 @@ final readonly class StorageSystem
         #[Autowire(env: 'EXPORTER_S3_BUCKET')]
         private string $s3Bucket,
     ) {
+        $this->mountManager = new MountManager([
+            StorageEnum::FILE_SYSTEM->value => new Filesystem($this->getFileSystemAdapter()),
+            StorageEnum::S3->value          => new Filesystem($this->getS3Adapter()),
+        ]);
     }
 
     /**
@@ -46,7 +52,7 @@ final readonly class StorageSystem
      */
     public function write(DocumentInterface $document, string $contents, ?array $config = null): void
     {
-        $this->getMountManager()->write($document->getPath(), $contents, $config ?? [
+        $this->mountManager->write($document->getPath(), $contents, $config ?? [
             'visibility'           => 'private',
             'directory_visibility' => 'private',
         ]);
@@ -57,31 +63,42 @@ final readonly class StorageSystem
      */
     public function read(DocumentInterface $document): string
     {
-        return $this->getMountManager()->read($document->getPath());
+        return $this->mountManager->read($document->getPath());
     }
 
     /**
+     * @return resource
+     *
      * @throws FilesystemException
      */
-    public function getHttpStreamResponse(DocumentInterface $document): Response
+    public function readStream(DocumentInterface $document): mixed
     {
-        $content = $this->read($document);
+        return $this->mountManager->readStream($document->getPath());
+    }
 
-        $response = new Response($content);
-        $response->headers->set('Content-Disposition', HeaderUtils::makeDisposition(
+    public function generateHttpStreamResponse(DocumentInterface $document): StreamedResponse
+    {
+        $streamedResponse = new StreamedResponse(function () use ($document): void {
+            $stream = $this->readStream($document);
+
+            fpassthru($stream);
+            fclose($stream);
+        });
+
+        try {
+            $fileSize = $this->mountManager->fileSize($document->getPath());
+            $streamedResponse->headers->set('Content-Length', (string) $fileSize);
+        } catch (FilesystemException) {
+            // Do nothing more.
+        }
+
+        $streamedResponse->headers->set('Content-Type', 'application/octet-stream');
+        $streamedResponse->headers->set('Content-Disposition', HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,
             $document->getFileName()
         ));
 
-        return $response;
-    }
-
-    private function getMountManager(): MountManager
-    {
-        return new MountManager([
-            StorageEnum::FILE_SYSTEM->value => new Filesystem($this->getFileSystemAdapter()),
-            StorageEnum::S3->value          => new Filesystem($this->getS3Adapter()),
-        ]);
+        return $streamedResponse;
     }
 
     private function getFileSystemAdapter(): LocalFilesystemAdapter
