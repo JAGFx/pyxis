@@ -6,8 +6,8 @@ namespace App\Module\Exporter\Domain\Account\Controller\Back;
 
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Module\Exporter\Domain\Account\Message\Query\ExportListAccount\ExportListAccountQuery;
-use App\Module\Exporter\Infrastructure\Document\Factory\DocumentInterface;
-use App\Module\Exporter\Infrastructure\Document\Factory\DocumentTypeEnum;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentInterface;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageSystem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,6 +37,13 @@ class AccountExporterController extends AbstractController
     )]
     public function exportList(): Response
     {
+        /*
+         * TODO:
+         *  - Async query/command
+         *  - Notification when done
+         *  - UI
+         */
+
         $exportListAccountQuery = new ExportListAccountQuery(DocumentTypeEnum::CSV, StorageEnum::S3);
 
         /** @var DocumentInterface $document */

@@ -2,7 +2,7 @@
 
 namespace App\Module\Exporter\Infrastructure\Storage;
 
-use App\Module\Exporter\Infrastructure\Document\Factory\DocumentInterface;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentInterface;
 use Aws\S3\S3Client;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\Filesystem;

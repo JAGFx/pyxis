@@ -2,6 +2,7 @@
 
 namespace App\Module\Exporter\Infrastructure\Document\Factory;
 
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 

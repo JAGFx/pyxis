@@ -3,6 +3,8 @@
 namespace App\Module\Exporter\Infrastructure\Document\Factory;
 
 use App\Module\Exporter\Infrastructure\Document\Message\Query\ExporterQueryInterface;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentInterface;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AutoconfigureTag(DocumentFactoryResolver::FACTORY_TAG)]

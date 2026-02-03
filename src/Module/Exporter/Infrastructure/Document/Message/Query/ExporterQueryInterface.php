@@ -2,7 +2,7 @@
 
 namespace App\Module\Exporter\Infrastructure\Document\Message\Query;
 
-use App\Module\Exporter\Infrastructure\Document\Factory\DocumentTypeEnum;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
 
 interface ExporterQueryInterface

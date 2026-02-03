@@ -2,8 +2,6 @@
 
 namespace App\Module\Exporter\Infrastructure\Document\Model;
 
-use App\Module\Exporter\Infrastructure\Document\Factory\DocumentInterface;
-use App\Module\Exporter\Infrastructure\Document\Factory\DocumentTypeEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
 
 readonly class Document implements DocumentInterface

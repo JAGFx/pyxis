@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Module\Exporter\Infrastructure\Document\Factory;
+namespace App\Module\Exporter\Infrastructure\Document\Model;
 
 enum DocumentTypeEnum: string
 {

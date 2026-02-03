@@ -3,7 +3,7 @@
 namespace App\Module\Exporter\Domain\Account\Message\Query\ExportListAccount;
 
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentFactoryResolver;
-use App\Module\Exporter\Infrastructure\Document\Factory\DocumentInterface;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentInterface;
 use App\Shared\Cqs\Handler\QueryHandlerInterface;
 
 /**
