@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace App\Module\Exporter\Domain\Account\Controller\Back;
 
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Module\Exporter\Domain\Account\Message\Query\ExportListAccount\ExportListAccountQuery;
-use App\Module\Exporter\Infrastructure\Document\Model\DocumentInterface;
+use App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\RequestExportAccountListCommand;
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
-use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
-use App\Module\Exporter\Infrastructure\Storage\StorageSystem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +19,6 @@ class AccountExporterController extends AbstractController
 {
     public function __construct(
         private readonly MessageBus $messageBus,
-        private readonly StorageSystem $storageSystem,
     ) {
     }
 
@@ -44,11 +40,10 @@ class AccountExporterController extends AbstractController
          *  - UI
          */
 
-        $exportListAccountQuery = new ExportListAccountQuery(DocumentTypeEnum::CSV, StorageEnum::S3);
+        $requestExportAccountListCommand = new RequestExportAccountListCommand(DocumentTypeEnum::CSV);
 
-        /** @var DocumentInterface $document */
-        $document = $this->messageBus->dispatch($exportListAccountQuery);
+        $this->messageBus->dispatch($requestExportAccountListCommand);
 
-        return $this->storageSystem->generateHttpStreamResponse($document);
+        return $this->redirectToRoute('home');
     }
 }

@@ -6,7 +6,7 @@ use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentFactoryInterface;
-use App\Module\Exporter\Infrastructure\Document\Message\Query\ExporterQueryInterface;
+use App\Module\Exporter\Infrastructure\Document\Message\Command\RequestExportCommandInterface;
 use App\Module\Exporter\Infrastructure\Document\Model\Document;
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentInterface;
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
@@ -41,7 +41,7 @@ readonly class CsvListAccountDocumentFactory implements DocumentFactoryInterface
      * @throws ExceptionInterface
      */
     #[Override]
-    public function createDocument(ExporterQueryInterface $query): DocumentInterface
+    public function createDocument(RequestExportCommandInterface $query): DocumentInterface
     {
         [$header, $records] = $this->getRawData();
 

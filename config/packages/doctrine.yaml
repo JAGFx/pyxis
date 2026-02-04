@@ -50,6 +50,11 @@ doctrine:
             dir: '%kernel.project_dir%/src/Domain/Assignment'
             prefix: 'App\Domain\Assignment\Entity'
             alias: Assignment
+          Artifact: # TODO: Use a way to auto register module's entities
+            is_bundle: false
+            dir: '%kernel.project_dir%/src/Module/Exporter/Domain/Artifact'
+            prefix: 'App\Module\Exporter\Domain\Artifact\Entity'
+            alias: Artifact
         dql:
           string_functions:
             ifnull: DoctrineExtensions\Query\Mysql\IfNull

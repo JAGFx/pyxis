@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Module\Exporter\Domain\Account\Message\Query\ExportListAccount;
+namespace App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList;
 
 use App\Domain\Account\Entity\Account;
-use App\Module\Exporter\Infrastructure\Document\Message\Query\ExporterQueryInterface;
+use App\Module\Exporter\Infrastructure\Document\Message\Command\RequestExportCommandInterface;
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
-use App\Shared\Cqs\Message\Query\QueryInterface;
+use App\Shared\Cqs\Message\Command\CommandInterface;
 
 /**
- * @see ExportListAccountHandler
+ * @see RequestExportAccountListHandler
  */
-class ExportListAccountQuery implements QueryInterface, ExporterQueryInterface
+class RequestExportAccountListCommand implements CommandInterface, RequestExportCommandInterface
 {
     public function __construct(
         private DocumentTypeEnum $documentType,
-        private StorageEnum $storage,
+        private StorageEnum $storage = StorageEnum::S3,
     ) {
     }
 
@@ -29,7 +29,7 @@ class ExportListAccountQuery implements QueryInterface, ExporterQueryInterface
         return $this->documentType;
     }
 
-    public function setDocumentType(DocumentTypeEnum $documentType): ExportListAccountQuery
+    public function setDocumentType(DocumentTypeEnum $documentType): RequestExportAccountListCommand
     {
         $this->documentType = $documentType;
 
@@ -41,7 +41,7 @@ class ExportListAccountQuery implements QueryInterface, ExporterQueryInterface
         return $this->storage;
     }
 
-    public function setStorage(StorageEnum $storage): ExportListAccountQuery
+    public function setStorage(StorageEnum $storage): RequestExportAccountListCommand
     {
         $this->storage = $storage;
 

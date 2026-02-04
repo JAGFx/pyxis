@@ -2,7 +2,7 @@
 
 namespace App\Module\Exporter\Infrastructure\Document\Factory;
 
-use App\Module\Exporter\Infrastructure\Document\Message\Query\ExporterQueryInterface;
+use App\Module\Exporter\Infrastructure\Document\Message\Command\RequestExportCommandInterface;
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentInterface;
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
@@ -12,5 +12,5 @@ interface DocumentFactoryInterface
 {
     public function support(string $targetClass, DocumentTypeEnum $documentType): bool;
 
-    public function createDocument(ExporterQueryInterface $query): DocumentInterface;
+    public function createDocument(RequestExportCommandInterface $query): DocumentInterface;
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Module\Exporter\Infrastructure\Document\Message\Query;
+namespace App\Module\Exporter\Infrastructure\Document\Message\Command;
 
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
 
-interface ExporterQueryInterface
+interface RequestExportCommandInterface
 {
     public function getTarget(): string;
 
