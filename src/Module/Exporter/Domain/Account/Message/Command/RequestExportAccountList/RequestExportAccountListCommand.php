@@ -3,6 +3,7 @@
 namespace App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList;
 
 use App\Domain\Account\Entity\Account;
+use App\Infrastructure\Cqs\Message\Command\TranslatableTrait;
 use App\Module\Exporter\Infrastructure\Document\Message\Command\RequestExportCommandInterface;
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
@@ -13,6 +14,8 @@ use App\Shared\Cqs\Message\Command\CommandInterface;
  */
 class RequestExportAccountListCommand implements CommandInterface, RequestExportCommandInterface
 {
+    use TranslatableTrait;
+
     public function __construct(
         private DocumentTypeEnum $documentType,
         private StorageEnum $storage = StorageEnum::S3,

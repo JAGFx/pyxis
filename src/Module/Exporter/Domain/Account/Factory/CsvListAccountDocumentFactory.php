@@ -51,7 +51,7 @@ readonly class CsvListAccountDocumentFactory implements DocumentFactoryInterface
 
         $content  = $csv->toString();
         $filename = sprintf('accounts_%s.csv', date('YmdHis'));
-        $path     = 'account/list/' . $filename;
+        $path     = 'exports/account/list/' . $filename;
 
         $document = new Document(
             $path,

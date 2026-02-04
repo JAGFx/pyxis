@@ -9,6 +9,8 @@ use App\Shared\Entity\HasUuidIdentifierTrait;
 use App\Shared\Entity\IntIdentifierInterface;
 use App\Shared\Entity\TimestampableTrait;
 use App\Shared\Entity\UuidIdentifierInterface;
+use DateTimeImmutable;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Table;
@@ -38,6 +40,9 @@ class Artifact implements IntIdentifierInterface, UuidIdentifierInterface
 
     #[ORM\Column(nullable: true, enumType: StorageEnum::class)]
     private ?StorageEnum $storage = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $finishedAt = null;
 
     public function __construct(string $command)
     {
@@ -100,6 +105,18 @@ class Artifact implements IntIdentifierInterface, UuidIdentifierInterface
     public function setStorage(?StorageEnum $storage): Artifact
     {
         $this->storage = $storage;
+
+        return $this;
+    }
+
+    public function getFinishedAt(): ?DateTimeImmutable
+    {
+        return $this->finishedAt;
+    }
+
+    public function setFinishedAt(?DateTimeImmutable $finishedAt): Artifact
+    {
+        $this->finishedAt = $finishedAt;
 
         return $this;
     }
