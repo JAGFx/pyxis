@@ -35,8 +35,6 @@ class AccountExporterController extends AbstractController
     {
         /*
          * TODO:
-         *  - Async query/command
-         *  - Notification when done
          *  - UI
          */
 

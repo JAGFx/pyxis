@@ -18,7 +18,7 @@ trait HasUuidIdentifierTrait
 
     public function setUuid(?Uuid $uuid): self
     {
-        if (!is_null($uuid)) {
+        if (!is_null($this->uuid)) {
             return $this;
         }
 

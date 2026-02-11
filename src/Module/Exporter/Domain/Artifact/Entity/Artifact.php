@@ -15,6 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Table;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Uid\Uuid;
 
 #[Entity(repositoryClass: ArtifactRepository::class)]
 #[Table(name: 'exporter_artifact')]
@@ -44,9 +45,11 @@ class Artifact implements IntIdentifierInterface, UuidIdentifierInterface
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $finishedAt = null;
 
-    public function __construct(string $command)
+    public function __construct(string $command, ?Uuid $uuid = null)
     {
         $this->command = $command;
+
+        $this->setUuid($uuid);
     }
 
     public function getCommand(): string

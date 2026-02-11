@@ -1,0 +1,9 @@
+{% apply inline_css %}
+    Votre demande d'export est prête. Vous pouvez télécharger votre export en cliquant sur le lien ci-dessous.
+
+    Nom: {{ exportName }}
+    Documents disponible:
+    {% for artifactUuid in artifactUuids %}
+        - <a href="{{ artifactUuid }}">{{ artifactUuid }}</a>
+    {% endfor %}
+{% endapply %}
