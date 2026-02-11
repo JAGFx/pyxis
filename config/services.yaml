@@ -43,7 +43,6 @@ services:
     resource: '../src/Module/'
     exclude:
       - '../Module/**/*Bundle.php'
-      - '../Module/**/config/'
       - '../Module/**/Domain/**/Entity/'
 
   # add more service definitions when explicit configuration is needed
