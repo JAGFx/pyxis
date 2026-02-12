@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Module\Exporter\Shared\Message\Command;
+namespace App\Module\Exporter\Shared\Cqs\Message\Command;
 
 use App\Module\Exporter\Domain\Artifact\Entity\Artifact;
 use App\Module\Exporter\Infrastructure\RequestExport\Message\Command\RequestExportCommandInterface;

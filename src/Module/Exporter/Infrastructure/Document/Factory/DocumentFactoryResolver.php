@@ -6,7 +6,7 @@ use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 
-final readonly class DocumentFactoryResolver
+readonly class DocumentFactoryResolver
 {
     public const string FACTORY_TAG = 'app.module.document_factory';
 

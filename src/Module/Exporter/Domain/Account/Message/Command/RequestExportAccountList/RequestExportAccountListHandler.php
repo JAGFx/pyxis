@@ -6,7 +6,7 @@ use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Module\Exporter\Domain\Account\Factory\CsvListAccountDocumentFactory;
 use App\Module\Exporter\Domain\Artifact\Message\Command\AttachDocumentToArtifact\AttachDocumentToArtifactCommand;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentFactoryResolver;
-use App\Module\Exporter\Shared\Message\Command\ArtifactRequestExportHandlerTrait;
+use App\Module\Exporter\Shared\Cqs\Message\Command\ArtifactRequestExportHandlerTrait;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\CannotInsertRecord;
