@@ -62,8 +62,7 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
             $artifactUuid->toRfc4122(),
             $document->getFileName(),
             $document->getPath(),
-            $command->getStorage(),
-            true
+            $command->getStorage()
         );
         $this->messageBus->dispatch($attachDocumentToArtifactCommand);
 

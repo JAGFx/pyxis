@@ -15,7 +15,6 @@ readonly class AttachDocumentToArtifactCommand implements CommandInterface
         private string $documentName,
         private string $documentPath,
         private StorageEnum $storage,
-        private bool $asLast = false,
         private ?string $parentArtifactUuid = null,
     ) {
     }
@@ -43,11 +42,6 @@ readonly class AttachDocumentToArtifactCommand implements CommandInterface
     public function getStorage(): StorageEnum
     {
         return $this->storage;
-    }
-
-    public function isAsLast(): bool
-    {
-        return $this->asLast;
     }
 
     public function getParentArtifactUuid(): ?string

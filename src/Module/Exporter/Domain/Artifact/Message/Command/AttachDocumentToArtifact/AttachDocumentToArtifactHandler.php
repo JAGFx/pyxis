@@ -33,11 +33,9 @@ readonly class AttachDocumentToArtifactHandler implements CommandHandlerInterfac
         $artifact
             ->setDocumentName($command->getDocumentName())
             ->setDocumentPath($command->getDocumentPath())
-            ->setStorage($command->getStorage());
-
-        if ($command->isAsLast()) {
-            $artifact->setFinishedAt(new DateTimeImmutable());
-        }
+            ->setStorage($command->getStorage())
+            ->setFinishedAt(new DateTimeImmutable())
+        ;
 
         if ($command->hasParent()) {
             $parentArtifact = $this->entityFinder->findByUuidIdentifierOrFail(
