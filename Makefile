@@ -44,10 +44,10 @@ init: build
 test: db\:test test\:unit test\:integration
 
 test\:unit:
-	@bin/php bin/phpunit tests/Unit
+	@bin/php bin/phpunit tests/Unit --display-all-issues
 
 test\:integration:
-	@bin/php bin/phpunit tests/Integration
+	@bin/php bin/phpunit tests/Integration --display-all-issues
 
 lint:
 	bin/php php-cs-fixer fix --using-cache=no --diff

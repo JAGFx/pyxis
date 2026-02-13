@@ -67,6 +67,7 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
         $this->messageBus->dispatch($attachDocumentToArtifactCommand);
 
         // Step 4: Notify user
+        // TODO: Move other way
         $email = new TemplatedEmail()
             ->from('Pyxis <noreplay@me.com>')
             ->to('email@me.com')
@@ -80,7 +81,5 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
             ->htmlTemplate('module/exporter/domain/artifact/email/artifact_attached_to_export_request.html.twig');
 
         $this->mailer->send($email);
-
-        // TODO: Add try-catch to remove file in storage if an error occurred on attach document
     }
 }
