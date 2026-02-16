@@ -7,6 +7,7 @@ use App\Module\Exporter\Domain\Artifact\Entity\Artifact;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 use ReflectionException;
 
 /**
@@ -32,7 +33,9 @@ readonly class AttachDocumentToArtifactHandler implements CommandHandlerInterfac
                 $command->getParentArtifactUuid()
             );
 
-        // TODO: throw an exception if the artifact is already finished (i.e. has a document attached)
+        if ($artifact->isFinished()) {
+            throw new LogicException('Unable to attach document to this artifact: Already finished.');
+        }
 
         $artifact
             ->setDocumentName($command->getDocumentName())
