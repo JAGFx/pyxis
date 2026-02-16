@@ -4,6 +4,7 @@ namespace App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccoun
 
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Module\Exporter\Domain\Account\Factory\CsvListAccountDocumentFactory;
+use App\Module\Exporter\Domain\Artifact\Mailer\ArtifactMailerDispatcher;
 use App\Module\Exporter\Domain\Artifact\Message\Command\AttachDocumentToArtifact\AttachDocumentToArtifactCommand;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentFactoryResolver;
 use App\Module\Exporter\Shared\Cqs\Message\Command\ArtifactRequestExportHandlerTrait;
@@ -11,8 +12,6 @@ use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\CannotInsertRecord;
 use League\Csv\Exception;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Uid\Uuid;
 use Throwable;
@@ -27,8 +26,8 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
     public function __construct(
         private DocumentFactoryResolver $factoryResolver,
         private MessageBus $messageBus,
-        private MailerInterface $mailer,
         private EntityManagerInterface $entityManager,
+        private ArtifactMailerDispatcher $mailerDispatcher,
     ) {
     }
 
@@ -40,7 +39,7 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
      */
     public function __invoke(RequestExportAccountListCommand $command): void
     {
-        // Step 1: Create an artifact if not already done. Its redispatched after.
+        // Step 1: Create an artifact if not already done. This command will be redispatched after.
         if (!$command->isOnExportingStage()) {
             $this->createEmptyArtifact($command);
 
@@ -67,19 +66,8 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
         $this->messageBus->dispatch($attachDocumentToArtifactCommand);
 
         // Step 4: Notify user
-        // TODO: Move other way
-        $email = new TemplatedEmail()
-            ->from('Pyxis <noreplay@me.com>')
-            ->to('email@me.com')
-            ->subject("Votre demande d'export est prête")
-            ->context([
-                'exportName'    => $command->getTranslationKey(),
-                'artifactUuids' => [
-                    $artifactUuid->toRfc4122(),
-                ],
-            ])
-            ->htmlTemplate('module/exporter/domain/artifact/email/artifact_attached_to_export_request.html.twig');
-
-        $this->mailer->send($email);
+        $this->mailerDispatcher->requestExportFinished($command, [
+            $artifactUuid->toRfc4122() => $document->getFileName(),
+        ]);
     }
 }

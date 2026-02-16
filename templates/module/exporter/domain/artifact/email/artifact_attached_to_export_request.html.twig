@@ -1,9 +1,11 @@
-{% apply inline_css %}
-    Votre demande d'export est prête. Vous pouvez télécharger votre export en cliquant sur le lien ci-dessous.
+{% trans_default_domain 'mailer' %}
 
-    Nom: {{ exportName }}
-    Documents disponible:
-    {% for artifactUuid in artifactUuids %}
-        - <a href="{{ artifactUuid }}">{{ artifactUuid }}</a>
+{% apply inline_css %}
+    {{ 'exporters.shared.request_export_finished.body.message_ready' | trans }}
+
+    {{ 'exporters.shared.request_export_finished.body.properties.name' | trans }}: {{ exportName }}
+    {{ 'exporters.shared.request_export_finished.body.properties.document_available' | trans }}:
+    {% for uuid, name in artifacts %}
+        - <a href="{{ uuid }}">{{ name }}</a>
     {% endfor %}
 {% endapply %}
