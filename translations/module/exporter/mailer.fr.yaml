@@ -6,4 +6,3 @@ exporters:
         message_ready: Votre demande d'export est prête. Vous pouvez télécharger votre export en cliquant sur le lien ci-dessous.
         properties:
           name: Nom
-          document_available: Documents disponibles

@@ -11,22 +11,23 @@ use App\Shared\Cqs\Message\Command\CommandInterface;
 readonly class AttachDocumentToArtifactCommand implements CommandInterface
 {
     public function __construct(
-        private string $artifactUuid,
+        private string $parentArtifactUuid,
+        private string $requestExportCommandName,
         private string $documentName,
         private string $documentPath,
         private StorageEnum $storage,
-        private ?string $parentArtifactUuid = null,
+        private bool $nested = false,
     ) {
     }
 
-    public function hasParent(): bool
+    public function getParentArtifactUuid(): ?string
     {
-        return !is_null($this->parentArtifactUuid);
+        return $this->parentArtifactUuid;
     }
 
-    public function getArtifactUuid(): string
+    public function getRequestExportCommandName(): string
     {
-        return $this->artifactUuid;
+        return $this->requestExportCommandName;
     }
 
     public function getDocumentName(): string
@@ -44,8 +45,8 @@ readonly class AttachDocumentToArtifactCommand implements CommandInterface
         return $this->storage;
     }
 
-    public function getParentArtifactUuid(): ?string
+    public function isNested(): bool
     {
-        return $this->parentArtifactUuid;
+        return $this->nested;
     }
 }

@@ -20,7 +20,7 @@ class AbstractRequestExportCommandTest extends TestCase
 
     public function testStageArtifactExporting(): void
     {
-        $exportCommand = new RequestExportAccountListCommand(DocumentTypeEnum::CSV)->setArtifactUuid(Uuid::v7());
+        $exportCommand = new RequestExportAccountListCommand(DocumentTypeEnum::CSV)->setParentArtifactUuid(Uuid::v7());
 
         self::assertSame(RequestExportStageEnum::EXPORTING, $exportCommand->getStage());
         self::assertTrue($exportCommand->isOnExportingStage());

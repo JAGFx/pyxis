@@ -20,7 +20,7 @@ interface RequestExportCommandInterface extends CommandInterface
 
     public function getStage(): RequestExportStageEnum;
 
-    public function getArtifactUuid(): ?Uuid;
+    public function getParentArtifactUuid(): Uuid;
 
-    public function setArtifactUuid(?Uuid $artifactUuid): self;
+    public function setParentArtifactUuid(Uuid $artifactUuid): self;
 }

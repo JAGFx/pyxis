@@ -25,10 +25,14 @@ readonly class AttachDocumentToArtifactHandler implements CommandHandlerInterfac
      */
     public function __invoke(AttachDocumentToArtifactCommand $command): void
     {
-        $artifact = $this->entityFinder->findByUuidIdentifierOrFail(
-            Artifact::class,
-            $command->getArtifactUuid()
-        );
+        $artifact = ($command->isNested())
+            ? new Artifact($command->getRequestExportCommandName())
+            : $this->entityFinder->findByUuidIdentifierOrFail(
+                Artifact::class,
+                $command->getParentArtifactUuid()
+            );
+
+        // TODO: throw an exception if the artifact is already finished (i.e. has a document attached)
 
         $artifact
             ->setDocumentName($command->getDocumentName())
@@ -37,12 +41,14 @@ readonly class AttachDocumentToArtifactHandler implements CommandHandlerInterfac
             ->setFinishedAt(new DateTimeImmutable())
         ;
 
-        if ($command->hasParent()) {
+        if ($command->isNested()) {
             $parentArtifact = $this->entityFinder->findByUuidIdentifierOrFail(
                 Artifact::class,
                 $command->getParentArtifactUuid()
             );
             $artifact->setParent($parentArtifact);
+
+            $this->entityManager->persist($artifact);
         }
 
         $this->entityManager->flush();

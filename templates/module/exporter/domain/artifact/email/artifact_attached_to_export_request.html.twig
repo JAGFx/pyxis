@@ -3,9 +3,5 @@
 {% apply inline_css %}
     {{ 'exporters.shared.request_export_finished.body.message_ready' | trans }}
 
-    {{ 'exporters.shared.request_export_finished.body.properties.name' | trans }}: {{ exportName }}
-    {{ 'exporters.shared.request_export_finished.body.properties.document_available' | trans }}:
-    {% for uuid, name in artifacts %}
-        - <a href="{{ uuid }}">{{ name }}</a>
-    {% endfor %}
+    {{ 'exporters.shared.request_export_finished.body.properties.name' | trans }}: <a href="{{ artifactUuid }}">{{ exportName }}</a>
 {% endapply %}

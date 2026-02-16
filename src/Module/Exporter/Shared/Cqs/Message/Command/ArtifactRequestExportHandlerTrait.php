@@ -15,7 +15,7 @@ trait ArtifactRequestExportHandlerTrait
      * @throws Throwable
      * @throws ExceptionInterface
      */
-    public function createEmptyArtifact(RequestExportCommandInterface $command): void
+    public function createParentEmptyArtifact(RequestExportCommandInterface $command): void
     {
         $artifactUuid = Uuid::v7();
         $artifact     = new Artifact(
@@ -26,7 +26,7 @@ trait ArtifactRequestExportHandlerTrait
         $this->entityManager->persist($artifact);
         $this->entityManager->flush();
 
-        $command->setArtifactUuid($artifactUuid);
+        $command->setParentArtifactUuid($artifactUuid);
 
         $this->messageBus->dispatch($command, [
             new DispatchAfterCurrentBusStamp(),

@@ -13,7 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\CannotInsertRecord;
 use League\Csv\Exception;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
-use Symfony\Component\Uid\Uuid;
 use Throwable;
 
 /**
@@ -41,7 +40,7 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
     {
         // Step 1: Create an artifact if not already done. This command will be redispatched after.
         if (!$command->isOnExportingStage()) {
-            $this->createEmptyArtifact($command);
+            $this->createParentEmptyArtifact($command);
 
             return;
         }
@@ -54,11 +53,11 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
         );
         $document = $factory->createDocument($command);
 
-        // Step 3: Attach a document to artifact + mark it as finished
-        /** @var Uuid $artifactUuid */
-        $artifactUuid                    = $command->getArtifactUuid();
+        // Step 3: Attach a document to an artifact
+        $parentArtifactUuid              = $command->getParentArtifactUuid();
         $attachDocumentToArtifactCommand = new AttachDocumentToArtifactCommand(
-            $artifactUuid->toRfc4122(),
+            $parentArtifactUuid->toRfc4122(),
+            $command->getTranslationKey(),
             $document->getFileName(),
             $document->getPath(),
             $command->getStorage()
@@ -66,8 +65,6 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
         $this->messageBus->dispatch($attachDocumentToArtifactCommand);
 
         // Step 4: Notify user
-        $this->mailerDispatcher->requestExportFinished($command, [
-            $artifactUuid->toRfc4122() => $document->getFileName(),
-        ]);
+        $this->mailerDispatcher->requestExportFinished($command);
     }
 }

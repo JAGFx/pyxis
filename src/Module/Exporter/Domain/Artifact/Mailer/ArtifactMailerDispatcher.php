@@ -22,11 +22,9 @@ class ArtifactMailerDispatcher
     }
 
     /**
-     * @param array<string, string> $artifacts
-     *
      * @throws TransportExceptionInterface
      */
-    public function requestExportFinished(RequestExportCommandInterface $command, array $artifacts): void
+    public function requestExportFinished(RequestExportCommandInterface $command): void
     {
         $email = $this->newAsyncMail()
             ->to('email@me.com')
@@ -34,8 +32,8 @@ class ArtifactMailerDispatcher
                 $this->translator->trans('exporters.shared.request_export_finished.subject', domain: 'mailer')
             )
             ->context([
-                'exportName' => $command->getTranslationKey(),
-                'artifacts'  => $artifacts,
+                'exportName'   => $command->getTranslationKey(),
+                'artifactUuid' => $command->getParentArtifactUuid()->toRfc4122(),
             ])
             ->htmlTemplate('module/exporter/domain/artifact/email/artifact_attached_to_export_request.html.twig');
 

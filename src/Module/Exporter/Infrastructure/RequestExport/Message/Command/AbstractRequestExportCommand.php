@@ -11,7 +11,7 @@ abstract class AbstractRequestExportCommand implements RequestExportCommandInter
 {
     protected RequestExportStageEnum $stage = RequestExportStageEnum::ARTIFACT_CREATION;
 
-    protected ?Uuid $artifactUuid = null;
+    protected Uuid $parentArtifactUuid;
 
     public function __construct(
         protected DocumentTypeEnum $documentType,
@@ -53,15 +53,15 @@ abstract class AbstractRequestExportCommand implements RequestExportCommandInter
         return $this->stage;
     }
 
-    public function getArtifactUuid(): ?Uuid
+    public function getParentArtifactUuid(): Uuid
     {
-        return $this->artifactUuid;
+        return $this->parentArtifactUuid;
     }
 
-    public function setArtifactUuid(?Uuid $artifactUuid): self
+    public function setParentArtifactUuid(Uuid $artifactUuid): self
     {
-        $this->artifactUuid = $artifactUuid;
-        $this->stage        = RequestExportStageEnum::EXPORTING;
+        $this->parentArtifactUuid = $artifactUuid;
+        $this->stage              = RequestExportStageEnum::EXPORTING;
 
         return $this;
     }
