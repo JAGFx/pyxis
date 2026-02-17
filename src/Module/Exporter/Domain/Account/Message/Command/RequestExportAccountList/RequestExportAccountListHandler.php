@@ -7,6 +7,7 @@ use App\Module\Exporter\Domain\Account\Factory\CsvListAccountDocumentFactory;
 use App\Module\Exporter\Domain\Artifact\Mailer\ArtifactMailerDispatcher;
 use App\Module\Exporter\Domain\Artifact\Message\Command\AttachDocumentToArtifact\AttachDocumentToArtifactCommand;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentFactoryResolver;
+use App\Module\Exporter\Infrastructure\Storage\StorageSystem;
 use App\Module\Exporter\Shared\Cqs\Message\Command\ArtifactRequestExportHandlerTrait;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,6 +28,7 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
         private MessageBus $messageBus,
         private EntityManagerInterface $entityManager,
         private ArtifactMailerDispatcher $mailerDispatcher,
+        private StorageSystem $storageSystem,
     ) {
     }
 
@@ -54,15 +56,21 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
         $document = $factory->createDocument($command);
 
         // Step 3: Attach a document to an artifact
-        $parentArtifactUuid              = $command->getParentArtifactUuid();
-        $attachDocumentToArtifactCommand = new AttachDocumentToArtifactCommand(
-            $parentArtifactUuid->toRfc4122(),
-            $command->getTranslationKey(),
-            $document->getFileName(),
-            $document->getPath(),
-            $command->getStorage()
-        );
-        $this->messageBus->dispatch($attachDocumentToArtifactCommand);
+        try {
+            $parentArtifactUuid              = $command->getParentArtifactUuid();
+            $attachDocumentToArtifactCommand = new AttachDocumentToArtifactCommand(
+                $parentArtifactUuid->toRfc4122(),
+                $command->getTranslationKey(),
+                $document->getFileName(),
+                $document->getPath(),
+                $command->getStorage()
+            );
+            $this->messageBus->dispatch($attachDocumentToArtifactCommand);
+        } catch (Throwable $throwable) {
+            $this->storageSystem->delete($document);
+
+            throw $throwable;
+        }
 
         // Step 4: Notify user
         $this->mailerDispatcher->requestExportFinished($command);

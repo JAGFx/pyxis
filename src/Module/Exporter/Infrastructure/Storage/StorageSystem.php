@@ -76,6 +76,14 @@ final readonly class StorageSystem
         return $this->mountManager->readStream($document->getPath());
     }
 
+    /**
+     * @throws FilesystemException
+     */
+    public function delete(DocumentInterface $document): void
+    {
+        $this->mountManager->delete($document->getPath());
+    }
+
     public function generateHttpStreamResponse(DocumentInterface $document): StreamedResponse
     {
         $streamedResponse = new StreamedResponse(function () use ($document): void {
