@@ -3,7 +3,7 @@
 namespace App\Tests\Unit\Module\Exporter\Domain\Artifact\Entity;
 
 use App\Module\Exporter\Domain\Artifact\Entity\Artifact;
-use App\Module\Exporter\Domain\Artifact\Entity\ArtifiactStatusEnum;
+use App\Module\Exporter\Domain\Artifact\Entity\ArtifactStatusEnum;
 use DateTimeImmutable;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -26,18 +26,18 @@ class ArtifactTest extends TestCase
     {
         yield 'Pending' => [
             'data'           => [],
-            'expectedStatus' => ArtifiactStatusEnum::PENDING,
+            'expectedStatus' => ArtifactStatusEnum::PENDING,
         ];
         yield 'Finished' => [
             'data' => [
                 'finishedAt' => new DateTimeImmutable(),
             ],
-            'expectedStatus' => ArtifiactStatusEnum::DONE,
+            'expectedStatus' => ArtifactStatusEnum::DONE,
         ];
     }
 
     #[DataProvider('statusGenerator')]
-    public function testStatus(array $data, ArtifiactStatusEnum $expectedStatus): void
+    public function testStatus(array $data, ArtifactStatusEnum $expectedStatus): void
     {
         $artifact = $this->generateArtifact($data);
         self::assertSame($expectedStatus, $artifact->getStatus());

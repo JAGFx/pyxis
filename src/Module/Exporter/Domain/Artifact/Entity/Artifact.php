@@ -52,18 +52,18 @@ class Artifact implements IntIdentifierInterface, UuidIdentifierInterface
         $this->setUuid($uuid);
     }
 
-    public function getStatus(): ArtifiactStatusEnum
+    public function getStatus(): ArtifactStatusEnum
     {
         if (!is_null($this->finishedAt)) {
-            return ArtifiactStatusEnum::DONE;
+            return ArtifactStatusEnum::DONE;
         }
 
-        return ArtifiactStatusEnum::PENDING;
+        return ArtifactStatusEnum::PENDING;
     }
 
     public function isFinished(): bool
     {
-        return ArtifiactStatusEnum::DONE === $this->getStatus();
+        return ArtifactStatusEnum::DONE === $this->getStatus();
     }
 
     public function getCommand(): string

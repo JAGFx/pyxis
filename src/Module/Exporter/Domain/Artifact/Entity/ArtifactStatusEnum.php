@@ -2,8 +2,9 @@
 
 namespace App\Module\Exporter\Domain\Artifact\Entity;
 
-enum ArtifiactStatusEnum: string
+enum ArtifactStatusEnum: string
 {
     case PENDING = 'pending';
     case DONE    = 'done';
+    case FAIL    = 'fail';
 }
