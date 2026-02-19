@@ -28,7 +28,7 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         self::bootKernel();
         $container   = static::getContainer();
         $application = new Application(self::$kernel);
-        $command     = $application->find('bugr:periodic-entry:apply');
+        $command     = $application->find('pyxis:periodic-entry:apply');
 
         $this->commandTester = new CommandTester($command);
         $this->entityManager = $container->get(EntityManagerInterface::class);

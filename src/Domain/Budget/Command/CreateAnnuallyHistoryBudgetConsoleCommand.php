@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 use Throwable;
 
-#[AsCommand('bugr:create_annually_history_budget')]
+#[AsCommand('pyxis:create_annually_history_budget')]
 #[AsPeriodicTask('P1Y', 'first day of january 01:00:00')]
 class CreateAnnuallyHistoryBudgetConsoleCommand extends Command
 {

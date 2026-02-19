@@ -50,4 +50,15 @@ class ArtifactRepository extends ServiceEntityRepository
 
         return $queryBuilder;
     }
+
+    /**
+     * @throws DateMalformedStringException
+     */
+    public function markAsFinishedArtifactsQueryBuilder(FindArtifactsQuery $query): QueryBuilder
+    {
+        return $this->getArtifactsQueryBuilder($query)
+            ->update()
+            ->set('a.finishedAt', ':finishedAt')
+            ->setParameter('finishedAt', new DateTimeImmutable());
+    }
 }

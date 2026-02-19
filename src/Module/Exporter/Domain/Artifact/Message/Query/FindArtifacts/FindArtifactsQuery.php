@@ -12,7 +12,7 @@ class FindArtifactsQuery implements QueryInterface
 {
     public function __construct(
         private ?ArtifactStatusEnum $status = null,
-        private ?int                $maxAgeInMinutes = null,
+        private ?int $maxAgeInMinutes = null,
     ) {
     }
 

@@ -98,4 +98,24 @@ class ArtifactRepositoryTest extends KernelTestCase
 
         self::assertCount($expectedCount, $artifacts);
     }
+
+    /**
+     * @throws DateMalformedStringException
+     */
+    public function testMarkFinished(): void
+    {
+        ArtifactFactory::new(['createdAt' => new DateTimeImmutable('2026-01-01 01:00:00')])->create();
+        ArtifactFactory::new(['createdAt' => new DateTimeImmutable('2026-01-02 01:00:00')])->create();
+
+        $query = new FindArtifactsQuery();
+        $this->repository
+            ->markAsFinishedArtifactsQueryBuilder($query)
+            ->getQuery()
+            ->execute();
+
+        $artifacts = ArtifactFactory::all();
+        foreach ($artifacts as $artifact) {
+            self::assertNotNull($artifact->getFinishedAt());
+        }
+    }
 }

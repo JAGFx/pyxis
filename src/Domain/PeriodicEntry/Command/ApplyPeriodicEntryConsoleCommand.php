@@ -19,7 +19,7 @@ use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 use Throwable;
 
-#[AsCommand('bugr:periodic-entry:apply')]
+#[AsCommand('pyxis:periodic-entry:apply')]
 #[AsPeriodicTask('P1D', '14:00:00')]
 readonly class ApplyPeriodicEntryConsoleCommand
 {
