@@ -3,6 +3,7 @@
 namespace App\Module\Exporter\Domain\Artifact\Entity;
 
 use App\Module\Exporter\Domain\Artifact\Repository\ArtifactRepository;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
 use App\Shared\Entity\HasIntIdentifierTrait;
 use App\Shared\Entity\HasUuidIdentifierTrait;
@@ -44,6 +45,9 @@ class Artifact implements IntIdentifierInterface, UuidIdentifierInterface
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $finishedAt = null;
+
+    #[ORM\Column(nullable: true, enumType: DocumentTypeEnum::class)]
+    private ?DocumentTypeEnum $documentType = null;
 
     public function __construct(string $command, ?Uuid $uuid = null)
     {
@@ -134,6 +138,18 @@ class Artifact implements IntIdentifierInterface, UuidIdentifierInterface
     public function setFinishedAt(?DateTimeImmutable $finishedAt): Artifact
     {
         $this->finishedAt = $finishedAt;
+
+        return $this;
+    }
+
+    public function getDocumentType(): ?DocumentTypeEnum
+    {
+        return $this->documentType;
+    }
+
+    public function setDocumentType(?DocumentTypeEnum $documentType): Artifact
+    {
+        $this->documentType = $documentType;
 
         return $this;
     }

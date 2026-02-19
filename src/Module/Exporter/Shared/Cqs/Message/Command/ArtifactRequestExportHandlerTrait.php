@@ -21,7 +21,7 @@ trait ArtifactRequestExportHandlerTrait
         $artifact     = new Artifact(
             $command->getTranslationKey(),
             $artifactUuid,
-        );
+        )->setDocumentType($command->getDocumentType());
 
         $this->entityManager->persist($artifact);
         $this->entityManager->flush();

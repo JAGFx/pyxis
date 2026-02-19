@@ -8,6 +8,7 @@ use App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\
 use App\Module\Exporter\Domain\Artifact\Mailer\ArtifactMailerDispatcher;
 use App\Module\Exporter\Infrastructure\Document\Factory\DocumentFactoryResolver;
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
+use App\Module\Exporter\Infrastructure\Storage\StorageSystem;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\CannotInsertRecord;
 use League\Csv\Exception;
@@ -43,7 +44,8 @@ class RequestExportAccountListHandlerTest extends TestCase
             $this->documentFactoryResolverMock,
             $this->messageBusMock,
             $this->entityManagerMock,
-            $this->artifactMailerDispatcherMock
+            $this->artifactMailerDispatcherMock,
+            $this->createMock(StorageSystem::class)
         );
     }
 

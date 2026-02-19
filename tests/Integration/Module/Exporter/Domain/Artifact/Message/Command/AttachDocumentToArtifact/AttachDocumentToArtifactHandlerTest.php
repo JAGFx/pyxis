@@ -4,6 +4,7 @@ namespace App\Tests\Integration\Module\Exporter\Domain\Artifact\Message\Command\
 
 use App\Module\Exporter\Domain\Artifact\Entity\Artifact;
 use App\Module\Exporter\Domain\Artifact\Message\Command\AttachDocumentToArtifact\AttachDocumentToArtifactCommand;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
 use App\Tests\Factory\ArtifactFactory;
 use App\Tests\Integration\Shared\CommandHandlerTestCase;
@@ -26,6 +27,7 @@ class AttachDocumentToArtifactHandlerTest extends CommandHandlerTestCase
             requestExportCommandName: 'export_command',
             documentName: $data['documentName'] ?? 'documentName',
             documentPath: $data['documentPath'] ?? 'documentPath',
+            documentType: $data['documentType'] ?? DocumentTypeEnum::CSV,
             storage: $data['storage'] ?? StorageEnum::FILE_SYSTEM,
             nested: $data['nested'] ?? false,
         );

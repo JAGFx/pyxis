@@ -2,6 +2,7 @@
 
 namespace App\Module\Exporter\Domain\Artifact\Message\Command\AttachDocumentToArtifact;
 
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 
@@ -15,6 +16,7 @@ readonly class AttachDocumentToArtifactCommand implements CommandInterface
         private string $requestExportCommandName,
         private string $documentName,
         private string $documentPath,
+        private DocumentTypeEnum $documentType,
         private StorageEnum $storage,
         private bool $nested = false,
     ) {
@@ -38,6 +40,11 @@ readonly class AttachDocumentToArtifactCommand implements CommandInterface
     public function getDocumentPath(): string
     {
         return $this->documentPath;
+    }
+
+    public function getDocumentType(): DocumentTypeEnum
+    {
+        return $this->documentType;
     }
 
     public function getStorage(): StorageEnum

@@ -31,7 +31,7 @@ class ArtifactRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('a');
 
         if (!is_null($query->getMaxAgeInMinutes())) {
-            $ageDate = $initialDate->modify("- {$query->getMaxAgeInMinutes()} minutes");
+            $ageDate = $initialDate->modify(sprintf('- %d minutes', $query->getMaxAgeInMinutes()));
 
             $queryBuilder
                 ->andWhere('a.createdAt < :createdAt')

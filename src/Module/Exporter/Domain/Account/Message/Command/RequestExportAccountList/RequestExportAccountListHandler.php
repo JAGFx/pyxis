@@ -63,6 +63,7 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
                 $command->getTranslationKey(),
                 $document->getFileName(),
                 $document->getPath(),
+                $command->getDocumentType(),
                 $command->getStorage()
             );
             $this->messageBus->dispatch($attachDocumentToArtifactCommand);

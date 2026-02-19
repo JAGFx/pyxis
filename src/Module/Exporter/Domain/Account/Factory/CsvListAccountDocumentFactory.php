@@ -41,7 +41,7 @@ readonly class CsvListAccountDocumentFactory implements DocumentFactoryInterface
      * @throws ExceptionInterface
      */
     #[Override]
-    public function createDocument(RequestExportCommandInterface $query): DocumentInterface
+    public function createDocument(RequestExportCommandInterface $command): DocumentInterface
     {
         [$header, $records] = $this->getRawData();
 
@@ -57,7 +57,7 @@ readonly class CsvListAccountDocumentFactory implements DocumentFactoryInterface
             $path,
             $filename,
             DocumentTypeEnum::CSV,
-            $query->getStorage()
+            $command->getStorage()
         );
 
         $this->storageSystem->write(

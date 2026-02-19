@@ -27,13 +27,14 @@ readonly class AttachDocumentToArtifactHandler implements CommandHandlerInterfac
     public function __invoke(AttachDocumentToArtifactCommand $command): void
     {
         $artifact = ($command->isNested())
-            ? new Artifact($command->getRequestExportCommandName())
+            ? new Artifact($command->getRequestExportCommandName())->setDocumentType($command->getDocumentType())
             : $this->entityFinder->findByUuidIdentifierOrFail(
                 Artifact::class,
                 $command->getParentArtifactUuid()
             );
 
         if ($artifact->isFinished()) {
+            // TODO: Use custom validation on business group??
             throw new LogicException('Unable to attach document to this artifact: Already finished.');
         }
 

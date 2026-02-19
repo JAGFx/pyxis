@@ -12,5 +12,5 @@ interface DocumentFactoryInterface
 {
     public function support(string $targetClass, DocumentTypeEnum $documentType): bool;
 
-    public function createDocument(RequestExportCommandInterface $query): DocumentInterface;
+    public function createDocument(RequestExportCommandInterface $command): DocumentInterface;
 }
