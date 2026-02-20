@@ -29,10 +29,7 @@ readonly class ForceFinishPendingArtifactsHandler implements CommandHandlerInter
     {
         $findArtifactsQuery = new FindArtifactsQuery(ArtifactStatusEnum::PENDING, $command->getMaxAgeInMinutes() ?? self::MAX_AGE_IN_MINUTES);
 
-        $this->artifactRepository
-            ->forceFinishPendingArtifactsQueryBuilder($findArtifactsQuery)
-            ->getQuery()
-            ->execute();
+        $this->artifactRepository->forceFinishPendingArtifacts($findArtifactsQuery);
 
         $this->entityManager->flush();
     }

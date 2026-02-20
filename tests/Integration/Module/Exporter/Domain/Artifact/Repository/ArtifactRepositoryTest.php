@@ -35,14 +35,26 @@ class ArtifactRepositoryTest extends KernelTestCase
             'status'        => ArtifactStatusEnum::DONE,
             'expectedCount' => 1,
         ];
+
+        yield 'Disabled' => [
+            'status'        => ArtifactStatusEnum::DISABLED,
+            'expectedCount' => 1,
+        ];
+
+        yield 'Failed' => [
+            'status'        => ArtifactStatusEnum::FAILED,
+            'expectedCount' => 1,
+        ];
     }
 
     #[DataProvider('statusDataset')]
     public function testArtifactStatusAreOk(ArtifactStatusEnum $status, int $expectedCount): void
     {
-        ArtifactFactory::new(['finishedAt' => null])->create();
-        ArtifactFactory::new(['finishedAt' => new DateTimeImmutable()])->create();
-        ArtifactFactory::new(['finishedAt' => null])->create();
+        ArtifactFactory::new(['finishedAt' => null,                    'disabledAt' => null])->create();                                              // Pending
+        ArtifactFactory::new(['finishedAt' => null,                    'disabledAt' => new DateTimeImmutable()])->create();                           // Pending (Invalid disabledAt)
+        ArtifactFactory::new(['finishedAt' => new DateTimeImmutable(), 'disabledAt' => null,                    'documentPath' => 'local://path/to/document'])->create(); // Done
+        ArtifactFactory::new(['finishedAt' => new DateTimeImmutable(), 'disabledAt' => new DateTimeImmutable()])->create();                           // Disabled
+        ArtifactFactory::new(['finishedAt' => new DateTimeImmutable(), 'disabledAt' => null,                    'documentPath' => null])->create();   // Failed
 
         $query = new FindArtifactsQuery($status);
         /** @var Artifact[] $artifacts */
@@ -102,20 +114,36 @@ class ArtifactRepositoryTest extends KernelTestCase
     /**
      * @throws DateMalformedStringException
      */
-    public function testMarkFinished(): void
+    public function testForceFinishPendingArtifacts(): void
     {
         ArtifactFactory::new(['createdAt' => new DateTimeImmutable('2026-01-01 01:00:00')])->create();
         ArtifactFactory::new(['createdAt' => new DateTimeImmutable('2026-01-02 01:00:00')])->create();
 
         $query = new FindArtifactsQuery();
-        $this->repository
-            ->forceFinishPendingArtifactsQueryBuilder($query)
-            ->getQuery()
-            ->execute();
+        $this->repository->forceFinishPendingArtifacts($query);
 
+        /** @var Artifact[] $artifacts */
         $artifacts = ArtifactFactory::all();
         foreach ($artifacts as $artifact) {
             self::assertNotNull($artifact->getFinishedAt());
+        }
+    }
+
+    /**
+     * @throws DateMalformedStringException
+     */
+    public function testDisableOldestArtifacts(): void
+    {
+        ArtifactFactory::new(['createdAt' => new DateTimeImmutable('2026-01-01 01:00:00'), 'finishedAt' => new DateTimeImmutable(), 'documentPath' => 'local://path/to/document'])->create();
+        ArtifactFactory::new(['createdAt' => new DateTimeImmutable('2026-01-02 01:00:00'), 'finishedAt' => new DateTimeImmutable(), 'documentPath' => 'local://path/to/document'])->create();
+
+        $query = new FindArtifactsQuery(ArtifactStatusEnum::DONE);
+        $this->repository->disableOldestArtifacts($query);
+
+        /** @var Artifact[] $artifacts */
+        $artifacts = ArtifactFactory::all();
+        foreach ($artifacts as $artifact) {
+            self::assertNotNull($artifact->getDisabledAt());
         }
     }
 }

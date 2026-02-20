@@ -19,6 +19,14 @@ class ArtifactTest extends TestCase
             $artifact->setFinishedAt($data['finishedAt']);
         }
 
+        if (isset($data['disabledAt'])) {
+            $artifact->setDisabledAt($data['disabledAt']);
+        }
+
+        if (isset($data['documentPath'])) {
+            $artifact->setDocumentPath($data['documentPath']);
+        }
+
         return $artifact;
     }
 
@@ -30,9 +38,23 @@ class ArtifactTest extends TestCase
         ];
         yield 'Finished' => [
             'data' => [
-                'finishedAt' => new DateTimeImmutable(),
+                'finishedAt'   => new DateTimeImmutable(),
+                'documentPath' => 'path/to/document',
             ],
             'expectedStatus' => ArtifactStatusEnum::DONE,
+        ];
+        yield 'Disabled' => [
+            'data' => [
+                'finishedAt' => new DateTimeImmutable(),
+                'disabledAt' => new DateTimeImmutable(),
+            ],
+            'expectedStatus' => ArtifactStatusEnum::DISABLED,
+        ];
+        yield 'Failed' => [
+            'data' => [
+                'finishedAt' => new DateTimeImmutable(),
+            ],
+            'expectedStatus' => ArtifactStatusEnum::FAILED,
         ];
     }
 

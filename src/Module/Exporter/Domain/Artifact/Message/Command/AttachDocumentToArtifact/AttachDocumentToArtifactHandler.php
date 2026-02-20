@@ -33,7 +33,7 @@ readonly class AttachDocumentToArtifactHandler implements CommandHandlerInterfac
                 $command->getParentArtifactUuid()
             );
 
-        if ($artifact->isFinished()) {
+        if (!$artifact->isPending()) {
             // TODO: Use custom validation on business group??
             throw new LogicException('Unable to attach document to this artifact: Already finished.');
         }

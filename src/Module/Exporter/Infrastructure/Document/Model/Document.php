@@ -11,11 +11,16 @@ readonly class Document implements DocumentInterface
         private string $fileName,
         private DocumentTypeEnum $type,
         private StorageEnum $storage,
+        private ?string $absolutePath = null,
     ) {
     }
 
     public function getPath(): string
     {
+        if (!is_null($this->absolutePath)) {
+            return $this->absolutePath;
+        }
+
         /* @see https://flysystem.thephpleague.com/docs/advanced/mount-manager/ */
         return $this->storage->value . '://' . $this->path;
     }

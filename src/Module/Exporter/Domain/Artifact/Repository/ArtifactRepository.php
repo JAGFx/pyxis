@@ -5,11 +5,14 @@ namespace App\Module\Exporter\Domain\Artifact\Repository;
 use App\Module\Exporter\Domain\Artifact\Entity\Artifact;
 use App\Module\Exporter\Domain\Artifact\Entity\ArtifactStatusEnum;
 use App\Module\Exporter\Domain\Artifact\Message\Query\FindArtifacts\FindArtifactsQuery;
+use App\Module\Exporter\Infrastructure\Document\Model\Document;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentInterface;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use LogicException;
 
 /**
  * @extends ServiceEntityRepository<Artifact>
@@ -40,11 +43,17 @@ class ArtifactRepository extends ServiceEntityRepository
         }
 
         switch ($query->getStatus()) {
-            case ArtifactStatusEnum::PENDING:
-                $queryBuilder->andWhere('a.finishedAt IS NULL');
+            case ArtifactStatusEnum::DISABLED:
+                $queryBuilder->andWhere('a.finishedAt IS NOT NULL AND a.disabledAt IS NOT NULL');
+                break;
+            case ArtifactStatusEnum::FAILED:
+                $queryBuilder->andWhere('a.finishedAt IS NOT NULL AND a.disabledAt IS NULL AND a.documentPath IS NULL');
                 break;
             case ArtifactStatusEnum::DONE:
-                $queryBuilder->andWhere('a.finishedAt IS NOT NULL');
+                $queryBuilder->andWhere('a.finishedAt IS NOT NULL AND a.disabledAt IS NULL AND a.documentPath IS NOT NULL');
+                break;
+            case ArtifactStatusEnum::PENDING:
+                $queryBuilder->andWhere('a.finishedAt IS NULL');
                 break;
         }
 
@@ -54,11 +63,50 @@ class ArtifactRepository extends ServiceEntityRepository
     /**
      * @throws DateMalformedStringException
      */
-    public function forceFinishPendingArtifactsQueryBuilder(FindArtifactsQuery $query): QueryBuilder
+    public function forceFinishPendingArtifacts(FindArtifactsQuery $query): void
     {
-        return $this->getArtifactsQueryBuilder($query)
+        $this->getArtifactsQueryBuilder($query)
             ->update()
             ->set('a.finishedAt', ':finishedAt')
-            ->setParameter('finishedAt', new DateTimeImmutable());
+            ->setParameter('finishedAt', new DateTimeImmutable())
+            ->getQuery()
+            ->execute()
+        ;
+    }
+
+    /**
+     * @return DocumentInterface[]
+     *
+     * @throws DateMalformedStringException
+     */
+    public function getOldestArtifactDocuments(FindArtifactsQuery $query): array
+    {
+        /** @var DocumentInterface[] $documents */
+        $documents = $this
+            ->getArtifactsQueryBuilder($query)
+            ->select(sprintf('NEW %s(a.documentPath, a.documentName, a.documentType, a.storage, a.documentPath)', Document::class))
+            ->getQuery()
+            ->getResult()
+        ;
+
+        return $documents;
+    }
+
+    /**
+     * @throws DateMalformedStringException
+     */
+    public function disableOldestArtifacts(FindArtifactsQuery $query): void
+    {
+        if (ArtifactStatusEnum::DONE !== $query->getStatus()) {
+            throw new LogicException('Only done artifacts can be disabled');
+        }
+
+        $this->getArtifactsQueryBuilder($query)
+            ->update()
+            ->set('a.disabledAt', ':disabledAt')
+            ->setParameter('disabledAt', new DateTimeImmutable())
+            ->getQuery()
+            ->execute()
+        ;
     }
 }

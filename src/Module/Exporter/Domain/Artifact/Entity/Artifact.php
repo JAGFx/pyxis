@@ -49,6 +49,9 @@ class Artifact implements IntIdentifierInterface, UuidIdentifierInterface
     #[ORM\Column(nullable: true, enumType: DocumentTypeEnum::class)]
     private ?DocumentTypeEnum $documentType = null;
 
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $disabledAt = null;
+
     public function __construct(string $command, ?Uuid $uuid = null)
     {
         $this->command = $command;
@@ -58,6 +61,14 @@ class Artifact implements IntIdentifierInterface, UuidIdentifierInterface
 
     public function getStatus(): ArtifactStatusEnum
     {
+        if (!is_null($this->disabledAt) && !is_null($this->finishedAt)) {
+            return ArtifactStatusEnum::DISABLED;
+        }
+
+        if (!is_null($this->finishedAt) && is_null($this->documentPath)) {
+            return ArtifactStatusEnum::FAILED;
+        }
+
         if (!is_null($this->finishedAt)) {
             return ArtifactStatusEnum::DONE;
         }
@@ -65,9 +76,19 @@ class Artifact implements IntIdentifierInterface, UuidIdentifierInterface
         return ArtifactStatusEnum::PENDING;
     }
 
+    public function isDisabled(): bool
+    {
+        return ArtifactStatusEnum::DISABLED === $this->getStatus();
+    }
+
     public function isFinished(): bool
     {
         return ArtifactStatusEnum::DONE === $this->getStatus();
+    }
+
+    public function isPending(): bool
+    {
+        return ArtifactStatusEnum::PENDING === $this->getStatus();
     }
 
     public function getCommand(): string
@@ -150,6 +171,18 @@ class Artifact implements IntIdentifierInterface, UuidIdentifierInterface
     public function setDocumentType(?DocumentTypeEnum $documentType): Artifact
     {
         $this->documentType = $documentType;
+
+        return $this;
+    }
+
+    public function getDisabledAt(): ?DateTimeImmutable
+    {
+        return $this->disabledAt;
+    }
+
+    public function setDisabledAt(?DateTimeImmutable $disabledAt): Artifact
+    {
+        $this->disabledAt = $disabledAt;
 
         return $this;
     }
