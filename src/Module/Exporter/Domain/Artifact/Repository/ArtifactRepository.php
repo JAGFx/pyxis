@@ -54,7 +54,7 @@ class ArtifactRepository extends ServiceEntityRepository
     /**
      * @throws DateMalformedStringException
      */
-    public function markAsFinishedArtifactsQueryBuilder(FindArtifactsQuery $query): QueryBuilder
+    public function forceFinishPendingArtifactsQueryBuilder(FindArtifactsQuery $query): QueryBuilder
     {
         return $this->getArtifactsQueryBuilder($query)
             ->update()

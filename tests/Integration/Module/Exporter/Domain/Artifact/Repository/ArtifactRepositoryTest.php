@@ -109,7 +109,7 @@ class ArtifactRepositoryTest extends KernelTestCase
 
         $query = new FindArtifactsQuery();
         $this->repository
-            ->markAsFinishedArtifactsQueryBuilder($query)
+            ->forceFinishPendingArtifactsQueryBuilder($query)
             ->getQuery()
             ->execute();
 

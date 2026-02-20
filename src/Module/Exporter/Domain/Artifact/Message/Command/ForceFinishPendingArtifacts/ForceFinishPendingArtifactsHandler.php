@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Module\Exporter\Domain\Artifact\Message\Command\MarkAsErrorAllBlockedArtifact;
+namespace App\Module\Exporter\Domain\Artifact\Message\Command\ForceFinishPendingArtifacts;
 
 use App\Module\Exporter\Domain\Artifact\Entity\ArtifactStatusEnum;
 use App\Module\Exporter\Domain\Artifact\Message\Query\FindArtifacts\FindArtifactsQuery;
@@ -10,9 +10,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Throwable;
 
 /**
- * @see MarkAsErrorAllBlockedArtifactCommand
+ * @see ForceFinishPendingArtifactsCommand
  */
-readonly class MarkAsErrorAllBlockedArtifactHandler implements CommandHandlerInterface
+readonly class ForceFinishPendingArtifactsHandler implements CommandHandlerInterface
 {
     private const int MAX_AGE_IN_MINUTES = 60 * 24; // 1 day
 
@@ -25,12 +25,12 @@ readonly class MarkAsErrorAllBlockedArtifactHandler implements CommandHandlerInt
     /**
      * @throws Throwable
      */
-    public function __invoke(MarkAsErrorAllBlockedArtifactCommand $command): void
+    public function __invoke(ForceFinishPendingArtifactsCommand $command): void
     {
         $findArtifactsQuery = new FindArtifactsQuery(ArtifactStatusEnum::PENDING, $command->getMaxAgeInMinutes() ?? self::MAX_AGE_IN_MINUTES);
 
         $this->artifactRepository
-            ->markAsFinishedArtifactsQueryBuilder($findArtifactsQuery)
+            ->forceFinishPendingArtifactsQueryBuilder($findArtifactsQuery)
             ->getQuery()
             ->execute();
 

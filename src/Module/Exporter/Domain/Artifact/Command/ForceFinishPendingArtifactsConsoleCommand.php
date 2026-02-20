@@ -3,7 +3,7 @@
 namespace App\Module\Exporter\Domain\Artifact\Command;
 
 use App\Infrastructure\Cqs\Bus\MessageBus;
-use App\Module\Exporter\Domain\Artifact\Message\Command\MarkAsErrorAllBlockedArtifact\MarkAsErrorAllBlockedArtifactCommand;
+use App\Module\Exporter\Domain\Artifact\Message\Command\ForceFinishPendingArtifacts\ForceFinishPendingArtifactsCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
@@ -13,10 +13,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 use Throwable;
 
-#[AsCommand('pyxis:exporter:artifact:mark-as-error-all-blocked')]
+#[AsCommand('pyxis:exporter:artifact:force-finish-pending')]
 #[AsPeriodicTask('P1D', '01:00:00')]
-// TODO: Rename
-class MarkAsErrorAllBlockedArtifactConsoleCommand
+class ForceFinishPendingArtifactsConsoleCommand
 {
     public function __construct(
         private readonly MessageBus $messageBus,
@@ -35,11 +34,11 @@ class MarkAsErrorAllBlockedArtifactConsoleCommand
         $symfonyStyle = new SymfonyStyle($input, $output);
 
         try {
-            $markAsErrorAllBlockedArtifactCommand = new MarkAsErrorAllBlockedArtifactCommand($maxAgeInMinutes);
+            $forceFinishPendingArtifactsCommand = new ForceFinishPendingArtifactsCommand($maxAgeInMinutes);
 
-            $this->messageBus->dispatch($markAsErrorAllBlockedArtifactCommand);
+            $this->messageBus->dispatch($forceFinishPendingArtifactsCommand);
 
-            $symfonyStyle->success('All blocked artifacts have been marked as error successfully.');
+            $symfonyStyle->success('All pending artifacts that are blocked for more than the specified age have been marked as finished.');
 
             return Command::SUCCESS;
         } catch (Throwable $throwable) {

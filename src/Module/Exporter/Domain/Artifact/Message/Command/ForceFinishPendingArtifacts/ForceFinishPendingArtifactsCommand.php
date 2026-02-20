@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Module\Exporter\Domain\Artifact\Message\Command\MarkAsErrorAllBlockedArtifact;
+namespace App\Module\Exporter\Domain\Artifact\Message\Command\ForceFinishPendingArtifacts;
 
 use App\Shared\Cqs\Message\Command\CommandInterface;
 
 /**
  * @see MarkAsErrorBlockedArtifactHandler
  */
-readonly class MarkAsErrorAllBlockedArtifactCommand implements CommandInterface
+readonly class ForceFinishPendingArtifactsCommand implements CommandInterface
 {
     public function __construct(
         private ?int $maxAgeInMinutes = null,
