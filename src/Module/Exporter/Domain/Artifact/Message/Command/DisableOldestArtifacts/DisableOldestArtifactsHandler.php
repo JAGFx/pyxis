@@ -41,7 +41,7 @@ readonly class DisableOldestArtifactsHandler implements CommandHandlerInterface
             } catch (FilesystemException $exception) {
                 $this->logger->error('[DisableOldestArtifactsHandler] Unable to delete artifact document', [
                     'documentPath' => $oldestArtifactDocument->getPath(),
-                    'error' => $exception->getMessage()
+                    'error'        => $exception->getMessage(),
                 ]);
             }
         }

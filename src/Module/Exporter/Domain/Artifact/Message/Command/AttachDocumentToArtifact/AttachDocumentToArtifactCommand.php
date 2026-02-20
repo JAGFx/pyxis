@@ -2,6 +2,8 @@
 
 namespace App\Module\Exporter\Domain\Artifact\Message\Command\AttachDocumentToArtifact;
 
+use App\Infrastructure\Cqs\Validation\ValidationGroupEnum;
+use App\Module\Exporter\Domain\Artifact\Validator\ArtifactMustBePending;
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use App\Module\Exporter\Infrastructure\Storage\StorageEnum;
 use App\Shared\Cqs\Message\Command\CommandInterface;
@@ -12,6 +14,7 @@ use App\Shared\Cqs\Message\Command\CommandInterface;
 readonly class AttachDocumentToArtifactCommand implements CommandInterface
 {
     public function __construct(
+        #[ArtifactMustBePending(groups: [ValidationGroupEnum::Business->value])]
         private string $parentArtifactUuid,
         private string $requestExportCommandName,
         private string $documentName,

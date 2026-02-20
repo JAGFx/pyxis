@@ -7,7 +7,6 @@ use App\Module\Exporter\Domain\Artifact\Entity\Artifact;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
-use LogicException;
 use ReflectionException;
 
 /**
@@ -32,11 +31,6 @@ readonly class AttachDocumentToArtifactHandler implements CommandHandlerInterfac
                 Artifact::class,
                 $command->getParentArtifactUuid()
             );
-
-        if (!$artifact->isPending()) {
-            // TODO: Use custom validation on business group??
-            throw new LogicException('Unable to attach document to this artifact: Already finished.');
-        }
 
         $artifact
             ->setDocumentName($command->getDocumentName())

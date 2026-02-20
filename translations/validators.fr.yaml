@@ -6,3 +6,8 @@ entry:
   create_or_update:
     has_enough_amount_assignment: |
      Le montant de l'affectation doit être inférieur ou égal au montant restant de l'affectation : %assignmentAmount%.
+
+assignment:
+  create_or_update:
+    has_enough_amount: |
+      Ce montant doit être inférieur ou égale la valeur totale du compte (%total% €)

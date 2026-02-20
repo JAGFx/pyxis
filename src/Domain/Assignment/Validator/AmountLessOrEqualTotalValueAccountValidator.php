@@ -38,11 +38,10 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
         /** @var AmountBalance $amountBalance */
         $amountBalance = reset($amountBalances);
 
-        // TODO: Add test for it
         if ($value->getAmount() > $amountBalance->getTotal()) {
             $this->context
                 ->buildViolation($constraint->message)
-                ->setParameter('{{ total }}', number_format($amountBalance->getTotal(), 2, ',', ' '))
+                ->setParameter('%total%', number_format($amountBalance->getTotal(), 2, ',', ' '))
                 ->setInvalidValue($value->getAmount())
                 ->atPath('amount')
                 ->addViolation();

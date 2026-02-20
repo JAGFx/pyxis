@@ -1,0 +1,3 @@
+exporter:
+  artifact:
+    must_be_pending: "L'artefact doit être en attente."

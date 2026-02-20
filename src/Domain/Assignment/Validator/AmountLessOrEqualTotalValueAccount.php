@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraint;
 #[Attribute]
 class AmountLessOrEqualTotalValueAccount extends Constraint
 {
-    public string $message = 'Ce montant doit être inférieur ou égale la valeur totale du compte ({{ total }}€)';
+    public string $message = 'assignment.create_or_update.has_enough_amount';
 
     public function __construct(?array $groups = null)
     {
