@@ -46,7 +46,6 @@ readonly class ApplyBudgetAccountBalanceHandler implements CommandHandlerInterfa
                 flags: [EntryFlagEnum::BALANCE],
             );
 
-            // TODO: Add flushable props
             $this->messageBus->dispatch($spentCommand);
             $this->messageBus->dispatch($forecastCommand);
 
