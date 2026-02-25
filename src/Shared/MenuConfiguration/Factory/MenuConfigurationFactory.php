@@ -21,10 +21,11 @@ final readonly class MenuConfigurationFactory
         );
     }
 
-    private function generateCreateUrl(MenuConfigurationEntityEnum $target): string
+    private function generateCreateUrl(MenuConfigurationEntityEnum $target): ?string
     {
         return match ($target) {
             MenuConfigurationEntityEnum::ACCOUNT        => $this->urlGenerator->generate('back_account_new'),
+            MenuConfigurationEntityEnum::ARTIFACT       => null,
             MenuConfigurationEntityEnum::ASSIGNMENT     => $this->urlGenerator->generate('back_assignment_create'),
             MenuConfigurationEntityEnum::BUDGET         => $this->urlGenerator->generate('back_budget_create'),
             MenuConfigurationEntityEnum::PERIODIC_ENTRY => $this->urlGenerator->generate('back_periodic_entry_create'),
@@ -36,6 +37,7 @@ final readonly class MenuConfigurationFactory
     {
         return match ($target) {
             MenuConfigurationEntityEnum::ACCOUNT,
+            MenuConfigurationEntityEnum::ARTIFACT,
             MenuConfigurationEntityEnum::ASSIGNMENT,
             MenuConfigurationEntityEnum::BUDGET,
             MenuConfigurationEntityEnum::PERIODIC_ENTRY,

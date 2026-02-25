@@ -12,3 +12,6 @@ exporter:
       DONE: Terminé
       FAILED: Échoué
       DISABLED: Désactivé
+    document_type:
+      CSV: CSV
+      PDF: PDF

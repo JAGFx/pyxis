@@ -1,0 +1,11 @@
+exporter:
+  artifact:
+    search:
+      status:
+        label: Statut
+      documentType:
+        label: Type de document
+      startDate:
+        label: Du
+      endDate:
+        label: Au

@@ -7,10 +7,12 @@ use App\Domain\Assignment\Form\AssignmentSearchType;
 use App\Domain\Budget\Form\BudgetSearchType;
 use App\Domain\Entry\Form\EntrySearchType;
 use App\Domain\PeriodicEntry\Form\PeriodicEntrySearchType;
+use App\Module\Exporter\Domain\Artifact\Form\ArtifactSearchType;
 
 enum MenuConfigurationEntityEnum: string
 {
     case ACCOUNT        = 'account';
+    case ARTIFACT       = 'artifact';
     case ASSIGNMENT     = 'assignment';
     case BUDGET         = 'budget';
     case PERIODIC_ENTRY = 'periodic_entry';
@@ -20,6 +22,7 @@ enum MenuConfigurationEntityEnum: string
     {
         return match ($this) {
             self::ACCOUNT        => AccountSearchType::class,
+            self::ARTIFACT       => ArtifactSearchType::class,
             self::ASSIGNMENT     => AssignmentSearchType::class,
             self::BUDGET         => BudgetSearchType::class,
             self::PERIODIC_ENTRY => PeriodicEntrySearchType::class,
@@ -31,6 +34,7 @@ enum MenuConfigurationEntityEnum: string
     {
         return match ($this) {
             self::ACCOUNT        => 'AccountSearchForm',
+            self::ARTIFACT       => 'ArtifactSearchForm',
             self::ASSIGNMENT     => 'AssigmentSearchForm',
             self::BUDGET         => 'BudgetSearchForm',
             self::PERIODIC_ENTRY => 'PeriodicEntrySearchForm',

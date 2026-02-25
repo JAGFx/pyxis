@@ -9,6 +9,8 @@ use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Module\Exporter\Domain\Artifact\Form\ArtifactSearchType;
 use App\Module\Exporter\Domain\Artifact\Message\Query\FindArtifacts\FindArtifactsQuery;
+use App\Shared\MenuConfiguration\Enum\MenuConfigurationEntityEnum;
+use App\Shared\MenuConfiguration\Factory\MenuConfigurationFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +25,7 @@ class ArtifactController extends AbstractController
 
     public function __construct(
         private readonly MessageBus $messageBus,
+        private readonly MenuConfigurationFactory $menuConfigurationFactory,
     ) {
     }
 
@@ -39,12 +42,14 @@ class ArtifactController extends AbstractController
     {
         $searchQuery = new FindArtifactsQuery()
             ->setOrderBy('createdAt')
-            ->setOrderDirection(OrderEnum::DESC);
+            ->setOrderDirection(OrderEnum::DESC)
+        ;
 
         $this->handlePaginationForm($request, ArtifactSearchType::class, $searchQuery);
 
         return $this->render('module/exporter/domain/artifact/index.html.twig', [
             'artifacts' => $this->messageBus->dispatch($searchQuery),
+            'config'    => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::ARTIFACT),
         ]);
     }
 }

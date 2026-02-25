@@ -9,7 +9,9 @@ use App\Infrastructure\KnpPaginator\DTO\OrderableTrait;
 use App\Infrastructure\KnpPaginator\DTO\PaginableTrait;
 use App\Infrastructure\KnpPaginator\DTO\PaginationInterface;
 use App\Module\Exporter\Domain\Artifact\Entity\ArtifactStatusEnum;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use App\Shared\Cqs\Message\Query\QueryInterface;
+use DateTimeImmutable;
 
 /**
  * @see FindArtifactsHandler
@@ -22,6 +24,9 @@ class FindArtifactsQuery implements OrderableInterface, PaginationInterface, Que
     public function __construct(
         private ?ArtifactStatusEnum $status = null,
         private ?int $maxAgeInMinutes = null,
+        private ?DocumentTypeEnum $documentType = null,
+        private ?DateTimeImmutable $startDate = null,
+        private ?DateTimeImmutable $endDate = null,
     ) {
     }
 
@@ -45,6 +50,42 @@ class FindArtifactsQuery implements OrderableInterface, PaginationInterface, Que
     public function setMaxAgeInMinutes(?int $maxAgeInMinutes): FindArtifactsQuery
     {
         $this->maxAgeInMinutes = $maxAgeInMinutes;
+
+        return $this;
+    }
+
+    public function getDocumentType(): ?DocumentTypeEnum
+    {
+        return $this->documentType;
+    }
+
+    public function setDocumentType(?DocumentTypeEnum $documentType): FindArtifactsQuery
+    {
+        $this->documentType = $documentType;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?DateTimeImmutable
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?DateTimeImmutable $startDate): FindArtifactsQuery
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    public function getEndDate(): ?DateTimeImmutable
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?DateTimeImmutable $endDate): FindArtifactsQuery
+    {
+        $this->endDate = $endDate;
 
         return $this;
     }

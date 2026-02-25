@@ -8,3 +8,5 @@ twig_component:
         App\Domain\Entry\Twig\Components\: 'domain/entry/components/'
 
         App\Shared\Twig\Components\: 'shared/components/'
+
+        App\Module\Exporter\Domain\Artifact\Twig\Components\: 'module/exporter/domain/artifact/components'

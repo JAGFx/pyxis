@@ -7,6 +7,7 @@ use App\Module\Exporter\Domain\Artifact\Entity\ArtifactStatusEnum;
 use App\Module\Exporter\Domain\Artifact\Message\Query\FindArtifacts\FindArtifactsQuery;
 use App\Module\Exporter\Infrastructure\Document\Model\Document;
 use App\Module\Exporter\Infrastructure\Document\Model\DocumentInterface;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -55,6 +56,27 @@ class ArtifactRepository extends ServiceEntityRepository
             case ArtifactStatusEnum::PENDING:
                 $queryBuilder->andWhere('a.finishedAt IS NULL');
                 break;
+        }
+
+        if ($query->getDocumentType() instanceof DocumentTypeEnum) {
+            $queryBuilder
+                ->andWhere('a.documentType = :documentType')
+                ->setParameter('documentType', $query->getDocumentType())
+            ;
+        }
+
+        if ($query->getStartDate() instanceof DateTimeImmutable) {
+            $queryBuilder
+                ->andWhere('a.createdAt >= :startDate')
+                ->setParameter('startDate', $query->getStartDate()->format('Y-m-d'))
+            ;
+        }
+
+        if ($query->getEndDate() instanceof DateTimeImmutable) {
+            $queryBuilder
+                ->andWhere('a.createdAt <= :endDate')
+                ->setParameter('endDate', $query->getEndDate()->setTime(23, 59, 59))
+            ;
         }
 
         if ('createdAt' === $query->getOrderBy()) {
