@@ -67,6 +67,10 @@ class RequestExportAccountListHandlerTest extends TestCase
 
         $this->messageBusMock
             ->expects($this->once())
+            ->method('dispatchChained');
+
+        $this->messageBusMock
+            ->expects($this->never())
             ->method('dispatch');
 
         $this->documentFactoryResolverMock
@@ -103,6 +107,10 @@ class RequestExportAccountListHandlerTest extends TestCase
         $this->messageBusMock
             ->expects($this->once())
             ->method('dispatch');
+
+        $this->messageBusMock
+            ->expects($this->never())
+            ->method('dispatchChained');
 
         $this->documentFactoryResolverMock
             ->expects($this->once())

@@ -5,7 +5,6 @@ namespace App\Module\Exporter\Shared\Cqs\Message\Command;
 use App\Module\Exporter\Domain\Artifact\Entity\Artifact;
 use App\Module\Exporter\Infrastructure\RequestExport\Message\Command\RequestExportCommandInterface;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
-use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Component\Uid\Uuid;
 use Throwable;
 
@@ -28,8 +27,6 @@ trait ArtifactRequestExportHandlerTrait
 
         $command->setParentArtifactUuid($artifactUuid);
 
-        $this->messageBus->dispatch($command, [
-            new DispatchAfterCurrentBusStamp(),
-        ]);
+        $this->messageBus->dispatchChained($command);
     }
 }

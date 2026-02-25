@@ -11,6 +11,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Messenger\Stamp\StampInterface;
 use Symfony\Component\Messenger\Stamp\ValidationStamp;
@@ -22,6 +23,19 @@ readonly class MessageBus
         private MessageBusInterface $commandBus,
         private MessageBusInterface $queryBus,
     ) {
+    }
+
+    /**
+     * @throws Throwable
+     * @throws ExceptionInterface
+     */
+    public function dispatchChained(CommandInterface|QueryInterface $command): mixed
+    {
+        $chainedStamp = [
+            new DispatchAfterCurrentBusStamp(),
+        ];
+
+        return $this->dispatch($command, $chainedStamp);
     }
 
     /**
