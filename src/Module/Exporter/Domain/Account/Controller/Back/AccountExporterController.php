@@ -28,20 +28,15 @@ class AccountExporterController extends AbstractController
      */
     #[Route(
         '/accounts/list',
-        name: 'back_export_list_accounts',
+        name: 'back_exporter_list_accounts',
         methods: Request::METHOD_GET
     )]
     public function exportList(): Response
     {
-        /*
-         * TODO:
-         *  - UI
-         */
-
         $requestExportAccountListCommand = new RequestExportAccountListCommand(DocumentTypeEnum::CSV);
 
         $this->messageBus->dispatch($requestExportAccountListCommand);
 
-        return $this->redirectToRoute('home');
+        return $this->redirectToRoute('back_exporter_list_artifacts');
     }
 }

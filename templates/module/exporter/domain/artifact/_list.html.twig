@@ -1,0 +1,15 @@
+<twig:PageTitle :icon="icons.export" label="{{ 'exporter.artifact.title' | trans }}" />
+
+<twig:List:List>
+    {% for artifact in artifacts %}
+        {% include 'module/exporter/domain/artifact/_item.html.twig' %}
+    {% else %}
+        <twig:List:Item>
+            <div class="text-center">{{ 'no_data' | trans(domain: 'interface') }}</div>
+        </twig:List:Item>
+    {% endfor %}
+
+    <div class="mt-4 flex justify-center items-center">
+        {{ knp_pagination_render(artifacts) }}
+    </div>
+</twig:List:List>

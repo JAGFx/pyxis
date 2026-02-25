@@ -9,6 +9,7 @@
             'primary': 'text-primary',
             'secondary': 'text-secondary',
             'default': 'text-muted',
+            'black': 'text-black',
         },
     },
     'defaultVariants': {
@@ -20,7 +21,7 @@
 
 <twig:Tooltip title="{{ label }}" class="inline-flex" placement="top">
     <small class="{{ entityValueItemCva.apply({color}) }}">
-        <i class="{{ icon }}"></i>
+        {% if icon is not empty %}<i class="{{ icon }}"></i>{% endif %}
         <span class="leading-3.5">{{ content | raw }}</span>
     </small>
 </twig:Tooltip>

@@ -73,5 +73,10 @@
             :icon="icons.assignment"
             label="{{ 'menu.main.assignments' | trans(domain: 'navigation') }}"
         />
+        <twig:Overlay:GridActionButton
+            actionUrl="{{ path('back_exporter_list_artifacts') }}"
+            :icon="icons.export"
+            label="{{ 'menu.main.export' | trans(domain: 'navigation') }}"
+        />
     </div>
 </twig:Overlay:Overlay>

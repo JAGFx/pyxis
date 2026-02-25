@@ -17,6 +17,8 @@
 
 **Query DTO**: `readonly class FindFooQuery implements QueryInterface` — optional params only.
 
+**Query DTO (pageable/sortable)**: Add `use OrderableTrait; use PaginableTrait;` and implement `OrderableInterface` on Query DTOs that must support pagination and sorting. The handler then injects `PaginatorInterface` and returns `PaginationInterface<int, Entity>`.
+
 **QueryHandler**: `readonly class FooHandler implements QueryHandlerInterface` — single `__invoke(FooQuery $c): void`, inject `EntityManagerInterface` + repos.
 
 ### Validation groups
@@ -28,12 +30,15 @@
 
 ## CRITICAL: Code Style
 
-- `declare(strict_types=1);` everywhere · PSR-12 · PHP 8.4 features · English only
+- **English only** — all code, comments, docblocks, commit messages, and documentation (including this file) must be written in English.
+- `declare(strict_types=1);` everywhere · PSR-12 · PHP 8.4 features
 - Constructor promotion + `readonly` always · Early return / guard clauses
 - Explicit types · `??` and `?->` · PHPDoc only when inference is insufficient
 - Imports: global namespace, alphabetically sorted, no function imports
 - Doctrine queries: always via repository · `use Doctrine\ORM\Mapping as ORM`
 - Throw specific exceptions · `Throwable` catch-all only in controllers
+
+**Enums**: For translatable enum values, always add a `label(): string` method returning a translation key based on `$this->name` (e.g. `'prefix.' . $this->name`). See `EntryTypeEnum::label()` (`src/Domain/Entry/Entity/EntryTypeEnum.php`) as reference.
 
 ### Naming
 
@@ -114,7 +119,17 @@ src/
 │       ├── Storage/           # StorageEnum (FILE_SYSTEM='local', S3='s3')
 │       └── RequestExport/     # AbstractRequestExportCommand
 └── Shared/
+
+translations/
+├── messages.fr.yaml         # global translations
+├── module/
+│   └── {module}/            # module-scoped translations (same file naming)
+│       ├── messages.fr.yaml
+│       ├── document.fr.yaml
+│       └── ...
 ```
+
+**Module translations**: Module-specific translations must live under `translations/module/{module}/`, using standard file naming conventions (`messages.fr.yaml`, `validators.fr.yaml`, etc.).
 
 ---
 

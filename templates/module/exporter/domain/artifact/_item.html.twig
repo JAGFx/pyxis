@@ -1,0 +1,28 @@
+<twig:List:Item>
+    <div class="flex justify-between items-start">
+        <span>{{ ('exporter.request_export.' ~ artifact.command) | trans }}</span>
+        <twig:Tooltip title="{{ 'exporter.artifact.list.createdAt' | trans }}" placement="left" class="flex-none">
+            <small class="text-muted">{{ artifact.createdAt | format_datetime(timeFormat='short', locale=app.request.locale) }}</small>
+        </twig:Tooltip>
+    </div>
+
+    <twig:block name="detail">
+        <div class="flex justify-start items-center space-x-2 mb-1">
+            {% if artifact.isFinished %}
+                {% set statusLabel =  artifact.finishedAt | format_datetime(timeFormat='short', locale=app.request.locale) %}
+            {% elseif artifact.isDisabled %}
+                {% set statusLabel =  artifact.disabledAt | format_datetime(timeFormat='short', locale=app.request.locale) %}
+            {% else %}
+                {% set statusLabel =  artifact.status.label() %}
+            {% endif %}
+            <twig:List:EntityValueItem label="{{ statusLabel | trans }}" :color="artifact.status.color">
+                {{ artifact.status.label() | trans  }}
+            </twig:List:EntityValueItem>
+            {% if artifact.documentType %}
+                <twig:List:EntityValueItem label="{{ 'exporter.artifact.list.type' | trans }}" color="default">
+                    {{ artifact.documentType.value | upper }}
+                </twig:List:EntityValueItem>
+            {% endif %}
+        </div>
+    </twig:block>
+</twig:List:Item>

@@ -29,6 +29,8 @@ class AnonymousSmokeTest extends WebTestCase
         yield ['/entries/balance'];
         yield ['/periodic_entries'];
         yield ['/periodic_entries/create'];
+        yield ['/exporter/requests'];
+        yield ['/exporter/requests?page=2'];
     }
 
     #[DataProvider('routesDatasets')]

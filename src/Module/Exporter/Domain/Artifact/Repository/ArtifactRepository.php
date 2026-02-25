@@ -57,6 +57,10 @@ class ArtifactRepository extends ServiceEntityRepository
                 break;
         }
 
+        if ('createdAt' === $query->getOrderBy()) {
+            $queryBuilder->orderBy('a.createdAt', $query->getOrderDirection()->value);
+        }
+
         return $queryBuilder;
     }
 

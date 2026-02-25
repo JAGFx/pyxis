@@ -1,0 +1,14 @@
+exporter:
+  request_export:
+    request_export_account_list_command: Liste des comptes
+  artifact:
+    title: Exports
+    list:
+      createdAt: Date de la demande
+      status: Statut
+      type: Type d'export
+    status:
+      PENDING: En cours
+      DONE: Terminé
+      FAILED: Échoué
+      DISABLED: Désactivé
