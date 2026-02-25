@@ -29,6 +29,13 @@
 
 **QueryHandler**: `readonly class FooHandler implements QueryHandlerInterface` — single `__invoke(FooQuery $c): void`, inject `EntityManagerInterface` + repos.
 
+**Live Component search form + Turbo Stream**:
+1. **Live Component** — `src/.../Twig/Components/FooSearchForm.php`, extends `AbstractController`, uses `#[AsLiveComponent(template: '...')]` + `ComponentWithFormTrait` + `DefaultActionTrait`. `instantiateForm()` creates the form with `action` pointing to the Turbo search route.
+2. **twig_component.yaml** — register each new module namespace: `App\...\Twig\Components\: 'module/.../components'`.
+3. **Front search controller** — POST route, uses `TurboResponseTrait`; calls `createForm()->handleRequest($request)` manually (NOT `handlePaginationForm`); returns `renderTurboStream()` with a `*.turbo.stream.html.twig` template.
+4. **Turbo Stream template** — extends `shared/turbo/_stream.html.twig`; `<turbo-stream action="update" target="main_body">` includes the `_list.html.twig` partial.
+5. **Live Component template** — wraps with `<div {{ attributes }}>`, sets `data-turbo: true` on the form, includes `shared/menu/_search_form_button_actions.html.twig` for submit/reset buttons.
+
 ### Validation groups
 
 | Group | When | Tools |
@@ -48,6 +55,8 @@
 
 **Enums**: For translatable enum values, always add a `label(): string` method returning a translation key based on `$this->name` (e.g. `'prefix.' . $this->name`). See `EntryTypeEnum::label()` (`src/Domain/Entry/Entity/EntryTypeEnum.php`) as reference.
 
+**EnumType form fields**: Always set `'choice_label' => 'label'` + `'choice_translation_domain' => 'messages'` for enums that have a `label()` method. Optional filter fields use `'required' => false` + `'placeholder' => 'shared.default.placeholders.all'`.
+
 ### Naming
 
 | Symbol | Convention |
@@ -57,6 +66,7 @@
 | Constant | UPPER_CASE |
 | Enum case | PascalCase |
 | File / Directory | Match class name / PascalCase |
+| Controller | Always split into `Controller/Back/` (admin) and `Controller/Front/` (user-facing) |
 
 ---
 
@@ -137,7 +147,7 @@ translations/
 │       └── ...
 ```
 
-**Module translations**: Module-specific translations must live under `translations/module/{module}/`, using standard file naming conventions (`messages.fr.yaml`, `validators.fr.yaml`, etc.).
+**Module translations**: Module-specific translations must live under `translations/module/{module}/`, using standard file naming conventions (`messages.fr.yaml`, `validators.fr.yaml`, `forms.fr.yaml`, etc.).
 
 ---
 
