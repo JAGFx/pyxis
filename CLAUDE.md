@@ -17,7 +17,15 @@
 
 **Query DTO**: `readonly class FindFooQuery implements QueryInterface` — optional params only.
 
-**Query DTO (pageable/sortable)**: Add `use OrderableTrait; use PaginableTrait;` and implement `OrderableInterface` on Query DTOs that must support pagination and sorting. The handler then injects `PaginatorInterface` and returns `PaginationInterface<int, Entity>`.
+**Query DTO (pageable/sortable)**: Add `use OrderableTrait; use PaginableTrait;` and implement `OrderableInterface, PaginationInterface` on Query DTOs that must support pagination and sorting. The handler then injects `PaginatorInterface` and returns `PaginationInterface<int, Entity>`.
+
+**Paginated list controller**:
+1. **Query DTO** — implements `OrderableInterface, PaginationInterface`, uses `OrderableTrait, PaginableTrait`. Constructor sets optional filter params; set default sort in controller.
+2. **Handler** — injects `PaginatorInterface`, calls `$this->paginator->paginate($repo->getQueryBuilder($query), $query->getPage(), $query->getPageSize())`, returns `PaginationInterface<int, Entity>`.
+3. **Repository** — `getQueryBuilder(FindFooQuery $q)` applies filters + `orderBy($q->getOrderBy(), $q->getOrderDirection()->value)`, returns `QueryBuilder`.
+4. **Form type** — `data_class = FindFooQuery`, calls `PaginationBuilder::buildForm($builder)` (no extra fields unless filters needed).
+5. **Controller** — uses `PaginationFormHandlerTrait`; creates Query DTO with defaults (`->setOrderBy('field')->setOrderDirection(OrderEnum::DESC)`), calls `$this->handlePaginationForm($request, FooSearchType::class, $query)`, dispatches via `$this->messageBus->dispatch($query)`, passes result to template.
+6. **Template** — iterates `PaginationInterface` directly (`{% for item in items %}`), renders controls with `{{ knp_pagination_render(items) }}`.
 
 **QueryHandler**: `readonly class FooHandler implements QueryHandlerInterface` — single `__invoke(FooQuery $c): void`, inject `EntityManagerInterface` + repos.
 
