@@ -8,14 +8,17 @@ use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\KnpPaginator\Controller\PaginationFormHandlerTrait;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Module\Exporter\Domain\Artifact\Form\ArtifactSearchType;
+use App\Module\Exporter\Domain\Artifact\Message\Query\DownloadArtifact\DownloadArtifactQuery;
 use App\Module\Exporter\Domain\Artifact\Message\Query\FindArtifacts\FindArtifactsQuery;
 use App\Shared\MenuConfiguration\Enum\MenuConfigurationEntityEnum;
 use App\Shared\MenuConfiguration\Factory\MenuConfigurationFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Uid\Uuid;
 use Throwable;
 
 #[Route('/exporter')]
@@ -51,5 +54,22 @@ class ArtifactController extends AbstractController
             'artifacts' => $this->messageBus->dispatch($searchQuery),
             'config'    => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::ARTIFACT),
         ]);
+    }
+
+    /**
+     * @throws Throwable
+     * @throws ExceptionInterface
+     */
+    #[Route(
+        '/requests/{artifactUuid}/download',
+        name: 'back_exporter_download_artifact',
+        methods: Request::METHOD_GET
+    )]
+    public function download(Uuid $artifactUuid): StreamedResponse
+    {
+        /** @var StreamedResponse $streamedResponse */
+        $streamedResponse = $this->messageBus->dispatch(new DownloadArtifactQuery($artifactUuid));
+
+        return $streamedResponse;
     }
 }

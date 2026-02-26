@@ -22,6 +22,7 @@ twig:
       remove: 'fa-solid fa-trash-can'
       see_balance: 'fa-solid fa-scale-balanced'
       export: 'fa-solid fa-file-export'
+      download: 'fa-solid fa-download'
 
 when@test:
   twig:
