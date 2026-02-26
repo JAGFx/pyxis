@@ -19,22 +19,13 @@
 
 **Query DTO (pageable/sortable)**: Add `use OrderableTrait; use PaginableTrait;` and implement `OrderableInterface, PaginationInterface` on Query DTOs that must support pagination and sorting. The handler then injects `PaginatorInterface` and returns `PaginationInterface<int, Entity>`.
 
-**Paginated list controller**:
-1. **Query DTO** — implements `OrderableInterface, PaginationInterface`, uses `OrderableTrait, PaginableTrait`. Constructor sets optional filter params; set default sort in controller.
-2. **Handler** — injects `PaginatorInterface`, calls `$this->paginator->paginate($repo->getQueryBuilder($query), $query->getPage(), $query->getPageSize())`, returns `PaginationInterface<int, Entity>`.
-3. **Repository** — `getQueryBuilder(FindFooQuery $q)` applies filters + `orderBy($q->getOrderBy(), $q->getOrderDirection()->value)`, returns `QueryBuilder`.
-4. **Form type** — `data_class = FindFooQuery`, calls `PaginationBuilder::buildForm($builder)` (no extra fields unless filters needed).
-5. **Controller** — uses `PaginationFormHandlerTrait`; creates Query DTO with defaults (`->setOrderBy('field')->setOrderDirection(OrderEnum::DESC)`), calls `$this->handlePaginationForm($request, FooSearchType::class, $query)`, dispatches via `$this->messageBus->dispatch($query)`, passes result to template.
-6. **Template** — iterates `PaginationInterface` directly (`{% for item in items %}`), renders controls with `{{ knp_pagination_render(items) }}`.
-
 **QueryHandler**: `readonly class FooHandler implements QueryHandlerInterface` — single `__invoke(FooQuery $c): void`, inject `EntityManagerInterface` + repos.
 
-**Live Component search form + Turbo Stream**:
-1. **Live Component** — `src/.../Twig/Components/FooSearchForm.php`, extends `AbstractController`, uses `#[AsLiveComponent(template: '...')]` + `ComponentWithFormTrait` + `DefaultActionTrait`. `instantiateForm()` creates the form with `action` pointing to the Turbo search route.
-2. **twig_component.yaml** — register each new module namespace: `App\...\Twig\Components\: 'module/.../components'`.
-3. **Front search controller** — POST route, uses `TurboResponseTrait`; calls `createForm()->handleRequest($request)` manually (NOT `handlePaginationForm`); returns `renderTurboStream()` with a `*.turbo.stream.html.twig` template.
-4. **Turbo Stream template** — extends `shared/turbo/_stream.html.twig`; `<turbo-stream action="update" target="main_body">` includes the `_list.html.twig` partial.
-5. **Live Component template** — wraps with `<div {{ attributes }}>`, sets `data-turbo: true` on the form, includes `shared/menu/_search_form_button_actions.html.twig` for submit/reset buttons.
+### Module Exporter
+
+- **Artifact** states: `PENDING | DONE | FAILED | DISABLED`. API: `getStatus()`, `isPending()`, `isFinished()`, `isDisabled()`, `getParent()`.
+- **DocumentFactoryInterface**: `support(string $targetClass, DocumentTypeEnum $type): bool` + `createDocument(RequestExportCommandInterface $cmd): DocumentInterface`. Auto-tagged via `DocumentFactoryResolver`.
+- **Export flow**: `RequestExportCommand → createParentEmptyArtifact() [async] → DocumentFactory::createDocument() → AttachDocumentToArtifactCommand`
 
 ### Validation groups
 
@@ -67,6 +58,62 @@
 | Enum case | PascalCase |
 | File / Directory | Match class name / PascalCase |
 | Controller | Always split into `Controller/Back/` (admin) and `Controller/Front/` (user-facing) |
+
+---
+
+## Patterns
+
+### Paginated list controller
+
+1. **Query DTO** — implements `OrderableInterface, PaginationInterface`, uses `OrderableTrait, PaginableTrait`. Constructor sets optional filter params; set default sort in controller.
+2. **Handler** — injects `PaginatorInterface`, calls `$this->paginator->paginate($repo->getQueryBuilder($query), $query->getPage(), $query->getPageSize())`, returns `PaginationInterface<int, Entity>`.
+3. **Repository** — `getQueryBuilder(FindFooQuery $q)` applies filters + `orderBy($q->getOrderBy(), $q->getOrderDirection()->value)`, returns `QueryBuilder`.
+4. **Form type** — `data_class = FindFooQuery`, calls `PaginationBuilder::buildForm($builder)` (no extra fields unless filters needed).
+5. **Controller** — uses `PaginationFormHandlerTrait`; creates Query DTO with defaults (`->setOrderBy('field')->setOrderDirection(OrderEnum::DESC)`), calls `$this->handlePaginationForm($request, FooSearchType::class, $query)`, dispatches via `$this->messageBus->dispatch($query)`, passes result to template.
+6. **Template** — iterates `PaginationInterface` directly (`{% for item in items %}`), renders controls with `{{ knp_pagination_render(items) }}`.
+
+### Live Component search form + Turbo Stream
+
+1. **Live Component** — `src/.../Twig/Components/FooSearchForm.php`, extends `AbstractController`, uses `#[AsLiveComponent(template: '...')]` + `ComponentWithFormTrait` + `DefaultActionTrait`. `instantiateForm()` creates the form with `action` pointing to the Turbo search route.
+2. **twig_component.yaml** — register each new module namespace: `App\...\Twig\Components\: 'module/.../components'`.
+3. **Front search controller** — POST route, uses `TurboResponseTrait`; calls `createForm()->handleRequest($request)` manually (NOT `handlePaginationForm`); returns `renderTurboStream()` with a `*.turbo.stream.html.twig` template.
+4. **Turbo Stream template** — extends `shared/turbo/_stream.html.twig`; `<turbo-stream action="update" target="main_body">` includes the `_list.html.twig` partial.
+5. **Live Component template** — wraps with `<div {{ attributes }}>`, sets `data-turbo: true` on the form, includes `shared/menu/_search_form_button_actions.html.twig` for submit/reset buttons.
+
+### Voters
+
+- Location: `src/{Domain,Module}/*/Security/FooVoter.php`
+- Extends `Voter<string, EntityClass>` with `@extends` PHPDoc
+- Attribute constants: `public const string ACTION = 'FOO_ACTION';`
+- `supports()`: check attribute constant + `$subject instanceof Entity`
+- `voteOnAttribute()`: `match ($attribute)` → delegate to private `canXxx()` methods
+- No constructor injection unless strictly required (keep logic pure)
+- **Never use voters in controllers** — invoke them only inside handlers (Command or Query handlers)
+- Usage in handler: inject `Security` service, call `$this->security->isGranted(FooVoter::ACTION, $entity)` or `$this->security->denyAccessUnlessGranted(FooVoter::ACTION, $entity)`
+- Usage in Twig: `{% if is_granted(constant('App\\...\\FooVoter::ACTION'), entity) %}`
+
+### List row actions (overlay UI)
+
+Pattern: each list item is wrapped in a `<turbo-frame>` with a unique ID, using long-press overlay to reveal per-row actions.
+
+1. **Frame ID**: `{% set frameId = 'domain_entity_list_item_' ~ entity.id %}`
+2. **Wrap item**: `<turbo-frame id="{{ frameId }}"><twig:Overlay:TriggerLongPress target="{{ frameId }}"><twig:List:Item>...</twig:List:Item></twig:Overlay:TriggerLongPress>`
+3. **Overlay** (guarded by voter):
+   ```twig
+   {% if is_granted(constant('App\\...\\FooVoter::ACTION'), entity) %}
+   <twig:Overlay:Overlay id="{{ frameId }}">
+       <div class="overlay-grid">
+           <twig:Overlay:GridActionButton
+               actionUrl="{{ path('route_name', {param: entity.uuid}) }}"
+               :icon="icons.iconName"
+               label="{{ 'actions.label' | trans(domain: 'interface') }}"
+           />
+       </div>
+   </twig:Overlay:Overlay>
+   {% endif %}
+   ```
+4. **Icons**: declared in `config/packages/twig.yaml` under `twig.globals.icons` (e.g. `download: 'fa-solid fa-download'`)
+5. Multiple actions → multiple `<twig:Overlay:GridActionButton>` inside `div.overlay-grid`, each guarded individually if needed
 
 ---
 
@@ -107,7 +154,7 @@
 
 - Dockerised environemnt.
 - PHP binary: `bin/php`. Ex `bin/php bin/console about`
-- Prefer using makefile as possible 
+- Prefer using makefile as possible
 
 ```bash
 make lint       # CS Fixer + PHPStan + Rector
@@ -148,11 +195,3 @@ translations/
 ```
 
 **Module translations**: Module-specific translations must live under `translations/module/{module}/`, using standard file naming conventions (`messages.fr.yaml`, `validators.fr.yaml`, `forms.fr.yaml`, etc.).
-
----
-
-## Module Exporter — Key concepts
-
-- **Artifact** states: `PENDING | DONE | FAILED | DISABLED`. API: `getStatus()`, `isPending()`, `isFinished()`, `isDisabled()`, `getParent()`.
-- **DocumentFactoryInterface**: `support(string $targetClass, DocumentTypeEnum $type): bool` + `createDocument(RequestExportCommandInterface $cmd): DocumentInterface`. Auto-tagged via `DocumentFactoryResolver`.
-- **Export flow**: `RequestExportCommand → createParentEmptyArtifact() [async] → DocumentFactory::createDocument() → AttachDocumentToArtifactCommand`
