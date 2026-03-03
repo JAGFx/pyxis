@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\Uid\Uuid;
 use Throwable;
 
@@ -63,6 +64,7 @@ class ArtifactController extends AbstractController
     #[Route(
         '/requests/{artifactUuid}/download',
         name: 'back_exporter_download_artifact',
+        requirements: ['artifactUuid' => Requirement::UUID_V7],
         methods: Request::METHOD_GET
     )]
     public function download(Uuid $artifactUuid): StreamedResponse
