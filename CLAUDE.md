@@ -53,6 +53,16 @@
 | File / Directory | Match class name / PascalCase |
 | Controller | Always split into `Controller/Back/` (admin) and `Controller/Front/` (user-facing) |
 
+### Tests
+
+#### Unit tests
+- Location: `tests/Unit/`
+- Naming: `*Test.php` (e.g. `FooServiceTest.php`)
+- Test class: `final class FooServiceTest extends TestCase`
+- Creation of an object: `private function generateFoo(): Foo { return new Foo(...); }`
+- Mock: If not need to mdofiy, use `$this->createMock()` directly. Also, add the property `private Foo|MockObject $fooMock;
+- As possible, use Generator for test cases `public function somtihgDataset(): Generator {}`
+
 ---
 
 ## Patterns

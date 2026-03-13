@@ -69,9 +69,8 @@ readonly class CsvListAccountDocumentFactory implements DocumentFactoryInterface
         return $document;
     }
 
-    private function buildQuery(RequestExportCommandInterface $command): FindAccountsQuery
+    public function buildQuery(RequestExportCommandInterface $command): FindAccountsQuery
     {
-        // TODO: add test units + integration
         $filters    = $command->getFilters();
         $enabledRaw = $filters['enabled'] ?? '';
 
