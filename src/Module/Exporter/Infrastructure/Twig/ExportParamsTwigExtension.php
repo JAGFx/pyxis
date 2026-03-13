@@ -19,7 +19,6 @@ class ExportParamsTwigExtension
     #[AsTwigFunction('export_params')]
     public function exportParams(FormView $form): array
     {
-        // TODO: Add unit tests
         $result = [];
         foreach ($form->children as $name => $child) {
             $value = $child->vars['value'] ?? null;

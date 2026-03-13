@@ -17,7 +17,6 @@ final class RequestExportCommandFactory
     ) {
     }
 
-    // TODO: Add unit tests
     public function create(string $name): AbstractRequestExportCommand
     {
         if (!array_key_exists($name, $this->requestExportCommandMap)) {

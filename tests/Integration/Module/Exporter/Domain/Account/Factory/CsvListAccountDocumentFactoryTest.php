@@ -3,6 +3,7 @@
 namespace App\Tests\Integration\Module\Exporter\Domain\Account\Factory;
 
 use App\Module\Exporter\Domain\Account\Factory\CsvListAccountDocumentFactory;
+use App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\RequestExportAccountListCommand;
 use App\Tests\Integration\Shared\KernelTestCase;
 
 class CsvListAccountDocumentFactoryTest extends KernelTestCase
@@ -20,7 +21,7 @@ class CsvListAccountDocumentFactoryTest extends KernelTestCase
 
     public function testRawDataHeaders(): void
     {
-        [$headers] = $this->csvListAccountDocumentFactory->getRawData();
+        [$headers] = $this->csvListAccountDocumentFactory->getRawData(new RequestExportAccountListCommand());
 
         self::assertCount(2, $headers);
         self::assertEquals(['ID', 'Libellé'], $headers);

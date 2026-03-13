@@ -27,7 +27,7 @@ class RequestExportAccountListHandlerTest extends CommandHandlerTestCase
         self::assertSame(1, ArtifactFactory::count());
         /** @var Artifact $firstArtifact */
         $firstArtifact = ArtifactFactory::first()->_real();
-        $this->assertArtifactIsFinished($firstArtifact, 'request_export_account_list_command');
+        $this->assertArtifactIsFinished($firstArtifact, 'export_account_list');
 
         self::assertEmailCount(1);
     }
