@@ -2,7 +2,7 @@
 
 namespace App\Module\Exporter\Infrastructure\Document\Factory;
 
-use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
+use App\Module\Exporter\Infrastructure\RequestExport\Message\Command\RequestExportCommandInterface;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
 
@@ -20,14 +20,14 @@ readonly class DocumentFactoryResolver
     /**
      * @throws RuntimeException
      */
-    public function resolve(string $targetClass, DocumentTypeEnum $documentType): DocumentFactoryInterface
+    public function resolve(RequestExportCommandInterface $command): DocumentFactoryInterface
     {
         foreach ($this->factories as $factory) {
-            if ($factory->support($targetClass, $documentType)) {
+            if ($factory->support($command)) {
                 return $factory;
             }
         }
 
-        throw new RuntimeException(sprintf('No factory found for target "%s" and type "%s"', $targetClass, $documentType->value));
+        throw new RuntimeException(sprintf('No factory found for target "%s" and type "%s"', $command::class, $command->getDocumentType()->value));
     }
 }

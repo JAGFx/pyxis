@@ -1,6 +1,6 @@
 exporter:
   request_export:
-    request_export_account_list_command: Liste des comptes
+    export_account_list: Liste des comptes
   artifact:
     title: Exports
     list:

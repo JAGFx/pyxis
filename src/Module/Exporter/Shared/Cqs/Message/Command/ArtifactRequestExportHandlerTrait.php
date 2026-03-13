@@ -18,7 +18,7 @@ trait ArtifactRequestExportHandlerTrait
     {
         $artifactUuid = Uuid::v7();
         $artifact     = new Artifact(
-            $command->getTranslationKey(),
+            $command->getName(),
             $artifactUuid,
         )->setDocumentType($command->getDocumentType());
 

@@ -49,10 +49,7 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
 
         // Step 2: Generate a document + store it
         /** @var CsvListAccountDocumentFactory $factory */
-        $factory = $this->factoryResolver->resolve(
-            $command->getTarget(),
-            $command->getDocumentType()
-        );
+        $factory  = $this->factoryResolver->resolve($command);
         $document = $factory->createDocument($command);
 
         // Step 3: Attach a document to an artifact
@@ -60,7 +57,7 @@ readonly class RequestExportAccountListHandler implements CommandHandlerInterfac
             $parentArtifactUuid              = $command->getParentArtifactUuid();
             $attachDocumentToArtifactCommand = new AttachDocumentToArtifactCommand(
                 $parentArtifactUuid->toRfc4122(),
-                $command->getTranslationKey(),
+                $command->getName(),
                 $document->getFileName(),
                 $document->getPath(),
                 $command->getDocumentType(),

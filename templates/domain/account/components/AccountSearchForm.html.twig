@@ -10,6 +10,11 @@
 
         {% include 'shared/menu/_search_form_button_actions.html.twig' %}
 
+        <twig:Button node="a" :icon="icons.download" label="{{ 'actions.export' | trans(domain: 'interface') }}" dir="right" size="lg"
+            href="{{ path('back_exporter_request', {'target': constant('App\\Module\\Exporter\\Domain\\Account\\Message\\Command\\RequestExportAccountList\\RequestExportAccountListCommand::NAME')} + export_params(form)) }}"
+            data-turbo="false"
+        />
+
         {{ form_end(form) }}
     </twig:Card>
 </div>

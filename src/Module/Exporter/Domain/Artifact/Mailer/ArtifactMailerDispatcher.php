@@ -32,7 +32,7 @@ class ArtifactMailerDispatcher
                 $this->translator->trans('exporters.shared.request_export_finished.subject', domain: 'mailer')
             )
             ->context([
-                'exportName'   => $command->getTranslationKey(),
+                'exportName'   => $command->getName(),
                 'artifactUuid' => $command->getParentArtifactUuid()->toRfc4122(),
             ])
             ->htmlTemplate('module/exporter/domain/artifact/email/artifact_attached_to_export_request.html.twig');

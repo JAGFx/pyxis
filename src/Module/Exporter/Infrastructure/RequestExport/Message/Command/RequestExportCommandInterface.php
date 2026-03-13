@@ -10,17 +10,23 @@ use Symfony\Component\Uid\Uuid;
 
 interface RequestExportCommandInterface extends CommandInterface
 {
-    public function getTarget(): string;
+    public function getName(): string;
 
     public function getDocumentType(): DocumentTypeEnum;
 
     public function getStorage(): StorageEnum;
-
-    public function getTranslationKey(): string;
 
     public function getStage(): RequestExportStageEnum;
 
     public function getParentArtifactUuid(): Uuid;
 
     public function setParentArtifactUuid(Uuid $artifactUuid): self;
+
+    public function setDocumentType(DocumentTypeEnum $documentType): self;
+
+    /** @return array<string, string> */
+    public function getFilters(): array;
+
+    /** @param array<string, string> $filters */
+    public function setFilters(array $filters): static;
 }

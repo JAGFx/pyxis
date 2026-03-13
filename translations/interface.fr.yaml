@@ -10,3 +10,4 @@ actions:
   remove: Supprimer
   back: Retour
   download: Télécharger
+  export: Exporter

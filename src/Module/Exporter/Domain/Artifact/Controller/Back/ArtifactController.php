@@ -10,12 +10,18 @@ use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Module\Exporter\Domain\Artifact\Form\ArtifactSearchType;
 use App\Module\Exporter\Domain\Artifact\Message\Query\DownloadArtifact\DownloadArtifactQuery;
 use App\Module\Exporter\Domain\Artifact\Message\Query\FindArtifacts\FindArtifactsQuery;
+use App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum;
+use App\Module\Exporter\Infrastructure\RequestExport\Factory\RequestExportCommandFactory;
+use App\Module\Exporter\Infrastructure\RequestExport\Message\Command\AbstractRequestExportCommand;
 use App\Shared\MenuConfiguration\Enum\MenuConfigurationEntityEnum;
 use App\Shared\MenuConfiguration\Factory\MenuConfigurationFactory;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
@@ -30,6 +36,7 @@ class ArtifactController extends AbstractController
     public function __construct(
         private readonly MessageBus $messageBus,
         private readonly MenuConfigurationFactory $menuConfigurationFactory,
+        private readonly RequestExportCommandFactory $requestExportCommandFactory,
     ) {
     }
 
@@ -38,11 +45,11 @@ class ArtifactController extends AbstractController
      * @throws ExceptionInterface
      */
     #[Route(
-        '/requests',
+        '/requests/list',
         name: 'back_exporter_list_artifacts',
         methods: Request::METHOD_GET
     )]
-    public function requestList(Request $request): Response
+    public function list(Request $request): Response
     {
         $searchQuery = new FindArtifactsQuery()
             ->setOrderBy('createdAt')
@@ -55,6 +62,33 @@ class ArtifactController extends AbstractController
             'artifacts' => $this->messageBus->dispatch($searchQuery),
             'config'    => $this->menuConfigurationFactory->createFor(MenuConfigurationEntityEnum::ARTIFACT),
         ]);
+    }
+
+    /**
+     * @param array<string, string> $filters
+     *
+     * @throws Throwable
+     * @throws ExceptionInterface
+     */
+    #[Route('/requests/request', name: 'back_exporter_request', methods: [Request::METHOD_GET])]
+    public function request(
+        #[MapQueryParameter]
+        string $target,
+        #[MapQueryParameter(AbstractRequestExportCommand::FILTERS_KEY)]
+        array $filters = [],
+        #[MapQueryParameter]
+        DocumentTypeEnum $type = DocumentTypeEnum::CSV,
+    ): Response {
+        try {
+            $command = $this->requestExportCommandFactory->create($target);
+        } catch (InvalidArgumentException $invalidArgumentException) {
+            throw new BadRequestHttpException($invalidArgumentException->getMessage(), $invalidArgumentException);
+        }
+
+        $command->setDocumentType($type)->setFilters($filters);
+        $this->messageBus->dispatch($command);
+
+        return $this->redirectToRoute('back_exporter_list_artifacts');
     }
 
     /**
