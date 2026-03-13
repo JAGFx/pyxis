@@ -21,12 +21,6 @@
 
 **QueryHandler**: `readonly class FooHandler implements QueryHandlerInterface` — single `__invoke(FooQuery $c): void`, inject `EntityManagerInterface` + repos.
 
-### Module Exporter
-
-- **Artifact** states: `PENDING | DONE | FAILED | DISABLED`. API: `getStatus()`, `isPending()`, `isFinished()`, `isDisabled()`, `getParent()`.
-- **DocumentFactoryInterface**: `support(string $targetClass, DocumentTypeEnum $type): bool` + `createDocument(RequestExportCommandInterface $cmd): DocumentInterface`. Auto-tagged via `DocumentFactoryResolver`.
-- **Export flow**: `RequestExportCommand → createParentEmptyArtifact() [async] → DocumentFactory::createDocument() → AttachDocumentToArtifactCommand`
-
 ### Validation groups
 
 | Group | When | Tools |
@@ -92,6 +86,10 @@
 - Usage in handler: inject `Security` service, call `$this->security->isGranted(FooVoter::ACTION, $entity)` or `$this->security->denyAccessUnlessGranted(FooVoter::ACTION, $entity)`
 - Usage in Twig: `{% if is_granted(constant('App\\...\\FooVoter::ACTION'), entity) %}`
 
+### Twig atomic components
+
+Shared atomic components live in `templates/shared/components/` (`Button`, `Card`, `PageTitle`, `Tooltip`, `List/*`, `Overlay/*`). Read the template files directly to discover available props and blocks.
+
 ### List row actions (overlay UI)
 
 Pattern: each list item is wrapped in a `<turbo-frame>` with a unique ID, using long-press overlay to reveal per-row actions.
@@ -115,7 +113,53 @@ Pattern: each list item is wrapped in a `<turbo-frame>` with a unique ID, using 
 4. **Icons**: declared in `config/packages/twig.yaml` under `twig.globals.icons` (e.g. `download: 'fa-solid fa-download'`)
 5. Multiple actions → multiple `<twig:Overlay:GridActionButton>` inside `div.overlay-grid`, each guarded individually if needed
 
----
+### Module Exporter
+
+- **Artifact** states: `PENDING | DONE | FAILED | DISABLED`. API: `getStatus()`, `isPending()`, `isFinished()`, `isDisabled()`, `getParent()`.
+- **DocumentFactoryInterface**: `support(RequestExportCommandInterface $cmd): bool` + `createDocument(RequestExportCommandInterface $cmd): DocumentInterface`. Auto-tagged via `DocumentFactoryResolver`.
+- **Export flow**: `RequestExportCommand → createParentEmptyArtifact() [async] → DocumentFactory::createDocument() → AttachDocumentToArtifactCommand`
+
+### Creating a new export type
+
+1. **Export command** — `src/Module/Exporter/Domain/{Context}/Message/Command/RequestExport{Context}/RequestExport{Context}Command.php`
+   ```php
+   #[AsMessage('async')]
+   #[AsExportCommand]
+   class RequestExportFooCommand extends AbstractRequestExportCommand
+   {
+       public const string NAME = 'export_foo';
+   }
+   ```
+   Auto-discovered by `RequestExportCommandFactory` via `RequestExportPass` compiler pass — no manual registration needed.
+
+2. **Handler** — `RequestExport{Context}Handler.php` uses `ArtifactRequestExportHandlerTrait`:
+   ```php
+   readonly class RequestExportFooHandler implements CommandHandlerInterface
+   {
+       use ArtifactRequestExportHandlerTrait;
+       // __invoke: stage 1 → createParentEmptyArtifact(); stage 2 → factory→createDocument() → AttachDocumentToArtifactCommand
+   }
+   ```
+   See `RequestExportAccountListHandler` for the full two-stage pattern.
+
+3. **Document factory** — `src/Module/Exporter/Domain/{Context}/Factory/{Type}{Context}DocumentFactory.php` implements `DocumentFactoryInterface`:
+   - `support()`: check `$cmd instanceof RequestExportFooCommand && $cmd->getDocumentType() === DocumentTypeEnum::CSV`
+   - `createDocument()`: build query from `$cmd->getFilters()`, fetch entities, write document, return `Document`
+
+4. **Translation key** — add `exporter.request_export.export_foo: Label` in `translations/module/exporter/messages.fr.yaml`
+
+### Triggering an export from a search form
+
+The `export_params(FormView $form)` Twig function (provided by `ExportParamsTwigExtension`) converts form values into `filters[field]=value` URL params.
+
+Export button template pattern (use `twig:Button` with `node="a"`, `data-turbo="false"`):
+```twig
+<twig:Button node="a" :icon="icons.download" label="{{ 'actions.export' | trans(domain: 'interface') }}" dir="right" size="lg"
+    href="{{ path('back_exporter_request', {'target': constant('App\\Module\\Exporter\\Domain\\Foo\\Message\\Command\\RequestExportFooCommand::NAME')} + export_params(form)) }}"
+    data-turbo="false"
+/>
+```
+Route `back_exporter_request` (GET `/exporter/requests/request`) accepts `target`, `type`, and `filters[]` query params; it creates and dispatches the export command via `RequestExportCommandFactory`.
 
 ## Execution Mode
 
@@ -182,7 +226,8 @@ src/
 │       ├── Document/Factory/  # DocumentFactoryInterface + DocumentFactoryResolver
 │       ├── Document/Model/    # Document, DocumentTypeEnum
 │       ├── Storage/           # StorageEnum (FILE_SYSTEM='local', S3='s3')
-│       └── RequestExport/     # AbstractRequestExportCommand
+│       ├── RequestExport/     # AbstractRequestExportCommand, AsExportCommand (attr), RequestExportCommandFactory, RequestExportPass
+│       └── Twig/              # ExportParamsTwigExtension (export_params() function)
 └── Shared/
 
 translations/
