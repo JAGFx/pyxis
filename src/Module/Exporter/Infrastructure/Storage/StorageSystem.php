@@ -84,7 +84,7 @@ readonly class StorageSystem
         $this->mountManager->delete($document->getPath());
     }
 
-    public function generateHttpStreamResponse(DocumentInterface $document): StreamedResponse
+    public function generateHttpStreamedResponse(DocumentInterface $document): StreamedResponse
     {
         $streamedResponse = new StreamedResponse(function () use ($document): void {
             $stream = $this->readStream($document);

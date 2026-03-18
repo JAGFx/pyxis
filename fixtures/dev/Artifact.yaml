@@ -1,0 +1,61 @@
+App\Module\Exporter\Domain\Artifact\Entity\Artifact:
+
+  # --- PENDING (parent artifact, processing not yet finished) ---
+  artifact_pending_parent:
+    __construct:
+      - <(App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\RequestExportAccountListCommand::NAME)>
+    createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
+
+  artifact_pending:
+    __construct:
+      - <(App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\RequestExportAccountListCommand::NAME)>
+    parent: '@artifact_pending_parent'
+    createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
+
+  # --- DONE ---
+  artifact_done_parent:
+    __construct:
+      - <(App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\RequestExportAccountListCommand::NAME)>
+    createdAt: <immutableDateTimeBetween('-2 days', '-1 day')>
+
+  artifact_done:
+    __construct:
+      - <(App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\RequestExportAccountListCommand::NAME)>
+    parent: '@artifact_done_parent'
+    documentName: accounts_export.csv
+    documentPath: exports/accounts_export.csv
+    documentType: <(App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum::CSV)>
+    storage: <(App\Module\Exporter\Infrastructure\Storage\StorageEnum::FILE_SYSTEM)>
+    finishedAt: <immutableDateTimeBetween('-1 day', '-1 hour')>
+    createdAt: <immutableDateTimeBetween('-2 days', '-1 day')>
+
+  # --- FAILED ---
+  artifact_failed_parent:
+    __construct:
+      - <(App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\RequestExportAccountListCommand::NAME)>
+    createdAt: <immutableDateTimeBetween('-3 days', '-2 days')>
+
+  artifact_failed:
+    __construct:
+      - <(App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\RequestExportAccountListCommand::NAME)>
+    parent: '@artifact_failed_parent'
+    finishedAt: <immutableDateTimeBetween('-2 days', '-1 day')>
+    createdAt: <immutableDateTimeBetween('-3 days', '-2 days')>
+
+  # --- DISABLED ---
+  artifact_disabled_parent:
+    __construct:
+      - <(App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\RequestExportAccountListCommand::NAME)>
+    createdAt: <immutableDateTimeBetween('-5 days', '-4 days')>
+
+  artifact_disabled:
+    __construct:
+      - <(App\Module\Exporter\Domain\Account\Message\Command\RequestExportAccountList\RequestExportAccountListCommand::NAME)>
+    parent: '@artifact_disabled_parent'
+    documentName: accounts_export_old.csv
+    documentPath: exports/accounts_export_old.csv
+    documentType: <(App\Module\Exporter\Infrastructure\Document\Model\DocumentTypeEnum::CSV)>
+    storage: <(App\Module\Exporter\Infrastructure\Storage\StorageEnum::FILE_SYSTEM)>
+    finishedAt: <immutableDateTimeBetween('-4 days', '-3 days')>
+    disabledAt: <immutableDateTimeBetween('-3 days', '-2 days')>
+    createdAt: <immutableDateTimeBetween('-5 days', '-4 days')>

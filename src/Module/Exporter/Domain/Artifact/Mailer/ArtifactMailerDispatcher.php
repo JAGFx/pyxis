@@ -18,6 +18,8 @@ class ArtifactMailerDispatcher
         private readonly TranslatorInterface $translator,
         #[Autowire(env: 'MAILER_AUTHOR')]
         private readonly string $author,
+        #[Autowire(env: 'MAILER_TO')]
+        private readonly string $to,
     ) {
     }
 
@@ -27,7 +29,7 @@ class ArtifactMailerDispatcher
     public function requestExportFinished(RequestExportCommandInterface $command): void
     {
         $email = $this->newAsyncMail()
-            ->to('email@me.com')
+            ->to($this->to)
             ->subject(
                 $this->translator->trans('exporters.shared.request_export_finished.subject', domain: 'mailer')
             )

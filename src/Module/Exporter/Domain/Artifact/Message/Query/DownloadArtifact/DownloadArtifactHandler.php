@@ -46,6 +46,6 @@ readonly class DownloadArtifactHandler implements QueryHandlerInterface
             $artifact->getDocumentPath()
         );
 
-        return $this->storage->generateHttpStreamResponse($document);
+        return $this->storage->generateHttpStreamedResponse($document);
     }
 }
