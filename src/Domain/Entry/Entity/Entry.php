@@ -74,7 +74,7 @@ class Entry implements IntIdentifierInterface
 
     public function isBalancing(): bool
     {
-        return in_array(EntryFlagEnum::BALANCE, $this->flags ?? [], true);
+        return in_array(EntryFlagEnum::BALANCE, $this->flags, true);
     }
 
     public function __construct()

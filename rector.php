@@ -21,6 +21,7 @@ use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Set\ValueObject\SetList;
 use Rector\Symfony\CodeQuality\Rector\Class_\InlineClassRoutePrefixRector;
 use Rector\Symfony\Set\SymfonySetList;
+use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
 use Rector\Visibility\Rector\ClassMethod\ExplicitPublicClassMethodRector;
 
 return static function (RectorConfig $rectorConfig): void {
@@ -50,7 +51,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->symfonyContainerXml(__DIR__ . '/var/cache/dev/App_KernelDevDebugContainer.xml');
 
     $rectorConfig->sets([
-        SymfonySetList::SYMFONY_74,
+        SymfonySetList::COMPOSER_BASED,
         SymfonySetList::SYMFONY_CODE_QUALITY,
         SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
     ]);
@@ -62,7 +63,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // PHPUnit
     $rectorConfig->sets([
-        PHPUnitSetList::PHPUNIT_90,
+        PHPUnitSetList::COMPOSER_BASED,
         PHPUnitSetList::PHPUNIT_CODE_QUALITY,
     ]);
 
@@ -89,5 +90,6 @@ return static function (RectorConfig $rectorConfig): void {
         RenameVariableToMatchMethodCallReturnTypeRector::class,
         InlineClassRoutePrefixRector::class,
         ChangeOrIfContinueToMultiContinueRector::class,
+        SafeDeclareStrictTypesRector::class,
     ]);
 };
