@@ -3,9 +3,11 @@
 namespace App\Tests\Integration\Domain\PeriodicEntry\Command;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Tests\Factory\AccountFactory;
+use App\Tests\Factory\AssignmentFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
@@ -212,5 +214,39 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         $this->assertEquals($expectedExceptionCount, $exceptionCount,
             "Expected {$expectedExceptionCount} exceptions but found {$exceptionCount} in scenario: {$scenarioName}"
         );
+    }
+
+    public function testSpentPeriodicEntryUpdatesAssignmentOncePerMonth(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::new()->create([
+            'account' => $account,
+            'amount'  => 1000.0,
+        ])->_real();
+
+        /** @var PeriodicEntry $periodicEntry */
+        $periodicEntry = PeriodicEntryFactory::new()->create([
+            'name'          => 'Spent periodic entry with assignment',
+            'executionDate' => new DateTimeImmutable('2025-10-05'),
+            'account'       => $account,
+            'amount'        => 100.0,
+        ])->_real();
+        $periodicEntry->setAssignment($assignment);
+        $this->entityManager->flush();
+
+        $exitCode = $this->commandTester->execute(['--target-date' => '2025-10-05 02:00:00']);
+        $this->assertEquals(Command::SUCCESS, $exitCode);
+
+        $this->entityManager->refresh($assignment);
+        $this->assertEquals(1100.0, $assignment->getAmount());
+
+        // Second run in the same month must not update the assignment again
+        $exitCode = $this->commandTester->execute(['--target-date' => '2025-10-05 03:00:00']);
+        $this->assertEquals(Command::SUCCESS, $exitCode);
+
+        $this->entityManager->refresh($assignment);
+        $this->assertEquals(1100.0, $assignment->getAmount());
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Domain\PeriodicEntry\Entity;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Repository\PeriodicEntryRepository;
@@ -49,6 +50,10 @@ class PeriodicEntry implements IntIdentifierInterface
 
     #[ORM\Column(nullable: true)]
     private ?DateTimeImmutable $lastExecutionDate = null;
+
+    #[ManyToOne]
+    #[JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Assignment $assignment = null;
 
     public function getTotalAmount(): float
     {
@@ -211,6 +216,18 @@ class PeriodicEntry implements IntIdentifierInterface
     public function setLastExecutionDate(?DateTimeImmutable $lastExecutionDate): PeriodicEntry
     {
         $this->lastExecutionDate = $lastExecutionDate;
+
+        return $this;
+    }
+
+    public function getAssignment(): ?Assignment
+    {
+        return $this->assignment;
+    }
+
+    public function setAssignment(?Assignment $assignment): PeriodicEntry
+    {
+        $this->assignment = $assignment;
 
         return $this;
     }

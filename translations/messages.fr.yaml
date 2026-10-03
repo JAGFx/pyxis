@@ -54,6 +54,7 @@ periodic_entry:
     execution_date: Date d'exécution
     execution_date_value: Jour %dayInMonth%
     active_budget: Nombre de budget(s) actif
+    assignment: Affectation
 
 entry:
   title: Entrées

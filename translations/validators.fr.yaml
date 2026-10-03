@@ -6,3 +6,8 @@ entry:
   create_or_update:
     has_enough_amount_assignment: |
      Le montant de l'affectation doit être inférieur ou égal au montant restant de l'affectation : %assignmentAmount%.
+
+periodic_entry:
+  create_or_update:
+    assignment_forbidden_with_budgets: Une affectation ne peut être utilisée que pour une entrée périodique sans budget.
+    assignment_account_mismatch: L'affectation doit appartenir au compte sélectionné.

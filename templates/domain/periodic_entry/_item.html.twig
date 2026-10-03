@@ -41,6 +41,12 @@
                         {{ 'periodic_entry.list.execution_date_value' | trans({'%dayInMonth%' : periodicEntry.executionDate.format('j')}) }}
                     </twig:List:EntityValueItem>
 
+                    {% if periodicEntry.assignment is not null %}
+                        <twig:List:EntityValueItem :icon="icons.assignment" label="{{ 'periodic_entry.list.assignment' | trans }}">
+                            {{ periodicEntry.assignment.name }}
+                        </twig:List:EntityValueItem>
+                    {% endif %}
+
                     {% if periodicEntry.isForecast %}
                         <twig:List:EntityValueItem icon="fa-solid fa-coins" label="{{ 'periodic_entry.list.active_budget' | trans }}">
                             {{ periodicEntry.countBudgets }}

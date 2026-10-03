@@ -3,6 +3,7 @@
 namespace App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
@@ -14,6 +15,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\ObjectMapper\Attribute\Map;
+use Symfony\Component\Validator\Constraints\Expression;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\IsNull;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -24,6 +26,11 @@ use Symfony\Component\Validator\Constraints\When;
  * @see CreateOrUpdatePeriodicEntryHandler
  */
 #[Map(PeriodicEntry::class)]
+#[Expression(
+    expression: 'this.getAssignment() === null or this.getAccount() === null or this.getAssignment().getAccount().getId() === this.getAccount().getId()',
+    message: 'periodic_entry.create_or_update.assignment_account_mismatch',
+    groups: [ValidationGroupEnum::Business->value]
+)]
 class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
 {
     use HasCollectionTrait;
@@ -60,6 +67,15 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
          * @var Collection<int, Budget>
          */
         private Collection $budgets = new ArrayCollection(),
+
+        #[When(
+            expression: 'this.isForecast() == true',
+            constraints: [
+                new IsNull(message: 'periodic_entry.create_or_update.assignment_forbidden_with_budgets'),
+            ],
+            groups: [ValidationGroupEnum::Business->value]
+        )]
+        private ?Assignment $assignment = null,
     ) {
     }
 
@@ -142,6 +158,18 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
     public function setBudgets(Collection $budgets): CreateOrUpdatePeriodicEntryCommand
     {
         $this->budgets = $budgets;
+
+        return $this;
+    }
+
+    public function getAssignment(): ?Assignment
+    {
+        return $this->assignment;
+    }
+
+    public function setAssignment(?Assignment $assignment): CreateOrUpdatePeriodicEntryCommand
+    {
+        $this->assignment = $assignment;
 
         return $this;
     }

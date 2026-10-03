@@ -73,6 +73,9 @@ periodic_entry:
       budgets:
         label: Budgets
         placeholder: -- Pas de budget --
+      assignment:
+        label: Affectation à alimenter
+        placeholder: -- Pas d'affectation --
     search:
       name:
           label: Nom

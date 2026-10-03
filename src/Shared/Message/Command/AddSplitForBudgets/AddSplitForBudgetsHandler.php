@@ -66,6 +66,7 @@ readonly class AddSplitForBudgetsHandler implements CommandHandlerInterface
                 name: $periodicEntry->getName(),
                 amount: $periodicEntry->getAmount() ?? 0.0,
                 flags: [EntryFlagEnum::PERIODIC_ENTRY],
+                assignment: $periodicEntry->getAssignment(),
             );
 
             $this->messageBus->dispatch($entryCommand);

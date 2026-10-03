@@ -3,16 +3,20 @@
 namespace App\Tests\Integration\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry\CreateOrUpdatePeriodicEntryCommand;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Tests\Factory\AccountFactory;
+use App\Tests\Factory\AssignmentFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
@@ -20,13 +24,15 @@ class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
     private MessageBus $messageBus;
 
     private ObjectMapperInterface $objectMapper;
+    private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
         self::bootKernel();
-        $container          = static::getContainer();
-        $this->messageBus   = $container->get(MessageBus::class);
-        $this->objectMapper = $container->get(ObjectMapperInterface::class);
+        $container           = static::getContainer();
+        $this->messageBus    = $container->get(MessageBus::class);
+        $this->objectMapper  = $container->get(ObjectMapperInterface::class);
+        $this->entityManager = $container->get(EntityManagerInterface::class);
     }
 
     public function testCreateDoesNotThrowException(): void
@@ -99,5 +105,73 @@ class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
         $this->objectMapper->map($periodicEntry, CreateOrUpdatePeriodicEntryCommand::class);
 
         $this->expectNotToPerformAssertions();
+    }
+
+    public function testCreateWithAssignmentPersistsAssignment(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::new()->create(['account' => $account])->_real();
+
+        $command = new CreateOrUpdatePeriodicEntryCommand(
+            account: $account,
+            name: 'Periodic Entry With Assignment',
+            amount: 100.0,
+            executionDate: new DateTimeImmutable(),
+            assignment: $assignment,
+        );
+
+        $this->messageBus->dispatch($command);
+
+        /** @var PeriodicEntry $periodicEntry */
+        $periodicEntry = $this->entityManager
+            ->getRepository(PeriodicEntry::class)
+            ->findOneBy(['name' => 'Periodic Entry With Assignment']);
+
+        $this->assertSame($assignment->getId(), $periodicEntry->getAssignment()?->getId());
+    }
+
+    public function testCreateWithAssignmentAndBudgetsThrowsValidationException(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::new()->create(['account' => $account])->_real();
+        /** @var Budget $budget */
+        $budget = BudgetFactory::new()->create(['amount' => 1200.0])->_real();
+
+        $command = new CreateOrUpdatePeriodicEntryCommand(
+            account: $account,
+            name: 'Forecast Periodic Entry With Assignment',
+            amount: null,
+            executionDate: new DateTimeImmutable(),
+            budgets: new ArrayCollection([$budget]),
+            assignment: $assignment,
+        );
+
+        $this->expectException(ValidationFailedException::class);
+
+        $this->messageBus->dispatch($command);
+    }
+
+    public function testCreateWithAssignmentFromAnotherAccountThrowsValidationException(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::new()->create(['account' => AccountFactory::new()])->_real();
+
+        $command = new CreateOrUpdatePeriodicEntryCommand(
+            account: $account,
+            name: 'Periodic Entry With Foreign Assignment',
+            amount: 100.0,
+            executionDate: new DateTimeImmutable(),
+            assignment: $assignment,
+        );
+
+        $this->expectException(ValidationFailedException::class);
+
+        $this->messageBus->dispatch($command);
     }
 }
