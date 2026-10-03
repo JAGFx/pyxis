@@ -8,17 +8,12 @@ use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\AssignmentFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Integration\Shared\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request;
-use Zenstruck\Foundry\Test\Factories;
-use Zenstruck\Foundry\Test\ResetDatabase;
 
 class PeriodicEntryControllerTest extends WebTestCase
 {
-    use Factories;
-    use ResetDatabase;
-
     private const string FORM_NAME = 'periodic_entry_create_or_update';
 
     public function testCreatePagePreselectsFirstAccountAndRendersItsAssignments(): void

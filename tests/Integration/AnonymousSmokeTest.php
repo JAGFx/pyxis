@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
+use App\Tests\Integration\Shared\WebTestCase;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 class AnonymousSmokeTest extends WebTestCase
