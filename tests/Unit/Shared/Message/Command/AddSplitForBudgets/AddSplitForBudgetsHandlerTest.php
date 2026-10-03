@@ -3,7 +3,9 @@
 namespace App\Tests\Unit\Shared\Message\Command\AddSplitForBudgets;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Budget\Entity\Budget;
+use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Infrastructure\Cqs\Bus\MessageBus;
@@ -338,5 +340,79 @@ class AddSplitForBudgetsHandlerTest extends TestCase
             ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
 
         self::assertNotNull($periodicEntry->getLastExecutionDate());
+    }
+
+    public function testSplitForSpentWithAssignmentMustPassAssignmentToEntry(): void
+    {
+        $assignment = new Assignment()
+            ->setName('Savings')
+            ->setAmount(1000.0);
+
+        $periodicEntry = new PeriodicEntry()
+            ->setExecutionDate(new DateTimeImmutable())
+            ->setLastExecutionDate(null)
+            ->setAmount(200.0)
+            ->setName('Spent Entry With Assignment')
+            ->setAccount(new Account())
+            ->setAssignment($assignment);
+
+        $this->messageBusMock
+            ->expects(self::once())
+            ->method('dispatch')
+            ->with(self::callback(
+                static fn (CreateOrUpdateEntryCommand $command): bool => $command->getAssignment() === $assignment
+                    && 200.0 === $command->getAmount()
+            ));
+
+        $this->entityManagerMock
+            ->expects(self::once())
+            ->method('flush');
+
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
+    }
+
+    public function testSplitForForecastMustNeverPassAssignmentToEntries(): void
+    {
+        $periodicEntry = new PeriodicEntry()
+            ->setExecutionDate(new DateTimeImmutable())
+            ->setLastExecutionDate(null)
+            ->setName('Forecast Entry With Assignment')
+            ->setAccount(new Account())
+            ->setAssignment(new Assignment()->setName('Savings')->setAmount(1000.0))
+            ->addBudget(new Budget()
+                ->setName('Budget 1')
+                ->setAmount(200.0)
+                ->setEnabled(true)
+            )
+            ->addBudget(new Budget()
+                ->setName('Budget 2')
+                ->setAmount(300.0)
+                ->setEnabled(true)
+            );
+
+        $this->messageBusMock
+            ->expects(self::exactly(2))
+            ->method('dispatch')
+            ->with(self::callback(
+                static fn (CreateOrUpdateEntryCommand $command): bool => null === $command->getAssignment()
+            ));
+
+        $this->entityManagerMock
+            ->expects(self::once())
+            ->method('flush');
+
+        $this->entityFinderMock
+            ->expects(self::once())
+            ->method('findByIntIdentifierOrFail')
+            ->willReturn($periodicEntry);
+
+        $this->generateAddSplitForBudgetsHandler()
+            ->__invoke(new AddSplitForBudgetsCommand($periodicEntry->getId()));
     }
 }

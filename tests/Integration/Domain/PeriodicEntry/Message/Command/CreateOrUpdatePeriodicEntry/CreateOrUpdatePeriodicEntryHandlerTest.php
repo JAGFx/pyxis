@@ -24,6 +24,7 @@ class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
     private MessageBus $messageBus;
 
     private ObjectMapperInterface $objectMapper;
+
     private EntityManagerInterface $entityManager;
 
     protected function setUp(): void

@@ -2,6 +2,8 @@
 
 namespace App\Domain\PeriodicEntry\Controller\Back;
 
+use App\Domain\Account\Entity\Account;
+use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Form\PeriodicEntryCreateOrUpdateType;
 use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry\CreateOrUpdatePeriodicEntryCommand;
@@ -86,7 +88,7 @@ class PeriodicEntryController extends AbstractController
     private function handleRequest(Request $request, ?PeriodicEntry $periodicEntry = null): Response
     {
         $periodicEntryCommand = is_null($periodicEntry)
-            ? new CreateOrUpdatePeriodicEntryCommand()
+            ? new CreateOrUpdatePeriodicEntryCommand(account: $this->getDefaultAccount())
             : $this->objectMapper->map($periodicEntry, CreateOrUpdatePeriodicEntryCommand::class);
 
         $form = $this
@@ -111,5 +113,19 @@ class PeriodicEntryController extends AbstractController
             'form'          => $form,
             'periodicEntry' => $periodicEntry,
         ]);
+    }
+
+    /**
+     * Same account as the one pre-selected by the account select, so the dependent assignment field is rendered on first load.
+     *
+     * @throws ExceptionInterface
+     * @throws Throwable
+     */
+    private function getDefaultAccount(): ?Account
+    {
+        /** @var Account[] $accounts */
+        $accounts = $this->messageBus->dispatch(new FindAccountsQuery(true)->setOrderBy('name'));
+
+        return $accounts[0] ?? null;
     }
 }
