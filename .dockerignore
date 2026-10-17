@@ -27,3 +27,4 @@ fixtures/
 node_modules/
 tests/
 ressources/
+private/
