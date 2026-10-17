@@ -9,6 +9,7 @@ use App\Infrastructure\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use App\Infrastructure\Cqs\Validation\ValidationGroupEnum;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use Symfony\Component\ObjectMapper\Attribute\Map;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Positive;
@@ -27,6 +28,7 @@ class CreateOrUpdateAssignmentCommand implements CommandInterface
 
     public function __construct(
         #[NotBlank]
+        #[Length(max: 255)]
         private string $name = '',
 
         #[NotBlank]

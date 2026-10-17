@@ -12,6 +12,7 @@ use App\Infrastructure\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use App\Infrastructure\Cqs\Validation\ValidationGroupEnum;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use Symfony\Component\ObjectMapper\Attribute\Map;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotEqualTo;
 use Symfony\Component\Validator\Constraints\NotNull;
@@ -30,6 +31,7 @@ class CreateOrUpdateEntryCommand implements CommandInterface
         private ?Account $account = null,
 
         #[NotBlank]
+        #[Length(max: Entry::NAME_MAX_LENGTH)]
         private ?string $name = null,
 
         #[NotEqualTo(0)]

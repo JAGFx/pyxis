@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\Expression;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\IsNull;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\When;
@@ -42,6 +43,7 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
         private ?Account $account = null,
 
         #[NotBlank]
+        #[Length(max: 255)]
         private ?string $name = '',
 
         #[When(

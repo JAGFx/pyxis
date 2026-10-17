@@ -18,6 +18,7 @@ class CreateOrUpdateAccountCommand implements CommandInterface
 
     public function __construct(
         #[Assert\NotBlank]
+        #[Assert\Length(max: 255)]
         private string $name = '',
     ) {
     }

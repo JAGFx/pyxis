@@ -2,6 +2,7 @@
 
 namespace App\Shared\Message\Command\AddSplitForBudgets;
 
+use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
@@ -80,7 +81,7 @@ readonly class AddSplitForBudgetsHandler implements CommandHandlerInterface
 
                 $entryCommand = new CreateOrUpdateEntryCommand(
                     account: $periodicEntry->getAccount(),
-                    name: $periodicEntry->getName() . ' - ' . $budget->getName(),
+                    name: mb_substr($periodicEntry->getName() . ' - ' . $budget->getName(), 0, Entry::NAME_MAX_LENGTH),
                     amount: $amount,
                     budget: $budget,
                     flags: [EntryFlagEnum::PERIODIC_ENTRY],

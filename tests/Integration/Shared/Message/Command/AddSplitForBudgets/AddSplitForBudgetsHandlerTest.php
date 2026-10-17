@@ -182,4 +182,33 @@ class AddSplitForBudgetsHandlerTest extends KernelTestCase
             }
         }
     }
+
+    public function testAddSplitForBudgetsTruncatesTooLongEntryNames(): void
+    {
+        $account = AccountFactory::new()->create(['name' => 'Test Provision Account']);
+        $budget  = BudgetFactory::new()->create([
+            'name'    => str_repeat('b', 200),
+            'amount'  => 1200.0,
+            'enabled' => true,
+        ]);
+
+        /** @var PeriodicEntry $periodicEntry */
+        $periodicEntry = PeriodicEntryFactory::new()->create([
+            'name'              => str_repeat('p', 100),
+            'amount'            => null,
+            'account'           => $account,
+            'executionDate'     => new DateTimeImmutable(),
+            'lastExecutionDate' => null,
+            'budgets'           => [$budget],
+        ])->_real();
+
+        $this->messageBus->dispatch(new AddSplitForBudgetsCommand($periodicEntry->getId()));
+
+        /** @var Entry[] $createdEntries */
+        $createdEntries = EntryFactory::repository()->findAll();
+
+        self::assertCount(1, $createdEntries);
+        self::assertSame(255, mb_strlen($createdEntries[0]->getName()));
+        self::assertStringStartsWith(str_repeat('p', 100) . ' - ', $createdEntries[0]->getName());
+    }
 }

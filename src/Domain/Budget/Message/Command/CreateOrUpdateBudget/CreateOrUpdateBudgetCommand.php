@@ -6,6 +6,7 @@ use App\Domain\Budget\Entity\Budget;
 use App\Infrastructure\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use Symfony\Component\ObjectMapper\Attribute\Map;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Positive;
 
@@ -19,6 +20,7 @@ class CreateOrUpdateBudgetCommand implements CommandInterface
 
     public function __construct(
         #[NotBlank]
+        #[Length(max: 255)]
         public string $name = '',
 
         #[Positive]

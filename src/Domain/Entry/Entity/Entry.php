@@ -25,6 +25,8 @@ class Entry implements IntIdentifierInterface
     use HasCollectionTrait;
     use HasIntIdentifierTrait;
 
+    public const int NAME_MAX_LENGTH = 255;
+
     public const array NON_EDITABLE_FLAGS = [
         EntryFlagEnum::BALANCE,
         EntryFlagEnum::TRANSFERT,
