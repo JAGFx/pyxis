@@ -51,11 +51,14 @@ class Budget implements IntIdentifierInterface
 
     public function getProgress(bool $showAsSpentOnly = false): float
     {
-        return array_reduce(
+        $progress = array_reduce(
             $this->entries->toArray(),
-            static fn (float $currentSum, Entry $entry): float => $currentSum + (($showAsSpentOnly) ? 0 : $entry->getAmount()),
-            0
+            static fn (float $currentSum, Entry $entry): float => $currentSum + $entry->getAmount(),
+            0.0
         );
+
+        // Same meaning as BudgetValueObject::getProgress()
+        return ($showAsSpentOnly) ? abs($progress) : $progress;
     }
 
     public function getCashFlow(?Account $account = null): float
