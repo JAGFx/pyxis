@@ -49,23 +49,39 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
         /** @var AmountBalance $amountBalance */
         $amountBalance = reset($amountBalances);
 
+        $currentAssignment = is_null($value->getOriginId())
+            ? null
+            : $this->entityFinder->findByIntIdentifier(Assignment::class, $value->getOriginId());
+
+        // Linked entries belong to the account: moving the assignment would leave them on the other one
+        if ($currentAssignment instanceof Assignment
+            && $currentAssignment->getAccount()->getId() !== $account->getId()
+            && !$currentAssignment->getEntries()->isEmpty()
+        ) {
+            $this->context
+                ->buildViolation($constraint->accountLockedMessage)
+                ->atPath('account')
+                ->addViolation();
+
+            return;
+        }
+
         // The other assignments of the account already hold part of its total
         $otherAssignments = $amountBalance->getAssignments();
+        $linkedEntries    = 0.0;
 
-        if (!is_null($value->getOriginId())) {
-            $currentAssignment = $this->entityFinder->findByIntIdentifier(Assignment::class, $value->getOriginId());
-
-            if ($currentAssignment instanceof Assignment && $currentAssignment->getAccount()->getId() === $account->getId()) {
-                $otherAssignments -= $currentAssignment->getAmount();
-            }
+        if ($currentAssignment instanceof Assignment && $currentAssignment->getAccount()->getId() === $account->getId()) {
+            $otherAssignments -= $currentAssignment->getBalance();
+            $linkedEntries = $currentAssignment->getBalance() - $currentAssignment->getAmount();
         }
 
         $availableAmount = round($amountBalance->getTotal() - $otherAssignments, 2);
+        $newBalance      = round($value->getAmount() + $linkedEntries, 2);
 
-        if (round($value->getAmount(), 2) > $availableAmount) {
+        if ($newBalance > $availableAmount) {
             $this->context
                 ->buildViolation($constraint->message)
-                ->setParameter('{{ total }}', number_format($availableAmount, 2, ',', ' '))
+                ->setParameter('{{ total }}', number_format($availableAmount - $linkedEntries, 2, ',', ' '))
                 ->setInvalidValue($value->getAmount())
                 ->atPath('amount')
                 ->addViolation();

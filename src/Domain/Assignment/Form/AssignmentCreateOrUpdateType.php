@@ -32,6 +32,9 @@ class AssignmentCreateOrUpdateType extends AbstractType
             ])
             ->add('name', TextType::class)
             ->add('amount', MoneyType::class)
+            ->add('target', MoneyType::class, [
+                'required' => false,
+            ])
         ;
     }
 

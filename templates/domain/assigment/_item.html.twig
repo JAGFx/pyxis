@@ -8,7 +8,7 @@
             <div class="flex justify-between items-center">
                 <span>{{ assignment.name }}</span>
                 <div class="flex-none">
-                    {{ currency.amount(assignment.amount, true) }}
+                    {{ currency.amount(assignment.balance, true) }}
                 </div>
             </div>
 
@@ -16,6 +16,13 @@
                 <twig:List:EntityValueItem :icon="icons.account" label="{{ 'assignment.list.account' | trans }}">
                     {{ assignment.account.name }}
                 </twig:List:EntityValueItem>
+                {% if assignment.target is not null %}
+                    <twig:List:EntityValueItem :icon="icons.target" label="{{ 'assignment.list.target' | trans }}">
+                        {% import 'shared/_currency.macro.html.twig' as currency %}
+                        {{ currency.amount(assignment.target, false) }}
+                        ({{ (assignment.balance * 100 / assignment.target) | number_format(0) }}%)
+                    </twig:List:EntityValueItem>
+                {% endif %}
             </twig:block>
         </twig:List:Item>
     </twig:Overlay:TriggerLongPress>

@@ -34,11 +34,7 @@ readonly class CreateOrUpdateEntryHandler implements CommandHandlerInterface
         if (null === $command->getOriginId()) {
             /** @var Entry $entry */
             $entry = $this->objectMapper->map($command, Entry::class);
-
-            if (!is_null($command->getAssignment())) {
-                $assignment = $command->getAssignment();
-                $assignment->setAmount($assignment->getAmount() + $command->getAmount());
-            }
+            $entry->getAssignment()?->getEntries()->add($entry);
 
             $this->entityManager->persist($entry);
         } else {

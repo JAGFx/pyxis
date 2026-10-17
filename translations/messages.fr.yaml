@@ -32,6 +32,7 @@ assignment:
   title: Affectations
   list:
     account: Compte
+    target: Objectif
 
 budget:
   title: Budgets

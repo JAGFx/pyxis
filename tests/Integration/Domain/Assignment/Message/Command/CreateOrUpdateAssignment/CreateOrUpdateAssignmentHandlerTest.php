@@ -138,4 +138,67 @@ class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
 
         $this->expectNotToPerformAssertions();
     }
+
+    public function testEnvelopeWithoutStartingAmountAndWithTargetIsAccepted(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+
+        $this->messageBus->dispatch(new CreateOrUpdateAssignmentCommand('Vacances', 0.0, $account, 2000.0));
+
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::repository()->findOneBy(['name' => 'Vacances'])->_real();
+        self::assertSame(0.0, $assignment->getBalance());
+        self::assertSame(2000.0, $assignment->getTarget());
+    }
+
+    public function testUpdatingTheStartingAmountTakesLinkedEntriesIntoAccount(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+        EntryFactory::new()->create(['account' => $account, 'amount' => 1000.0]);
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => 800.0])->_real();
+        $linked     = EntryFactory::new()->create(['account' => $account, 'amount' => -300.0, 'assignment' => $assignment])->_real();
+        $assignment->getEntries()->add($linked);
+
+        // Account total 700, linked entries -300: a starting amount of 1000 gives a balance of 700, the maximum
+        $command = new CreateOrUpdateAssignmentCommand('Raised', 1000.0, $account);
+        $command->setOriginId($assignment->getId());
+        $this->messageBus->dispatch($command);
+        self::assertSame(700.0, $assignment->getBalance());
+
+        $command = new CreateOrUpdateAssignmentCommand('Too high', 1000.01, $account);
+        $command->setOriginId($assignment->getId());
+
+        try {
+            $this->messageBus->dispatch($command);
+            self::fail('A ValidationFailedException was expected');
+        } catch (ValidationFailedException $exception) {
+            self::assertStringContainsString('1 000,00', (string) $exception->getViolations()->get(0)->getMessage());
+        }
+    }
+
+    public function testAccountCannotChangeWhenEntriesAreLinked(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+        /** @var Account $otherAccount */
+        $otherAccount = AccountFactory::new()->create()->_real();
+        EntryFactory::new()->create(['account' => $otherAccount, 'amount' => 5000.0]);
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => 100.0])->_real();
+        $linked     = EntryFactory::new()->create(['account' => $account, 'amount' => -50.0, 'assignment' => $assignment])->_real();
+        $assignment->getEntries()->add($linked);
+
+        $command = new CreateOrUpdateAssignmentCommand('Moved', 100.0, $otherAccount);
+        $command->setOriginId($assignment->getId());
+
+        try {
+            $this->messageBus->dispatch($command);
+            self::fail('A ValidationFailedException was expected');
+        } catch (ValidationFailedException $exception) {
+            self::assertSame('account', $exception->getViolations()->get(0)->getPropertyPath());
+        }
+    }
 }

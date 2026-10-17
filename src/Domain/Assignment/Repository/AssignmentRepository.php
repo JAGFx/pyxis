@@ -5,6 +5,7 @@ namespace App\Domain\Assignment\Repository;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
 use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
+use App\Domain\Entry\Entity\Entry;
 use App\Infrastructure\Doctrine\Query\LikeExpression;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -55,6 +56,27 @@ class AssignmentRepository extends ServiceEntityRepository
         $queryBuilder = $this
             ->createQueryBuilder('a')
             ->select('SUM(a.amount) as sum');
+
+        if (!is_null($query->getAccountId())) {
+            $queryBuilder
+                ->andWhere('a.account = :account')
+                ->setParameter('account', $query->getAccountId());
+        }
+
+        return $queryBuilder;
+    }
+
+    /**
+     * Sum of the entries linked to the assignments: added to the starting amounts to get the balances.
+     */
+    public function linkedEntriesQueryBuilder(GetAssignmentBalanceQuery $query): QueryBuilder
+    {
+        $queryBuilder = $this
+            ->getEntityManager()
+            ->createQueryBuilder()
+            ->select('SUM(e.amount) as sum')
+            ->from(Entry::class, 'e')
+            ->join('e.assignment', 'a');
 
         if (!is_null($query->getAccountId())) {
             $queryBuilder

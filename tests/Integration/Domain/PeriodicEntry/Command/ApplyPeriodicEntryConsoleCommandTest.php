@@ -240,15 +240,15 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         $exitCode = $this->commandTester->execute(['--target-date' => '2025-10-05 02:00:00']);
         $this->assertEquals(Command::SUCCESS, $exitCode);
 
-        $this->entityManager->refresh($assignment);
-        $this->assertEquals(1100.0, $assignment->getAmount());
+        $this->entityManager->clear();
+        $this->assertEquals(1100.0, $this->entityManager->find(Assignment::class, $assignment->getId())?->getBalance());
 
         // Second run in the same month must not update the assignment again
         $exitCode = $this->commandTester->execute(['--target-date' => '2025-10-05 03:00:00']);
         $this->assertEquals(Command::SUCCESS, $exitCode);
 
-        $this->entityManager->refresh($assignment);
-        $this->assertEquals(1100.0, $assignment->getAmount());
+        $this->entityManager->clear();
+        $this->assertEquals(1100.0, $this->entityManager->find(Assignment::class, $assignment->getId())?->getBalance());
     }
 
     public function testFailingPeriodicEntryDoesNotBreakProcess(): void

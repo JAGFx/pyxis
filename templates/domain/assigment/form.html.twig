@@ -15,6 +15,7 @@
         {{ form_row(form.account) }}
         {{ form_row(form.name) }}
         {{ form_row(form.amount) }}
+        {{ form_row(form.target) }}
 
         <div class="pt-4 pb-1 flex justify-end">
             <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right" size="lg"/>

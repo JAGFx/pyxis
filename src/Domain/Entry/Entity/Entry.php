@@ -3,6 +3,7 @@
 namespace App\Domain\Entry\Entity;
 
 use App\Domain\Account\Entity\Account;
+use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Repository\EntryRepository;
 use App\Shared\Entity\HasCollectionTrait;
@@ -47,6 +48,10 @@ class Entry implements IntIdentifierInterface
     /** @var EntryFlagEnum[] */
     #[Column(type: Types::JSON, enumType: EntryFlagEnum::class)]
     private array $flags = [];
+
+    #[ManyToOne(inversedBy: 'entries')]
+    #[JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Assignment $assignment = null;
 
     public function getType(): EntryTypeEnum
     {
@@ -138,6 +143,18 @@ class Entry implements IntIdentifierInterface
     public function setFlags(array $flags): Entry
     {
         $this->flags = $flags;
+
+        return $this;
+    }
+
+    public function getAssignment(): ?Assignment
+    {
+        return $this->assignment;
+    }
+
+    public function setAssignment(?Assignment $assignment): self
+    {
+        $this->assignment = $assignment;
 
         return $this;
     }

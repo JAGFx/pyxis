@@ -7,6 +7,7 @@ use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
+use App\Domain\Entry\Message\Command\RemoveEntry\RemoveEntryCommand;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\AssignmentFactory;
@@ -14,6 +15,7 @@ use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
 class CreateOrUpdateEntryHandlerTest extends KernelTestCase
@@ -94,37 +96,116 @@ class CreateOrUpdateEntryHandlerTest extends KernelTestCase
         $this->expectNotToPerformAssertions();
     }
 
-    public function testCreateEntryWithAssignmentUpdatesAssignmentAmount(): void
+    public function testCreateEntryWithAssignmentLinksItAndLowersTheBalance(): void
+    {
+        $assignment = $this->createAssignmentWithAmount(1000.0);
+
+        $this->dispatchEntry($assignment, -150.0);
+
+        $assignment = $this->reloadAssignment($assignment);
+        self::assertSame(1000.0, $assignment->getAmount(), 'The starting amount is never written by entries');
+        self::assertSame(850.0, $assignment->getBalance());
+        self::assertCount(1, $assignment->getEntries());
+    }
+
+    public function testRemovingALinkedEntryRestoresTheBalance(): void
+    {
+        $assignment = $this->createAssignmentWithAmount(1000.0);
+        $entryId    = $this->dispatchEntry($assignment, -150.0);
+
+        $this->messageBus->dispatch(new RemoveEntryCommand()->setOriginId($entryId));
+
+        self::assertSame(1000.0, $this->reloadAssignment($assignment)->getBalance());
+    }
+
+    public function testUpdatingALinkedEntryAdjustsTheBalance(): void
+    {
+        $assignment = $this->createAssignmentWithAmount(1000.0);
+        $entryId    = $this->dispatchEntry($assignment, -150.0);
+
+        /** @var Entry $entry */
+        $entry   = $this->entityManager->find(Entry::class, $entryId);
+        $command = $this->objectMapper->map($entry, CreateOrUpdateEntryCommand::class);
+        $command->setOriginId($entryId)->setAmount(-400.0);
+        $this->messageBus->dispatch($command);
+
+        $assignment = $this->reloadAssignment($assignment);
+        self::assertSame(600.0, $assignment->getBalance());
+        self::assertCount(1, $assignment->getEntries(), 'The entry stays linked on update');
+    }
+
+    public function testUpdatingALinkedEntryBeyondTheBalanceIsRejected(): void
+    {
+        $assignment = $this->createAssignmentWithAmount(1000.0);
+        $entryId    = $this->dispatchEntry($assignment, -150.0);
+
+        /** @var Entry $entry */
+        $entry   = $this->entityManager->find(Entry::class, $entryId);
+        $command = $this->objectMapper->map($entry, CreateOrUpdateEntryCommand::class);
+        $command->setOriginId($entryId)->setAmount(-1001.0);
+
+        $this->expectException(ValidationFailedException::class);
+
+        $this->messageBus->dispatch($command);
+    }
+
+    public function testEntryWithBudgetAndAssignmentIsRejected(): void
+    {
+        $assignment = $this->createAssignmentWithAmount(1000.0);
+        /** @var Budget $budget */
+        $budget = BudgetFactory::new()->create()->_real();
+
+        $command = new CreateOrUpdateEntryCommand(
+            account: $assignment->getAccount(),
+            name: 'Forecast entry with assignment',
+            amount: -100.0,
+            budget: $budget,
+            assignment: $assignment,
+        );
+
+        try {
+            $this->messageBus->dispatch($command);
+            self::fail('A ValidationFailedException was expected');
+        } catch (ValidationFailedException $exception) {
+            self::assertCount(1, $exception->getViolations());
+            self::assertSame('assignment', $exception->getViolations()->get(0)->getPropertyPath());
+        }
+    }
+
+    private function createAssignmentWithAmount(float $amount): Assignment
     {
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
 
         /** @var Assignment $assignment */
-        $assignment = AssignmentFactory::new()->create([
-            'account' => $account,
-            'amount'  => 1000.0, // Initial assignment amount
-        ])->_real();
+        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => $amount])->_real();
 
-        $initialAssignmentAmount = $assignment->getAmount();
-        $entryAmount             = -150.0; // Negative amount (expense)
+        return $assignment;
+    }
 
-        $command = new CreateOrUpdateEntryCommand();
-        $command->setName('Test Entry with Assignment');
-        $command->setAccount($account);
-        $command->setAmount($entryAmount);
-        $command->setAssignment($assignment);
+    private function dispatchEntry(Assignment $assignment, float $amount): int
+    {
+        $this->messageBus->dispatch(new CreateOrUpdateEntryCommand(
+            account: $assignment->getAccount(),
+            name: 'Entry linked to the assignment',
+            amount: $amount,
+            assignment: $assignment,
+        ));
 
-        $this->messageBus->dispatch($command);
+        /** @var Entry $entry */
+        $entry = EntryFactory::repository()->findOneBy(['name' => 'Entry linked to the assignment']);
 
-        // Refresh the assignment from database to get updated amount
-        $this->entityManager->refresh($assignment);
+        return (int) $entry->getId();
+    }
 
-        $expectedAmount = $initialAssignmentAmount + $entryAmount; // 1000.0 + (-150.0) = 850.0
+    private function reloadAssignment(Assignment $assignment): Assignment
+    {
+        $id = $assignment->getId();
+        $this->entityManager->clear();
 
-        self::assertSame(
-            $expectedAmount,
-            $assignment->getAmount(),
-            'Assignment amount should be updated by adding the entry amount'
-        );
+        /** @var Assignment $reloaded */
+        $reloaded = $this->entityManager->find(Assignment::class, $id);
+
+        return $reloaded;
     }
 }

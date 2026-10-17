@@ -12,10 +12,12 @@ use App\Infrastructure\Cqs\Message\Command\HasOriginIntIdentifierTrait;
 use App\Infrastructure\Cqs\Validation\ValidationGroupEnum;
 use App\Shared\Cqs\Message\Command\CommandInterface;
 use Symfony\Component\ObjectMapper\Attribute\Map;
+use Symfony\Component\Validator\Constraints\IsNull;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotEqualTo;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\When;
 
 /**
  * @see CreateOrUpdateEntryHandler
@@ -44,7 +46,14 @@ class CreateOrUpdateEntryCommand implements CommandInterface
          */
         private array $flags = [],
 
-        #[Map(if: false)]
+        // Mapped to the entry: the assignment balance is computed from its linked entries
+        #[When(
+            expression: 'this.getBudget() !== null',
+            constraints: [
+                new IsNull(message: 'entry.create_or_update.assignment_forbidden_with_budget'),
+            ],
+            groups: [ValidationGroupEnum::Business->value]
+        )]
         private ?Assignment $assignment = null,
     ) {
     }

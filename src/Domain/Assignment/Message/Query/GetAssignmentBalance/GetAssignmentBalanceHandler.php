@@ -23,12 +23,18 @@ readonly class GetAssignmentBalanceHandler implements QueryHandlerInterface
      */
     public function __invoke(GetAssignmentBalanceQuery $query): float
     {
-        /** @var ?float $data */
-        $data = $this->repository
+        /** @var ?float $startingAmounts */
+        $startingAmounts = $this->repository
             ->balanceQueryBuilder($query)
             ->getQuery()
             ->getSingleScalarResult();
 
-        return $data ?? 0.0;
+        /** @var ?float $linkedEntries */
+        $linkedEntries = $this->repository
+            ->linkedEntriesQueryBuilder($query)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return round((float) $startingAmounts + (float) $linkedEntries, 2);
     }
 }

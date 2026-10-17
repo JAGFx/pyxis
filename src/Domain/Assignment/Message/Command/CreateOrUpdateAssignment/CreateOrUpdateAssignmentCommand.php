@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Positive;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
 
 /**
  * TODO:
@@ -31,12 +32,15 @@ class CreateOrUpdateAssignmentCommand implements CommandInterface
         #[Length(max: 255)]
         private string $name = '',
 
-        #[NotBlank]
-        #[Positive]
+        // Starting amount: 0 for an envelope filled over time
+        #[PositiveOrZero]
         private float $amount = 0.0,
 
         #[NotNull]
         private ?Account $account = null,
+
+        #[Positive]
+        private ?float $target = null,
     ) {
     }
 
@@ -60,6 +64,18 @@ class CreateOrUpdateAssignmentCommand implements CommandInterface
     public function setAmount(float $amount): CreateOrUpdateAssignmentCommand
     {
         $this->amount = $amount;
+
+        return $this;
+    }
+
+    public function getTarget(): ?float
+    {
+        return $this->target;
+    }
+
+    public function setTarget(?float $target): CreateOrUpdateAssignmentCommand
+    {
+        $this->target = $target;
 
         return $this;
     }

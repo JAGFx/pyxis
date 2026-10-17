@@ -6,9 +6,11 @@ namespace App\Tests\Unit\Domain\Entry\Validator;
 
 use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Entity\Assignment;
+use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Message\Command\CreateOrUpdateEntry\CreateOrUpdateEntryCommand;
 use App\Domain\Entry\Validator\HasEnoughAmountAssignment;
 use App\Domain\Entry\Validator\HasEnoughAmountAssignmentValidator;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
 use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +18,7 @@ use stdClass;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class HasEnoughAmountAssignmentValidatorTest extends TestCase
 {
@@ -23,12 +26,15 @@ class HasEnoughAmountAssignmentValidatorTest extends TestCase
 
     private ExecutionContextInterface $context;
 
+    private EntityFinder $entityFinder;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->validator = new HasEnoughAmountAssignmentValidator();
-        $this->context   = $this->createMock(ExecutionContextInterface::class);
+        $this->entityFinder = $this->createStub(EntityFinder::class);
+        $this->validator    = new HasEnoughAmountAssignmentValidator($this->entityFinder);
+        $this->context      = $this->createMock(ExecutionContextInterface::class);
         $this->validator->initialize($this->context);
     }
 
@@ -52,8 +58,8 @@ class HasEnoughAmountAssignmentValidatorTest extends TestCase
         $this->validator->validate($invalidValue, $constraint);
     }
 
-    #[DataProvider('provideEarlyReturnCases')]
-    public function testEarlyReturnCasesDoNotTriggerValidation(CreateOrUpdateEntryCommand $command): void
+    #[DataProvider('provideNoViolationCases')]
+    public function testNoViolationCases(CreateOrUpdateEntryCommand $command): void
     {
         $constraint = new HasEnoughAmountAssignment();
 
@@ -64,23 +70,54 @@ class HasEnoughAmountAssignmentValidatorTest extends TestCase
         $this->validator->validate($command, $constraint);
     }
 
-    public static function provideEarlyReturnCases(): Generator
+    public static function provideNoViolationCases(): Generator
     {
-        yield 'Entry update (non-null originId) should skip validation' => [
+        yield 'Entry without assignment' => [
+            self::createCommand(assignment: null, withAssignment: false),
+        ];
+
+        yield 'Entry within the assignment balance' => [
+            self::createCommand(),
+        ];
+
+        yield 'Entry update within the assignment balance' => [
             self::createCommand(123),
         ];
+    }
 
-        yield 'Entry without assignment should skip validation' => [
-            self::createCommand(assignment: null),
-        ];
+    public function testUpdateReplacesTheStoredAmountInTheBalance(): void
+    {
+        $account    = self::createAccount();
+        $assignment = self::createAssignment($account, 500.0);
+        $stored     = new Entry()->setName('Stored')->setAmount(-400.0)->setAccount($account)->setAssignment($assignment);
+        $assignment->getEntries()->add($stored);
 
-        yield 'Entry update with null assignment should skip validation' => [
-            self::createCommand(456),
-        ];
+        $this->entityFinder->method('findByIntIdentifier')->willReturn($stored);
 
-        yield 'Entry update with null amount should skip validation' => [
-            self::createCommand(789),
-        ];
+        // Balance 100 once the -400 is spent: -450 fits, as the -400 is replaced and not added
+        $this->context->expects(self::never())->method('buildViolation');
+
+        $this->validator->validate(self::createCommand(42, $assignment, -450.0, $account), new HasEnoughAmountAssignment());
+    }
+
+    public function testUpdateExceedingTheAssignmentBalanceRaisesAViolation(): void
+    {
+        $account    = self::createAccount();
+        $assignment = self::createAssignment($account, 500.0);
+        $stored     = new Entry()->setName('Stored')->setAmount(-400.0)->setAccount($account)->setAssignment($assignment);
+        $assignment->getEntries()->add($stored);
+
+        $this->entityFinder->method('findByIntIdentifier')->willReturn($stored);
+
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $builder->method('setParameter')->willReturnSelf();
+        $builder->method('setInvalidValue')->willReturnSelf();
+        $builder->method('atPath')->willReturnSelf();
+        $builder->expects(self::once())->method('addViolation');
+
+        $this->context->expects(self::once())->method('buildViolation')->willReturn($builder);
+
+        $this->validator->validate(self::createCommand(42, $assignment, -600.0, $account), new HasEnoughAmountAssignment());
     }
 
     private static function createAccount(): Account
@@ -102,9 +139,10 @@ class HasEnoughAmountAssignmentValidatorTest extends TestCase
         ?Assignment $assignment = null,
         ?float $amount = -100.0,
         ?Account $account = null,
+        bool $withAssignment = true,
     ): CreateOrUpdateEntryCommand {
         $account    = $account ?? self::createAccount();
-        $assignment = $assignment ?? self::createAssignment($account);
+        $assignment = $withAssignment ? ($assignment ?? self::createAssignment($account)) : null;
 
         $command = new CreateOrUpdateEntryCommand(
             account: $account,

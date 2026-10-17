@@ -39,7 +39,9 @@ assignment:
     account:
       label: Compte
     amount:
-      label: Montant
+      label: Montant de départ
+    target:
+      label: Objectif (facultatif)
 
 budget:
   account_balance:
