@@ -1,0 +1,69 @@
+# Scenarios to check budget balancing and periodic entries by hand (reload with `make fixture`)
+
+App\Domain\Budget\Entity\Budget:
+  # Cash flow on both accounts: each account must be balanced separately
+  budget_scenario_multi_account:
+    name: 'Scénario - Cash-flow multi-comptes'
+    amount: 600
+
+  # Opposite cash flows: global cash flow is 0, but each account still has to be balanced
+  budget_scenario_opposite_cash_flow:
+    name: 'Scénario - Cash-flows opposés'
+    amount: 600
+
+  # Entries created at the same second: cash flow must be 300, not 100
+  budget_scenario_same_second:
+    name: 'Scénario - Entrées à la même seconde'
+    amount: 600
+
+App\Domain\Entry\Entity\Entry:
+  entry_scenario_multi_account_a:
+    name: 'Scénario - multi-comptes Livret A'
+    createdAt: <dateTimeImmutable('-1 year')>
+    amount: 300
+    budget: '@budget_scenario_multi_account'
+    account: '@account_a'
+
+  entry_scenario_multi_account_ldds:
+    name: 'Scénario - multi-comptes LDDS'
+    createdAt: <dateTimeImmutable('-1 year')>
+    amount: -100
+    budget: '@budget_scenario_multi_account'
+    account: '@account_ldds'
+
+  entry_scenario_opposite_a:
+    name: 'Scénario - opposés Livret A'
+    createdAt: <dateTimeImmutable('-1 year')>
+    amount: 50
+    budget: '@budget_scenario_opposite_cash_flow'
+    account: '@account_a'
+
+  entry_scenario_opposite_ldds:
+    name: 'Scénario - opposés LDDS'
+    createdAt: <dateTimeImmutable('-1 year')>
+    amount: -50
+    budget: '@budget_scenario_opposite_cash_flow'
+    account: '@account_ldds'
+
+  entry_scenario_same_second_{1..3}:
+    name: 'Scénario - même seconde <current()>'
+    createdAt: <dateTimeImmutable('first day of january last year 14:00:00')>
+    amount: 100
+    budget: '@budget_scenario_same_second'
+    account: '@account_a'
+
+App\Domain\Assignment\Entity\Assignment:
+  # Makes the periodic entry below fail (HasEnoughAmountAssignment)
+  assignment_scenario_negative:
+    name: 'Scénario - Assignment négatif'
+    amount: -1000
+    account: '@account_ldds'
+
+App\Domain\PeriodicEntry\Entity\PeriodicEntry:
+  # Fails on `bin/console bugr:periodic-entry:apply` without stopping the other periodic entries
+  periodic_entry_scenario_failing:
+    name: 'Scénario - Écriture périodique en échec'
+    amount: 100
+    executionDate: <immutableDateTimeBetween('-5 hour', 'now')>
+    account: '@account_ldds'
+    assignment: '@assignment_scenario_negative'
