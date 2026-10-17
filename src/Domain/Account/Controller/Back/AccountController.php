@@ -101,11 +101,11 @@ class AccountController extends AbstractController
                 }
 
                 $this->messageBus->dispatch($accountCommand);
+
+                return $this->redirectToRoute('back_account_list');
             } catch (ValidationFailedException $exception) {
                 $this->mapBusinessErrorsToForm($exception->getViolations(), $form);
             }
-
-            return $this->redirectToRoute('back_account_list');
         }
 
         return $this->render('domain/account/form.html.twig', [
