@@ -15,9 +15,9 @@ class PaginationBuilder
                 'required' => false,
                 'data'     => 1,
                 'setter'   => function (PaginationInterface $data, $value): void {
-                    /** @var int $page */
-                    $page = max(1, $value ?? 1);
-                    $data->setPage($page);
+                    // Tampered values (non numeric, negative, overflow) fall back to the first page
+                    $page = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+                    $data->setPage(false === $page ? 1 : $page);
                 },
             ]);
     }

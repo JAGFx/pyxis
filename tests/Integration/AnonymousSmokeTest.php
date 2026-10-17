@@ -29,6 +29,27 @@ class AnonymousSmokeTest extends WebTestCase
         yield ['/entries/balance'];
         yield ['/periodic_entries'];
         yield ['/periodic_entries/create'];
+
+        // Tampered pagination falls back to the first page instead of a TypeError
+        yield ['/entries?page=abc'];
+        yield ['/entries?page=-3'];
+        yield ['/entries?page=99999999999999999999'];
+    }
+
+    public static function notFoundRoutesDatasets(): Generator
+    {
+        yield ['/search-form?target=unknown'];
+        yield ['/search-form'];
+    }
+
+    #[DataProvider('notFoundRoutesDatasets')]
+    public function testRoutesIsNotFound(string $path): void
+    {
+        $client = static::createClient();
+
+        $client->request(Request::METHOD_GET, $path);
+
+        self::assertResponseStatusCodeSame(404, "Bad status code for path: $path");
     }
 
     #[DataProvider('routesDatasets')]
