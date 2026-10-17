@@ -9,6 +9,7 @@ use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\AssignmentFactory;
 use App\Tests\Factory\BudgetFactory;
+use App\Tests\Factory\EntryFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use DateTimeImmutable;
@@ -248,5 +249,53 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
 
         $this->entityManager->refresh($assignment);
         $this->assertEquals(1100.0, $assignment->getAmount());
+    }
+
+    public function testFailingPeriodicEntryDoesNotBreakProcess(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::new()->create([
+            'account' => $account,
+            'amount'  => -1000.0,
+        ])->_real();
+
+        // Rejected by HasEnoughAmountAssignment: the assignment stays negative after the entry
+        /** @var PeriodicEntry $failingPeriodicEntry */
+        $failingPeriodicEntry = PeriodicEntryFactory::new()->create([
+            'name'          => 'Failing periodic entry',
+            'executionDate' => new DateTimeImmutable('2025-10-05'),
+            'account'       => $account,
+            'amount'        => 100.0,
+        ])->_real();
+        $failingPeriodicEntry->setAssignment($assignment);
+
+        /** @var PeriodicEntry $periodicEntry */
+        $periodicEntry = PeriodicEntryFactory::new()->create([
+            'name'          => 'Valid periodic entry',
+            'executionDate' => new DateTimeImmutable('2025-10-05'),
+            'account'       => $account,
+            'amount'        => 50.0,
+        ])->_real();
+        $this->entityManager->flush();
+
+        $exitCode = $this->commandTester->execute(['--target-date' => '2025-10-05 02:00:00']);
+
+        $this->assertEquals(Command::FAILURE, $exitCode);
+        $this->assertStringContainsString('The job has been executed with 1 failure(s).', $this->commandTester->getDisplay());
+
+        $failingPeriodicEntryId = $failingPeriodicEntry->getId();
+        $periodicEntryId        = $periodicEntry->getId();
+        $this->entityManager->clear();
+
+        /** @var PeriodicEntry $failingPeriodicEntry */
+        $failingPeriodicEntry = $this->entityManager->find(PeriodicEntry::class, $failingPeriodicEntryId);
+        /** @var PeriodicEntry $periodicEntry */
+        $periodicEntry = $this->entityManager->find(PeriodicEntry::class, $periodicEntryId);
+
+        $this->assertNull($failingPeriodicEntry->getLastExecutionDate());
+        $this->assertNotNull($periodicEntry->getLastExecutionDate());
+        $this->assertCount(1, EntryFactory::repository()->findBy(['name' => 'Valid periodic entry']));
     }
 }
