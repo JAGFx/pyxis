@@ -19,7 +19,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
+// Relies on the old_bugr connection, only defined in dev (config/packages/doctrine.yaml)
+#[When(env: 'dev')]
 #[AsCommand(
     name: 'bugr:old-budget:budget-summary',
     description: 'Display budget periods with amount, start and end date.'

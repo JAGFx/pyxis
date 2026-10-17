@@ -17,7 +17,10 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\Attribute\When;
 
+// Relies on the old_bugr connection, only defined in dev (config/packages/doctrine.yaml)
+#[When(env: 'dev')]
 #[AsCommand('bugr:old-data:import')]
 class ImportOlderDataCommand
 {
