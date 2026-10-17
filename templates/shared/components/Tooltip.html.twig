@@ -32,7 +32,7 @@
 {% set placement = placement | default('bottom') %}
 {% set tooltipId = 'tooltip-' ~ random() %}
 
-<div {{ attributes }} data-tooltip-target="{{ tooltipId }}" data-tooltip-trigger="click" data-tooltip-placement="{{ placement }}">
+<div {{ attributes.without('title', 'placement') }} data-tooltip-target="{{ tooltipId }}" data-tooltip-trigger="click" data-tooltip-placement="{{ placement }}">
      {% block content %}{% endblock %}
 
     <div id="{{ tooltipId }}" role="tooltip" class="{{ tooltipCva.apply({placement}) }}">

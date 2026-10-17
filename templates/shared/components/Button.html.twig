@@ -41,7 +41,7 @@
 {% set icon = icon | default('') %}
 
 
-<{{ node }} class="{{ buttonCva.apply({dir}, attributes.render('class')) | tailwind_merge }}" {{ attributes.without('class') }}>
+<{{ node }} class="{{ buttonCva.apply({dir}, attributes.render('class')) | tailwind_merge }}" {{ attributes.without('class', 'node', 'dir', 'color', 'size', 'label', 'icon') }}>
     {% if label is not empty and dir == 'right' %}
         <span class="text-white">{{ label }}</span>
     {% endif %}
