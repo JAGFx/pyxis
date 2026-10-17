@@ -45,6 +45,21 @@ App\Domain\Entry\Entity\Entry:
     budget: '@budget_scenario_opposite_cash_flow'
     account: '@account_ldds'
 
+  # Balance of "Epargne de précaution": 1600 - 100 = 1500, restored when this entry is removed
+  entry_scenario_assignment_spent:
+    name: 'Scénario - Dépense sur épargne de précaution'
+    createdAt: <dateTimeImmutable('-2 day')>
+    amount: -100
+    account: '@account_ldds'
+    assignment: '@assignment_ldds1'
+
+  entry_scenario_envelope_deposit:
+    name: 'Scénario - Versement enveloppe vacances'
+    createdAt: <dateTimeImmutable('-1 day')>
+    amount: 300
+    account: '@account_a'
+    assignment: '@assignment_scenario_envelope'
+
   entry_scenario_same_second_{1..3}:
     name: 'Scénario - même seconde <current()>'
     createdAt: <dateTimeImmutable('first day of january last year 14:00:00')>
@@ -58,6 +73,13 @@ App\Domain\Assignment\Entity\Assignment:
     name: 'Scénario - Assignment négatif'
     amount: -1000
     account: '@account_ldds'
+
+  # Envelope filled over time towards a target: balance 300 / 2000 (15%)
+  assignment_scenario_envelope:
+    name: 'Scénario - Enveloppe vacances'
+    amount: 0
+    target: 2000
+    account: '@account_a'
 
 App\Domain\PeriodicEntry\Entity\PeriodicEntry:
   # Fails on `bin/console bugr:periodic-entry:apply` without stopping the other periodic entries
