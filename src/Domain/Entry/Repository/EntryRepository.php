@@ -7,6 +7,7 @@ use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
+use App\Infrastructure\Doctrine\Query\LikeExpression;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -53,7 +54,7 @@ class EntryRepository extends ServiceEntityRepository
         if (!is_null($searchQuery->getName())) {
             $queryBuilder
                 ->andWhere('e.name LIKE :name')
-                ->setParameter('name', '%' . $searchQuery->getName() . '%');
+                ->setParameter('name', LikeExpression::contains($searchQuery->getName()));
         }
 
         if (EntryTypeEnum::TYPE_SPENT === $searchQuery->getType()) {

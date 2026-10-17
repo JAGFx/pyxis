@@ -5,6 +5,7 @@ namespace App\Domain\Assignment\Repository;
 use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Message\Query\FindAssignments\FindAssignmentsQuery;
 use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
+use App\Infrastructure\Doctrine\Query\LikeExpression;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -34,7 +35,7 @@ class AssignmentRepository extends ServiceEntityRepository
         if (!is_null($searchQuery->getName())) {
             $queryBuilder
                 ->andWhere('a.name LIKE :name')
-                ->setParameter('name', '%' . $searchQuery->getName() . '%');
+                ->setParameter('name', LikeExpression::contains($searchQuery->getName()));
         }
 
         switch ($searchQuery->getOrderBy()) {

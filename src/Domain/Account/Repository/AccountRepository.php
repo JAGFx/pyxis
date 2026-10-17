@@ -5,6 +5,7 @@ namespace App\Domain\Account\Repository;
 use App\Domain\Account\Entity\Account;
 use App\Domain\Account\Message\Query\FindAccountIds\FindAccountIdsQuery;
 use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
+use App\Infrastructure\Doctrine\Query\LikeExpression;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -31,7 +32,7 @@ class AccountRepository extends ServiceEntityRepository
         if (null !== $searchQuery->getName()) {
             $queryBuilder
                 ->andWhere('a.name LIKE :name')
-                ->setParameter('name', '%' . $searchQuery->getName() . '%');
+                ->setParameter('name', LikeExpression::contains($searchQuery->getName()));
         }
 
         if (true === $searchQuery->hasPositiveOrNegativeBalance()) {

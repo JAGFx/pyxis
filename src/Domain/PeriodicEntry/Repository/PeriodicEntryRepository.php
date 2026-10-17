@@ -5,6 +5,7 @@ namespace App\Domain\PeriodicEntry\Repository;
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
 use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
+use App\Infrastructure\Doctrine\Query\LikeExpression;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -29,7 +30,7 @@ class PeriodicEntryRepository extends ServiceEntityRepository
         if (null !== $searchQuery->getName()) {
             $queryBuilder
                 ->andWhere('p.name LIKE :name')
-                ->setParameter('name', '%' . $searchQuery->getName() . '%')
+                ->setParameter('name', LikeExpression::contains($searchQuery->getName()))
             ;
         }
 

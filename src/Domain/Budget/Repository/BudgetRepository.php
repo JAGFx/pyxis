@@ -5,6 +5,7 @@ namespace App\Domain\Budget\Repository;
 use App\Domain\Budget\Entity\Budget;
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Message\Query\FindBudgetVO\FindBudgetVOQuery;
+use App\Infrastructure\Doctrine\Query\LikeExpression;
 use App\Shared\Utils\YearRange;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -28,7 +29,7 @@ class BudgetRepository extends ServiceEntityRepository
         if (null !== $searchQuery->getName()) {
             $queryBuilder
                 ->andWhere('b.name LIKE :name')
-                ->setParameter('name', '%' . $searchQuery->getName() . '%');
+                ->setParameter('name', LikeExpression::contains($searchQuery->getName()));
         }
 
         if (!is_null($searchQuery->isEnabled())) {

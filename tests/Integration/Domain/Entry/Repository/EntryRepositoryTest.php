@@ -454,4 +454,20 @@ class EntryRepositoryTest extends KernelTestCase
         self::assertContains('Entry with BALANCE, TRANSFERT and HIDDEN', $entryNames);
         self::assertContains('Entry with all flags', $entryNames);
     }
+
+    public function testNameFilterTreatsWildcardsLiterally(): void
+    {
+        $account = AccountFactory::new()->create();
+        foreach (['Remise 50%', 'Remise 500', 'frais_banque', 'frais banque'] as $name) {
+            EntryFactory::new()->create(['account' => $account, 'name' => $name]);
+        }
+
+        $find = fn (string $name): array => array_map(
+            static fn (Entry $entry): string => $entry->getName(),
+            $this->entryRepository->getEntriesQueryBuilder(new FindEntriesQuery(name: $name, flags: []))->getQuery()->getResult()
+        );
+
+        self::assertSame(['Remise 50%'], $find('50%'));
+        self::assertSame(['frais_banque'], $find('s_b'));
+    }
 }
