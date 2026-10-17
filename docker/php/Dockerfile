@@ -58,6 +58,9 @@ RUN cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
 COPY docker/php/conf.d/error_reporting.prod.ini $PHP_INI_DIR/error_reporting.ini
 COPY docker/php/conf.d/opcache.prod.ini $PHP_INI_DIR/opcache.ini
 
+# Database dump before migrations (see entrypoint.sh). The connector provides caching_sha2_password for MySQL 8
+RUN apk add --no-cache mariadb-client mariadb-connector-c
+
 RUN adduser -D ${USER} \
     && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp \
     && chown -R ${USER}:${USER} /config/caddy /data/caddy
