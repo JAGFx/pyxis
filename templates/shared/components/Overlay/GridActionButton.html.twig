@@ -18,7 +18,7 @@
 {% set actionUrl = actionUrl | default('#')  %}
 
 <div class="flex justify-center">
-    <a href="{{ actionUrl }}" class="aspect-square w-20 h-auto rounded-3xl p-2 flex flex-col justify-start items-center text-center space-y-2" {{ attributes.without('class') }}>
+    <a href="{{ actionUrl }}" class="aspect-square w-20 h-auto rounded-3xl p-2 flex flex-col justify-start items-center text-center space-y-2" {{ attributes.without('class', 'actionUrl', 'icon', 'label', 'color') }}>
         <div class="{{ iconCva.apply({color}) | tailwind_merge }}" >
             <i class="{{ icon }} text-[1.2rem]"></i>
         </div>
