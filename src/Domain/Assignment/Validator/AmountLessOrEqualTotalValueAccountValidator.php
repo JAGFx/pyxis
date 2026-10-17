@@ -2,8 +2,11 @@
 
 namespace App\Domain\Assignment\Validator;
 
+use App\Domain\Account\Entity\Account;
+use App\Domain\Assignment\Entity\Assignment;
 use App\Domain\Assignment\Message\Command\CreateOrUpdateAssignment\CreateOrUpdateAssignmentCommand;
 use App\Infrastructure\Cqs\Bus\MessageBus;
+use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
 use App\Shared\ValueObject\AmountBalance;
 use InvalidArgumentException;
@@ -16,6 +19,7 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
 {
     public function __construct(
         private readonly MessageBus $messageBus,
+        private readonly EntityFinder $entityFinder,
     ) {
     }
 
@@ -33,16 +37,35 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
             return;
         }
 
+        $account = $value->getAccount();
+
+        // Reported by the NotNull constraint
+        if (!$account instanceof Account) {
+            return;
+        }
+
         /** @var AmountBalance[] $amountBalances */
-        $amountBalances = $this->messageBus->dispatch(new GetAmountBalanceQuery([$value->getAccount()?->getId()]));
+        $amountBalances = $this->messageBus->dispatch(new GetAmountBalanceQuery([$account->getId()]));
         /** @var AmountBalance $amountBalance */
         $amountBalance = reset($amountBalances);
 
-        // TODO: Add test for it
-        if ($value->getAmount() > $amountBalance->getTotal()) {
+        // The other assignments of the account already hold part of its total
+        $otherAssignments = $amountBalance->getAssignments();
+
+        if (!is_null($value->getOriginId())) {
+            $currentAssignment = $this->entityFinder->findByIntIdentifier(Assignment::class, $value->getOriginId());
+
+            if ($currentAssignment instanceof Assignment && $currentAssignment->getAccount()->getId() === $account->getId()) {
+                $otherAssignments -= $currentAssignment->getAmount();
+            }
+        }
+
+        $availableAmount = round($amountBalance->getTotal() - $otherAssignments, 2);
+
+        if (round($value->getAmount(), 2) > $availableAmount) {
             $this->context
                 ->buildViolation($constraint->message)
-                ->setParameter('{{ total }}', number_format($amountBalance->getTotal(), 2, ',', ' '))
+                ->setParameter('{{ total }}', number_format($availableAmount, 2, ',', ' '))
                 ->setInvalidValue($value->getAmount())
                 ->atPath('amount')
                 ->addViolation();
