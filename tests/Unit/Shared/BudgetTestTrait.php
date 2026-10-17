@@ -12,7 +12,7 @@ trait BudgetTestTrait
     {
         $budget = (new Budget())
             ->setName('A Budget')
-            ->setAmount($data['amount'] ?? 0.0);
+            ->setAmount($data['amount'] ?? 0);
 
         foreach ($data['entries'] as $entryData) {
             $entry = $this->generateEntry([

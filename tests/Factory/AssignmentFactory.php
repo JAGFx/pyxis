@@ -16,7 +16,7 @@ class AssignmentFactory extends ModelFactory
     {
         return [
             'name'    => self::faker()->words(3, true),
-            'amount'  => self::faker()->randomFloat(2, 10, 1000),
+            'amount'  => self::faker()->numberBetween(1000, 100000),
             'account' => AccountFactory::new(),
         ];
     }

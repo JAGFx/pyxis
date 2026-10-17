@@ -31,15 +31,15 @@ class CreateHistoryBudgetHandlerTest extends KernelTestCase
         /** @var Budget $budget */
         $budget = BudgetFactory::new()->create([
             'name'    => 'Test Budget',
-            'amount'  => 1200.0,
+            'amount'  => 120000,
             'enabled' => true,
         ])->_real();
 
         $command = new CreateHistoryBudgetCommand(
             budget: $budget,
-            amount: 1200.0,
+            amount: 120000,
             date: new DateTimeImmutable(),
-            spent: 900.0,
+            spent: 90000,
             relativeProgress: 0.75,
         );
 
@@ -53,7 +53,7 @@ class CreateHistoryBudgetHandlerTest extends KernelTestCase
         /** @var Budget $budget */
         $budget = BudgetFactory::new()->create([
             'name'    => 'Test Budget for Mapping',
-            'amount'  => 1000.0,
+            'amount'  => 100000,
             'enabled' => true,
         ])->_real();
 
@@ -61,8 +61,8 @@ class CreateHistoryBudgetHandlerTest extends KernelTestCase
         $historyBudget = HistoryBudgetFactory::new()->create([
             'date'             => new DateTimeImmutable(),
             'relativeProgress' => 0.5,
-            'spent'            => 500.0,
-            'amount'           => 1000.0,
+            'spent'            => 50000,
+            'amount'           => 100000,
             'budget'           => $budget,
         ])->_real();
 

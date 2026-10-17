@@ -11,7 +11,7 @@ final class PeriodicEntryFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'amount'        => self::faker()->randomFloat(),
+            'amount'        => self::faker()->numberBetween(1, 1000000),
             'createdAt'     => DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'executionDate' => DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'name'          => self::faker()->text(),

@@ -41,9 +41,9 @@ class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
         /** @var Account $account */
         $account = AccountFactory::new()->create(['name' => 'Test Account'])->_real();
         /** @var Budget $budget1 */
-        $budget1 = BudgetFactory::new()->create(['name' => 'Test Budget 1', 'amount' => 1200.0])->_real();
+        $budget1 = BudgetFactory::new()->create(['name' => 'Test Budget 1', 'amount' => 120000])->_real();
         /** @var Budget $budget2 */
-        $budget2 = BudgetFactory::new()->create(['name' => 'Test Budget 2', 'amount' => 600.0])->_real();
+        $budget2 = BudgetFactory::new()->create(['name' => 'Test Budget 2', 'amount' => 60000])->_real();
 
         $command = new CreateOrUpdatePeriodicEntryCommand(
             account: $account,
@@ -67,15 +67,15 @@ class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
         $existingPeriodicEntry = PeriodicEntryFactory::new()->create([
             'name'    => 'Original Periodic Entry',
             'account' => $account,
-            'amount'  => 100.0,
+            'amount'  => 10000,
         ])->_real();
 
         /** @var Account $newAccount */
         $newAccount = AccountFactory::new()->create(['name' => 'Updated Account'])->_real();
         /** @var Budget $budget1 */
-        $budget1 = BudgetFactory::new()->create(['name' => 'Updated Budget 1', 'amount' => 800.0])->_real();
+        $budget1 = BudgetFactory::new()->create(['name' => 'Updated Budget 1', 'amount' => 80000])->_real();
         /** @var Budget $budget2 */
-        $budget2 = BudgetFactory::new()->create(['name' => 'Updated Budget 2', 'amount' => 400.0])->_real();
+        $budget2 = BudgetFactory::new()->create(['name' => 'Updated Budget 2', 'amount' => 40000])->_real();
 
         $command = new CreateOrUpdatePeriodicEntryCommand(
             account: $newAccount,
@@ -118,7 +118,7 @@ class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
         $command = new CreateOrUpdatePeriodicEntryCommand(
             account: $account,
             name: 'Periodic Entry With Assignment',
-            amount: 100.0,
+            amount: 10000,
             executionDate: new DateTimeImmutable(),
             assignment: $assignment,
         );
@@ -140,7 +140,7 @@ class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
         /** @var Assignment $assignment */
         $assignment = AssignmentFactory::new()->create(['account' => $account])->_real();
         /** @var Budget $budget */
-        $budget = BudgetFactory::new()->create(['amount' => 1200.0])->_real();
+        $budget = BudgetFactory::new()->create(['amount' => 120000])->_real();
 
         $command = new CreateOrUpdatePeriodicEntryCommand(
             account: $account,
@@ -166,7 +166,7 @@ class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
         $command = new CreateOrUpdatePeriodicEntryCommand(
             account: $account,
             name: 'Periodic Entry With Foreign Assignment',
-            amount: 100.0,
+            amount: 10000,
             executionDate: new DateTimeImmutable(),
             assignment: $assignment,
         );

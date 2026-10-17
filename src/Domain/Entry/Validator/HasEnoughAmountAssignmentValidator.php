@@ -36,22 +36,22 @@ class HasEnoughAmountAssignmentValidator extends ConstraintValidator
         }
 
         // On update, the balance already holds the stored amount of the entry: replace it by the new one
-        $storedAmount = 0.0;
+        $storedAmount = 0;
         if (!is_null($value->getOriginId())) {
             $storedEntry = $this->entityFinder->findByIntIdentifier(Entry::class, $value->getOriginId());
 
             if ($storedEntry instanceof Entry && $storedEntry->getAssignment() === $assignment) {
-                $storedAmount = $storedEntry->getAmount() ?? 0.0;
+                $storedAmount = $storedEntry->getAmount();
             }
         }
 
         $balance    = $assignment->getBalance() - $storedAmount;
-        $restAmount = round($balance + $value->getAmount(), 2);
+        $restAmount = $balance + $value->getAmount();
 
         if ($restAmount < 0) {
             $this->context
                 ->buildViolation($constraint->message)
-                ->setParameter('%assignmentAmount%', number_format($balance, 2, ',', ' '))
+                ->setParameter('%assignmentAmount%', number_format($balance / 100, 2, ',', ' '))
                 ->setInvalidValue($value->getAmount())
                 ->atPath('amount')
                 ->addViolation();

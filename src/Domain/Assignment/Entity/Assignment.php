@@ -22,16 +22,16 @@ class Assignment implements IntIdentifierInterface
     private string $name;
 
     /**
-     * Starting amount: money already set aside when the assignment was created (0 for an envelope filled over time).
+     * Starting amount in cents: money already set aside when the assignment was created (0 for an envelope filled over time).
      */
     #[ORM\Column]
-    private float $amount;
+    private int $amount;
 
     /**
-     * Optional amount to reach, only used for display.
+     * Optional amount to reach in cents, only used for display.
      */
     #[ORM\Column(nullable: true)]
-    private ?float $target = null;
+    private ?int $target = null;
 
     /**
      * @var Collection<int, Entry>
@@ -51,13 +51,13 @@ class Assignment implements IntIdentifierInterface
     /**
      * Starting amount plus the linked entries: deleting or updating an entry is reflected without any write here.
      */
-    public function getBalance(): float
+    public function getBalance(): int
     {
-        return round(array_reduce(
+        return array_reduce(
             $this->entries->toArray(),
-            static fn (float $balance, Entry $entry): float => $balance + ($entry->getAmount() ?? 0.0),
+            static fn (int $balance, Entry $entry): int => $balance + $entry->getAmount(),
             $this->amount
-        ), 2);
+        );
     }
 
     public function getName(): string
@@ -72,24 +72,24 @@ class Assignment implements IntIdentifierInterface
         return $this;
     }
 
-    public function getAmount(): float
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): Assignment
+    public function setAmount(int $amount): Assignment
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    public function getTarget(): ?float
+    public function getTarget(): ?int
     {
         return $this->target;
     }
 
-    public function setTarget(?float $target): Assignment
+    public function setTarget(?int $target): Assignment
     {
         $this->target = $target;
 

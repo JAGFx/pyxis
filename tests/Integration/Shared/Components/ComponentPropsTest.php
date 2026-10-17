@@ -42,16 +42,16 @@ class ComponentPropsTest extends WebTestCase
         /** @var Account $account */
         $account = AccountFactory::new()->create(['name' => 'Livret A'])->_real();
         /** @var Budget $budget */
-        $budget = BudgetFactory::new()->create(['name' => 'Vacances', 'amount' => 600.0])->_real();
-        EntryFactory::new()->create(['account' => $account, 'amount' => 1000.0, 'name' => 'Salaire']);
+        $budget = BudgetFactory::new()->create(['name' => 'Vacances', 'amount' => 60000])->_real();
+        EntryFactory::new()->create(['account' => $account, 'amount' => 100000, 'name' => 'Salaire']);
         EntryFactory::new()->create([
             'account'   => $account,
             'budget'    => $budget,
-            'amount'    => -100.0,
+            'amount'    => -10000,
             'name'      => 'Billets',
             'createdAt' => new DateTimeImmutable('-1 year'),
         ]);
-        AssignmentFactory::new()->create(['account' => $account, 'amount' => 100.0, 'target' => 500.0]);
+        AssignmentFactory::new()->create(['account' => $account, 'amount' => 10000, 'target' => 50000]);
 
         $crawler = $client->request(Request::METHOD_GET, sprintf($path, $account->getId()));
 

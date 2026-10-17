@@ -65,7 +65,7 @@ readonly class AddSplitForBudgetsHandler implements CommandHandlerInterface
             $entryCommand = new CreateOrUpdateEntryCommand(
                 account: $periodicEntry->getAccount(),
                 name: $periodicEntry->getName(),
-                amount: $periodicEntry->getAmount() ?? 0.0,
+                amount: $periodicEntry->getAmount() ?? 0,
                 flags: [EntryFlagEnum::PERIODIC_ENTRY],
                 assignment: $periodicEntry->getAssignment(),
             );
@@ -73,9 +73,9 @@ readonly class AddSplitForBudgetsHandler implements CommandHandlerInterface
             $this->messageBus->dispatch($entryCommand);
         } else {
             foreach ($periodicEntry->getBudgets() as $budget) {
-                $amount = $periodicEntry->getAmountFor($budget);
+                $amount = $periodicEntry->getAmountFor($budget, (int) $currentDate->format('n'));
 
-                if ($amount <= 0.0) {
+                if ($amount <= 0) {
                     continue;
                 }
 

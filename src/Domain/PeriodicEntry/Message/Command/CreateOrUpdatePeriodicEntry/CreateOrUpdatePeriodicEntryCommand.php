@@ -49,7 +49,7 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
         #[When(
             expression: 'this.isSpent()',
             constraints: [
-                new GreaterThan(0.0),
+                new GreaterThan(0),
                 new NotNull(),
             ],
             groups: [ValidationGroupEnum::Business->value]
@@ -61,7 +61,7 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
             ],
             groups: [ValidationGroupEnum::Business->value]
         )]
-        private ?float $amount = null,
+        private ?int $amount = null,
 
         #[NotNull]
         private ?DateTimeImmutable $executionDate = null,
@@ -130,12 +130,12 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
         return $this;
     }
 
-    public function getAmount(): ?float
+    public function getAmount(): ?int
     {
         return $this->amount;
     }
 
-    public function setAmount(?float $amount): CreateOrUpdatePeriodicEntryCommand
+    public function setAmount(?int $amount): CreateOrUpdatePeriodicEntryCommand
     {
         $this->amount = $amount;
 

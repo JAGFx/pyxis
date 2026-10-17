@@ -22,17 +22,17 @@ class Statistics
     /**
      * @param array<string, mixed> $statistics
      */
-    public static function sumOf(array $statistics, string $property): float
+    public static function sumOf(array $statistics, string $property): int
     {
         return array_reduce(
             $statistics,
-            static function (float $currentSum, array $item) use ($property): float {
-                /** @var array<float> $currentItem */
+            static function (int $currentSum, array $item) use ($property): int {
+                /** @var array<int|string|null> $currentItem */
                 $currentItem = $item;
 
-                return $currentSum + ($currentItem[$property] ?? 0.0);
+                return $currentSum + (int) ($currentItem[$property] ?? 0);
             },
-            0.0
+            0
         );
     }
 }

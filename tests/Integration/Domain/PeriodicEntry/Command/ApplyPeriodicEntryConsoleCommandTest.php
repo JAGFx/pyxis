@@ -177,7 +177,7 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         $account = AccountFactory::new()->create()->_real();
         /** @var Budget $budget */
         $budget = BudgetFactory::new()->create([
-            'amount'  => 1200.0,
+            'amount'  => 120000,
             'enabled' => true,
         ])->_real();
 
@@ -224,7 +224,7 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         /** @var Assignment $assignment */
         $assignment = AssignmentFactory::new()->create([
             'account' => $account,
-            'amount'  => 1000.0,
+            'amount'  => 100000,
         ])->_real();
 
         /** @var PeriodicEntry $periodicEntry */
@@ -232,7 +232,7 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
             'name'          => 'Spent periodic entry with assignment',
             'executionDate' => new DateTimeImmutable('2025-10-05'),
             'account'       => $account,
-            'amount'        => 100.0,
+            'amount'        => 10000,
         ])->_real();
         $periodicEntry->setAssignment($assignment);
         $this->entityManager->flush();
@@ -241,14 +241,14 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         $this->assertEquals(Command::SUCCESS, $exitCode);
 
         $this->entityManager->clear();
-        $this->assertEquals(1100.0, $this->entityManager->find(Assignment::class, $assignment->getId())?->getBalance());
+        $this->assertEquals(110000, $this->entityManager->find(Assignment::class, $assignment->getId())?->getBalance());
 
         // Second run in the same month must not update the assignment again
         $exitCode = $this->commandTester->execute(['--target-date' => '2025-10-05 03:00:00']);
         $this->assertEquals(Command::SUCCESS, $exitCode);
 
         $this->entityManager->clear();
-        $this->assertEquals(1100.0, $this->entityManager->find(Assignment::class, $assignment->getId())?->getBalance());
+        $this->assertEquals(110000, $this->entityManager->find(Assignment::class, $assignment->getId())?->getBalance());
     }
 
     public function testFailingPeriodicEntryDoesNotBreakProcess(): void
@@ -258,7 +258,7 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
         /** @var Assignment $assignment */
         $assignment = AssignmentFactory::new()->create([
             'account' => $account,
-            'amount'  => -1000.0,
+            'amount'  => -100000,
         ])->_real();
 
         // Rejected by HasEnoughAmountAssignment: the assignment stays negative after the entry
@@ -267,7 +267,7 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
             'name'          => 'Failing periodic entry',
             'executionDate' => new DateTimeImmutable('2025-10-05'),
             'account'       => $account,
-            'amount'        => 100.0,
+            'amount'        => 10000,
         ])->_real();
         $failingPeriodicEntry->setAssignment($assignment);
 
@@ -276,7 +276,7 @@ class ApplyPeriodicEntryConsoleCommandTest extends KernelTestCase
             'name'          => 'Valid periodic entry',
             'executionDate' => new DateTimeImmutable('2025-10-05'),
             'account'       => $account,
-            'amount'        => 50.0,
+            'amount'        => 5000,
         ])->_real();
         $this->entityManager->flush();
 

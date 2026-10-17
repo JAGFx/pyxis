@@ -2,14 +2,14 @@ App\Domain\Entry\Entity\Entry:
   entry_initial_spent_account_a:
     name: Initial entry spent
     createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
-    amount: 5000
+    amount: 500000
     account: '@account_a'
     flags: ['<(App\Domain\Entry\Entity\EntryFlagEnum::HIDDEN)>']
 
   entry_initial_budget_account_a:
     name: Initial entry budget
     createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
-    amount: 2000
+    amount: 200000
     account: '@account_a'
     budget: '@budget_initial'
     flags: ['<(App\Domain\Entry\Entity\EntryFlagEnum::HIDDEN)>']
@@ -17,40 +17,40 @@ App\Domain\Entry\Entity\Entry:
   entry_initial_spent_ldds:
     name: Initial entry LDDS
     createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
-    amount: 2600
+    amount: 260000
     account: '@account_ldds'
     flags: ['<(App\Domain\Entry\Entity\EntryFlagEnum::HIDDEN)>']
 
   entry_budget_over:
     name: Entry budget over
     createdAt: <immutableDateTimeBetween('-1 year -6 month', '-1 year')>
-    amount: -500
+    amount: -50000
     budget: '@budget_over'
     account: '@account_a'
 
   entry_budget_full_spent:
     name: Entry budget full
     createdAt: <immutableDateTimeBetween('-1 year -6 month', '-1 year')>
-    amount: -200
+    amount: -20000
     budget: '@budget_full'
     account: '@account_a'
 
   entry_budget_full_forecast:
     name: <name()>
     createdAt: <immutableDateTimeBetween('-1 year -6 month', '-1 year')>
-    amount: 200
+    amount: 20000
     budget: '@budget_full'
     account: '@account_a'
 
   entry_budget_current_year_{1..7}:
     name: <name()>
     createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
-    amount: <randomFloat(2, -150, 150)>
+    amount: <numberBetween(-15000, 15000)>
     account: '@account_a'
 
   entry_budget_current_year_forecast_{1..7}:
     name: <name()>
     createdAt: <immutableDateTimeBetween('-1 hour', 'now')>
-    amount: <randomFloat(2, -150, 150)>
+    amount: <numberBetween(-15000, 15000)>
     budget: '@budget_current_year'
     account: '@account_a'

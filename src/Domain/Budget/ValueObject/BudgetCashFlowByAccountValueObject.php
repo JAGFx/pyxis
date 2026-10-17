@@ -10,7 +10,7 @@ readonly class BudgetCashFlowByAccountValueObject
     public function __construct(
         private Budget $budget,
         private Account $account,
-        private float $cashFlow,
+        private int $cashFlow,
     ) {
     }
 
@@ -24,7 +24,7 @@ readonly class BudgetCashFlowByAccountValueObject
         return $this->account;
     }
 
-    public function getCashFlow(): float
+    public function getCashFlow(): int
     {
         return $this->cashFlow;
     }

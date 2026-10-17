@@ -38,7 +38,7 @@ class BudgetRepositoryTest extends KernelTestCase
     private function populateDatabase(): void
     {
         BudgetFactory::createOne([
-            'amount' => 256.0,
+            'amount' => 25600,
             'name'   => self::BUDGET_NAME,
         ]);
 
@@ -49,21 +49,21 @@ class BudgetRepositoryTest extends KernelTestCase
 
         EntryFactory::createMany(3, [
             'createdAt' => DateTimeImmutable::createFromMutable(faker()->dateTimeBetween('-1 year -1 month', '-1 year')),
-            'amount'    => 128,
+            'amount'    => 12800,
             'budget'    => BudgetFactory::find(['name' => self::BUDGET_NAME]),
             'account'   => $account,
         ]);
 
         EntryFactory::createMany(3, [
             'createdAt' => DateTimeImmutable::createFromMutable(faker()->dateTimeBetween('-5 hour')),
-            'amount'    => -64.0,
+            'amount'    => -6400,
             'budget'    => BudgetFactory::find(['name' => self::BUDGET_NAME]),
             'account'   => $account,
         ]);
 
         EntryFactory::createMany(2, [
             'createdAt' => DateTimeImmutable::createFromMutable(faker()->dateTimeBetween('-5 hour')),
-            'amount'    => 64.0,
+            'amount'    => 6400,
             'budget'    => BudgetFactory::find(['name' => self::BUDGET_NAME]),
             'account'   => $account,
         ]);
@@ -97,8 +97,8 @@ class BudgetRepositoryTest extends KernelTestCase
 
         self::assertInstanceOf(BudgetValueObject::class, $budgetsVo);
         self::assertSame(self::BUDGET_NAME, $budgetsVo->getName());
-        self::assertSame(256.0, $budgetsVo->getAmount());
-        self::assertSame(-192.0, $budgetsVo->getProgress());
+        self::assertSame(25600, $budgetsVo->getAmount());
+        self::assertSame(-19200, $budgetsVo->getProgress());
     }
 
     public function testBudgetForecastProgressForSpecificYearIsCorrect(): void
@@ -112,8 +112,8 @@ class BudgetRepositoryTest extends KernelTestCase
 
         self::assertInstanceOf(BudgetValueObject::class, $budgetsVo);
         self::assertSame(self::BUDGET_NAME, $budgetsVo->getName());
-        self::assertSame(256.0, $budgetsVo->getAmount());
-        self::assertSame(128.0, $budgetsVo->getProgress());
+        self::assertSame(25600, $budgetsVo->getAmount());
+        self::assertSame(12800, $budgetsVo->getProgress());
     }
 
     public function testBudgetSoldForSpecificYearIsCorrect(): void
@@ -126,8 +126,8 @@ class BudgetRepositoryTest extends KernelTestCase
 
         self::assertInstanceOf(BudgetValueObject::class, $budgetsVo);
         self::assertSame(self::BUDGET_NAME, $budgetsVo->getName());
-        self::assertSame(256.0, $budgetsVo->getAmount());
-        self::assertSame(-64.0, $budgetsVo->getProgress());
+        self::assertSame(25600, $budgetsVo->getAmount());
+        self::assertSame(-6400, $budgetsVo->getProgress());
     }
 
     public function testBudgetSoldIsCorrect(): void
@@ -138,7 +138,7 @@ class BudgetRepositoryTest extends KernelTestCase
 
         self::assertInstanceOf(BudgetValueObject::class, $budgetsVo);
         self::assertSame(self::BUDGET_NAME, $budgetsVo->getName());
-        self::assertSame(256.0, $budgetsVo->getAmount());
-        self::assertSame(320.0, $budgetsVo->getProgress());
+        self::assertSame(25600, $budgetsVo->getAmount());
+        self::assertSame(32000, $budgetsVo->getProgress());
     }
 }

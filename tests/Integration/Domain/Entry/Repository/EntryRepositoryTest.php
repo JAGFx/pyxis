@@ -54,13 +54,13 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account1,
             'budget'  => $budget1,
-            'amount'  => 100.0,
+            'amount'  => 10000,
             'name'    => 'Entry 1',
         ]);
         EntryFactory::new()->create([
             'account' => $account1,
             'budget'  => $budget1,
-            'amount'  => 50.0,
+            'amount'  => 5000,
             'name'    => 'Entry 2',
         ]);
 
@@ -68,7 +68,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account1,
             'budget'  => $budget2,
-            'amount'  => 75.0,
+            'amount'  => 7500,
             'name'    => 'Entry 3',
         ]);
 
@@ -76,7 +76,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account2,
             'budget'  => $budget1,
-            'amount'  => 200.0,
+            'amount'  => 20000,
             'name'    => 'Entry 4',
         ]);
 
@@ -84,7 +84,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account2,
             'budget'  => $budget2,
-            'amount'  => -50.0,
+            'amount'  => -5000,
             'name'    => 'Entry 5',
         ]);
 
@@ -92,13 +92,13 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account1,
             'budget'  => null,
-            'amount'  => 25.0,
+            'amount'  => 2500,
             'name'    => 'Entry 6',
         ]);
         EntryFactory::new()->create([
             'account' => $account2,
             'budget'  => null,
-            'amount'  => 30.0,
+            'amount'  => 3000,
             'name'    => 'Entry 7',
         ]);
     }
@@ -119,14 +119,14 @@ class EntryRepositoryTest extends KernelTestCase
 
         // Check null budget group (entries without budget)
         self::assertNull($entriesBalance[0]['id'], 'First group should have null budget id');
-        self::assertEquals(55.0, $entriesBalance[0]['sum'], 'Sum for entries without budget should be 55 (25 + 30)');
+        self::assertEquals(5500, $entriesBalance[0]['sum'], 'Sum for entries without budget should be 55 (25 + 30)');
 
         // Check budget groups
         self::assertNotNull($entriesBalance[1]['id'], 'Second group should have a budget id');
-        self::assertEquals(350.0, $entriesBalance[1]['sum'], 'Sum for first budget should be 350 (100 + 50 + 200)');
+        self::assertEquals(35000, $entriesBalance[1]['sum'], 'Sum for first budget should be 350 (100 + 50 + 200)');
 
         self::assertNotNull($entriesBalance[2]['id'], 'Third group should have a budget id');
-        self::assertEquals(25.0, $entriesBalance[2]['sum'], 'Sum for second budget should be 25 (75 + (-50))');
+        self::assertEquals(2500, $entriesBalance[2]['sum'], 'Sum for second budget should be 25 (75 + (-50))');
     }
 
     public function testBalanceWithAccountFilter(): void
@@ -148,14 +148,14 @@ class EntryRepositoryTest extends KernelTestCase
 
         // Check null budget group (entries without budget for account1)
         self::assertNull($entriesBalance[0]['id'], 'First group should have null budget id');
-        self::assertEquals(25.0, $entriesBalance[0]['sum'], 'Sum for account1 entries without budget should be 25');
+        self::assertEquals(2500, $entriesBalance[0]['sum'], 'Sum for account1 entries without budget should be 25');
 
         // Check budget groups for account1
         self::assertNotNull($entriesBalance[1]['id'], 'Second group should have a budget id');
-        self::assertEquals(150.0, $entriesBalance[1]['sum'], 'Sum for account1 first budget should be 150 (100 + 50)');
+        self::assertEquals(15000, $entriesBalance[1]['sum'], 'Sum for account1 first budget should be 150 (100 + 50)');
 
         self::assertNotNull($entriesBalance[2]['id'], 'Third group should have a budget id');
-        self::assertEquals(75.0, $entriesBalance[2]['sum'], 'Sum for account1 second budget should be 75');
+        self::assertEquals(7500, $entriesBalance[2]['sum'], 'Sum for account1 second budget should be 75');
     }
 
     public function testBalanceWithNonExistentAccount(): void
@@ -194,13 +194,13 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 100.0,
+            'amount'  => 10000,
             'name'    => 'Forecast Entry 1',
         ]);
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 200.0,
+            'amount'  => 20000,
             'name'    => 'Forecast Entry 2',
         ]);
 
@@ -208,13 +208,13 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => null,
-            'amount'  => 50.0,
+            'amount'  => 5000,
             'name'    => 'Spent Entry 1',
         ]);
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => null,
-            'amount'  => 75.0,
+            'amount'  => 7500,
             'name'    => 'Spent Entry 2',
         ]);
     }
@@ -280,7 +280,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 100.0,
+            'amount'  => 10000,
             'name'    => 'Entry with only BALANCE',
             'flags'   => [EntryFlagEnum::BALANCE],
         ]);
@@ -288,7 +288,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 200.0,
+            'amount'  => 20000,
             'name'    => 'Entry with only TRANSFERT',
             'flags'   => [EntryFlagEnum::TRANSFERT],
         ]);
@@ -296,7 +296,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 150.0,
+            'amount'  => 15000,
             'name'    => 'Entry with only HIDDEN',
             'flags'   => [EntryFlagEnum::HIDDEN],
         ]);
@@ -305,7 +305,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 300.0,
+            'amount'  => 30000,
             'name'    => 'Entry with BALANCE and TRANSFERT',
             'flags'   => [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT],
         ]);
@@ -313,7 +313,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 250.0,
+            'amount'  => 25000,
             'name'    => 'Entry with BALANCE and HIDDEN',
             'flags'   => [EntryFlagEnum::BALANCE, EntryFlagEnum::HIDDEN],
         ]);
@@ -322,7 +322,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 400.0,
+            'amount'  => 40000,
             'name'    => 'Entry with BALANCE, TRANSFERT and HIDDEN',
             'flags'   => [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT, EntryFlagEnum::HIDDEN],
         ]);
@@ -331,7 +331,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 500.0,
+            'amount'  => 50000,
             'name'    => 'Entry with all flags',
             'flags'   => [EntryFlagEnum::BALANCE, EntryFlagEnum::TRANSFERT, EntryFlagEnum::HIDDEN, EntryFlagEnum::PERIODIC_ENTRY],
         ]);
@@ -340,7 +340,7 @@ class EntryRepositoryTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 50.0,
+            'amount'  => 5000,
             'name'    => 'Entry with empty flags',
             'flags'   => [],
         ]);

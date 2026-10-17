@@ -29,7 +29,7 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
     {
         PeriodicEntryFactory::createSequence([
             [
-                'amount'  => 42,
+                'amount'  => 4200,
                 'name'    => 'Spent',
                 'account' => AccountFactory::new()->create(),
             ],
@@ -37,9 +37,9 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
                 'amount'  => null,
                 'name'    => 'Forecast',
                 'budgets' => BudgetFactory::createSequence([
-                    ['amount' => 123],
-                    ['amount' => 456],
-                    ['amount' => 789, 'enabled' => false],
+                    ['amount' => 12300],
+                    ['amount' => 45600],
+                    ['amount' => 78900, 'enabled' => false],
                 ]),
                 'account' => AccountFactory::new()->create(),
             ],
@@ -74,7 +74,7 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
         /** @var PeriodicEntry $periodicEntrySpent */
         $periodicEntrySpent = reset($periodicEntriesSpent);
         self::assertSame('Spent', $periodicEntrySpent->getName());
-        self::assertSame(42.0, $periodicEntrySpent->getAmount());
+        self::assertSame(4200, $periodicEntrySpent->getAmount());
         self::assertSame(EntryTypeEnum::TYPE_SPENT, $periodicEntrySpent->getType());
         self::assertTrue($periodicEntrySpent->isSpent());
     }
@@ -94,7 +94,7 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
         /** @var PeriodicEntry $periodicEntrySpent */
         $periodicEntrySpent = reset($periodicEntriesSpent);
         self::assertSame('Forecast', $periodicEntrySpent->getName());
-        self::assertSame(48.25, $periodicEntrySpent->getTotalAmount());
+        self::assertSame(4825, $periodicEntrySpent->getTotalAmount());
         self::assertSame(EntryTypeEnum::TYPE_FORECAST, $periodicEntrySpent->getType());
         self::assertTrue($periodicEntrySpent->isForecast());
     }

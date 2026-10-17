@@ -1,69 +1,66 @@
-# Scenarios to check budget balancing and periodic entries by hand (reload with `make fixture`)
+# Scenarios to check budget balancing and periodic entries by hand (reload with `make fixture`). Amounts in cents.
 
 App\Domain\Budget\Entity\Budget:
   # Cash flow on both accounts: each account must be balanced separately
   budget_scenario_multi_account:
     name: 'Scénario - Cash-flow multi-comptes'
-    amount: 600
-
+    amount: 60000
   # Opposite cash flows: global cash flow is 0, but each account still has to be balanced
   budget_scenario_opposite_cash_flow:
     name: 'Scénario - Cash-flows opposés'
-    amount: 600
-
-  # Entries created at the same second: cash flow must be 300, not 100
+    amount: 60000
+  # Entries created at the same second: cash flow must be 300 €, not 100 €
   budget_scenario_same_second:
     name: 'Scénario - Entrées à la même seconde'
-    amount: 600
-
+    amount: 60000
 App\Domain\Entry\Entity\Entry:
   entry_scenario_multi_account_a:
     name: 'Scénario - multi-comptes Livret A'
     createdAt: <dateTimeImmutable('-1 year')>
-    amount: 300
+    amount: 30000
     budget: '@budget_scenario_multi_account'
     account: '@account_a'
 
   entry_scenario_multi_account_ldds:
     name: 'Scénario - multi-comptes LDDS'
     createdAt: <dateTimeImmutable('-1 year')>
-    amount: -100
+    amount: -10000
     budget: '@budget_scenario_multi_account'
     account: '@account_ldds'
 
   entry_scenario_opposite_a:
     name: 'Scénario - opposés Livret A'
     createdAt: <dateTimeImmutable('-1 year')>
-    amount: 50
+    amount: 5000
     budget: '@budget_scenario_opposite_cash_flow'
     account: '@account_a'
 
   entry_scenario_opposite_ldds:
     name: 'Scénario - opposés LDDS'
     createdAt: <dateTimeImmutable('-1 year')>
-    amount: -50
+    amount: -5000
     budget: '@budget_scenario_opposite_cash_flow'
     account: '@account_ldds'
 
-  # Balance of "Epargne de précaution": 1600 - 100 = 1500, restored when this entry is removed
+  # Balance of "Epargne de précaution": 1600 € - 100 € = 1500 €, restored when this entry is removed
   entry_scenario_assignment_spent:
     name: 'Scénario - Dépense sur épargne de précaution'
     createdAt: <dateTimeImmutable('-2 day')>
-    amount: -100
+    amount: -10000
     account: '@account_ldds'
     assignment: '@assignment_ldds1'
 
   entry_scenario_envelope_deposit:
     name: 'Scénario - Versement enveloppe vacances'
     createdAt: <dateTimeImmutable('-1 day')>
-    amount: 300
+    amount: 30000
     account: '@account_a'
     assignment: '@assignment_scenario_envelope'
 
   entry_scenario_same_second_{1..3}:
     name: 'Scénario - même seconde <current()>'
     createdAt: <dateTimeImmutable('first day of january last year 14:00:00')>
-    amount: 100
+    amount: 10000
     budget: '@budget_scenario_same_second'
     account: '@account_a'
 
@@ -71,21 +68,21 @@ App\Domain\Assignment\Entity\Assignment:
   # Makes the periodic entry below fail (HasEnoughAmountAssignment)
   assignment_scenario_negative:
     name: 'Scénario - Assignment négatif'
-    amount: -1000
+    amount: -100000
     account: '@account_ldds'
 
-  # Envelope filled over time towards a target: balance 300 / 2000 (15%)
+  # Envelope filled over time towards a target: balance 300 € / 2000 € (15%)
   assignment_scenario_envelope:
     name: 'Scénario - Enveloppe vacances'
     amount: 0
-    target: 2000
+    target: 200000
     account: '@account_a'
 
 App\Domain\PeriodicEntry\Entity\PeriodicEntry:
   # Fails on `bin/console bugr:periodic-entry:apply` without stopping the other periodic entries
   periodic_entry_scenario_failing:
     name: 'Scénario - Écriture périodique en échec'
-    amount: 100
+    amount: 10000
     executionDate: <immutableDateTimeBetween('-5 hour', 'now')>
     account: '@account_ldds'
     assignment: '@assignment_scenario_negative'

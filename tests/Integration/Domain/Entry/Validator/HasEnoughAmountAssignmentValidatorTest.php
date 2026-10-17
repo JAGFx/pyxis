@@ -36,7 +36,7 @@ class HasEnoughAmountAssignmentValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[DataProvider('provideInvalidCases')]
-    public function testInvalidCases(callable $commandFactory, string $assignmentAmount, float $entryAmount): void
+    public function testInvalidCases(callable $commandFactory, string $assignmentAmount, int $entryAmount): void
     {
         $command    = $commandFactory();
         $constraint = new HasEnoughAmountAssignment();
@@ -53,44 +53,44 @@ class HasEnoughAmountAssignmentValidatorTest extends ConstraintValidatorTestCase
     public static function provideValidCases(): Generator
     {
         yield 'assignment has enough amount for negative entry' => [
-            fn () => self::createCommandWithAssignment(assignmentAmount: 1000.0, entryAmount: -500.0),
+            fn () => self::createCommandWithAssignment(assignmentAmount: 100000, entryAmount: -50000),
         ];
 
         yield 'assignment has exactly the same amount as negative entry' => [
-            fn () => self::createCommandWithAssignment(assignmentAmount: 500.0, entryAmount: -500.0),
+            fn () => self::createCommandWithAssignment(assignmentAmount: 50000, entryAmount: -50000),
         ];
 
         yield 'positive entry amount should pass' => [
-            fn () => self::createCommandWithAssignment(assignmentAmount: 100.0, entryAmount: 200.0),
+            fn () => self::createCommandWithAssignment(assignmentAmount: 10000, entryAmount: 20000),
         ];
 
         yield 'zero entry amount should pass' => [
-            fn () => self::createCommandWithAssignment(assignmentAmount: 100.0, entryAmount: 0.0),
+            fn () => self::createCommandWithAssignment(assignmentAmount: 10000, entryAmount: 0),
         ];
     }
 
     public static function provideInvalidCases(): Generator
     {
         yield 'assignment does not have enough amount' => [
-            fn () => self::createCommandWithAssignment(assignmentAmount: 100.0, entryAmount: -200.0),
+            fn () => self::createCommandWithAssignment(assignmentAmount: 10000, entryAmount: -20000),
             '100,00', // assignment balance
-            -200.0, // entry amount
+            -20000, // entry amount
         ];
 
         yield 'assignment has zero amount but entry is negative' => [
-            fn () => self::createCommandWithAssignment(assignmentAmount: 0.0, entryAmount: -50.0),
+            fn () => self::createCommandWithAssignment(assignmentAmount: 0, entryAmount: -5000),
             '0,00', // assignment balance
-            -50.0, // entry amount
+            -5000, // entry amount
         ];
 
         yield 'small insufficient amount' => [
-            fn () => self::createCommandWithAssignment(assignmentAmount: 99.99, entryAmount: -100.0),
+            fn () => self::createCommandWithAssignment(assignmentAmount: 9999, entryAmount: -10000),
             '99,99', // assignment balance
-            -100.0, // entry amount
+            -10000, // entry amount
         ];
     }
 
-    private static function createCommandWithAssignment(float $assignmentAmount, float $entryAmount): CreateOrUpdateEntryCommand
+    private static function createCommandWithAssignment(int $assignmentAmount, int $entryAmount): CreateOrUpdateEntryCommand
     {
         /** @var Account $account */
         $account = AccountFactory::new()

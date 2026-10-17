@@ -27,7 +27,7 @@ class CreateOrUpdateBudgetHandlerTest extends KernelTestCase
     {
         $command = new CreateOrUpdateBudgetCommand(
             name: 'Complete Budget Test',
-            amount: 1200.0,
+            amount: 120000,
             enabled: true
         );
 
@@ -41,13 +41,13 @@ class CreateOrUpdateBudgetHandlerTest extends KernelTestCase
         /** @var Budget $existingBudget */
         $existingBudget = BudgetFactory::new()->create([
             'name'    => 'Original Budget',
-            'amount'  => 800.0,
+            'amount'  => 80000,
             'enabled' => true,
         ])->_real();
 
         $command = new CreateOrUpdateBudgetCommand(
             name: 'Updated Complete Budget',
-            amount: 1500.0,
+            amount: 150000,
             enabled: false
         );
         $command->setOriginId($existingBudget->getId());
@@ -62,7 +62,7 @@ class CreateOrUpdateBudgetHandlerTest extends KernelTestCase
         /** @var Budget $budget */
         $budget = BudgetFactory::new()->create([
             'name'    => 'Test Budget for Mapping',
-            'amount'  => 1000.0,
+            'amount'  => 100000,
             'enabled' => true,
         ])->_real();
 

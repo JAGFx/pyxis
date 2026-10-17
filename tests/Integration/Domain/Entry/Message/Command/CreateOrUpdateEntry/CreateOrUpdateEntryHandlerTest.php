@@ -46,7 +46,7 @@ class CreateOrUpdateEntryHandlerTest extends KernelTestCase
         $command = new CreateOrUpdateEntryCommand();
         $command->setName('Test Entry');
         $command->setAccount($account);
-        $command->setAmount(150.0);
+        $command->setAmount(15000);
         $command->setBudget($budget);
 
         $this->messageBus->dispatch($command);
@@ -71,7 +71,7 @@ class CreateOrUpdateEntryHandlerTest extends KernelTestCase
         $command = new CreateOrUpdateEntryCommand();
         $command->setName('Updated Entry');
         $command->setAccount($account);
-        $command->setAmount(250.0);
+        $command->setAmount(25000);
         $command->setBudget($budget);
         $command->setOriginId($existingEntry->getId());
 
@@ -98,51 +98,51 @@ class CreateOrUpdateEntryHandlerTest extends KernelTestCase
 
     public function testCreateEntryWithAssignmentLinksItAndLowersTheBalance(): void
     {
-        $assignment = $this->createAssignmentWithAmount(1000.0);
+        $assignment = $this->createAssignmentWithAmount(100000);
 
-        $this->dispatchEntry($assignment, -150.0);
+        $this->dispatchEntry($assignment, -15000);
 
         $assignment = $this->reloadAssignment($assignment);
-        self::assertSame(1000.0, $assignment->getAmount(), 'The starting amount is never written by entries');
-        self::assertSame(850.0, $assignment->getBalance());
+        self::assertSame(100000, $assignment->getAmount(), 'The starting amount is never written by entries');
+        self::assertSame(85000, $assignment->getBalance());
         self::assertCount(1, $assignment->getEntries());
     }
 
     public function testRemovingALinkedEntryRestoresTheBalance(): void
     {
-        $assignment = $this->createAssignmentWithAmount(1000.0);
-        $entryId    = $this->dispatchEntry($assignment, -150.0);
+        $assignment = $this->createAssignmentWithAmount(100000);
+        $entryId    = $this->dispatchEntry($assignment, -15000);
 
         $this->messageBus->dispatch(new RemoveEntryCommand()->setOriginId($entryId));
 
-        self::assertSame(1000.0, $this->reloadAssignment($assignment)->getBalance());
+        self::assertSame(100000, $this->reloadAssignment($assignment)->getBalance());
     }
 
     public function testUpdatingALinkedEntryAdjustsTheBalance(): void
     {
-        $assignment = $this->createAssignmentWithAmount(1000.0);
-        $entryId    = $this->dispatchEntry($assignment, -150.0);
+        $assignment = $this->createAssignmentWithAmount(100000);
+        $entryId    = $this->dispatchEntry($assignment, -15000);
 
         /** @var Entry $entry */
         $entry   = $this->entityManager->find(Entry::class, $entryId);
         $command = $this->objectMapper->map($entry, CreateOrUpdateEntryCommand::class);
-        $command->setOriginId($entryId)->setAmount(-400.0);
+        $command->setOriginId($entryId)->setAmount(-40000);
         $this->messageBus->dispatch($command);
 
         $assignment = $this->reloadAssignment($assignment);
-        self::assertSame(600.0, $assignment->getBalance());
+        self::assertSame(60000, $assignment->getBalance());
         self::assertCount(1, $assignment->getEntries(), 'The entry stays linked on update');
     }
 
     public function testUpdatingALinkedEntryBeyondTheBalanceIsRejected(): void
     {
-        $assignment = $this->createAssignmentWithAmount(1000.0);
-        $entryId    = $this->dispatchEntry($assignment, -150.0);
+        $assignment = $this->createAssignmentWithAmount(100000);
+        $entryId    = $this->dispatchEntry($assignment, -15000);
 
         /** @var Entry $entry */
         $entry   = $this->entityManager->find(Entry::class, $entryId);
         $command = $this->objectMapper->map($entry, CreateOrUpdateEntryCommand::class);
-        $command->setOriginId($entryId)->setAmount(-1001.0);
+        $command->setOriginId($entryId)->setAmount(-100100);
 
         $this->expectException(ValidationFailedException::class);
 
@@ -151,14 +151,14 @@ class CreateOrUpdateEntryHandlerTest extends KernelTestCase
 
     public function testEntryWithBudgetAndAssignmentIsRejected(): void
     {
-        $assignment = $this->createAssignmentWithAmount(1000.0);
+        $assignment = $this->createAssignmentWithAmount(100000);
         /** @var Budget $budget */
         $budget = BudgetFactory::new()->create()->_real();
 
         $command = new CreateOrUpdateEntryCommand(
             account: $assignment->getAccount(),
             name: 'Forecast entry with assignment',
-            amount: -100.0,
+            amount: -10000,
             budget: $budget,
             assignment: $assignment,
         );
@@ -172,7 +172,7 @@ class CreateOrUpdateEntryHandlerTest extends KernelTestCase
         }
     }
 
-    private function createAssignmentWithAmount(float $amount): Assignment
+    private function createAssignmentWithAmount(int $amount): Assignment
     {
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
@@ -183,7 +183,7 @@ class CreateOrUpdateEntryHandlerTest extends KernelTestCase
         return $assignment;
     }
 
-    private function dispatchEntry(Assignment $assignment, float $amount): int
+    private function dispatchEntry(Assignment $assignment, int $amount): int
     {
         $this->messageBus->dispatch(new CreateOrUpdateEntryCommand(
             account: $assignment->getAccount(),

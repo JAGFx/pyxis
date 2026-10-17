@@ -21,20 +21,20 @@ readonly class GetAssignmentBalanceHandler implements QueryHandlerInterface
      * @throws NonUniqueResultException
      * @throws NoResultException
      */
-    public function __invoke(GetAssignmentBalanceQuery $query): float
+    public function __invoke(GetAssignmentBalanceQuery $query): int
     {
-        /** @var ?float $startingAmounts */
+        /** @var int|string|null $startingAmounts */
         $startingAmounts = $this->repository
             ->balanceQueryBuilder($query)
             ->getQuery()
             ->getSingleScalarResult();
 
-        /** @var ?float $linkedEntries */
+        /** @var int|string|null $linkedEntries */
         $linkedEntries = $this->repository
             ->linkedEntriesQueryBuilder($query)
             ->getQuery()
             ->getSingleScalarResult();
 
-        return round((float) $startingAmounts + (float) $linkedEntries, 2);
+        return (int) $startingAmounts + (int) $linkedEntries;
     }
 }

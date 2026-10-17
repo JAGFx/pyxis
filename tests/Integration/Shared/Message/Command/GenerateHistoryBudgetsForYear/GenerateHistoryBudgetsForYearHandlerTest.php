@@ -31,14 +31,14 @@ class GenerateHistoryBudgetsForYearHandlerTest extends KernelTestCase
         // Create a budget without entries
         BudgetFactory::new()->create([
             'name'    => 'Budget without entries',
-            'amount'  => 500.0,
+            'amount'  => 50000,
             'enabled' => true,
         ]);
 
         // Create a budget with entries to ensure the method works
         $budgetWithEntries = BudgetFactory::new()->create([
             'name'    => 'Budget with entries',
-            'amount'  => 300.0,
+            'amount'  => 30000,
             'enabled' => true,
         ]);
 
@@ -46,7 +46,7 @@ class GenerateHistoryBudgetsForYearHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account'   => $account,
             'budget'    => $budgetWithEntries,
-            'amount'    => -150.0,
+            'amount'    => -15000,
             'name'      => 'Test expense',
             'createdAt' => new DateTimeImmutable("$testYear-01-01"),
         ]);
@@ -66,35 +66,35 @@ class GenerateHistoryBudgetsForYearHandlerTest extends KernelTestCase
     public static function budgetProgressScenariosProvider(): Generator
     {
         yield 'Budget 0% spent (no entries)' => [
-            'budgetAmount'         => 300.0,
+            'budgetAmount'         => 30000,
             'entries'              => [],
             'expectedHistoryCount' => 0,
             'description'          => 'Budget without entries does not generate history',
         ];
 
         yield 'Budget 40% spent' => [
-            'budgetAmount' => 500.0,
+            'budgetAmount' => 50000,
             'entries'      => [
-                ['amount' => -200.0, 'name' => 'Gas'],
+                ['amount' => -20000, 'name' => 'Gas'],
             ],
             'expectedHistoryCount' => 1,
             'description'          => 'Budget with moderate expenses',
         ];
 
         yield 'Budget 100% spent' => [
-            'budgetAmount' => 400.0,
+            'budgetAmount' => 40000,
             'entries'      => [
-                ['amount' => -400.0, 'name' => 'Complete budget purchase'],
+                ['amount' => -40000, 'name' => 'Complete budget purchase'],
             ],
             'expectedHistoryCount' => 1,
             'description'          => 'Budget fully spent',
         ];
 
         yield 'Budget overspent (+125%)' => [
-            'budgetAmount' => 200.0,
+            'budgetAmount' => 20000,
             'entries'      => [
-                ['amount' => -150.0, 'name' => 'First expense'],
-                ['amount' => -100.0, 'name' => 'Second expense (overspent)'],
+                ['amount' => -15000, 'name' => 'First expense'],
+                ['amount' => -10000, 'name' => 'Second expense (overspent)'],
             ],
             'expectedHistoryCount' => 1,
             'description'          => 'Budget overspent',
@@ -146,14 +146,14 @@ class GenerateHistoryBudgetsForYearHandlerTest extends KernelTestCase
         $account  = AccountFactory::new()->create(['name' => 'Idempotent Test Account']);
         $budget   = BudgetFactory::new()->create([
             'name'    => 'Test Idempotent Budget',
-            'amount'  => 500.0,
+            'amount'  => 50000,
             'enabled' => true,
         ]);
 
         EntryFactory::new()->create([
             'account'   => $account,
             'budget'    => $budget,
-            'amount'    => -250.0,
+            'amount'    => -25000,
             'name'      => 'Test expense',
             'createdAt' => new DateTimeImmutable("$testYear-01-01"),
         ]);
@@ -164,7 +164,7 @@ class GenerateHistoryBudgetsForYearHandlerTest extends KernelTestCase
         $historyBudgets = HistoryBudgetFactory::repository()->findAll();
 
         self::assertCount(1, $historyBudgets, 'Should not create duplicate history budgets');
-        self::assertEquals(250.0, $historyBudgets[0]->getSpent());
+        self::assertEquals(25000, $historyBudgets[0]->getSpent());
         self::assertEquals(50.0, $historyBudgets[0]->getRelativeProgress());
     }
 
@@ -173,13 +173,13 @@ class GenerateHistoryBudgetsForYearHandlerTest extends KernelTestCase
         $datasets = [];
 
         for ($i = 1; $i <= 10; ++$i) {
-            $budgetAmount = $i * 100.0;
+            $budgetAmount = $i * 10000;
             $entriesCount = rand(1, 3);
             $entries      = [];
 
             for ($j = 0; $j < $entriesCount; ++$j) {
                 $entries[] = [
-                    'amount' => -($budgetAmount / $entriesCount * 0.8), // Spend 80% distributed
+                    'amount' => -intdiv($budgetAmount * 80 / 100, $entriesCount), // Spend 80% distributed
                     'name'   => "Expense $j for Budget Category $i",
                 ];
             }
@@ -197,7 +197,7 @@ class GenerateHistoryBudgetsForYearHandlerTest extends KernelTestCase
     #[DataProvider('largeBudgetDatasetProvider')]
     public function testGenerateHistoryBudgetsForYearWithLargeDataset(
         string $categoryName,
-        float $budgetAmount,
+        int $budgetAmount,
         array $entries,
     ): void {
         $testYear = 2024;

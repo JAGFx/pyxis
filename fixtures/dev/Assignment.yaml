@@ -1,5 +1,5 @@
 App\Domain\Assignment\Entity\Assignment:
     assignment_ldds1:
       name: 'Epargne de précaution'
-      amount: 1600
+      amount: 160000
       account: '@account_ldds'

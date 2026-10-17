@@ -22,11 +22,17 @@ class HistoryBudget implements IntIdentifierInterface
     #[Column]
     private ?float $relativeProgress = null;
 
+    /**
+     * In cents.
+     */
     #[Column(nullable: true)]
-    private ?float $spent = null;
+    private ?int $spent = null;
 
+    /**
+     * In cents.
+     */
     #[Column]
-    private ?float $amount = null;
+    private ?int $amount = null;
 
     #[ManyToOne(targetEntity: Budget::class)]
     private ?Budget $budget = null;
@@ -60,24 +66,24 @@ class HistoryBudget implements IntIdentifierInterface
         return $this;
     }
 
-    public function getSpent(): ?float
+    public function getSpent(): ?int
     {
         return $this->spent;
     }
 
-    public function setSpent(?float $spent): HistoryBudget
+    public function setSpent(?int $spent): HistoryBudget
     {
         $this->spent = $spent;
 
         return $this;
     }
 
-    public function getAmount(): ?float
+    public function getAmount(): ?int
     {
         return $this->amount;
     }
 
-    public function setAmount(?float $amount): HistoryBudget
+    public function setAmount(?int $amount): HistoryBudget
     {
         $this->amount = $amount;
 

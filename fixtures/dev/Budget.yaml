@@ -1,25 +1,22 @@
 App\Domain\Budget\Entity\Budget:
   budget_disabled:
     name: Budget disabled
-    amount: <randomFloat(2, 15, 1500)>
+    amount: <numberBetween(1500, 150000)>
     enabled: false
 
   budget_over:
     name: 'Budget Over'
-    amount: 200
-
+    amount: 20000
   budget_full:
     name: 'Budget full'
-    amount: 200
-
+    amount: 20000
   budget_empty:
     name: 'Budget empty'
-    amount: <randomFloat(2, 15, 1500)>
+    amount: <numberBetween(1500, 150000)>
 
   budget_current_year:
     name: 'Budget current year'
-    amount: 1000
-
+    amount: 100000
   budget_initial:
     name: 'Budget initial value'
     amount: 0
@@ -29,25 +26,25 @@ App\Domain\Budget\Entity\HistoryBudget:
   history_budget_over:
     date: <dateTimeImmutable('first day previous year')>
     relativeProgress: 250
-    amount: 200
-    spent: 500
+    amount: 20000
+    spent: 50000
     budget: '@budget_over'
 
   history_budget_full:
     date: <dateTimeImmutable('first day previous year')>
     relativeProgress: 100
-    amount: 200
-    spent: 200
+    amount: 20000
+    spent: 20000
     budget: '@budget_full'
 
   history_budget_empty:
     date: <dateTimeImmutable('first day previous year')>
     relativeProgress: 0
-    amount: 200
+    amount: 20000
     budget: '@budget_empty'
 
   budget_current_2_year_ago:
     date: <dateTimeImmutable('first day -2 year')>
     relativeProgress: 0
-    amount: 200
+    amount: 20000
     budget: '@budget_current_year'

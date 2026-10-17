@@ -107,7 +107,7 @@ class AddSplitForBudgetsHandlerTest extends TestCase
         $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($today)
             ->setLastExecutionDate($lastMonthExecution)
-            ->setAmount(200.0)
+            ->setAmount(20000)
             ->setName('Last month execution')
             ->setAccount(new Account());
 
@@ -134,12 +134,12 @@ class AddSplitForBudgetsHandlerTest extends TestCase
 
         $disabledBudget1 = new Budget()
             ->setName('Disabled Budget 1')
-            ->setAmount(100.0)
+            ->setAmount(10000)
             ->setEnabled(false);
 
         $disabledBudget2 = new Budget()
             ->setName('Disabled Budget 2')
-            ->setAmount(200.0)
+            ->setAmount(20000)
             ->setEnabled(false);
 
         $periodicEntry = new PeriodicEntry()
@@ -173,7 +173,7 @@ class AddSplitForBudgetsHandlerTest extends TestCase
 
         $zeroBudget = (new Budget())
             ->setName('Zero Budget')
-            ->setAmount(0.0)
+            ->setAmount(0)
             ->setEnabled(true);
 
         $periodicEntry = new PeriodicEntry()
@@ -208,7 +208,7 @@ class AddSplitForBudgetsHandlerTest extends TestCase
         $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($executionDateSameDay)
             ->setLastExecutionDate(null)
-            ->setAmount(300.0)
+            ->setAmount(30000)
             ->setName('Custom date test')
             ->setAccount(new Account());
 
@@ -236,7 +236,7 @@ class AddSplitForBudgetsHandlerTest extends TestCase
         $periodicEntry = new PeriodicEntry()
             ->setExecutionDate($today)
             ->setLastExecutionDate(null)
-            ->setAmount(200.0)
+            ->setAmount(20000)
             ->setName('Spent Entry')
             ->setAccount(new Account());
 
@@ -270,12 +270,12 @@ class AddSplitForBudgetsHandlerTest extends TestCase
             ->setAccount(new Account())
             ->addBudget(new Budget()
                 ->setName('Budget 1')
-                ->setAmount(200.0)
+                ->setAmount(20000)
                 ->setEnabled(true)
             )
             ->addBudget(new Budget()
                 ->setName('Budget 2')
-                ->setAmount(300.0)
+                ->setAmount(30000)
                 ->setEnabled(true)
             );
 
@@ -309,17 +309,17 @@ class AddSplitForBudgetsHandlerTest extends TestCase
             ->setAccount(new Account())
             ->addBudget(new Budget()
                 ->setName('Enabled Budget 1')
-                ->setAmount(200.0)
+                ->setAmount(20000)
                 ->setEnabled(true)
             )
             ->addBudget(new Budget()
                 ->setName('Enabled Budget 2')
-                ->setAmount(300.0)
+                ->setAmount(30000)
                 ->setEnabled(true)
             )
             ->addBudget(new Budget()
                 ->setName('Disabled Budget')
-                ->setAmount(150.0)
+                ->setAmount(15000)
                 ->setEnabled(false)
             );
 
@@ -346,12 +346,12 @@ class AddSplitForBudgetsHandlerTest extends TestCase
     {
         $assignment = new Assignment()
             ->setName('Savings')
-            ->setAmount(1000.0);
+            ->setAmount(100000);
 
         $periodicEntry = new PeriodicEntry()
             ->setExecutionDate(new DateTimeImmutable())
             ->setLastExecutionDate(null)
-            ->setAmount(200.0)
+            ->setAmount(20000)
             ->setName('Spent Entry With Assignment')
             ->setAccount(new Account())
             ->setAssignment($assignment);
@@ -361,7 +361,7 @@ class AddSplitForBudgetsHandlerTest extends TestCase
             ->method('dispatch')
             ->with(self::callback(
                 static fn (CreateOrUpdateEntryCommand $command): bool => $command->getAssignment() === $assignment
-                    && 200.0 === $command->getAmount()
+                    && 20000 === $command->getAmount()
             ));
 
         $this->entityManagerMock
@@ -384,15 +384,15 @@ class AddSplitForBudgetsHandlerTest extends TestCase
             ->setLastExecutionDate(null)
             ->setName('Forecast Entry With Assignment')
             ->setAccount(new Account())
-            ->setAssignment(new Assignment()->setName('Savings')->setAmount(1000.0))
+            ->setAssignment(new Assignment()->setName('Savings')->setAmount(100000))
             ->addBudget(new Budget()
                 ->setName('Budget 1')
-                ->setAmount(200.0)
+                ->setAmount(20000)
                 ->setEnabled(true)
             )
             ->addBudget(new Budget()
                 ->setName('Budget 2')
-                ->setAmount(300.0)
+                ->setAmount(30000)
                 ->setEnabled(true)
             );
 

@@ -32,8 +32,11 @@ class PeriodicEntry implements IntIdentifierInterface
     #[ORM\Column]
     private string $name;
 
-    #[ORM\Column(type: Types::FLOAT, nullable: true)]
-    private ?float $amount = null;
+    /**
+     * In cents.
+     */
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $amount = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $executionDate;
@@ -55,18 +58,18 @@ class PeriodicEntry implements IntIdentifierInterface
     #[JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Assignment $assignment = null;
 
-    public function getTotalAmount(): float
+    public function getTotalAmount(): int
     {
         if ($this->isSpent()) {
-            return $this->amount ?? 0.0;
+            return $this->amount ?? 0;
         }
 
-        $amount = 0.0;
+        $amount = 0;
 
         foreach ($this->getBudgets() as $budget) {
             $budgetAmount = $this->getAmountFor($budget);
 
-            if ($budgetAmount <= 0.0) {
+            if ($budgetAmount <= 0) {
                 continue;
             }
 
@@ -76,20 +79,30 @@ class PeriodicEntry implements IntIdentifierInterface
         return $amount;
     }
 
-    public function getAmountFor(Budget $budgetTarget): float
+    /**
+     * Monthly share of the budget, in cents. The remainder of the division by 12 adds one cent to the first months
+     * (100 € = 8,34 € from January to April, then 8,33 €): the 12 shares always sum up to the budget amount.
+     * Without a month, the base share is returned (display).
+     */
+    public function getAmountFor(Budget $budgetTarget, ?int $month = null): int
     {
         if (false === $budgetTarget->isEnabled()) {
-            return 0.0;
+            return 0;
         }
 
         /** @var ?Budget $budget */
         $budget = $this->budgets->findFirst(fn (int $k, Budget $budget): bool => $budget === $budgetTarget); // @phpstan-ignore-line
 
         if (is_null($budget)) {
-            return 0.0;
+            return 0;
         }
 
-        return round($budget->getAmount() / self::MONTH_SPLIT, 2);
+        $monthlyAmount = intdiv($budget->getAmount(), self::MONTH_SPLIT);
+        $remainder     = $budget->getAmount() % self::MONTH_SPLIT;
+
+        return (!is_null($month) && $month <= $remainder)
+            ? $monthlyAmount + 1
+            : $monthlyAmount;
     }
 
     public function getType(): EntryTypeEnum
@@ -140,12 +153,12 @@ class PeriodicEntry implements IntIdentifierInterface
         return $this;
     }
 
-    public function getAmount(): ?float
+    public function getAmount(): ?int
     {
         return $this->amount;
     }
 
-    public function setAmount(?float $amount): PeriodicEntry
+    public function setAmount(?int $amount): PeriodicEntry
     {
         $this->amount = $amount;
 

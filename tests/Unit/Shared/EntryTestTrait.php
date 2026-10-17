@@ -11,7 +11,7 @@ trait EntryTestTrait
     {
         $entry = (new Entry())
             ->setName($data['entryName'] ?? 'An entry')
-            ->setAmount($data['entryAmount'] ?? 0.0);
+            ->setAmount($data['entryAmount'] ?? 0);
 
         $entry->setCreatedAt($data['entryCreatedAt'] ?? new DateTimeImmutable());
 

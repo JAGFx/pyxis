@@ -28,8 +28,11 @@ class Budget implements IntIdentifierInterface
     use HasCollectionTrait;
     use HasIntIdentifierTrait;
 
-    #[ORM\Column(type: Types::FLOAT)]
-    private float $amount;
+    /**
+     * In cents.
+     */
+    #[ORM\Column(type: Types::INTEGER)]
+    private int $amount;
 
     /**
      * @var Collection<int, PeriodicEntry>
@@ -49,19 +52,19 @@ class Budget implements IntIdentifierInterface
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private bool $readOnly = false;
 
-    public function getProgress(bool $showAsSpentOnly = false): float
+    public function getProgress(bool $showAsSpentOnly = false): int
     {
         $progress = array_reduce(
             $this->entries->toArray(),
-            static fn (float $currentSum, Entry $entry): float => $currentSum + $entry->getAmount(),
-            0.0
+            static fn (int $currentSum, Entry $entry): int => $currentSum + $entry->getAmount(),
+            0
         );
 
         // Same meaning as BudgetValueObject::getProgress()
         return ($showAsSpentOnly) ? abs($progress) : $progress;
     }
 
-    public function getCashFlow(?Account $account = null): float
+    public function getCashFlow(?Account $account = null): int
     {
         $readableCollection = $this->entries->filter(
             static function (Entry $entry) use ($account): bool {
@@ -79,19 +82,19 @@ class Budget implements IntIdentifierInterface
 
         return array_reduce(
             $readableCollection->toArray(),
-            static fn (float $cashFlow, Entry $entry): float => $cashFlow + $entry->getAmount(),
-            0.0
+            static fn (int $cashFlow, Entry $entry): int => $cashFlow + $entry->getAmount(),
+            0
         );
     }
 
     public function hasNegativeCashFlow(): bool
     {
-        return round($this->getCashFlow(), 2) < 0.0;
+        return $this->getCashFlow() < 0;
     }
 
     public function hasPositiveCashFlow(): bool
     {
-        return round($this->getCashFlow(), 2) > 0.0;
+        return $this->getCashFlow() > 0;
     }
 
     /**
@@ -109,7 +112,7 @@ class Budget implements IntIdentifierInterface
             }
         }
 
-        return array_any($accounts, fn (Account $account): bool => 0.0 !== round($this->getCashFlow($account), 2));
+        return array_any($accounts, fn (Account $account): bool => 0 !== $this->getCashFlow($account));
     }
 
     public function __construct()
@@ -119,14 +122,14 @@ class Budget implements IntIdentifierInterface
         $this->entries         = new ArrayCollection();
     }
 
-    public function getAmount(): float
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount(int $amount): self
     {
-        $this->amount = round($amount, 2);
+        $this->amount = $amount;
 
         return $this;
     }

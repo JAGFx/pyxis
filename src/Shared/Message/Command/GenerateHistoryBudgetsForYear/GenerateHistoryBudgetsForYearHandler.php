@@ -59,7 +59,7 @@ readonly class GenerateHistoryBudgetsForYearHandler implements CommandHandlerInt
                 continue;
             }
 
-            $relativeProgress = 0.0 !== $budget->getAmount()
+            $relativeProgress = 0 !== $budget->getAmount()
                 ? ($budgetValue->getProgress(true) / $budget->getAmount()) * 100
                 : 0.0;
 

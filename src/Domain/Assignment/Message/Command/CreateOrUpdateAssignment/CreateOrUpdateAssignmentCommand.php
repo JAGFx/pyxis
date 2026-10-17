@@ -34,13 +34,13 @@ class CreateOrUpdateAssignmentCommand implements CommandInterface
 
         // Starting amount: 0 for an envelope filled over time
         #[PositiveOrZero]
-        private float $amount = 0.0,
+        private int $amount = 0,
 
         #[NotNull]
         private ?Account $account = null,
 
         #[Positive]
-        private ?float $target = null,
+        private ?int $target = null,
     ) {
     }
 
@@ -56,24 +56,24 @@ class CreateOrUpdateAssignmentCommand implements CommandInterface
         return $this;
     }
 
-    public function getAmount(): float
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): CreateOrUpdateAssignmentCommand
+    public function setAmount(int $amount): CreateOrUpdateAssignmentCommand
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    public function getTarget(): ?float
+    public function getTarget(): ?int
     {
         return $this->target;
     }
 
-    public function setTarget(?float $target): CreateOrUpdateAssignmentCommand
+    public function setTarget(?int $target): CreateOrUpdateAssignmentCommand
     {
         $this->target = $target;
 

@@ -35,17 +35,17 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         $result = reset($result);
 
         self::assertInstanceOf(AmountBalance::class, $result);
-        self::assertEquals(0.0, $result->getTotalSpent());
-        self::assertEquals(0.0, $result->getTotalForecast());
-        self::assertEquals(0.0, $result->getAssignments());
-        self::assertEquals(0.0, $result->getTotal());
+        self::assertEquals(0, $result->getTotalSpent());
+        self::assertEquals(0, $result->getTotalForecast());
+        self::assertEquals(0, $result->getAssignments());
+        self::assertEquals(0, $result->getTotal());
     }
 
     public function testGetAmountBalanceWithUnknownAccountMustFail(): void
     {
         /** @var Account $account */
         $account = AccountFactory::new()->create(['name' => self::ACCOUNT_1])->_real();
-        EntryFactory::new()->create(['account' => $account, 'amount' => 100.0]);
+        EntryFactory::new()->create(['account' => $account, 'amount' => 10000]);
 
         $this->expectException(NotFoundHttpException::class);
 
@@ -62,22 +62,22 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         $result = reset($result);
 
         self::assertInstanceOf(AmountBalance::class, $result);
-        self::assertEquals(0.0, $result->getTotalSpent());
-        self::assertEquals(0.0, $result->getTotalForecast());
-        self::assertEquals(0.0, $result->getAssignments());
-        self::assertEquals(0.0, $result->getTotal());
+        self::assertEquals(0, $result->getTotalSpent());
+        self::assertEquals(0, $result->getTotalForecast());
+        self::assertEquals(0, $result->getAssignments());
+        self::assertEquals(0, $result->getTotal());
     }
 
     public function testGetAmountBalanceWithPositiveSpentEntries(): void
     {
         $account = AccountFactory::new()->create(['name' => self::ACCOUNT_1]);
-        $budget  = BudgetFactory::new()->create(['name' => 'Monthly Budget', 'amount' => 1000.0]);
+        $budget  = BudgetFactory::new()->create(['name' => 'Monthly Budget', 'amount' => 100000]);
 
         // Create positive spent entries (money allocated to spend, not actual expenses)
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => null, // Spent entry
-            'amount'  => 600.0, // Positive = money allocated to spend
+            'amount'  => 60000, // Positive = money allocated to spend
             'name'    => 'Monthly spending allocation',
         ]);
 
@@ -85,14 +85,14 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget, // Forecast entry
-            'amount'  => 300.0,
+            'amount'  => 30000,
             'name'    => 'Budget provision',
         ]);
 
         // Create assignments (subtracted from remaining to spend)
         AssignmentFactory::new()->create([
             'account' => $account,
-            'amount'  => 150.0,
+            'amount'  => 15000,
             'name'    => 'Rent assignment',
         ]);
 
@@ -104,16 +104,16 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         self::assertInstanceOf(AmountBalance::class, $result);
 
         // Total spent = remaining to spend = 600 - 150 = 450
-        self::assertEquals(450.0, $result->getTotalSpent());
+        self::assertEquals(45000, $result->getTotalSpent());
 
         // Total forecast = 300 (provisions)
-        self::assertEquals(300.0, $result->getTotalForecast());
+        self::assertEquals(30000, $result->getTotalForecast());
 
         // Assignments = 150
-        self::assertEquals(150.0, $result->getAssignments());
+        self::assertEquals(15000, $result->getAssignments());
 
         // Total = 450 + 300 + 150 = 900
-        self::assertEquals(900.0, $result->getTotal());
+        self::assertEquals(90000, $result->getTotal());
     }
 
     public function testGetAmountBalanceForSpecificAccount(): void
@@ -121,20 +121,20 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         /** @var Account $account1 */
         $account1 = AccountFactory::new()->create(['name' => self::ACCOUNT_1])->_real();
         $account2 = AccountFactory::new()->create(['name' => self::ACCOUNT_2]);
-        $budget   = BudgetFactory::new()->create(['name' => 'Test Budget', 'amount' => 800.0]);
+        $budget   = BudgetFactory::new()->create(['name' => 'Test Budget', 'amount' => 80000]);
 
         // Create entries for account1
         EntryFactory::new()->create([
             'account' => $account1,
             'budget'  => null, // Spent entry (positive = allocated to spend)
-            'amount'  => 400.0,
+            'amount'  => 40000,
             'name'    => 'Account 1 spending allocation',
         ]);
 
         EntryFactory::new()->create([
             'account' => $account1,
             'budget'  => $budget, // Forecast entry (provision)
-            'amount'  => 300.0,
+            'amount'  => 30000,
             'name'    => 'Account 1 provision',
         ]);
 
@@ -142,27 +142,27 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account2,
             'budget'  => null,
-            'amount'  => 200.0,
+            'amount'  => 20000,
             'name'    => 'Account 2 spending allocation',
         ]);
 
         EntryFactory::new()->create([
             'account' => $account2,
             'budget'  => $budget,
-            'amount'  => 150.0,
+            'amount'  => 15000,
             'name'    => 'Account 2 provision',
         ]);
 
         // Create assignments
         AssignmentFactory::new()->create([
             'account' => $account1,
-            'amount'  => 100.0,
+            'amount'  => 10000,
             'name'    => 'Account 1 assignment',
         ]);
 
         AssignmentFactory::new()->create([
             'account' => $account2,
-            'amount'  => 50.0,
+            'amount'  => 5000,
             'name'    => 'Account 2 assignment',
         ]);
 
@@ -174,16 +174,16 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         self::assertInstanceOf(AmountBalance::class, $result);
 
         // Total spent for account1 = remaining to spend = 400 - 100 = 300
-        self::assertEquals(300.0, $result->getTotalSpent());
+        self::assertEquals(30000, $result->getTotalSpent());
 
         // Total forecast for account1 = 300 (provisions)
-        self::assertEquals(300.0, $result->getTotalForecast());
+        self::assertEquals(30000, $result->getTotalForecast());
 
         // Assignments for account1 = 100
-        self::assertEquals(100.0, $result->getAssignments());
+        self::assertEquals(10000, $result->getAssignments());
 
         // Total = 300 + 300 + 100 = 700
-        self::assertEquals(700.0, $result->getTotal());
+        self::assertEquals(70000, $result->getTotal());
     }
 
     public function testGetAmountBalanceWithMultipleAccounts(): void
@@ -192,27 +192,27 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         $account2 = AccountFactory::new()->create(['name' => self::ACCOUNT_2]);
         AccountFactory::new()->create(['name' => 'Empty Account']);
 
-        $budget1 = BudgetFactory::new()->create(['name' => 'Budget 1', 'amount' => 600.0]);
-        $budget2 = BudgetFactory::new()->create(['name' => 'Budget 2', 'amount' => 400.0]);
+        $budget1 = BudgetFactory::new()->create(['name' => 'Budget 1', 'amount' => 60000]);
+        $budget2 = BudgetFactory::new()->create(['name' => 'Budget 2', 'amount' => 40000]);
 
         // Account 1: Has both spent allocation and provisions with assignments
         EntryFactory::new()->create([
             'account' => $account1,
             'budget'  => null, // Spent entry (money allocated to spend)
-            'amount'  => 500.0,
+            'amount'  => 50000,
             'name'    => 'Account 1 spending allocation',
         ]);
 
         EntryFactory::new()->create([
             'account' => $account1,
             'budget'  => $budget1, // Provision
-            'amount'  => 350.0,
+            'amount'  => 35000,
             'name'    => 'Account 1 provision',
         ]);
 
         AssignmentFactory::new()->create([
             'account' => $account1,
-            'amount'  => 120.0,
+            'amount'  => 12000,
             'name'    => 'Account 1 assignment',
         ]);
 
@@ -220,7 +220,7 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account2,
             'budget'  => $budget2, // Provision only
-            'amount'  => 200.0,
+            'amount'  => 20000,
             'name'    => 'Account 2 provision only',
         ]);
 
@@ -232,27 +232,27 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         self::assertInstanceOf(AmountBalance::class, $result);
 
         // Total spent = remaining to spend = 500 - 120 = 380
-        self::assertEquals(380.0, $result->getTotalSpent());
+        self::assertEquals(38000, $result->getTotalSpent());
 
         // Total forecast = 350 + 200 = 550 (provisions)
-        self::assertEquals(550.0, $result->getTotalForecast());
+        self::assertEquals(55000, $result->getTotalForecast());
 
         // Total assignments = 120
-        self::assertEquals(120.0, $result->getAssignments());
+        self::assertEquals(12000, $result->getAssignments());
 
         // Total = 380 + 550 + 120 = 1050
-        self::assertEquals(1050.0, $result->getTotal());
+        self::assertEquals(105000, $result->getTotal());
     }
 
     public function testGetAmountBalanceWithOnlyForecastEntries(): void
     {
         $account = AccountFactory::new()->create(['name' => self::ACCOUNT_1]);
-        $budget  = BudgetFactory::new()->create(['name' => 'Forecast Budget', 'amount' => 500.0]);
+        $budget  = BudgetFactory::new()->create(['name' => 'Forecast Budget', 'amount' => 50000]);
 
         EntryFactory::new()->create([
             'account' => $account,
             'budget'  => $budget,
-            'amount'  => 350.0,
+            'amount'  => 35000,
             'name'    => 'Only forecast entry',
         ]);
 
@@ -264,16 +264,16 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         self::assertInstanceOf(AmountBalance::class, $result);
 
         // No spent entries: entryBalance.getTotalSpent() - assignmentsBalance = 0 - 0 = 0
-        self::assertEquals(0.0, $result->getTotalSpent());
+        self::assertEquals(0, $result->getTotalSpent());
 
         // Total forecast = 350
-        self::assertEquals(350.0, $result->getTotalForecast());
+        self::assertEquals(35000, $result->getTotalForecast());
 
         // No assignments
-        self::assertEquals(0.0, $result->getAssignments());
+        self::assertEquals(0, $result->getAssignments());
 
         // Total = 0 + 350 + 0 = 350
-        self::assertEquals(350.0, $result->getTotal());
+        self::assertEquals(35000, $result->getTotal());
     }
 
     public function testGetAmountBalanceWithMultipleSpecificAccounts(): void
@@ -285,27 +285,27 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         // Create a third account that won't be queried
         AccountFactory::new()->create(['name' => 'Ignored Account']);
 
-        $budget1 = BudgetFactory::new()->create(['name' => 'Budget 1', 'amount' => 800.0]);
-        $budget2 = BudgetFactory::new()->create(['name' => 'Budget 2', 'amount' => 600.0]);
+        $budget1 = BudgetFactory::new()->create(['name' => 'Budget 1', 'amount' => 80000]);
+        $budget2 = BudgetFactory::new()->create(['name' => 'Budget 2', 'amount' => 60000]);
 
         // Account 1 setup: spent + forecast + assignment
         EntryFactory::new()->create([
             'account' => $account1,
             'budget'  => null, // Spent entry
-            'amount'  => 1000.0,
+            'amount'  => 100000,
             'name'    => 'Account 1 spending allocation',
         ]);
 
         EntryFactory::new()->create([
             'account' => $account1,
             'budget'  => $budget1, // Forecast entry
-            'amount'  => 400.0,
+            'amount'  => 40000,
             'name'    => 'Account 1 provision',
         ]);
 
         AssignmentFactory::new()->create([
             'account' => $account1,
-            'amount'  => 300.0,
+            'amount'  => 30000,
             'name'    => 'Account 1 assignment',
         ]);
 
@@ -313,20 +313,20 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => $account2,
             'budget'  => null, // Spent entry
-            'amount'  => 600.0,
+            'amount'  => 60000,
             'name'    => 'Account 2 spending allocation',
         ]);
 
         EntryFactory::new()->create([
             'account' => $account2,
             'budget'  => $budget2, // Forecast entry
-            'amount'  => 250.0,
+            'amount'  => 25000,
             'name'    => 'Account 2 provision',
         ]);
 
         AssignmentFactory::new()->create([
             'account' => $account2,
-            'amount'  => 100.0,
+            'amount'  => 10000,
             'name'    => 'Account 2 assignment',
         ]);
 
@@ -334,7 +334,7 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account' => AccountFactory::new()->create(['name' => 'Ignored Account']),
             'budget'  => null,
-            'amount'  => 9999.0,
+            'amount'  => 999900,
             'name'    => 'Should be ignored',
         ]);
 
@@ -356,19 +356,19 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         $account1Balance = $balancesByName[self::ACCOUNT_1];
 
         // Account 1: spent = 1000 - 300 = 700, forecast = 400, assignments = 300, total = 700 + 400 + 300 = 1400
-        self::assertEquals(700.0, $account1Balance->getTotalSpent());
-        self::assertEquals(400.0, $account1Balance->getTotalForecast());
-        self::assertEquals(300.0, $account1Balance->getAssignments());
-        self::assertEquals(1400.0, $account1Balance->getTotal());
+        self::assertEquals(70000, $account1Balance->getTotalSpent());
+        self::assertEquals(40000, $account1Balance->getTotalForecast());
+        self::assertEquals(30000, $account1Balance->getAssignments());
+        self::assertEquals(140000, $account1Balance->getTotal());
 
         // Verify Account 2 balance
         self::assertArrayHasKey(self::ACCOUNT_2, $balancesByName);
         $account2Balance = $balancesByName[self::ACCOUNT_2];
 
         // Account 2: spent = 600 - 100 = 500, forecast = 250, assignments = 100, total = 500 + 250 + 100 = 850
-        self::assertEquals(500.0, $account2Balance->getTotalSpent());
-        self::assertEquals(250.0, $account2Balance->getTotalForecast());
-        self::assertEquals(100.0, $account2Balance->getAssignments());
-        self::assertEquals(850.0, $account2Balance->getTotal());
+        self::assertEquals(50000, $account2Balance->getTotalSpent());
+        self::assertEquals(25000, $account2Balance->getTotalForecast());
+        self::assertEquals(10000, $account2Balance->getAssignments());
+        self::assertEquals(85000, $account2Balance->getTotal());
     }
 }

@@ -35,8 +35,11 @@ class Entry implements IntIdentifierInterface
         EntryFlagEnum::HIDDEN,
     ];
 
-    #[Column(type: Types::FLOAT)]
-    private float $amount = 0;
+    /**
+     * In cents.
+     */
+    #[Column(type: Types::INTEGER)]
+    private int $amount = 0;
 
     #[ManyToOne(fetch: 'EXTRA_LAZY', inversedBy: 'entries')]
     private ?Budget $budget = null;
@@ -89,12 +92,12 @@ class Entry implements IntIdentifierInterface
         $this->createdAt = new DateTimeImmutable();
     }
 
-    public function getAmount(): ?float
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount(int $amount): self
     {
         $this->amount = $amount;
 

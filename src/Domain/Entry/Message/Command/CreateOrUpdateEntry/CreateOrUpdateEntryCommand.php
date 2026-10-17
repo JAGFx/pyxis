@@ -37,7 +37,7 @@ class CreateOrUpdateEntryCommand implements CommandInterface
         private ?string $name = null,
 
         #[NotEqualTo(0)]
-        private float $amount = 0.0,
+        private int $amount = 0,
 
         private ?Budget $budget = null,
 
@@ -82,12 +82,12 @@ class CreateOrUpdateEntryCommand implements CommandInterface
         return $this;
     }
 
-    public function getAmount(): float
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): CreateOrUpdateEntryCommand
+    public function setAmount(int $amount): CreateOrUpdateEntryCommand
     {
         $this->amount = $amount;
 

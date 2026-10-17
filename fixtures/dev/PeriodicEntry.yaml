@@ -1,7 +1,7 @@
 App\Domain\PeriodicEntry\Entity\PeriodicEntry:
   periodic_entry_spent:
     name: 'Periodic dépence'
-    amount: <randomFloat(2, 15, 1500)>
+    amount: <numberBetween(1500, 150000)>
     executionDate: <immutableDateTimeBetween('-5 hour', 'now')>
     account: ' @account_a'
 

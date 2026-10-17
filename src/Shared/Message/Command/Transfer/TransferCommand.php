@@ -25,7 +25,7 @@ class TransferCommand implements CommandInterface
 
     #[NotBlank]
     #[Positive]
-    private float $amount = 0;
+    private int $amount = 0;
 
     #[Assert\Callback]
     public function validate(ExecutionContext $context): void
@@ -73,12 +73,12 @@ class TransferCommand implements CommandInterface
         return $this;
     }
 
-    public function getAmount(): float
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): TransferCommand
+    public function setAmount(int $amount): TransferCommand
     {
         $this->amount = $amount;
 

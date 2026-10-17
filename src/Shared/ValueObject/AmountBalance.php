@@ -5,30 +5,30 @@ namespace App\Shared\ValueObject;
 readonly class AmountBalance
 {
     public function __construct(
-        private float $total,
-        private float $totalSpent,
-        private float $totalForecast,
-        private float $assignments,
+        private int $total,
+        private int $totalSpent,
+        private int $totalForecast,
+        private int $assignments,
         private ?string $accountName = null,
     ) {
     }
 
-    public function getTotal(): float
+    public function getTotal(): int
     {
         return $this->total;
     }
 
-    public function getTotalSpent(): float
+    public function getTotalSpent(): int
     {
         return $this->totalSpent;
     }
 
-    public function getTotalForecast(): float
+    public function getTotalForecast(): int
     {
         return $this->totalForecast;
     }
 
-    public function getAssignments(): float
+    public function getAssignments(): int
     {
         return $this->assignments;
     }

@@ -76,7 +76,7 @@ class PeriodicEntryControllerTest extends WebTestCase
         /** @var PeriodicEntry $periodicEntry */
         $periodicEntry = PeriodicEntryFactory::new()->create([
             'account'    => $account,
-            'amount'     => 20.0,
+            'amount'     => 2000,
             'assignment' => $assignment,
         ])->_real();
 

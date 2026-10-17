@@ -6,13 +6,13 @@ use App\Domain\Budget\Entity\BudgetStatusEnum;
 
 trait BudgetProgressTrait
 {
-    abstract public function getProgress(): float;
+    abstract public function getProgress(): int;
 
-    abstract public function getAmount(): float;
+    abstract public function getAmount(): int;
 
     public function getRelativeProgress(bool $showAsSpentOnly = false): float
     {
-        if (0.0 === $this->getAmount()) {
+        if (0 === $this->getAmount()) {
             return 0.0;
         }
 

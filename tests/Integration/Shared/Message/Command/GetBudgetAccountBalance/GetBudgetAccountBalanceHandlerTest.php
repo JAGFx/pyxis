@@ -30,12 +30,12 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
         $this->messageBus = $container->get(MessageBus::class);
     }
 
-    private function populateBalanceDatabase(float $cashFlowAmount = 500.0): void
+    private function populateBalanceDatabase(int $cashFlowAmount = 50000): void
     {
         /** @var Budget $budget */
         $budget = BudgetFactory::createOne([
             'name'   => self::BUDGET_BALANCE_NAME,
-            'amount' => 1000.0,
+            'amount' => 100000,
         ])->_real();
 
         /** @var Account $account */
@@ -52,7 +52,7 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
             ],
             [
                 'createdAt' => new DateTimeImmutable('-1 year -1 hour'),
-                'amount'    => 200,
+                'amount'    => 20000,
                 'budget'    => $budget,
                 'account'   => $account,
             ],
@@ -64,7 +64,7 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
         /** @var Budget $budget */
         $budget = BudgetFactory::createOne([
             'name'   => self::BUDGET_BALANCE_NAME,
-            'amount' => 1000.0,
+            'amount' => 100000,
         ])->_real();
 
         /** @var Account $account */
@@ -87,17 +87,17 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
 
     public static function budgetBalancingDataset(): Generator
     {
-        yield 'Positive cash flow' => [500.0];
-        yield 'Negative cash flow' => [-500.0];
+        yield 'Positive cash flow' => [50000];
+        yield 'Negative cash flow' => [-50000];
     }
 
     #[DataProvider('budgetBalancingDataset')]
-    public function testBudgetCashFlowMustTransferToSpent(float $cashFlowAmount): void
+    public function testBudgetCashFlowMustTransferToSpent(int $cashFlowAmount): void
     {
         $this->populateBalanceDatabase($cashFlowAmount);
 
         $initialBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery());
-        $overflow       = 200.0;
+        $overflow       = 20000;
 
         /** @var Budget $budget */
         $budget = BudgetFactory::find([
@@ -116,7 +116,7 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
 
         self::assertSame($initialBalance->getTotalSpent() + $overflow, $newBalance->getTotalSpent());
         self::assertSame($initialBalance->getTotalForecast() - $overflow, $newBalance->getTotalForecast());
-        self::assertSame(0.0, $budget->getCashFlow());
+        self::assertSame(0, $budget->getCashFlow());
 
         /** @var Entry[] $lastTwoById */
         $lastTwoById = EntryFactory::repository()->findBy([], ['id' => 'ASC'], 2, 2);
@@ -144,7 +144,7 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
         /** @var Budget $budget */
         $budget = BudgetFactory::createOne([
             'name'   => self::BUDGET_BALANCE_NAME,
-            'amount' => 1000.0,
+            'amount' => 100000,
         ])->_real();
 
         /** @var Account $firstAccount */
@@ -155,13 +155,13 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
         EntryFactory::createSequence([
             [
                 'createdAt' => new DateTimeImmutable('-1 year'),
-                'amount'    => 300.0,
+                'amount'    => 30000,
                 'budget'    => $budget,
                 'account'   => $firstAccount,
             ],
             [
                 'createdAt' => new DateTimeImmutable('-1 year -1 hour'),
-                'amount'    => -100.0,
+                'amount'    => -10000,
                 'budget'    => $budget,
                 'account'   => $secondAccount,
             ],
@@ -172,17 +172,17 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
             account: $firstAccount,
         ));
 
-        self::assertSame(0.0, $budget->getCashFlow($firstAccount));
-        self::assertSame(-100.0, $budget->getCashFlow($secondAccount));
+        self::assertSame(0, $budget->getCashFlow($firstAccount));
+        self::assertSame(-10000, $budget->getCashFlow($secondAccount));
         self::assertTrue($budget->hasCashFlowToBalance());
 
         /** @var Entry[] $balanceEntries */
         $balanceEntries = EntryFactory::repository()->findBy([], ['id' => 'ASC'], 2, 2);
 
         self::assertCount(2, $balanceEntries);
-        self::assertSame(300.0, $balanceEntries[0]->getAmount());
+        self::assertSame(30000, $balanceEntries[0]->getAmount());
         self::assertSame($firstAccount, $balanceEntries[0]->getAccount());
-        self::assertSame(-300.0, $balanceEntries[1]->getAmount());
+        self::assertSame(-30000, $balanceEntries[1]->getAmount());
         self::assertSame($firstAccount, $balanceEntries[1]->getAccount());
 
         $this->messageBus->dispatch(new ApplyBudgetAccountBalanceCommand(
@@ -190,8 +190,8 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
             account: $secondAccount,
         ));
 
-        self::assertSame(0.0, $budget->getCashFlow($secondAccount));
-        self::assertSame(0.0, $budget->getCashFlow());
+        self::assertSame(0, $budget->getCashFlow($secondAccount));
+        self::assertSame(0, $budget->getCashFlow());
         self::assertFalse($budget->hasCashFlowToBalance());
     }
 }

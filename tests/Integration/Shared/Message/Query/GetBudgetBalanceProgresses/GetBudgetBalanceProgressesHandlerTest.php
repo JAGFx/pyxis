@@ -30,7 +30,7 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
     {
         BudgetFactory::new()->create([
             'name'    => 'Budget Without Expenses',
-            'amount'  => 500.0,
+            'amount'  => 50000,
             'enabled' => true,
         ]);
 
@@ -49,7 +49,7 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
 
         $budget = BudgetFactory::new()->create([
             'name'    => 'Current Year Budget',
-            'amount'  => 800.0,
+            'amount'  => 80000,
             'enabled' => true,
         ]);
         $testYear = YearRange::current();
@@ -58,7 +58,7 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account'   => $account,
             'budget'    => $budget,
-            'amount'    => -200.0, // Negative = expense
+            'amount'    => -20000, // Negative = expense
             'name'      => 'Current expense 1',
             'createdAt' => new DateTimeImmutable($testYear),
         ]);
@@ -66,7 +66,7 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account'   => $account,
             'budget'    => $budget,
-            'amount'    => -150.0, // Negative = expense
+            'amount'    => -15000, // Negative = expense
             'name'      => 'Current expense 2',
             'createdAt' => new DateTimeImmutable($testYear),
         ]);
@@ -82,8 +82,8 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
 
         $progressVO = $result[0];
         self::assertEquals('Current Year Budget', $progressVO->getName());
-        self::assertEquals(800.0, $progressVO->getAmount());
-        self::assertEquals(350.0, $progressVO->getProgress()); // abs(-200) + abs(-150) = 350
+        self::assertEquals(80000, $progressVO->getAmount());
+        self::assertEquals(35000, $progressVO->getProgress()); // abs(-200) + abs(-150) = 350
         self::assertEquals(43.75, $progressVO->getTrueRelativeProgress()); // (350/800) * 100
     }
 
@@ -93,7 +93,7 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
 
         $budget = BudgetFactory::new()->create([
             'name'    => 'Complete Budget',
-            'amount'  => 1200.0,
+            'amount'  => 120000,
             'enabled' => true,
         ]);
 
@@ -103,7 +103,7 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account'   => $account,
             'budget'    => $budget,
-            'amount'    => -300.0, // Negative = expense
+            'amount'    => -30000, // Negative = expense
             'name'      => '2025 expense',
             'createdAt' => new DateTimeImmutable($testYear),
         ]);
@@ -111,7 +111,7 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account'   => $account,
             'budget'    => $budget,
-            'amount'    => -250.0, // Negative = expense
+            'amount'    => -25000, // Negative = expense
             'name'      => 'Another 2025 expense',
             'createdAt' => new DateTimeImmutable($testYear),
         ]);
@@ -120,16 +120,16 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         HistoryBudgetFactory::new()->create([
             'budget'           => $budget,
             'date'             => new DateTimeImmutable('2024-12-31'),
-            'amount'           => 1000.0,
-            'spent'            => 800.0,
+            'amount'           => 100000,
+            'spent'            => 80000,
             'relativeProgress' => 80.0,
         ]);
 
         HistoryBudgetFactory::new()->create([
             'budget'           => $budget,
             'date'             => new DateTimeImmutable('2023-12-31'),
-            'amount'           => 900.0,
-            'spent'            => 750.0,
+            'amount'           => 90000,
+            'spent'            => 75000,
             'relativeProgress' => 83.33,
         ]);
 
@@ -142,8 +142,8 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         self::assertCount(1, $currentResult);
         $currentProgressVO = $currentResult[0];
         self::assertEquals('Complete Budget', $currentProgressVO->getName());
-        self::assertEquals(1200.0, $currentProgressVO->getAmount());
-        self::assertEquals(550.0, $currentProgressVO->getProgress()); // abs(-300) + abs(-250) = 550 (from entries)
+        self::assertEquals(120000, $currentProgressVO->getAmount());
+        self::assertEquals(55000, $currentProgressVO->getProgress()); // abs(-300) + abs(-250) = 550 (from entries)
 
         // Test historical year 2024 (should use history)
         $historicalSearchQuery2024 = new GetBudgetBalanceProgressesQuery(2024, false);
@@ -154,8 +154,8 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         self::assertCount(1, $historical2024Result);
         $historical2024ProgressVO = $historical2024Result[0];
         self::assertEquals('Complete Budget', $historical2024ProgressVO->getName());
-        self::assertEquals(1000.0, $historical2024ProgressVO->getAmount());
-        self::assertEquals(800.0, $historical2024ProgressVO->getProgress()); // from history
+        self::assertEquals(100000, $historical2024ProgressVO->getAmount());
+        self::assertEquals(80000, $historical2024ProgressVO->getProgress()); // from history
         self::assertEquals(80.0, $historical2024ProgressVO->getTrueRelativeProgress());
 
         // Test historical year 2023 (should use history)
@@ -167,8 +167,8 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         self::assertCount(1, $historical2023Result);
         $historical2023ProgressVO = $historical2023Result[0];
         self::assertEquals('Complete Budget', $historical2023ProgressVO->getName());
-        self::assertEquals(900.0, $historical2023ProgressVO->getAmount());
-        self::assertEquals(750.0, $historical2023ProgressVO->getProgress()); // from history
+        self::assertEquals(90000, $historical2023ProgressVO->getAmount());
+        self::assertEquals(75000, $historical2023ProgressVO->getProgress()); // from history
         self::assertEquals(83.33, $historical2023ProgressVO->getTrueRelativeProgress());
     }
 
@@ -176,7 +176,7 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
     {
         $budget = BudgetFactory::new()->create([
             'name'    => 'Historical Only Budget',
-            'amount'  => 600.0,
+            'amount'  => 60000,
             'enabled' => true,
         ]);
 
@@ -184,16 +184,16 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         HistoryBudgetFactory::new()->create([
             'budget'           => $budget,
             'date'             => new DateTimeImmutable('2024-12-31'),
-            'amount'           => 600.0,
-            'spent'            => 450.0,
+            'amount'           => 60000,
+            'spent'            => 45000,
             'relativeProgress' => 75.0,
         ]);
 
         HistoryBudgetFactory::new()->create([
             'budget'           => $budget,
             'date'             => new DateTimeImmutable('2023-12-31'),
-            'amount'           => 550.0,
-            'spent'            => 200.0,
+            'amount'           => 55000,
+            'spent'            => 20000,
             'relativeProgress' => 36.36,
         ]);
 
@@ -214,8 +214,8 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         self::assertCount(1, $historical2024Result);
         $historical2024ProgressVO = $historical2024Result[0];
         self::assertEquals('Historical Only Budget', $historical2024ProgressVO->getName());
-        self::assertEquals(600.0, $historical2024ProgressVO->getAmount());
-        self::assertEquals(450.0, $historical2024ProgressVO->getProgress()); // from history
+        self::assertEquals(60000, $historical2024ProgressVO->getAmount());
+        self::assertEquals(45000, $historical2024ProgressVO->getProgress()); // from history
         self::assertEquals(75.0, $historical2024ProgressVO->getTrueRelativeProgress());
 
         // Test historical year 2023 (should use history)
@@ -227,8 +227,8 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         self::assertCount(1, $historical2023Result);
         $historical2023ProgressVO = $historical2023Result[0];
         self::assertEquals('Historical Only Budget', $historical2023ProgressVO->getName());
-        self::assertEquals(550.0, $historical2023ProgressVO->getAmount());
-        self::assertEquals(200.0, $historical2023ProgressVO->getProgress()); // from history
+        self::assertEquals(55000, $historical2023ProgressVO->getAmount());
+        self::assertEquals(20000, $historical2023ProgressVO->getProgress()); // from history
         self::assertEquals(36.36, $historical2023ProgressVO->getTrueRelativeProgress());
     }
 
@@ -239,7 +239,7 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         // Budget 1: Current expenses only (no history)
         $budget1 = BudgetFactory::new()->create([
             'name'    => 'Current Only Budget',
-            'amount'  => 400.0,
+            'amount'  => 40000,
             'enabled' => true,
         ]);
 
@@ -248,7 +248,7 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         EntryFactory::new()->create([
             'account'   => $account,
             'budget'    => $budget1,
-            'amount'    => -200.0, // Negative = expense
+            'amount'    => -20000, // Negative = expense
             'name'      => 'Budget 1 expense',
             'createdAt' => new DateTimeImmutable($testYear),
         ]);
@@ -256,29 +256,29 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         // Budget 2: No current expenses, only history
         $budget2 = BudgetFactory::new()->create([
             'name'    => 'Historical Only Budget 2',
-            'amount'  => 300.0,
+            'amount'  => 30000,
             'enabled' => true,
         ]);
 
         HistoryBudgetFactory::new()->create([
             'budget'           => $budget2,
             'date'             => new DateTimeImmutable('2024-12-31'),
-            'amount'           => 300.0,
-            'spent'            => 250.0,
+            'amount'           => 30000,
+            'spent'            => 25000,
             'relativeProgress' => 83.33,
         ]);
 
         // Budget 3: Both current expenses AND history
         $budget3 = BudgetFactory::new()->create([
             'name'    => 'Mixed Budget',
-            'amount'  => 500.0,
+            'amount'  => 50000,
             'enabled' => true,
         ]);
 
         EntryFactory::new()->create([
             'account'   => $account,
             'budget'    => $budget3,
-            'amount'    => -150.0, // Negative = expense
+            'amount'    => -15000, // Negative = expense
             'name'      => 'Budget 3 expense',
             'createdAt' => new DateTimeImmutable($testYear),
         ]);
@@ -286,8 +286,8 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
         HistoryBudgetFactory::new()->create([
             'budget'           => $budget3,
             'date'             => new DateTimeImmutable('2024-12-31'),
-            'amount'           => 500.0,
-            'spent'            => 400.0,
+            'amount'           => 50000,
+            'spent'            => 40000,
             'relativeProgress' => 80.0,
         ]);
 
@@ -304,11 +304,11 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
 
         // Current Only Budget
         self::assertEquals('Current Only Budget', $currentResult[0]->getName());
-        self::assertEquals(200.0, $currentResult[0]->getProgress()); // abs(-200)
+        self::assertEquals(20000, $currentResult[0]->getProgress()); // abs(-200)
 
         // Mixed Budget (current expenses, not history)
         self::assertEquals('Mixed Budget', $currentResult[1]->getName());
-        self::assertEquals(150.0, $currentResult[1]->getProgress()); // abs(-150)
+        self::assertEquals(15000, $currentResult[1]->getProgress()); // abs(-150)
 
         // Test historical year 2024
         $historicalSearchQuery = new GetBudgetBalanceProgressesQuery(2024, false);
@@ -323,10 +323,10 @@ class GetBudgetBalanceProgressesHandlerTest extends KernelTestCase
 
         // Historical Only Budget 2
         self::assertEquals('Historical Only Budget 2', $historicalResult[0]->getName());
-        self::assertEquals(250.0, $historicalResult[0]->getProgress());
+        self::assertEquals(25000, $historicalResult[0]->getProgress());
 
         // Mixed Budget
         self::assertEquals('Mixed Budget', $historicalResult[1]->getName());
-        self::assertEquals(400.0, $historicalResult[1]->getProgress());
+        self::assertEquals(40000, $historicalResult[1]->getProgress());
     }
 }

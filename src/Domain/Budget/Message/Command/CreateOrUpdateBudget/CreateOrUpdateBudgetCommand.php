@@ -24,7 +24,7 @@ class CreateOrUpdateBudgetCommand implements CommandInterface
         public string $name = '',
 
         #[Positive]
-        public float $amount = 0.0,
+        public int $amount = 0,
 
         public bool $enabled = true,
     ) {
@@ -42,12 +42,12 @@ class CreateOrUpdateBudgetCommand implements CommandInterface
         return $this;
     }
 
-    public function getAmount(): float
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): CreateOrUpdateBudgetCommand
+    public function setAmount(int $amount): CreateOrUpdateBudgetCommand
     {
         $this->amount = $amount;
 

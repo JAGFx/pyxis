@@ -24,15 +24,15 @@ class BudgetTest extends KernelTestCase
     public function testEntriesCreatedAtTheSameSecondAreAllHydrated(): void
     {
         /** @var Budget $budget */
-        $budget = BudgetFactory::createOne(['amount' => 1200.0])->_real();
+        $budget = BudgetFactory::createOne(['amount' => 120000])->_real();
         /** @var Account $account */
         $account   = AccountFactory::createOne()->_real();
         $createdAt = new DateTimeImmutable('-1 year')->setTime(14, 0);
 
         EntryFactory::createSequence([
-            ['createdAt' => $createdAt, 'amount' => 100.0, 'budget' => $budget, 'account' => $account],
-            ['createdAt' => $createdAt, 'amount' => 100.0, 'budget' => $budget, 'account' => $account],
-            ['createdAt' => $createdAt, 'amount' => 100.0, 'budget' => $budget, 'account' => $account],
+            ['createdAt' => $createdAt, 'amount' => 10000, 'budget' => $budget, 'account' => $account],
+            ['createdAt' => $createdAt, 'amount' => 10000, 'budget' => $budget, 'account' => $account],
+            ['createdAt' => $createdAt, 'amount' => 10000, 'budget' => $budget, 'account' => $account],
         ]);
 
         $budgetId = $budget->getId();
@@ -42,21 +42,21 @@ class BudgetTest extends KernelTestCase
         $budget = $this->entityManager->find(Budget::class, $budgetId);
 
         self::assertCount(3, $budget->getEntries());
-        self::assertSame(300.0, $budget->getCashFlow());
+        self::assertSame(30000, $budget->getCashFlow());
     }
 
     public function testOppositeCashFlowsOnDifferentAccountsMustBeBalanced(): void
     {
         /** @var Budget $budget */
-        $budget = BudgetFactory::createOne(['amount' => 1200.0])->_real();
+        $budget = BudgetFactory::createOne(['amount' => 120000])->_real();
         /** @var Account $firstAccount */
         $firstAccount = AccountFactory::createOne()->_real();
         /** @var Account $secondAccount */
         $secondAccount = AccountFactory::createOne()->_real();
 
         EntryFactory::createSequence([
-            ['createdAt' => new DateTimeImmutable('-1 year'), 'amount' => 50.0, 'budget' => $budget, 'account' => $firstAccount],
-            ['createdAt' => new DateTimeImmutable('-1 year -1 hour'), 'amount' => -50.0, 'budget' => $budget, 'account' => $secondAccount],
+            ['createdAt' => new DateTimeImmutable('-1 year'), 'amount' => 5000, 'budget' => $budget, 'account' => $firstAccount],
+            ['createdAt' => new DateTimeImmutable('-1 year -1 hour'), 'amount' => -5000, 'budget' => $budget, 'account' => $secondAccount],
         ]);
 
         self::assertFalse($budget->hasPositiveCashFlow());
@@ -67,14 +67,14 @@ class BudgetTest extends KernelTestCase
     public function testBalancedAccountsHaveNoCashFlowToBalance(): void
     {
         /** @var Budget $budget */
-        $budget = BudgetFactory::createOne(['amount' => 1200.0])->_real();
+        $budget = BudgetFactory::createOne(['amount' => 120000])->_real();
         /** @var Account $account */
         $account = AccountFactory::createOne()->_real();
 
         EntryFactory::createSequence([
-            ['createdAt' => new DateTimeImmutable('-1 year'), 'amount' => 0.1, 'budget' => $budget, 'account' => $account],
-            ['createdAt' => new DateTimeImmutable('-1 year -1 hour'), 'amount' => 0.2, 'budget' => $budget, 'account' => $account],
-            ['createdAt' => new DateTimeImmutable('-1 year -2 hour'), 'amount' => -0.3, 'budget' => $budget, 'account' => $account],
+            ['createdAt' => new DateTimeImmutable('-1 year'), 'amount' => 10, 'budget' => $budget, 'account' => $account],
+            ['createdAt' => new DateTimeImmutable('-1 year -1 hour'), 'amount' => 20, 'budget' => $budget, 'account' => $account],
+            ['createdAt' => new DateTimeImmutable('-1 year -2 hour'), 'amount' => -30, 'budget' => $budget, 'account' => $account],
         ]);
 
         self::assertFalse($budget->hasCashFlowToBalance());

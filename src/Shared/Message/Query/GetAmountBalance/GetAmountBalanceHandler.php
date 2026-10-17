@@ -63,7 +63,7 @@ readonly class GetAmountBalanceHandler implements QueryHandlerInterface
         /** @var EntryBalance $entryBalance */
         $entryBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery($account?->getId()));
 
-        /** @var float $assignmentsBalance */
+        /** @var int $assignmentsBalance */
         $assignmentsBalance = $this->messageBus->dispatch(new GetAssignmentBalanceQuery($account?->getId()));
 
         $totalSpent = $entryBalance->getTotalSpent() - $assignmentsBalance;

@@ -17,7 +17,7 @@ class GetBudgetCashFlowsByAccountHandlerTest extends TestCase
 {
     use BudgetTestTrait;
 
-    private const float BUDGET_AMOUNT = 1000.0;
+    private const int BUDGET_AMOUNT = 100000;
 
     private MessageBus $messageBus;
 
@@ -72,9 +72,9 @@ class GetBudgetCashFlowsByAccountHandlerTest extends TestCase
             ->method('getCashFlow')
             ->willReturnCallback(function ($account) use ($account1, $account2) {
                 return match ($account) {
-                    $account1 => 150.0,  // Positive cash flow
-                    $account2 => -75.0,  // Negative cash flow
-                    default   => 0.0,
+                    $account1 => 15000,  // Positive cash flow
+                    $account2 => -7500,  // Negative cash flow
+                    default   => 0,
                 };
             });
 
@@ -96,12 +96,12 @@ class GetBudgetCashFlowsByAccountHandlerTest extends TestCase
         // Check first cash flow (Account 1)
         self::assertEquals($budgetMock, $result[0]->getBudget());
         self::assertEquals($account1, $result[0]->getAccount());
-        self::assertEquals(150.0, $result[0]->getCashFlow());
+        self::assertEquals(15000, $result[0]->getCashFlow());
 
         // Check second cash flow (Account 2)
         self::assertEquals($budgetMock, $result[1]->getBudget());
         self::assertEquals($account2, $result[1]->getAccount());
-        self::assertEquals(-75.0, $result[1]->getCashFlow());
+        self::assertEquals(-7500, $result[1]->getCashFlow());
     }
 
     public function testGetBudgetCashFlowsByAccountWithAllZeroCashFlows(): void
@@ -116,7 +116,7 @@ class GetBudgetCashFlowsByAccountHandlerTest extends TestCase
         $budgetMock = $this->createMock(Budget::class);
         $budgetMock->expects(self::exactly(2))
             ->method('getCashFlow')
-            ->willReturn(0.0);
+            ->willReturn(0);
 
         $this->entityFinder
             ->expects(self::once())
@@ -166,9 +166,9 @@ class GetBudgetCashFlowsByAccountHandlerTest extends TestCase
             ->method('getCashFlow')
             ->willReturnCallback(function ($account) use ($account1, $account2) {
                 return match ($account) {
-                    $account1 => -200.0,
-                    $account2 => -350.0,
-                    default   => 0.0,
+                    $account1 => -20000,
+                    $account2 => -35000,
+                    default   => 0,
                 };
             });
 
@@ -184,8 +184,8 @@ class GetBudgetCashFlowsByAccountHandlerTest extends TestCase
         self::assertCount(2, $result);
 
         // Check all are negative cash flows
-        self::assertEquals(-200.0, $result[0]->getCashFlow());
-        self::assertEquals(-350.0, $result[1]->getCashFlow());
+        self::assertEquals(-20000, $result[0]->getCashFlow());
+        self::assertEquals(-35000, $result[1]->getCashFlow());
     }
 
     public function testGetBudgetCashFlowsByAccountWithMixedCashFlowsIncludingSmallValues(): void
@@ -204,11 +204,11 @@ class GetBudgetCashFlowsByAccountHandlerTest extends TestCase
             ->method('getCashFlow')
             ->willReturnCallback(function ($account) use ($account1, $account2, $account3, $account4) {
                 return match ($account) {
-                    $account1 => 0.01,    // Small positive
-                    $account2 => -0.01,   // Small negative
-                    $account3 => 0.0,     // Exact zero (excluded)
-                    $account4 => 1000.0,  // Large positive
-                    default   => 0.0,
+                    $account1 => 1,    // Small positive
+                    $account2 => -1,   // Small negative
+                    $account3 => 0,     // Exact zero (excluded)
+                    $account4 => 100000,  // Large positive
+                    default   => 0,
                 };
             });
 
@@ -224,9 +224,9 @@ class GetBudgetCashFlowsByAccountHandlerTest extends TestCase
         self::assertCount(3, $result); // All except the zero one
 
         $cashFlows = array_map(fn ($vo) => $vo->getCashFlow(), $result);
-        self::assertContains(0.01, $cashFlows);
-        self::assertContains(-0.01, $cashFlows);
-        self::assertContains(1000.0, $cashFlows);
-        self::assertNotContains(0.0, $cashFlows);
+        self::assertContains(1, $cashFlows);
+        self::assertContains(-1, $cashFlows);
+        self::assertContains(100000, $cashFlows);
+        self::assertNotContains(0, $cashFlows);
     }
 }

@@ -8,9 +8,9 @@ readonly class BudgetBalanceProgressValueObject
 {
     public function __construct(
         private ?string $name = null,
-        private ?float $progress = null,
+        private ?int $progress = null,
         private ?BudgetStatusEnum $status = null,
-        private ?float $amount = null,
+        private ?int $amount = null,
         private ?float $trueRelativeProgress = null,
     ) {
     }
@@ -20,7 +20,7 @@ readonly class BudgetBalanceProgressValueObject
         return $this->name;
     }
 
-    public function getProgress(): ?float
+    public function getProgress(): ?int
     {
         return $this->progress;
     }
@@ -30,7 +30,7 @@ readonly class BudgetBalanceProgressValueObject
         return $this->status;
     }
 
-    public function getAmount(): ?float
+    public function getAmount(): ?int
     {
         return $this->amount;
     }
@@ -40,7 +40,7 @@ readonly class BudgetBalanceProgressValueObject
         return $this->trueRelativeProgress;
     }
 
-    public function getBalance(): float
+    public function getBalance(): int
     {
         return $this->amount - $this->progress;
     }

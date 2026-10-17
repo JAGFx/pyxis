@@ -38,13 +38,13 @@ class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
 
         EntryFactory::new()->create([
             'account' => $account,
-            'amount'  => 200.0,
+            'amount'  => 20000,
         ]);
 
         $command = new CreateOrUpdateAssignmentCommand();
         $command->setName('Test Assignment');
         $command->setAccount($account);
-        $command->setAmount(150.0);
+        $command->setAmount(15000);
 
         $this->messageBus->dispatch($command);
 
@@ -66,13 +66,13 @@ class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
 
         EntryFactory::new()->create([
             'account' => $account,
-            'amount'  => 300.0,
+            'amount'  => 30000,
         ]);
 
         $command = new CreateOrUpdateAssignmentCommand();
         $command->setName('Updated Assignment');
         $command->setAccount($account);
-        $command->setAmount(250.0);
+        $command->setAmount(25000);
         $command->setOriginId($existingAssignment->getId());
 
         $this->messageBus->dispatch($command);
@@ -84,10 +84,10 @@ class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
     {
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
-        EntryFactory::new()->create(['account' => $account, 'amount' => 1000.0]);
-        AssignmentFactory::new()->create(['account' => $account, 'amount' => 800.0]);
+        EntryFactory::new()->create(['account' => $account, 'amount' => 100000]);
+        AssignmentFactory::new()->create(['account' => $account, 'amount' => 80000]);
 
-        $command = new CreateOrUpdateAssignmentCommand('Second assignment', 300.0, $account);
+        $command = new CreateOrUpdateAssignmentCommand('Second assignment', 30000, $account);
 
         try {
             $this->messageBus->dispatch($command);
@@ -103,10 +103,10 @@ class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
     {
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
-        EntryFactory::new()->create(['account' => $account, 'amount' => 1000.0]);
-        AssignmentFactory::new()->create(['account' => $account, 'amount' => 800.0]);
+        EntryFactory::new()->create(['account' => $account, 'amount' => 100000]);
+        AssignmentFactory::new()->create(['account' => $account, 'amount' => 80000]);
 
-        $this->messageBus->dispatch(new CreateOrUpdateAssignmentCommand('Second assignment', 200.0, $account));
+        $this->messageBus->dispatch(new CreateOrUpdateAssignmentCommand('Second assignment', 20000, $account));
 
         self::assertCount(2, AssignmentFactory::repository()->findBy(['account' => $account]));
     }
@@ -115,16 +115,16 @@ class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
     {
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
-        EntryFactory::new()->create(['account' => $account, 'amount' => 1000.0]);
+        EntryFactory::new()->create(['account' => $account, 'amount' => 100000]);
         /** @var Assignment $assignment */
-        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => 800.0])->_real();
+        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => 80000])->_real();
 
-        $command = new CreateOrUpdateAssignmentCommand('Raised assignment', 1000.0, $account);
+        $command = new CreateOrUpdateAssignmentCommand('Raised assignment', 100000, $account);
         $command->setOriginId($assignment->getId());
 
         $this->messageBus->dispatch($command);
 
-        self::assertSame(1000.0, $assignment->getAmount());
+        self::assertSame(100000, $assignment->getAmount());
     }
 
     public function testObjectMapperMappingDoesNotThrowException(): void
@@ -144,31 +144,31 @@ class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
 
-        $this->messageBus->dispatch(new CreateOrUpdateAssignmentCommand('Vacances', 0.0, $account, 2000.0));
+        $this->messageBus->dispatch(new CreateOrUpdateAssignmentCommand('Vacances', 0, $account, 200000));
 
         /** @var Assignment $assignment */
         $assignment = AssignmentFactory::repository()->findOneBy(['name' => 'Vacances'])->_real();
-        self::assertSame(0.0, $assignment->getBalance());
-        self::assertSame(2000.0, $assignment->getTarget());
+        self::assertSame(0, $assignment->getBalance());
+        self::assertSame(200000, $assignment->getTarget());
     }
 
     public function testUpdatingTheStartingAmountTakesLinkedEntriesIntoAccount(): void
     {
         /** @var Account $account */
         $account = AccountFactory::new()->create()->_real();
-        EntryFactory::new()->create(['account' => $account, 'amount' => 1000.0]);
+        EntryFactory::new()->create(['account' => $account, 'amount' => 100000]);
         /** @var Assignment $assignment */
-        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => 800.0])->_real();
-        $linked     = EntryFactory::new()->create(['account' => $account, 'amount' => -300.0, 'assignment' => $assignment])->_real();
+        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => 80000])->_real();
+        $linked     = EntryFactory::new()->create(['account' => $account, 'amount' => -30000, 'assignment' => $assignment])->_real();
         $assignment->getEntries()->add($linked);
 
         // Account total 700, linked entries -300: a starting amount of 1000 gives a balance of 700, the maximum
-        $command = new CreateOrUpdateAssignmentCommand('Raised', 1000.0, $account);
+        $command = new CreateOrUpdateAssignmentCommand('Raised', 100000, $account);
         $command->setOriginId($assignment->getId());
         $this->messageBus->dispatch($command);
-        self::assertSame(700.0, $assignment->getBalance());
+        self::assertSame(70000, $assignment->getBalance());
 
-        $command = new CreateOrUpdateAssignmentCommand('Too high', 1000.01, $account);
+        $command = new CreateOrUpdateAssignmentCommand('Too high', 100001, $account);
         $command->setOriginId($assignment->getId());
 
         try {
@@ -185,13 +185,13 @@ class CreateOrUpdateAssignmentHandlerTest extends KernelTestCase
         $account = AccountFactory::new()->create()->_real();
         /** @var Account $otherAccount */
         $otherAccount = AccountFactory::new()->create()->_real();
-        EntryFactory::new()->create(['account' => $otherAccount, 'amount' => 5000.0]);
+        EntryFactory::new()->create(['account' => $otherAccount, 'amount' => 500000]);
         /** @var Assignment $assignment */
-        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => 100.0])->_real();
-        $linked     = EntryFactory::new()->create(['account' => $account, 'amount' => -50.0, 'assignment' => $assignment])->_real();
+        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => 10000])->_real();
+        $linked     = EntryFactory::new()->create(['account' => $account, 'amount' => -5000, 'assignment' => $assignment])->_real();
         $assignment->getEntries()->add($linked);
 
-        $command = new CreateOrUpdateAssignmentCommand('Moved', 100.0, $otherAccount);
+        $command = new CreateOrUpdateAssignmentCommand('Moved', 10000, $otherAccount);
         $command->setOriginId($assignment->getId());
 
         try {

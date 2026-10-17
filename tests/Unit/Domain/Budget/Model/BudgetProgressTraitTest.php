@@ -17,12 +17,12 @@ class BudgetProgressTraitTest extends TestCase
         $budgetProgressTrait
             ->expects(self::any())
             ->method('getProgress')
-            ->willReturn(50.0);
+            ->willReturn(5000);
 
         $budgetProgressTrait
             ->expects(self::any())
             ->method('getAmount')
-            ->willReturn(0.0);
+            ->willReturn(0);
 
         self::assertSame(0.0, $budgetProgressTrait->getRelativeProgress());
     }

@@ -57,7 +57,7 @@ readonly class GetBudgetBalanceProgressesHandler implements QueryHandlerInterfac
         return array_map(
             fn (HistoryBudget $history): BudgetBalanceProgressValueObject => new BudgetBalanceProgressValueObject(
                 $history->getBudget()?->getName(),
-                $history->getSpent() ?? 0.0,
+                $history->getSpent() ?? 0,
                 $history->getStatus(),
                 $history->getAmount(),
                 $history->getRelativeProgress()

@@ -58,7 +58,7 @@ class GenerateHistoryBudgetsForYearHandlerTest extends TestCase
         $this->entityFinderMock
             ->expects($this->exactly(2))
             ->method('findByIntIdentifier')
-            ->willReturn(new Budget()->setAmount(20));
+            ->willReturn(new Budget()->setAmount(2000));
 
         $this
             ->generateGenerateHistoryBudgetsForYearHandler()
@@ -88,7 +88,7 @@ class GenerateHistoryBudgetsForYearHandlerTest extends TestCase
         $this->entityFinderMock
             ->expects($this->exactly(2))
             ->method('findByIntIdentifier')
-            ->willReturn(new Budget()->setAmount(20));
+            ->willReturn(new Budget()->setAmount(2000));
 
         $this
             ->generateGenerateHistoryBudgetsForYearHandler()

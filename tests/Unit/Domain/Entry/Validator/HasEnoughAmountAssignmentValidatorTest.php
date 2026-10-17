@@ -88,23 +88,23 @@ class HasEnoughAmountAssignmentValidatorTest extends TestCase
     public function testUpdateReplacesTheStoredAmountInTheBalance(): void
     {
         $account    = self::createAccount();
-        $assignment = self::createAssignment($account, 500.0);
-        $stored     = new Entry()->setName('Stored')->setAmount(-400.0)->setAccount($account)->setAssignment($assignment);
+        $assignment = self::createAssignment($account, 50000);
+        $stored     = new Entry()->setName('Stored')->setAmount(-40000)->setAccount($account)->setAssignment($assignment);
         $assignment->getEntries()->add($stored);
 
         $this->entityFinder->method('findByIntIdentifier')->willReturn($stored);
 
-        // Balance 100 once the -400 is spent: -450 fits, as the -400 is replaced and not added
+        // Balance 100 once the -400 is spent: -45000 fits, as the -400 is replaced and not added
         $this->context->expects(self::never())->method('buildViolation');
 
-        $this->validator->validate(self::createCommand(42, $assignment, -450.0, $account), new HasEnoughAmountAssignment());
+        $this->validator->validate(self::createCommand(42, $assignment, -45000, $account), new HasEnoughAmountAssignment());
     }
 
     public function testUpdateExceedingTheAssignmentBalanceRaisesAViolation(): void
     {
         $account    = self::createAccount();
-        $assignment = self::createAssignment($account, 500.0);
-        $stored     = new Entry()->setName('Stored')->setAmount(-400.0)->setAccount($account)->setAssignment($assignment);
+        $assignment = self::createAssignment($account, 50000);
+        $stored     = new Entry()->setName('Stored')->setAmount(-40000)->setAccount($account)->setAssignment($assignment);
         $assignment->getEntries()->add($stored);
 
         $this->entityFinder->method('findByIntIdentifier')->willReturn($stored);
@@ -117,7 +117,7 @@ class HasEnoughAmountAssignmentValidatorTest extends TestCase
 
         $this->context->expects(self::once())->method('buildViolation')->willReturn($builder);
 
-        $this->validator->validate(self::createCommand(42, $assignment, -600.0, $account), new HasEnoughAmountAssignment());
+        $this->validator->validate(self::createCommand(42, $assignment, -60000, $account), new HasEnoughAmountAssignment());
     }
 
     private static function createAccount(): Account
@@ -126,7 +126,7 @@ class HasEnoughAmountAssignmentValidatorTest extends TestCase
             ->setName('Test Account');
     }
 
-    private static function createAssignment(Account $account, float $amount = 500.0): Assignment
+    private static function createAssignment(Account $account, int $amount = 50000): Assignment
     {
         return new Assignment()
             ->setName('Test Assignment')
@@ -137,7 +137,7 @@ class HasEnoughAmountAssignmentValidatorTest extends TestCase
     private static function createCommand(
         ?int $originId = null,
         ?Assignment $assignment = null,
-        ?float $amount = -100.0,
+        ?int $amount = -10000,
         ?Account $account = null,
         bool $withAssignment = true,
     ): CreateOrUpdateEntryCommand {

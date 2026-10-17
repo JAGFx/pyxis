@@ -29,9 +29,9 @@ readonly class ApplyBudgetAccountBalanceHandler implements CommandHandlerInterfa
     {
         $budget   = $command->getBudget();
         $account  = $command->getAccount();
-        $cashFlow = round($budget->getCashFlow($account), 2);
+        $cashFlow = $budget->getCashFlow($account);
 
-        if (0.0 === $cashFlow) {
+        if (0 === $cashFlow) {
             return;
         }
 

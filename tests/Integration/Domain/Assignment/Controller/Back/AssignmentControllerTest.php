@@ -22,10 +22,10 @@ class AssignmentControllerTest extends WebTestCase
         $assignment = AssignmentFactory::new()->create([
             'name'    => 'Vacances',
             'account' => $account,
-            'amount'  => 0.0,
-            'target'  => 2000.0,
+            'amount'  => 0,
+            'target'  => 200000,
         ])->_real();
-        EntryFactory::new()->create(['account' => $account, 'amount' => 300.0, 'assignment' => $assignment]);
+        EntryFactory::new()->create(['account' => $account, 'amount' => 30000, 'assignment' => $assignment]);
 
         $crawler = $client->request(Request::METHOD_GET, '/assignments');
 

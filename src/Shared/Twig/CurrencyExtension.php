@@ -6,8 +6,11 @@ use Twig\Attribute\AsTwigFilter;
 
 class CurrencyExtension
 {
+    /**
+     * @param int $amount In cents
+     */
     #[AsTwigFilter('currency')]
-    public function currency(float $amount, bool $withSign = true): string
+    public function currency(int $amount, bool $withSign = true): string
     {
         if ($withSign) {
             $result = ($amount < 0)
@@ -17,7 +20,7 @@ class CurrencyExtension
             $result = '';
         }
 
-        $result .= number_format($amount, 2, '.', ' ');
+        $result .= number_format($amount / 100, 2, '.', ' ');
 
         return $result . ' €';
     }

@@ -48,58 +48,58 @@ class GetEntryBalanceHandlerTest extends TestCase
     public function testBalanceWithNullCommand(): void
     {
         $expectedData = [
-            ['id' => null, 'sum' => 150.0], // spent entries (budget = null)
-            ['id' => 1, 'sum' => 300.0],    // forecast entries (budget = 1)
-            ['id' => 2, 'sum' => 200.0],    // forecast entries (budget = 2)
+            ['id' => null, 'sum' => 15000], // spent entries (budget = null)
+            ['id' => 1, 'sum' => 30000],    // forecast entries (budget = 1)
+            ['id' => 2, 'sum' => 20000],    // forecast entries (budget = 2)
         ];
 
         $this->expectBalance($expectedData);
         $result = $this->createGetEntryBalanceHandlerMock()->__invoke(new GetEntryBalanceQuery());
 
-        self::assertEquals(150.0, $result->getTotalSpent());
-        self::assertEquals(500.0, $result->getTotalForecast()); // 300.0 + 200.0
+        self::assertEquals(15000, $result->getTotalSpent());
+        self::assertEquals(50000, $result->getTotalForecast()); // 30000 + 20000
     }
 
     public function testBalanceWithProvidedCommand(): void
     {
         $searchRequest = new GetEntryBalanceQuery();
         $expectedData  = [
-            ['id' => null, 'sum' => 75.0], // spent entries
-            ['id' => 1, 'sum' => 125.0],   // forecast entries
+            ['id' => null, 'sum' => 7500], // spent entries
+            ['id' => 1, 'sum' => 12500],   // forecast entries
         ];
 
         $this->expectBalance($expectedData, $searchRequest);
         $result = $this->createGetEntryBalanceHandlerMock()->__invoke($searchRequest);
 
-        self::assertEquals(75.0, $result->getTotalSpent());
-        self::assertEquals(125.0, $result->getTotalForecast());
+        self::assertEquals(7500, $result->getTotalSpent());
+        self::assertEquals(12500, $result->getTotalForecast());
     }
 
     public function testBalanceWithOnlySpentEntries(): void
     {
         $expectedData = [
-            ['id' => null, 'sum' => 250.0], // only spent entries
+            ['id' => null, 'sum' => 25000], // only spent entries
         ];
 
         $this->expectBalance($expectedData);
         $result = $this->createGetEntryBalanceHandlerMock()->__invoke(new GetEntryBalanceQuery());
 
-        self::assertEquals(250.0, $result->getTotalSpent());
-        self::assertEquals(0.0, $result->getTotalForecast());
+        self::assertEquals(25000, $result->getTotalSpent());
+        self::assertEquals(0, $result->getTotalForecast());
     }
 
     public function testBalanceWithOnlyForecastEntries(): void
     {
         $expectedData = [
-            ['id' => 1, 'sum' => 180.0], // only forecast entries
-            ['id' => 2, 'sum' => 320.0],
+            ['id' => 1, 'sum' => 18000], // only forecast entries
+            ['id' => 2, 'sum' => 32000],
         ];
 
         $this->expectBalance($expectedData);
         $result = $this->createGetEntryBalanceHandlerMock()->__invoke(new GetEntryBalanceQuery());
 
-        self::assertEquals(0.0, $result->getTotalSpent());
-        self::assertEquals(500.0, $result->getTotalForecast()); // 180.0 + 320.0
+        self::assertEquals(0, $result->getTotalSpent());
+        self::assertEquals(50000, $result->getTotalForecast()); // 18000 + 32000
     }
 
     public function testBalanceWithEmptyData(): void
@@ -109,7 +109,7 @@ class GetEntryBalanceHandlerTest extends TestCase
         $this->expectBalance($expectedData);
         $result = $this->createGetEntryBalanceHandlerMock()->__invoke(new GetEntryBalanceQuery());
 
-        self::assertEquals(0.0, $result->getTotalSpent());
-        self::assertEquals(0.0, $result->getTotalForecast());
+        self::assertEquals(0, $result->getTotalSpent());
+        self::assertEquals(0, $result->getTotalForecast());
     }
 }

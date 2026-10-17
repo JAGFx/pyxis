@@ -14,7 +14,7 @@ class GetBudgetAccountBalanceHandlerTest extends TestCase
 {
     use BudgetTestTrait;
 
-    private const float BUDGET_AMOUNT = 1000.0;
+    private const int BUDGET_AMOUNT = 100000;
 
     private EntityManagerInterface $entityManager;
 
@@ -28,8 +28,8 @@ class GetBudgetAccountBalanceHandlerTest extends TestCase
 
     public function testBudgetWithBalancedCashFlowDoNothing(): void
     {
-        $progress = 200.0;
-        $cashFlow = 0.0;
+        $progress = 20000;
+        $cashFlow = 0;
         $budget   = $this->generateBudget([
             'amount'  => self::BUDGET_AMOUNT,
             'entries' => [
@@ -44,7 +44,7 @@ class GetBudgetAccountBalanceHandlerTest extends TestCase
                     'entryCreatedAt' => new DateTimeImmutable('-1 year -1 hour'),
                 ],
                 [
-                    'entryAmount' => 200,
+                    'entryAmount' => 20000,
                 ],
             ],
         ]);

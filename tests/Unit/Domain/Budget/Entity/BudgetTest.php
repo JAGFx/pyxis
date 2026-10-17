@@ -14,15 +14,15 @@ class BudgetTest extends TestCase
     public function testProgressAsSpentOnlyIsTheAbsoluteProgress(): void
     {
         $budget = $this->generateBudget([
-            'amount'  => 1000.0,
+            'amount'  => 100000,
             'entries' => [
-                ['entryAmount' => -300.0],
-                ['entryAmount' => -150.0],
+                ['entryAmount' => -30000],
+                ['entryAmount' => -15000],
             ],
         ]);
 
-        self::assertSame(-450.0, $budget->getProgress());
-        self::assertSame(450.0, $budget->getProgress(true));
+        self::assertSame(-45000, $budget->getProgress());
+        self::assertSame(45000, $budget->getProgress(true));
         self::assertSame(45.0, $budget->getRelativeProgress(true));
     }
 }

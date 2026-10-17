@@ -32,7 +32,7 @@ class AddSplitForBudgetsHandlerTest extends KernelTestCase
         /** @var PeriodicEntry $periodicEntry */
         $periodicEntry = PeriodicEntryFactory::new()->create([
             'name'              => 'Monthly salary',
-            'amount'            => 2500.0,
+            'amount'            => 250000,
             'account'           => $account,
             'executionDate'     => new DateTimeImmutable(), // Today
             'lastExecutionDate' => null, // Never executed
@@ -47,7 +47,7 @@ class AddSplitForBudgetsHandlerTest extends KernelTestCase
         self::assertCount(1, $createdEntries, 'Only one entry must be created for SPENT type');
 
         $entry = $createdEntries[0];
-        self::assertEquals(2500.0, $entry->getAmount());
+        self::assertEquals(250000, $entry->getAmount());
         self::assertEquals('Monthly salary', $entry->getName());
         self::assertEquals($account->_real(), $entry->getAccount());
         self::assertEquals([EntryFlagEnum::PERIODIC_ENTRY], $entry->getFlags());
@@ -67,19 +67,19 @@ class AddSplitForBudgetsHandlerTest extends KernelTestCase
 
         $budget1 = BudgetFactory::new()->create([
             'name'    => 'Food',
-            'amount'  => 600.0, // 50€/month
+            'amount'  => 60000, // 50€/month
             'enabled' => true,
         ]);
 
         $budget2 = BudgetFactory::new()->create([
             'name'    => 'Transportation',
-            'amount'  => 360.0, // 30€/month
+            'amount'  => 36000, // 30€/month
             'enabled' => true,
         ]);
 
         $budget3 = BudgetFactory::new()->create([
             'name'    => 'Entertainment',
-            'amount'  => 240.0, // 20€/month
+            'amount'  => 24000, // 20€/month
             'enabled' => true,
         ]);
 
@@ -102,9 +102,9 @@ class AddSplitForBudgetsHandlerTest extends KernelTestCase
 
         // Verify amounts (budget / 12 months)
         $expectedAmounts = [
-            'Monthly provisions - Food'           => 50.0,  // 600/12
-            'Monthly provisions - Transportation' => 30.0,     // 360/12
-            'Monthly provisions - Entertainment'  => 20.0,        // 240/12
+            'Monthly provisions - Food'           => 5000,  // 600/12
+            'Monthly provisions - Transportation' => 3000,     // 360/12
+            'Monthly provisions - Entertainment'  => 2000,        // 240/12
         ];
 
         foreach ($createdEntries as $entry) {
@@ -129,25 +129,25 @@ class AddSplitForBudgetsHandlerTest extends KernelTestCase
 
         $activeBudget1 = BudgetFactory::new()->create([
             'name'    => 'Active Budget 1',
-            'amount'  => 480.0, // 40€/month
+            'amount'  => 48000, // 40€/month
             'enabled' => true,
         ]);
 
         $activeBudget2 = BudgetFactory::new()->create([
             'name'    => 'Active Budget 2',
-            'amount'  => 600.0, // 50€/month
+            'amount'  => 60000, // 50€/month
             'enabled' => true,
         ]);
 
         $inactiveBudget = BudgetFactory::new()->create([
             'name'    => 'Inactive Budget',
-            'amount'  => 360.0,
+            'amount'  => 36000,
             'enabled' => false, // Disabled budget
         ]);
 
         $zeroBudget = BudgetFactory::new()->create([
             'name'    => 'Zero Budget',
-            'amount'  => 0.0, // Zero amount
+            'amount'  => 0, // Zero amount
             'enabled' => true,
         ]);
 
@@ -176,9 +176,9 @@ class AddSplitForBudgetsHandlerTest extends KernelTestCase
 
         foreach ($createdEntries as $entry) {
             if ('Selective provisions - Active Budget 1' === $entry->getName()) {
-                self::assertEquals(40.0, $entry->getAmount()); // 480/12
+                self::assertEquals(4000, $entry->getAmount()); // 480/12
             } elseif ('Selective provisions - Active Budget 2' === $entry->getName()) {
-                self::assertEquals(50.0, $entry->getAmount()); // 600/12
+                self::assertEquals(5000, $entry->getAmount()); // 600/12
             }
         }
     }
@@ -188,7 +188,7 @@ class AddSplitForBudgetsHandlerTest extends KernelTestCase
         $account = AccountFactory::new()->create(['name' => 'Test Provision Account']);
         $budget  = BudgetFactory::new()->create([
             'name'    => str_repeat('b', 200),
-            'amount'  => 1200.0,
+            'amount'  => 120000,
             'enabled' => true,
         ]);
 

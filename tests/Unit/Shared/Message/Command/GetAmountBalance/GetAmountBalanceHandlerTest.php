@@ -41,47 +41,47 @@ class GetAmountBalanceHandlerTest extends TestCase
             'totalSpent'       => null,
             'totalForecast'    => null,
             'totalAssignments' => null,
-            'expectedTotal'    => 0.0,
-            'expectedSpent'    => 0.0,
-            'expectedForecast' => 0.0,
+            'expectedTotal'    => 0,
+            'expectedSpent'    => 0,
+            'expectedForecast' => 0,
         ];
 
         yield 'With spent / No forecast / No assignment' => [
-            'totalSpent'       => 1000,
+            'totalSpent'       => 100000,
             'totalForecast'    => null,
             'totalAssignments' => null,
-            'expectedTotal'    => 1000,
-            'expectedSpent'    => 1000,
-            'expectedForecast' => 0.0,
+            'expectedTotal'    => 100000,
+            'expectedSpent'    => 100000,
+            'expectedForecast' => 0,
         ];
 
         yield 'With spent / With forecast / No assignment' => [
-            'totalSpent'       => 1000,
-            'totalForecast'    => 500,
+            'totalSpent'       => 100000,
+            'totalForecast'    => 50000,
             'totalAssignments' => null,
-            'expectedTotal'    => 1500,
-            'expectedSpent'    => 1000,
-            'expectedForecast' => 500,
+            'expectedTotal'    => 150000,
+            'expectedSpent'    => 100000,
+            'expectedForecast' => 50000,
         ];
 
         yield 'With spent / With forecast / With assignment' => [
-            'totalSpent'       => 1000,
-            'totalForecast'    => 500,
-            'totalAssignments' => 200,
-            'expectedTotal'    => 1500,
-            'expectedSpent'    => 800, // rawSpent - assignment
-            'expectedForecast' => 500,
+            'totalSpent'       => 100000,
+            'totalForecast'    => 50000,
+            'totalAssignments' => 20000,
+            'expectedTotal'    => 150000,
+            'expectedSpent'    => 80000, // rawSpent - assignment
+            'expectedForecast' => 50000,
         ];
     }
 
     #[DataProvider('amountBalanceDatasets')]
     public function testAmountBalance(
-        ?float $totalSpent,
-        ?float $totalForecast,
-        ?float $totalAssignments,
-        float $expectedTotal,
-        float $expectedSpent,
-        float $expectedForecast,
+        ?int $totalSpent,
+        ?int $totalForecast,
+        ?int $totalAssignments,
+        int $expectedTotal,
+        int $expectedSpent,
+        int $expectedForecast,
     ): void {
         $this->messageBusMock
             ->expects($this->exactly(2)) // 1 GetEntryBalanceQuery + 1 GetAssignmentBalanceQuery
@@ -89,11 +89,11 @@ class GetAmountBalanceHandlerTest extends TestCase
             ->willReturnCallback(function ($query) use ($totalSpent, $totalForecast, $totalAssignments) {
                 if ($query instanceof GetEntryBalanceQuery) {
                     return new EntryBalance(
-                        $totalSpent ?? 0.0,
-                        $totalForecast ?? 0.0,
+                        $totalSpent ?? 0,
+                        $totalForecast ?? 0,
                     );
                 } elseif ($query instanceof GetAssignmentBalanceQuery) {
-                    return $totalAssignments ?? 0.0;
+                    return $totalAssignments ?? 0;
                 }
 
                 throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
@@ -122,9 +122,9 @@ class GetAmountBalanceHandlerTest extends TestCase
             ->method('dispatch')
             ->willReturnCallback(function ($query) {
                 if ($query instanceof GetEntryBalanceQuery) {
-                    return new EntryBalance(100.0, 50.0);
+                    return new EntryBalance(10000, 5000);
                 } elseif ($query instanceof GetAssignmentBalanceQuery) {
-                    return 25.0;
+                    return 2500;
                 }
 
                 throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
@@ -149,9 +149,9 @@ class GetAmountBalanceHandlerTest extends TestCase
 
         // Verify each balance has the correct calculations
         foreach ($amountBalances as $amountBalance) {
-            self::assertSame(150.0, $amountBalance->getTotal()); // 100 + 50
-            self::assertSame(75.0, $amountBalance->getTotalSpent()); // 100 - 25 (assignment)
-            self::assertSame(50.0, $amountBalance->getTotalForecast());
+            self::assertSame(15000, $amountBalance->getTotal()); // 100 + 50
+            self::assertSame(7500, $amountBalance->getTotalSpent()); // 100 - 25 (assignment)
+            self::assertSame(5000, $amountBalance->getTotalForecast());
         }
     }
 }

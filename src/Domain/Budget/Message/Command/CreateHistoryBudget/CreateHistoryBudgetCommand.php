@@ -16,9 +16,9 @@ class CreateHistoryBudgetCommand implements CommandInterface
 {
     public function __construct(
         private Budget $budget,
-        private float $amount,
+        private int $amount,
         private DateTimeImmutable $date,
-        private float $spent,
+        private int $spent,
         private float $relativeProgress,
     ) {
     }
@@ -35,12 +35,12 @@ class CreateHistoryBudgetCommand implements CommandInterface
         return $this;
     }
 
-    public function getAmount(): float
+    public function getAmount(): int
     {
         return $this->amount;
     }
 
-    public function setAmount(float $amount): CreateHistoryBudgetCommand
+    public function setAmount(int $amount): CreateHistoryBudgetCommand
     {
         $this->amount = $amount;
 
@@ -59,12 +59,12 @@ class CreateHistoryBudgetCommand implements CommandInterface
         return $this;
     }
 
-    public function getSpent(): float
+    public function getSpent(): int
     {
         return $this->spent;
     }
 
-    public function setSpent(float $spent): CreateHistoryBudgetCommand
+    public function setSpent(int $spent): CreateHistoryBudgetCommand
     {
         $this->spent = $spent;
 

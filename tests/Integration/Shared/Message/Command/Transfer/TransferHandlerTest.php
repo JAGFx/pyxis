@@ -19,7 +19,7 @@ class TransferHandlerTest extends KernelTestCase
 
     private const string BUDGET_TARGET_NAME = 'Budget target name';
 
-    private const float BUDGET_AMOUNT = 100.0;
+    private const int BUDGET_AMOUNT = 10000;
 
     private MessageBus $messageBus;
 

@@ -68,20 +68,20 @@ class AmountLessOrEqualTotalValueAccountValidator extends ConstraintValidator
 
         // The other assignments of the account already hold part of its total
         $otherAssignments = $amountBalance->getAssignments();
-        $linkedEntries    = 0.0;
+        $linkedEntries    = 0;
 
         if ($currentAssignment instanceof Assignment && $currentAssignment->getAccount()->getId() === $account->getId()) {
             $otherAssignments -= $currentAssignment->getBalance();
             $linkedEntries = $currentAssignment->getBalance() - $currentAssignment->getAmount();
         }
 
-        $availableAmount = round($amountBalance->getTotal() - $otherAssignments, 2);
-        $newBalance      = round($value->getAmount() + $linkedEntries, 2);
+        $availableAmount = $amountBalance->getTotal() - $otherAssignments;
+        $newBalance      = $value->getAmount() + $linkedEntries;
 
         if ($newBalance > $availableAmount) {
             $this->context
                 ->buildViolation($constraint->message)
-                ->setParameter('{{ total }}', number_format($availableAmount - $linkedEntries, 2, ',', ' '))
+                ->setParameter('{{ total }}', number_format(($availableAmount - $linkedEntries) / 100, 2, ',', ' '))
                 ->setInvalidValue($value->getAmount())
                 ->atPath('amount')
                 ->addViolation();

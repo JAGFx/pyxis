@@ -10,9 +10,12 @@ class MoneyType extends \Symfony\Component\Form\Extension\Core\Type\MoneyType
     {
         parent::configureOptions($resolver);
 
+        // Typed in euros, stored in cents
         $resolver->setDefaults([
-            'html5' => true,
-            'attr'  => [
+            'divisor' => 100,
+            'input'   => 'integer',
+            'html5'   => true,
+            'attr'    => [
                 'step' => 0.01,
             ],
         ]);

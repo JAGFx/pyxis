@@ -26,17 +26,17 @@ class AccountRepositoryTest extends KernelTestCase
     {
         // Account with zero balance (entries sum to 0)
         $zeroAccount = AccountFactory::new(['name' => 'Zero Account', 'enabled' => true])->create();
-        EntryFactory::new(['account' => $zeroAccount, 'amount' => 100])->create();
-        EntryFactory::new(['account' => $zeroAccount, 'amount' => -100])->create();
+        EntryFactory::new(['account' => $zeroAccount, 'amount' => 10000])->create();
+        EntryFactory::new(['account' => $zeroAccount, 'amount' => -10000])->create();
 
         // Account with positive balance
         $positiveAccount = AccountFactory::new(['name' => 'Positive Account', 'enabled' => true])->create();
-        EntryFactory::new(['account' => $positiveAccount, 'amount' => 150])->create();
-        EntryFactory::new(['account' => $positiveAccount, 'amount' => 50])->create();
+        EntryFactory::new(['account' => $positiveAccount, 'amount' => 15000])->create();
+        EntryFactory::new(['account' => $positiveAccount, 'amount' => 5000])->create();
 
         // Account with negative balance
         $negativeAccount = AccountFactory::new(['name' => 'Negative Account', 'enabled' => true])->create();
-        EntryFactory::new(['account' => $negativeAccount, 'amount' => -75])->create();
+        EntryFactory::new(['account' => $negativeAccount, 'amount' => -7500])->create();
 
         // Account with no entries
         AccountFactory::new(['name' => 'Empty Account', 'enabled' => true])->create();
