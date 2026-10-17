@@ -67,13 +67,14 @@
                 :icon="icons.edit"
                 label="{{ 'actions.edit' | trans(domain: 'interface') }}"
             />
-            {# TODO: Add confirm before action #}
             <twig:Overlay:GridActionButton
                 actionUrl="{{ path('front_periodic_entry_remove', {'id': periodicEntry.id}) }}"
                 :icon="icons.remove"
                 label="{{ 'actions.remove' | trans(domain: 'interface') }}"
                 color="secondary"
                 data-turbo="true"
+                data-turbo-method="delete"
+                data-turbo-confirm="{{ 'actions.remove_confirm' | trans({'%name%': periodicEntry.name}, 'interface') }}"
             />
         </div>
     </twig:Overlay:Overlay>

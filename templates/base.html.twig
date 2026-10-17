@@ -14,6 +14,8 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
 
+    <meta name="csrf-token" content="{{ csrf_token('turbo-action') }}">
+
     <title>{% block title %}{{ 'app_name' | trans }}{% endblock %}</title>
 
     {% block stylesheets %}

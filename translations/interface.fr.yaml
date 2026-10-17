@@ -8,4 +8,5 @@ actions:
   enable: Activer
   save: Valider
   remove: Supprimer
+  remove_confirm: "Supprimer « %name% » ? Cette action est définitive."
   back: Retour

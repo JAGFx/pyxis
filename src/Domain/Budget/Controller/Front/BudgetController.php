@@ -8,6 +8,7 @@ use App\Domain\Budget\Message\Command\ToggleEnableBudget\ToggleEnableBudgetComma
 use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
+use App\Infrastructure\Turbo\Security\TurboCsrf;
 use App\Shared\Message\Query\GetBudgetCashFlowsByAccount\GetBudgetCashFlowsByAccountQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Throwable;
 
 #[Route('budgets')]
@@ -35,8 +37,9 @@ class BudgetController extends AbstractController
         '/{id}/toggle',
         name: 'front_budget_toggle',
         requirements: ['id' => Requirement::DIGITS],
-        methods: [Request::METHOD_GET]
+        methods: [Request::METHOD_POST]
     )]
+    #[IsCsrfTokenValid(TurboCsrf::TOKEN_ID, tokenKey: TurboCsrf::HEADER, tokenSource: IsCsrfTokenValid::SOURCE_HEADER)]
     public function toggle(Request $request, Budget $budget): Response
     {
         $this->messageBus->dispatch(new ToggleEnableBudgetCommand()->setOriginId($budget->getId()));

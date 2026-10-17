@@ -58,6 +58,7 @@
                         :icon="icons.disable"
                         label="{{ 'actions.disabled' | trans(domain: 'interface') }}"
                         data-turbo="true"
+                        data-turbo-method="post"
                     />
                 {% endif %}
                 {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::ENABLE'), budget) %}
@@ -66,6 +67,7 @@
                         :icon="icons.enable"
                         label="{{ 'actions.enable' | trans(domain: 'interface') }}"
                         data-turbo="true"
+                        data-turbo-method="post"
                     />
                 {% endif %}
                 {% if is_granted(constant('App\\Domain\\Budget\\Security\\BudgetVoter::BALANCE'), budget) %}

@@ -36,6 +36,7 @@
                     :icon="icons.disable"
                     label="{{ 'actions.disabled' | trans(domain: 'interface') }}"
                     data-turbo="true"
+                    data-turbo-method="post"
                 />
             {% endif %}
             {% if is_granted(constant('App\\Domain\\Account\\Security\\AccountVoter::ENABLE'), account) %}
@@ -44,6 +45,7 @@
                     :icon="icons.enable"
                     label="{{ 'actions.enable' | trans(domain: 'interface') }}"
                     data-turbo="true"
+                    data-turbo-method="post"
                 />
             {% endif %}
         </div>

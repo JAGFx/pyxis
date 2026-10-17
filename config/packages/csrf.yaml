@@ -9,3 +9,5 @@ framework:
             - submit
             - authenticate
             - logout
+            # Turbo links/forms sending a non-GET request (X-CSRF-Token header read from the csrf-token meta)
+            - turbo-action

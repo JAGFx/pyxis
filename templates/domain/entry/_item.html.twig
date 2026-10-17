@@ -60,6 +60,8 @@
                     label="{{ 'actions.remove' | trans(domain: 'interface') }}"
                     color="secondary"
                     data-turbo="true"
+                    data-turbo-method="delete"
+                    data-turbo-confirm="{{ 'actions.remove_confirm' | trans({'%name%': entry.name}, 'interface') }}"
                 />
             </div>
         </twig:Overlay:Overlay>

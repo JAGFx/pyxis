@@ -8,6 +8,7 @@ use App\Domain\Entry\Message\Query\FindEntries\FindEntriesQuery;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\KnpPaginator\DTO\OrderEnum;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
+use App\Infrastructure\Turbo\Security\TurboCsrf;
 use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
 use App\Shared\ValueObject\AmountBalance;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Throwable;
 
 #[Route('/entries')]
@@ -57,8 +59,9 @@ class EntryController extends AbstractController
         '/{id}/remove',
         name: 'front_entry_remove',
         requirements: ['id' => Requirement::DIGITS],
-        methods: Request::METHOD_GET
+        methods: [Request::METHOD_DELETE]
     )]
+    #[IsCsrfTokenValid(TurboCsrf::TOKEN_ID, tokenKey: TurboCsrf::HEADER, tokenSource: IsCsrfTokenValid::SOURCE_HEADER)]
     public function remove(int $id, Request $request): Response
     {
         $this->messageBus->dispatch(new RemoveEntryCommand()->setOriginId($id));

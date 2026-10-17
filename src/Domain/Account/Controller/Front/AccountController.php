@@ -12,6 +12,7 @@ use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
 use App\Domain\Account\ValueObject\AccountIds;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Turbo\Controller\TurboResponseTrait;
+use App\Infrastructure\Turbo\Security\TurboCsrf;
 use App\Shared\Message\Query\GetAmountBalance\GetAmountBalanceQuery;
 use App\Shared\ValueObject\AmountBalance;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 use Throwable;
 
 #[Route('accounts')]
@@ -42,8 +44,9 @@ class AccountController extends AbstractController
         '/{id}/toggle',
         name: 'front_account_toggle',
         requirements: ['id' => Requirement::DIGITS],
-        methods: [Request::METHOD_GET]
+        methods: [Request::METHOD_POST]
     )]
+    #[IsCsrfTokenValid(TurboCsrf::TOKEN_ID, tokenKey: TurboCsrf::HEADER, tokenSource: IsCsrfTokenValid::SOURCE_HEADER)]
     public function toggle(Request $request, Account $account): Response
     {
         $this->messageBus->dispatch(new ToggleEnableAccountCommand()->setOriginId($account->getId()));
