@@ -175,4 +175,25 @@ class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
 
         $this->messageBus->dispatch($command);
     }
+
+    public function testCreateWithoutAmountNorBudgetsThrowsValidationException(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+
+        $command = new CreateOrUpdatePeriodicEntryCommand(
+            account: $account,
+            name: 'Periodic Entry Without Amount Nor Budgets',
+            amount: null,
+            executionDate: new DateTimeImmutable(),
+        );
+
+        try {
+            $this->messageBus->dispatch($command);
+            self::fail('A ValidationFailedException was expected');
+        } catch (ValidationFailedException $exception) {
+            self::assertCount(1, $exception->getViolations());
+            self::assertSame('budgets', $exception->getViolations()->get(0)->getPropertyPath());
+        }
+    }
 }

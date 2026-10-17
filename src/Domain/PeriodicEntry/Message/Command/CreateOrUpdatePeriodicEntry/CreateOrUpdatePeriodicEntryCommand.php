@@ -15,6 +15,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\ObjectMapper\Attribute\Map;
+use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\Expression;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\IsNull;
@@ -66,6 +67,13 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
         /**
          * @var Collection<int, Budget>
          */
+        #[When(
+            expression: 'this.isForecast()',
+            constraints: [
+                new Count(min: 1, minMessage: 'periodic_entry.create_or_update.amount_or_budgets_required'),
+            ],
+            groups: [ValidationGroupEnum::Business->value]
+        )]
         private Collection $budgets = new ArrayCollection(),
 
         #[When(
