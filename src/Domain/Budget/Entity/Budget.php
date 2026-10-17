@@ -40,7 +40,7 @@ class Budget implements IntIdentifierInterface
     /**
      * @var Collection<int, Entry>
      */
-    #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Entry::class, cascade: ['persist', 'remove'], indexBy: 'createdAt')]
+    #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Entry::class, cascade: ['persist', 'remove'])]
     private Collection $entries;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
@@ -89,6 +89,24 @@ class Budget implements IntIdentifierInterface
     public function hasPositiveCashFlow(): bool
     {
         return round($this->getCashFlow(), 2) > 0.0;
+    }
+
+    /**
+     * Balancing is done per account: a zero global cash flow can still hide
+     * opposite cash flows on different accounts.
+     */
+    public function hasCashFlowToBalance(): bool
+    {
+        $accounts = [];
+        foreach ($this->entries as $entry) {
+            $account = $entry->getAccount();
+
+            if ($account instanceof Account) {
+                $accounts[spl_object_id($account)] = $account;
+            }
+        }
+
+        return array_any($accounts, fn (Account $account): bool => 0.0 !== round($this->getCashFlow($account), 2));
     }
 
     public function __construct()

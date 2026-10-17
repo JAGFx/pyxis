@@ -27,30 +27,33 @@ readonly class ApplyBudgetAccountBalanceHandler implements CommandHandlerInterfa
      */
     public function __invoke(ApplyBudgetAccountBalanceCommand $command): void
     {
-        $budget  = $command->getBudget();
-        $account = $command->getAccount();
+        $budget   = $command->getBudget();
+        $account  = $command->getAccount();
+        $cashFlow = round($budget->getCashFlow($account), 2);
 
-        if ($budget->hasPositiveCashFlow() || $budget->hasNegativeCashFlow()) {
-            $spentCommand = new CreateOrUpdateEntryCommand(
-                account: $account,
-                name: $budget->getName(),
-                amount: $budget->getCashFlow(),
-                flags: [EntryFlagEnum::BALANCE],
-            );
-
-            $forecastCommand = new CreateOrUpdateEntryCommand(
-                account: $account,
-                name: $budget->getName(),
-                amount: -$budget->getCashFlow(),
-                budget: $budget,
-                flags: [EntryFlagEnum::BALANCE],
-            );
-
-            // TODO: Add flushable props
-            $this->messageBus->dispatch($spentCommand);
-            $this->messageBus->dispatch($forecastCommand);
-
-            $this->entityManager->flush();
+        if (0.0 === $cashFlow) {
+            return;
         }
+
+        $spentCommand = new CreateOrUpdateEntryCommand(
+            account: $account,
+            name: $budget->getName(),
+            amount: $cashFlow,
+            flags: [EntryFlagEnum::BALANCE],
+        );
+
+        $forecastCommand = new CreateOrUpdateEntryCommand(
+            account: $account,
+            name: $budget->getName(),
+            amount: -$cashFlow,
+            budget: $budget,
+            flags: [EntryFlagEnum::BALANCE],
+        );
+
+        // TODO: Add flushable props
+        $this->messageBus->dispatch($spentCommand);
+        $this->messageBus->dispatch($forecastCommand);
+
+        $this->entityManager->flush();
     }
 }

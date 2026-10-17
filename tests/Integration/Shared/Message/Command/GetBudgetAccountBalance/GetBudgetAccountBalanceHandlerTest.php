@@ -138,4 +138,60 @@ class GetBudgetAccountBalanceHandlerTest extends KernelTestCase
         self::assertSame($account, $lastTwoById[1]->getAccount());
         self::assertSame($budget->getId(), $lastTwoById[1]->getBudget()?->getId());
     }
+
+    public function testBalancingOnlyAppliesCashFlowOfTheSelectedAccount(): void
+    {
+        /** @var Budget $budget */
+        $budget = BudgetFactory::createOne([
+            'name'   => self::BUDGET_BALANCE_NAME,
+            'amount' => 1000.0,
+        ])->_real();
+
+        /** @var Account $firstAccount */
+        $firstAccount = AccountFactory::createOne()->_real();
+        /** @var Account $secondAccount */
+        $secondAccount = AccountFactory::createOne()->_real();
+
+        EntryFactory::createSequence([
+            [
+                'createdAt' => new DateTimeImmutable('-1 year'),
+                'amount'    => 300.0,
+                'budget'    => $budget,
+                'account'   => $firstAccount,
+            ],
+            [
+                'createdAt' => new DateTimeImmutable('-1 year -1 hour'),
+                'amount'    => -100.0,
+                'budget'    => $budget,
+                'account'   => $secondAccount,
+            ],
+        ]);
+
+        $this->messageBus->dispatch(new ApplyBudgetAccountBalanceCommand(
+            budget: $budget,
+            account: $firstAccount,
+        ));
+
+        self::assertSame(0.0, $budget->getCashFlow($firstAccount));
+        self::assertSame(-100.0, $budget->getCashFlow($secondAccount));
+        self::assertTrue($budget->hasCashFlowToBalance());
+
+        /** @var Entry[] $balanceEntries */
+        $balanceEntries = EntryFactory::repository()->findBy([], ['id' => 'ASC'], 2, 2);
+
+        self::assertCount(2, $balanceEntries);
+        self::assertSame(300.0, $balanceEntries[0]->getAmount());
+        self::assertSame($firstAccount, $balanceEntries[0]->getAccount());
+        self::assertSame(-300.0, $balanceEntries[1]->getAmount());
+        self::assertSame($firstAccount, $balanceEntries[1]->getAccount());
+
+        $this->messageBus->dispatch(new ApplyBudgetAccountBalanceCommand(
+            budget: $budget,
+            account: $secondAccount,
+        ));
+
+        self::assertSame(0.0, $budget->getCashFlow($secondAccount));
+        self::assertSame(0.0, $budget->getCashFlow());
+        self::assertFalse($budget->hasCashFlowToBalance());
+    }
 }

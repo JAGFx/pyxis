@@ -3,10 +3,10 @@
 namespace App\Domain\Budget\Form;
 
 use App\Domain\Account\Entity\Account;
-use App\Domain\Account\Message\Query\FindAccounts\FindAccountsQuery;
-use App\Domain\Account\Repository\AccountRepository;
+use App\Domain\Budget\ValueObject\BudgetCashFlowByAccountValueObject;
+use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\Message\Command\ApplyBudgetAccountBalance\ApplyBudgetAccountBalanceCommand;
-use Doctrine\ORM\QueryBuilder;
+use App\Shared\Message\Query\GetBudgetCashFlowsByAccount\GetBudgetCashFlowsByAccountQuery;
 use Override;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -17,6 +17,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BudgetAccountBalanceType extends AbstractType
 {
+    public function __construct(
+        private readonly MessageBus $messageBus,
+    ) {
+    }
+
     #[Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -26,19 +31,20 @@ class BudgetAccountBalanceType extends AbstractType
                 /** @var ApplyBudgetAccountBalanceCommand $budgetAccountBalanceCommand */
                 $budgetAccountBalanceCommand = $event->getData();
 
+                // Same cash flow definition as the balancing handler: only accounts with something to balance
+                /** @var BudgetCashFlowByAccountValueObject[] $cashFlows */
+                $cashFlows = $this->messageBus->dispatch(
+                    new GetBudgetCashFlowsByAccountQuery($budgetAccountBalanceCommand->getBudget()->getId())
+                );
+
                 $form
                     ->add('account', EntityType::class, [
-                        'class'         => Account::class,
-                        'choice_label'  => 'name',
-                        'query_builder' => function (AccountRepository $repository) use ($budgetAccountBalanceCommand): QueryBuilder {
-                            $searchQuery = new FindAccountsQuery(true)
-                                ->setOrderBy('name')
-                                ->setBudgetId($budgetAccountBalanceCommand->getBudget()->getId())
-                                ->setPositiveOrNegativeBalance(true)
-                            ;
-
-                            return $repository->getAccountsQueryBuilder($searchQuery);
-                        },
+                        'class'        => Account::class,
+                        'choice_label' => 'name',
+                        'choices'      => array_map(
+                            static fn (BudgetCashFlowByAccountValueObject $cashFlow): Account => $cashFlow->getAccount(),
+                            $cashFlows
+                        ),
                     ])
                 ;
             })

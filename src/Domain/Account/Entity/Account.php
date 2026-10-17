@@ -27,7 +27,7 @@ class Account implements IntIdentifierInterface
     /**
      * @var Collection<int, Entry>
      */
-    #[ORM\OneToMany(mappedBy: 'account', targetEntity: Entry::class, fetch: 'EXTRA_LAZY', indexBy: 'createdAt')]
+    #[ORM\OneToMany(mappedBy: 'account', targetEntity: Entry::class, fetch: 'EXTRA_LAZY')]
     private Collection $entries;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]

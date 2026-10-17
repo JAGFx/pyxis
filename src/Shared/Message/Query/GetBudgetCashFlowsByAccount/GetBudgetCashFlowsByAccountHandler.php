@@ -45,7 +45,7 @@ readonly class GetBudgetCashFlowsByAccountHandler implements QueryHandlerInterfa
         foreach ($accounts as $account) {
             $cashFlow = $budget->getCashFlow($account);
 
-            if (0.0 === $cashFlow) {
+            if (0.0 === round($cashFlow, 2)) {
                 continue;
             }
 

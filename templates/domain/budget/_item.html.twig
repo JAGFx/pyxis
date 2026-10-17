@@ -24,7 +24,7 @@
                             <small>{{ currency.amount(budget.cashFlow, 'true', 'false', true) }}</small>
                         </twig:Tooltip>
                     {% endif %}
-                    {% if budget.hasNegativeCashFlow or  budget.hasPositiveCashFlow%}
+                    {% if budget.hasCashFlowToBalance %}
                         <div>
                             <a data-turbo="true" href="{{ path('front_budget_cash_flow_by_account', {'id': budget.id}) }}" class="text-muted flex items-center">
                                 <small>

@@ -55,11 +55,8 @@ class BudgetVoter extends Voter
         if (!$this->canManage($budget)) {
             return false;
         }
-        if ($budget->hasPositiveCashFlow()) {
-            return true;
-        }
 
-        return $budget->hasNegativeCashFlow();
+        return $budget->hasCashFlowToBalance();
     }
 
     private function canEnable(Budget $budget): bool
