@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Shared\Message\Command\GetAmountBalance;
 
+use App\Domain\Account\Entity\Account;
 use App\Domain\Assignment\Message\Query\GetAssignmentBalance\GetAssignmentBalanceQuery;
 use App\Domain\Entry\Message\Query\GetEntryBalance\GetEntryBalanceQuery;
 use App\Domain\Entry\ValueObject\EntryBalance;
@@ -127,6 +128,16 @@ class GetAmountBalanceHandlerTest extends TestCase
                 }
 
                 throw new InvalidArgumentException('Unexpected query type: ' . get_class($query));
+            });
+
+        $this->entityFinderMock
+            ->expects($this->exactly(count($accountIds)))
+            ->method('findByIntIdentifierOrFail')
+            ->willReturnCallback(function (string $entityClass, int $id): Account {
+                $account = $this->createMock(Account::class);
+                $account->method('getId')->willReturn($id);
+
+                return $account;
             });
 
         $amountBalanceHandler = $this->generateGetAmountBalanceHandler();

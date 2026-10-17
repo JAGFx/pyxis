@@ -11,6 +11,7 @@ use App\Tests\Factory\AssignmentFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GetAmountBalanceHandlerTest extends KernelTestCase
 {
@@ -38,6 +39,17 @@ class GetAmountBalanceHandlerTest extends KernelTestCase
         self::assertEquals(0.0, $result->getTotalForecast());
         self::assertEquals(0.0, $result->getAssignments());
         self::assertEquals(0.0, $result->getTotal());
+    }
+
+    public function testGetAmountBalanceWithUnknownAccountMustFail(): void
+    {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create(['name' => self::ACCOUNT_1])->_real();
+        EntryFactory::new()->create(['account' => $account, 'amount' => 100.0]);
+
+        $this->expectException(NotFoundHttpException::class);
+
+        $this->messageBus->dispatch(new GetAmountBalanceQuery([(int) $account->getId() + 1000]));
     }
 
     public function testGetAmountBalanceWithAccountButNoEntriesNorAssignments(): void

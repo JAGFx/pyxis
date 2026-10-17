@@ -55,10 +55,10 @@ readonly class GetAmountBalanceHandler implements QueryHandlerInterface
      */
     private function getBalance(?int $accountId): AmountBalance
     {
-        $account = $this->entityFinder->findByIntIdentifier(
-            Account::class,
-            $accountId
-        );
+        // An unknown account must not silently fall back to the balance of all accounts
+        $account = is_null($accountId)
+            ? null
+            : $this->entityFinder->findByIntIdentifierOrFail(Account::class, $accountId);
 
         /** @var EntryBalance $entryBalance */
         $entryBalance = $this->messageBus->dispatch(new GetEntryBalanceQuery($account?->getId()));
