@@ -11,7 +11,6 @@ use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Infrastructure\Doctrine\Service\EntityFinder;
 use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use App\Shared\Utils\YearRange;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Throwable;
 
@@ -21,7 +20,6 @@ use Throwable;
 readonly class GenerateHistoryBudgetsForYearHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private LoggerInterface $logger,
         private MessageBus $messageBus,
         private EntityFinder $entityFinder,
     ) {
@@ -73,15 +71,9 @@ readonly class GenerateHistoryBudgetsForYearHandler implements CommandHandlerInt
                 $relativeProgress,
             );
 
-            try {
-                $this->messageBus->dispatch($createCommand);
-            } catch (Throwable $throwable) {
-                $this->logger->error($throwable->getMessage(), [
-                    'budget_id' => $budget->getId(),
-                    'year'      => $year,
-                    'exception' => $throwable,
-                ]);
-            }
+            // No per budget catch: a failure may close the entity manager, so the whole year fails and the
+            // transaction rolls back. Rerunning is safe as budgets already historized are skipped.
+            $this->messageBus->dispatch($createCommand);
         }
     }
 }

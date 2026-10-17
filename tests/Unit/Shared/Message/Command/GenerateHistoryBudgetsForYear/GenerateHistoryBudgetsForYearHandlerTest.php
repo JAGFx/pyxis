@@ -14,7 +14,6 @@ use App\Shared\Message\Command\GenerateHistoryBudgetsForYear\GenerateHistoryBudg
 use App\Shared\Message\Command\GenerateHistoryBudgetsForYear\GenerateHistoryBudgetsForYearHandler;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 
 class GenerateHistoryBudgetsForYearHandlerTest extends TestCase
 {
@@ -31,7 +30,6 @@ class GenerateHistoryBudgetsForYearHandlerTest extends TestCase
     private function generateGenerateHistoryBudgetsForYearHandler(): GenerateHistoryBudgetsForYearHandler
     {
         return new GenerateHistoryBudgetsForYearHandler(
-            $this->createMock(LoggerInterface::class),
             $this->messageBusMock,
             $this->entityFinderMock,
         );
