@@ -49,6 +49,17 @@ final readonly class ActionLogger
         ]);
     }
 
+    /**
+     * @param mixed[] $context
+     */
+    public function logSkipped(string $action, Throwable $reason, array $context = []): void
+    {
+        $this->auditLogger->info($action, [
+            'reason' => $reason->getMessage(),
+            ...$context,
+        ]);
+    }
+
     public function extractCorrelationId(Envelope $envelope): ?string
     {
         $stamp = $envelope->last(CorrelationStamp::class);
