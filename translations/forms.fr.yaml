@@ -78,7 +78,13 @@ periodic_entry:
       assignment:
         label: Affectation à alimenter
         placeholder: -- Pas d'affectation --
+      disable_when_target_reached:
+        label: Désactiver une fois l'objectif de l'affectation atteint
+      enabled:
+        label: Active
     search:
+      enabled:
+          label: Active
       name:
           label: Nom
       entry_type_enum:

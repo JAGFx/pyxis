@@ -15,6 +15,7 @@ use App\Shared\Message\Command\AddSplitForBudgets\AddSplitForBudgetsHandler;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class AddSplitForBudgetsHandlerTest extends TestCase
 {
@@ -37,6 +38,7 @@ class AddSplitForBudgetsHandlerTest extends TestCase
             $this->entityManagerMock,
             $this->messageBusMock,
             $this->entityFinderMock,
+            $this->createStub(LoggerInterface::class),
         );
     }
 

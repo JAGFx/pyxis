@@ -13,6 +13,7 @@ use App\Domain\Budget\Message\Query\FindBudgets\FindBudgetsQuery;
 use App\Domain\Budget\Repository\BudgetRepository;
 use App\Domain\PeriodicEntry\Message\Command\CreateOrUpdatePeriodicEntry\CreateOrUpdatePeriodicEntryCommand;
 use App\Shared\Form\Type\MoneyType;
+use App\Shared\Form\Type\YesNoType;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -60,6 +61,10 @@ class PeriodicEntryCreateOrUpdateType extends AbstractType
 
                     return $budgetRepository->getBudgetsQueryBuilder($searchQuery);
                 },
+            ])
+            ->add('enabled', YesNoType::class)
+            ->add('disable_when_target_reached', YesNoType::class, [
+                'property_path' => 'disableWhenTargetReached',
             ])
             ->addDependent('assignment', 'account', function (DependentField $field, ?Account $account): void {
                 if (is_null($account)) {

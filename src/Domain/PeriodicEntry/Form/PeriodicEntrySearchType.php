@@ -6,6 +6,7 @@ namespace App\Domain\PeriodicEntry\Form;
 
 use App\Domain\Entry\Entity\EntryTypeEnum;
 use App\Domain\PeriodicEntry\Message\Query\FindPeriodicEntries\FindPeriodicEntriesQuery;
+use App\Shared\Form\Type\YesNoType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -17,6 +18,10 @@ class PeriodicEntrySearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('enabled', YesNoType::class, [
+                'required'    => false,
+                'placeholder' => 'shared.default.placeholders.all',
+            ])
             ->add('name', TextType::class, [
                 'required' => false,
             ])

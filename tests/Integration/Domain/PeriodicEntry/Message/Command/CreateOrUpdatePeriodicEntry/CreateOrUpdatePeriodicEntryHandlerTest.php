@@ -16,6 +16,8 @@ use App\Tests\Integration\Shared\KernelTestCase;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Component\Messenger\Exception\ValidationFailedException;
 use Symfony\Component\ObjectMapper\ObjectMapperInterface;
 
@@ -195,5 +197,62 @@ class CreateOrUpdatePeriodicEntryHandlerTest extends KernelTestCase
             self::assertCount(1, $exception->getViolations());
             self::assertSame('budgets', $exception->getViolations()->get(0)->getPropertyPath());
         }
+    }
+
+    public static function disableWhenTargetReachedValidationDataset(): Generator
+    {
+        yield 'Without assignment' => [false, false, 1];
+        yield 'With an assignment without target' => [true, false, 1];
+        yield 'With an assignment with a target' => [true, true, 0];
+    }
+
+    #[DataProvider('disableWhenTargetReachedValidationDataset')]
+    public function testDisableWhenTargetReachedRequiresAnAssignmentWithATarget(
+        bool $withAssignment,
+        bool $withTarget,
+        int $expectedViolations,
+    ): void {
+        /** @var Account $account */
+        $account = AccountFactory::new()->create()->_real();
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::new()->create(['account' => $account, 'target' => $withTarget ? 200000 : null])->_real();
+
+        $command = new CreateOrUpdatePeriodicEntryCommand(
+            account: $account,
+            name: 'Monthly saving',
+            amount: 10000,
+            executionDate: new DateTimeImmutable(),
+            assignment: $withAssignment ? $assignment : null,
+            disableWhenTargetReached: true,
+        );
+
+        try {
+            $this->messageBus->dispatch($command);
+            $violations = 0;
+        } catch (ValidationFailedException $exception) {
+            $violations = $exception->getViolations()->count();
+            self::assertSame('disableWhenTargetReached', $exception->getViolations()->get(0)->getPropertyPath());
+        }
+
+        self::assertSame($expectedViolations, $violations);
+    }
+
+    public function testDisabledPeriodicEntryCanBeEnabledAgain(): void
+    {
+        /** @var PeriodicEntry $periodicEntry */
+        $periodicEntry = PeriodicEntryFactory::new()->create([
+            'account' => AccountFactory::new(),
+            'amount'  => 10000,
+            'enabled' => false,
+        ])->_real();
+
+        /** @var CreateOrUpdatePeriodicEntryCommand $command */
+        $command = $this->objectMapper->map($periodicEntry, CreateOrUpdatePeriodicEntryCommand::class);
+        self::assertFalse($command->isEnabled());
+
+        $command->setOriginId($periodicEntry->getId())->setEnabled(true);
+        $this->messageBus->dispatch($command);
+
+        self::assertTrue($periodicEntry->isEnabled());
     }
 }

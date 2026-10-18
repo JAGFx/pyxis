@@ -6,7 +6,7 @@
             {% import 'shared/_currency.macro.html.twig' as currency %}
 
             <div class="flex justify-between items-center">
-                <span>{{ periodicEntry.name }}</span>
+                <span class="{{ periodicEntry.enabled ? '' : 'line-through text-muted' }}">{{ periodicEntry.name }}</span>
                 {# TODO: Add to see budgets with turbo #}
 {#                <a data-turbo="true" href="{{ path('front_account_cash_flow', {'id': account.id}) }}" class="text-muted flex items-center">#}
 {#                    <small>#}

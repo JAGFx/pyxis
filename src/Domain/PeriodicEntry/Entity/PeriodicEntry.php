@@ -58,6 +58,18 @@ class PeriodicEntry implements IntIdentifierInterface
     #[JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Assignment $assignment = null;
 
+    /**
+     * A disabled periodic entry is no longer applied.
+     */
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
+    private bool $enabled = true;
+
+    /**
+     * Disable the periodic entry once its application makes the assignment balance reach the assignment target.
+     */
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $disableWhenTargetReached = false;
+
     public function getTotalAmount(): int
     {
         if ($this->isSpent()) {
@@ -229,6 +241,45 @@ class PeriodicEntry implements IntIdentifierInterface
     public function setLastExecutionDate(?DateTimeImmutable $lastExecutionDate): PeriodicEntry
     {
         $this->lastExecutionDate = $lastExecutionDate;
+
+        return $this;
+    }
+
+    /**
+     * Option enabled and assignment balance at or above its target. Checked before the application (already reached:
+     * not applied) and after it (the linked entry is then in the balance).
+     *
+     * @phpstan-impure The assignment balance changes when an entry is linked
+     */
+    public function hasReachedAssignmentTarget(): bool
+    {
+        $target = $this->assignment?->getTarget();
+
+        return $this->disableWhenTargetReached
+            && !is_null($target)
+            && $this->assignment->getBalance() >= $target;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): PeriodicEntry
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    public function isDisableWhenTargetReached(): bool
+    {
+        return $this->disableWhenTargetReached;
+    }
+
+    public function setDisableWhenTargetReached(bool $disableWhenTargetReached): PeriodicEntry
+    {
+        $this->disableWhenTargetReached = $disableWhenTargetReached;
 
         return $this;
     }

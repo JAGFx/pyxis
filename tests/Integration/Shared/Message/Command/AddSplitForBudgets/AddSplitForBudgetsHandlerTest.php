@@ -5,14 +5,19 @@ namespace App\Tests\Integration\Shared\Message\Command\AddSplitForBudgets;
 use App\Domain\Entry\Entity\Entry;
 use App\Domain\Entry\Entity\EntryFlagEnum;
 use App\Domain\PeriodicEntry\Entity\PeriodicEntry;
+use App\Domain\PeriodicEntry\Exception\PeriodicEntrySplitBudgetException;
 use App\Infrastructure\Cqs\Bus\MessageBus;
 use App\Shared\Message\Command\AddSplitForBudgets\AddSplitForBudgetsCommand;
 use App\Tests\Factory\AccountFactory;
+use App\Tests\Factory\AssignmentFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\EntryFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
 use DateTimeImmutable;
+use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 
 class AddSplitForBudgetsHandlerTest extends KernelTestCase
 {
@@ -210,5 +215,91 @@ class AddSplitForBudgetsHandlerTest extends KernelTestCase
         self::assertCount(1, $createdEntries);
         self::assertSame(255, mb_strlen($createdEntries[0]->getName()));
         self::assertStringStartsWith(str_repeat('p', 100) . ' - ', $createdEntries[0]->getName());
+    }
+
+    public static function targetReachedDataset(): Generator
+    {
+        // Envelope: 300 € already in, 2000 € target
+        yield 'Target reached exactly' => [170000, true, false];
+        yield 'Target exceeded' => [200000, true, false];
+        yield 'Target not reached yet' => [100000, true, true];
+        yield 'Option disabled: stays enabled even when the target is reached' => [170000, false, true];
+    }
+
+    #[DataProvider('targetReachedDataset')]
+    public function testPeriodicEntryIsDisabledOnceTheAssignmentTargetIsReached(
+        int $periodicAmount,
+        bool $disableWhenTargetReached,
+        bool $expectedEnabled,
+    ): void {
+        $account    = AccountFactory::new()->create(['name' => 'Envelope account']);
+        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => 0, 'target' => 200000])->_real();
+        $deposit    = EntryFactory::new()->create(['account' => $account, 'amount' => 30000, 'assignment' => $assignment])->_real();
+        $assignment->getEntries()->add($deposit);
+
+        /** @var PeriodicEntry $periodicEntry */
+        $periodicEntry = PeriodicEntryFactory::new()->create([
+            'name'                     => 'Monthly saving',
+            'amount'                   => $periodicAmount,
+            'account'                  => $account,
+            'executionDate'            => new DateTimeImmutable(),
+            'lastExecutionDate'        => null,
+            'assignment'               => $assignment,
+            'disableWhenTargetReached' => $disableWhenTargetReached,
+        ])->_real();
+
+        $this->messageBus->dispatch(new AddSplitForBudgetsCommand($periodicEntry->getId()));
+
+        self::assertSame(30000 + $periodicAmount, $assignment->getBalance(), 'The periodic entry is applied before being disabled');
+        self::assertSame($expectedEnabled, $periodicEntry->isEnabled());
+    }
+
+    public function testDisabledPeriodicEntryIsNotApplied(): void
+    {
+        $account = AccountFactory::new()->create(['name' => 'Disabled account']);
+
+        /** @var PeriodicEntry $periodicEntry */
+        $periodicEntry = PeriodicEntryFactory::new()->create([
+            'name'              => 'Disabled periodic entry',
+            'amount'            => 10000,
+            'account'           => $account,
+            'executionDate'     => new DateTimeImmutable(),
+            'lastExecutionDate' => null,
+            'enabled'           => false,
+        ])->_real();
+
+        try {
+            $this->messageBus->dispatch(new AddSplitForBudgetsCommand($periodicEntry->getId()));
+            self::fail('The disabled periodic entry must be rejected');
+        } catch (HandlerFailedException $exception) {
+            self::assertInstanceOf(PeriodicEntrySplitBudgetException::class, $exception->getPrevious());
+        }
+
+        self::assertCount(0, EntryFactory::repository()->findBy(['name' => 'Disabled periodic entry']));
+        self::assertNull($periodicEntry->getLastExecutionDate());
+    }
+
+    public function testPeriodicEntryIsNotAppliedWhenTheTargetIsAlreadyReached(): void
+    {
+        $account    = AccountFactory::new()->create(['name' => 'Envelope account']);
+        $assignment = AssignmentFactory::new()->create(['account' => $account, 'amount' => 200000, 'target' => 200000])->_real();
+
+        /** @var PeriodicEntry $periodicEntry */
+        $periodicEntry = PeriodicEntryFactory::new()->create([
+            'name'                     => 'Re-enabled monthly saving',
+            'amount'                   => 10000,
+            'account'                  => $account,
+            'executionDate'            => new DateTimeImmutable(),
+            'lastExecutionDate'        => null,
+            'assignment'               => $assignment,
+            'disableWhenTargetReached' => true,
+        ])->_real();
+
+        $this->messageBus->dispatch(new AddSplitForBudgetsCommand($periodicEntry->getId()));
+
+        self::assertFalse($periodicEntry->isEnabled());
+        self::assertNull($periodicEntry->getLastExecutionDate(), 'Not applied');
+        self::assertSame(200000, $assignment->getBalance());
+        self::assertCount(0, EntryFactory::repository()->findBy(['name' => 'Re-enabled monthly saving']));
     }
 }

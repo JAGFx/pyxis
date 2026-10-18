@@ -9,8 +9,10 @@
         {% if form.assignment is defined %}
             {{ form_row(form.assignment) }}
         {% endif %}
+        {{ form_row(form.disable_when_target_reached) }}
         {{ form_row(form.execution_date) }}
         {{ form_row(form.budgets) }}
+        {{ form_row(form.enabled) }}
 
         <div class="pt-4 pb-1 flex justify-end">
             <twig:Button type="submit" :icon="icons.save" label="{{ 'actions.save' | trans(domain: 'interface') }}" dir="right" size="lg"/>

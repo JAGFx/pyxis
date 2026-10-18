@@ -17,7 +17,21 @@ class FindPeriodicEntriesQuery implements OrderableInterface, QueryInterface
     public function __construct(
         private ?EntryTypeEnum $entryTypeEnum = null,
         private ?string $name = null,
+        // Like budgets: only the enabled ones by default, null for all
+        private ?bool $enabled = true,
     ) {
+    }
+
+    public function isEnabled(): ?bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(?bool $enabled): FindPeriodicEntriesQuery
+    {
+        $this->enabled = $enabled;
+
+        return $this;
     }
 
     public function getEntryTypeEnum(): ?EntryTypeEnum

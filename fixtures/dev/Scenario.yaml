@@ -86,3 +86,12 @@ App\Domain\PeriodicEntry\Entity\PeriodicEntry:
     executionDate: <immutableDateTimeBetween('-5 hour', 'now')>
     account: '@account_ldds'
     assignment: '@assignment_scenario_negative'
+
+  # Takes the envelope from 300 € to its 2000 € target, then gets disabled by `bin/console bugr:periodic-entry:apply`
+  periodic_entry_scenario_envelope:
+    name: 'Scénario - Épargne mensuelle vacances'
+    amount: 170000
+    executionDate: <immutableDateTimeBetween('-5 hour', 'now')>
+    account: '@account_a'
+    assignment: '@assignment_scenario_envelope'
+    disableWhenTargetReached: true

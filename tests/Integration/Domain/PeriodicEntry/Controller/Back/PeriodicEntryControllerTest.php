@@ -39,6 +39,7 @@ class PeriodicEntryControllerTest extends WebTestCase
             ->filter(sprintf('select[name="%s[assignment]"] option', self::FORM_NAME))
             ->each(static fn (Crawler $option): string => trim($option->text()));
 
+        self::assertSame('-- Pas d\'affectation --', $assignmentOptions[0]);
         self::assertContains('Alpha assignment', $assignmentOptions);
         self::assertNotContains('Beta assignment', $assignmentOptions);
     }

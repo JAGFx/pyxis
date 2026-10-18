@@ -10,6 +10,8 @@ use App\Tests\Factory\AccountFactory;
 use App\Tests\Factory\BudgetFactory;
 use App\Tests\Factory\PeriodicEntryFactory;
 use App\Tests\Integration\Shared\KernelTestCase;
+use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class PeriodicEntryRepositoryTest extends KernelTestCase
 {
@@ -97,5 +99,34 @@ class PeriodicEntryRepositoryTest extends KernelTestCase
         self::assertSame(4825, $periodicEntrySpent->getTotalAmount());
         self::assertSame(EntryTypeEnum::TYPE_FORECAST, $periodicEntrySpent->getType());
         self::assertTrue($periodicEntrySpent->isForecast());
+    }
+
+    public static function enabledFilterDataset(): Generator
+    {
+        yield 'Enabled only by default' => [new FindPeriodicEntriesQuery(), ['Forecast', 'Spent']];
+        yield 'All' => [new FindPeriodicEntriesQuery(enabled: null), ['Disabled', 'Forecast', 'Spent']];
+        yield 'Disabled only' => [new FindPeriodicEntriesQuery(enabled: false), ['Disabled']];
+    }
+
+    /**
+     * @param string[] $expectedNames
+     */
+    #[DataProvider('enabledFilterDataset')]
+    public function testEnabledFilter(FindPeriodicEntriesQuery $query, array $expectedNames): void
+    {
+        PeriodicEntryFactory::createOne([
+            'amount'  => 1000,
+            'name'    => 'Disabled',
+            'enabled' => false,
+            'account' => AccountFactory::new()->create(),
+        ]);
+
+        /** @var PeriodicEntry[] $periodicEntries */
+        $periodicEntries = $this->periodicEntryRepository
+            ->getPeriodicEntriesQueryBuilder($query->setOrderBy('name'))
+            ->getQuery()
+            ->getResult();
+
+        self::assertSame($expectedNames, array_map(static fn (PeriodicEntry $entry): string => $entry->getName(), $periodicEntries));
     }
 }

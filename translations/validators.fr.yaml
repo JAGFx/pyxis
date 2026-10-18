@@ -13,3 +13,4 @@ periodic_entry:
     assignment_forbidden_with_budgets: Une affectation ne peut être utilisée que pour une entrée périodique sans budget.
     assignment_account_mismatch: L'affectation doit appartenir au compte sélectionné.
     amount_or_budgets_required: Renseignez un montant ou au moins un budget.
+    disable_when_target_reached_requires_target: L'arrêt automatique nécessite une affectation avec un objectif.

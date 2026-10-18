@@ -86,6 +86,16 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
             groups: [ValidationGroupEnum::Business->value]
         )]
         private ?Assignment $assignment = null,
+
+        private bool $enabled = true,
+
+        // Only meaningful with an assignment that has a target to reach
+        #[Expression(
+            expression: 'value === false or (this.getAssignment() !== null and this.getAssignment().getTarget() !== null)',
+            message: 'periodic_entry.create_or_update.disable_when_target_reached_requires_target',
+            groups: [ValidationGroupEnum::Business->value]
+        )]
+        private bool $disableWhenTargetReached = false,
     ) {
     }
 
@@ -168,6 +178,30 @@ class CreateOrUpdatePeriodicEntryCommand implements CommandInterface
     public function setBudgets(Collection $budgets): CreateOrUpdatePeriodicEntryCommand
     {
         $this->budgets = $budgets;
+
+        return $this;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): CreateOrUpdatePeriodicEntryCommand
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    public function isDisableWhenTargetReached(): bool
+    {
+        return $this->disableWhenTargetReached;
+    }
+
+    public function setDisableWhenTargetReached(bool $disableWhenTargetReached): CreateOrUpdatePeriodicEntryCommand
+    {
+        $this->disableWhenTargetReached = $disableWhenTargetReached;
 
         return $this;
     }

@@ -34,6 +34,13 @@ class PeriodicEntryRepository extends ServiceEntityRepository
             ;
         }
 
+        if (!is_null($searchQuery->isEnabled())) {
+            $queryBuilder
+                ->andWhere('p.enabled = :enabled')
+                ->setParameter('enabled', $searchQuery->isEnabled())
+            ;
+        }
+
         if (EntryTypeEnum::TYPE_SPENT === $searchQuery->getEntryTypeEnum()) {
             $queryBuilder
                 ->andWhere('p.budgets IS EMPTY')

@@ -13,6 +13,7 @@ use App\Shared\Cqs\Handler\CommandHandlerInterface;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use ReflectionException;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Throwable;
@@ -26,6 +27,7 @@ readonly class AddSplitForBudgetsHandler implements CommandHandlerInterface
         private EntityManagerInterface $entityManager,
         private MessageBus $messageBus,
         private EntityFinder $entityFinder,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -43,6 +45,10 @@ readonly class AddSplitForBudgetsHandler implements CommandHandlerInterface
             $command->getPeriodicEntryId()
         );
 
+        if (!$periodicEntry->isEnabled()) {
+            throw new PeriodicEntrySplitBudgetException('The periodic entry is disabled.');
+        }
+
         // Use the date from command or current date if not provided
         $currentDate = $command->getDate() ?? new DateTimeImmutable();
 
@@ -59,6 +65,15 @@ readonly class AddSplitForBudgetsHandler implements CommandHandlerInterface
             && $periodicEntry->getLastExecutionDate() <= $lastDateOfCurrentMonth
         ) {
             throw new PeriodicEntrySplitBudgetException('A periodic entry has already been executed.');
+        }
+
+        // Re-enabled while the target is still reached: disable it again without feeding the assignment.
+        // No exception here, it would roll back the transaction and the disabling with it.
+        if ($periodicEntry->hasReachedAssignmentTarget()) {
+            $this->disableOnTargetReached($periodicEntry, false);
+            $this->entityManager->flush();
+
+            return;
         }
 
         if ($periodicEntry->isSpent()) {
@@ -92,6 +107,22 @@ readonly class AddSplitForBudgetsHandler implements CommandHandlerInterface
         }
 
         $periodicEntry->setLastExecutionDate($currentDate);
+
+        // The entry created above is already in the assignment balance
+        if ($periodicEntry->hasReachedAssignmentTarget()) {
+            $this->disableOnTargetReached($periodicEntry, true);
+        }
+
         $this->entityManager->flush();
+    }
+
+    private function disableOnTargetReached(PeriodicEntry $periodicEntry, bool $applied): void
+    {
+        $periodicEntry->setEnabled(false);
+        $this->logger->info('Periodic entry disabled: assignment target reached', [
+            'periodicEntryId' => $periodicEntry->getId(),
+            'assignmentId'    => $periodicEntry->getAssignment()?->getId(),
+            'applied'         => $applied,
+        ]);
     }
 }
