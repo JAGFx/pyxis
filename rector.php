@@ -2,13 +2,11 @@
 
 declare(strict_types=1);
 
-use Rector\CodingStyle\Rector\FuncCall\ConsistentImplodeRector;
 use Rector\CodingStyle\Rector\Stmt\NewlineAfterStatementRector;
 use Rector\Config\RectorConfig;
 use Rector\DeadCode\Rector\If_\RemoveAlwaysTrueIfConditionRector;
 use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\EarlyReturn\Rector\If_\ChangeIfElseValueAssignToEarlyReturnRector;
-use Rector\EarlyReturn\Rector\If_\ChangeOrIfContinueToMultiContinueRector;
 use Rector\EarlyReturn\Rector\If_\RemoveAlwaysElseRector;
 use Rector\EarlyReturn\Rector\StmtsAwareInterface\ReturnEarlyIfVariableRector;
 use Rector\Enum\Config\Defaults;
@@ -19,7 +17,6 @@ use Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector;
 use Rector\PHPUnit\Set\PHPUnitSetList;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Set\ValueObject\SetList;
-use Rector\Symfony\CodeQuality\Rector\Class_\InlineClassRoutePrefixRector;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\SafeDeclareStrictTypesRector;
 use Rector\Visibility\Rector\ClassMethod\ExplicitPublicClassMethodRector;
@@ -81,15 +78,12 @@ return static function (RectorConfig $rectorConfig): void {
 
     // Remove rules
     $rectorConfig->skip([
-        ConsistentImplodeRector::class,
         NewlineAfterStatementRector::class,
         RemoveAlwaysTrueIfConditionRector::class,
         RenameParamToMatchTypeRector::class,
         RenameMethodRector::class,
         RenamePropertyToMatchTypeRector::class,
         RenameVariableToMatchMethodCallReturnTypeRector::class,
-        InlineClassRoutePrefixRector::class,
-        ChangeOrIfContinueToMultiContinueRector::class,
         SafeDeclareStrictTypesRector::class,
     ]);
 };
