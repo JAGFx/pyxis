@@ -2,10 +2,24 @@
 set -e
 set -o pipefail
 
+# Plain PHP CLI rather than `frankenphp php-cli`: newer FrankenPHP releases pass the script name as the first
+# argument ("Command bin/console is not defined"), which made the database check below fail forever
+console() {
+    php bin/console "$@"
+}
+
 # Wait for database to be ready (optional, but recommended)
 echo "Waiting for database to be ready..."
-until frankenphp php-cli bin/console doctrine:query:sql "SELECT 1" > /dev/null 2>&1; do
-    echo "Database is not ready yet - sleeping"
+attempt=0
+until output=$(console doctrine:query:sql "SELECT 1" 2>&1); do
+    attempt=$((attempt + 1))
+    echo "Database is not ready yet - sleeping (attempt ${attempt})"
+
+    # Show the reason from time to time: a configuration error must not look like a database still starting
+    if [ $((attempt % 5)) -eq 1 ]; then
+        printf '%s\n' "${output}" | grep -v '^[[:space:]]*$' | tail -n 5
+    fi
+
     sleep 2
 done
 
@@ -25,7 +39,7 @@ backup_database() {
 
 # Only one container must run the migrations (set RUN_MIGRATIONS=0 on the workers)
 if [ "${RUN_MIGRATIONS:-1}" = "1" ]; then
-    if frankenphp php-cli bin/console doctrine:migrations:up-to-date --no-interaction > /dev/null 2>&1; then
+    if console doctrine:migrations:up-to-date --no-interaction > /dev/null 2>&1; then
         echo "Aucune migration à exécuter."
     else
         if [ -n "${BACKUP_DIR:-}" ]; then
@@ -35,7 +49,7 @@ if [ "${RUN_MIGRATIONS:-1}" = "1" ]; then
         fi
 
         echo "Exécution des migrations Doctrine…"
-        frankenphp php-cli bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+        console doctrine:migrations:migrate --no-interaction --allow-no-migration
     fi
 fi
 

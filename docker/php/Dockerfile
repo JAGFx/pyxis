@@ -1,4 +1,6 @@
-FROM dunglas/frankenphp:php8.4-alpine AS base
+# Pinned: an unpinned base pulled FrankenPHP 1.13.0, whose `frankenphp php-cli` broke the console arguments.
+# Upgrade on purpose, after checking the app and the entrypoint locally.
+FROM dunglas/frankenphp:1.12.7-php8.4-alpine AS base
 
 LABEL org.opencontainers.image.source=https://github.com/JAGFx/pyxis
 LABEL org.opencontainers.image.licenses=MIT
