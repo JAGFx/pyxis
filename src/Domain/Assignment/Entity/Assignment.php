@@ -60,6 +60,18 @@ class Assignment implements IntIdentifierInterface
         );
     }
 
+    /**
+     * Completion of the target in percent (above 100 once exceeded), null without target.
+     */
+    public function getTargetProgress(): ?float
+    {
+        if (is_null($this->target) || $this->target <= 0) {
+            return null;
+        }
+
+        return $this->getBalance() * 100 / $this->target;
+    }
+
     public function getName(): string
     {
         return $this->name;

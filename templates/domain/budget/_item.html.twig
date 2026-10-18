@@ -25,7 +25,8 @@
                         </twig:Tooltip>
                     {% endif %}
                     {% if budget.hasCashFlowToBalance %}
-                        <div>
+                        {# ml-auto: stays on the right when there is no global cash flow badge (opposite cash flows) #}
+                        <div class="ml-auto">
                             <a data-turbo="true" href="{{ path('front_budget_cash_flow_by_account', {'id': budget.id}) }}" class="text-muted flex items-center">
                                 <small>
                                     <span>{{ 'budget.list.actions.see_cash_flows' | trans }}</span>

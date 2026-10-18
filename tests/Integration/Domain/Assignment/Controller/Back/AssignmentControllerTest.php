@@ -32,7 +32,42 @@ class AssignmentControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
         $item = $crawler->filter('#assignment_list_item_' . $assignment->getId())->text();
         self::assertStringContainsString('300.00 €', $item);
-        self::assertStringContainsString('2 000.00 €', $item);
-        self::assertStringContainsString('(15%)', $item);
+        self::assertSame('/ 2 000.00 €', trim($crawler->filter('#assignment_list_item_' . $assignment->getId() . ' small.text-muted')->text()));
+        self::assertStringContainsString('15%', $item);
+    }
+
+    public function testListShowsCompletedOnceTheTargetIsReached(): void
+    {
+        $client = static::createClient();
+
+        /** @var Assignment $reached */
+        $reached = AssignmentFactory::new()->create(['amount' => 200000, 'target' => 200000])->_real();
+        /** @var Assignment $exceeded */
+        $exceeded = AssignmentFactory::new()->create(['amount' => 250000, 'target' => 200000])->_real();
+
+        $crawler = $client->request(Request::METHOD_GET, '/assignments');
+
+        self::assertResponseIsSuccessful();
+        foreach ([$reached, $exceeded] as $assignment) {
+            $item = $crawler->filter('#assignment_list_item_' . $assignment->getId())->text();
+            self::assertStringContainsString('Complet', $item);
+            self::assertStringNotContainsString('%', $item);
+        }
+    }
+
+    public function testListShowsNoProgressWithoutTarget(): void
+    {
+        $client = static::createClient();
+
+        /** @var Assignment $assignment */
+        $assignment = AssignmentFactory::new()->create(['name' => 'Sans objectif', 'amount' => 160000, 'target' => null])->_real();
+
+        $crawler = $client->request(Request::METHOD_GET, '/assignments');
+
+        self::assertResponseIsSuccessful();
+        $item = $crawler->filter('#assignment_list_item_' . $assignment->getId());
+        self::assertStringContainsString('1 600.00 €', $item->text());
+        self::assertStringNotContainsString('%', $item->text());
+        self::assertStringNotContainsString(' / ', $item->text());
     }
 }

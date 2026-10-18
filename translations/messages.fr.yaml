@@ -32,7 +32,8 @@ assignment:
   title: Affectations
   list:
     account: Compte
-    target: Objectif
+    target_progress: Progression vers l'objectif
+    target_completed: Complet
 
 budget:
   title: Budgets

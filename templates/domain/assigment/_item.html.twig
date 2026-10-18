@@ -7,22 +7,31 @@
 
             <div class="flex justify-between items-center">
                 <span>{{ assignment.name }}</span>
-                <div class="flex-none">
-                    {{ currency.amount(assignment.balance, true) }}
-                </div>
             </div>
 
             <twig:block name="detail">
-                <twig:List:EntityValueItem :icon="icons.account" label="{{ 'assignment.list.account' | trans }}">
-                    {{ assignment.account.name }}
-                </twig:List:EntityValueItem>
-                {% if assignment.target is not null %}
-                    <twig:List:EntityValueItem :icon="icons.target" label="{{ 'assignment.list.target' | trans }}">
-                        {% import 'shared/_currency.macro.html.twig' as currency %}
-                        {{ currency.amount(assignment.target, false) }}
-                        ({{ (assignment.balance * 100 / assignment.target) | number_format(0) }}%)
+                {% import 'shared/_currency.macro.html.twig' as currency %}
+
+                <div>
+                    {{ currency.amount(assignment.balance, true) }}
+                    {% if assignment.target is not null %}
+                        <small class="text-muted font-light">/ {{ assignment.target | currency(false) }}</small>
+                    {% endif %}
+                </div>
+                <div class="space-x-2">
+                    <twig:List:EntityValueItem :icon="icons.account" label="{{ 'assignment.list.account' | trans }}">
+                        {{ assignment.account.name }}
                     </twig:List:EntityValueItem>
-                {% endif %}
+
+                    {% if assignment.targetProgress is not null %}
+                        <twig:List:EntityValueItem icon="fa-solid fa-bullseye" label="{{ 'assignment.list.target_progress' | trans }}">
+                            {# Same threshold as the periodic entries disabled once the target is reached #}
+                            {{ assignment.targetProgress >= 100
+                                ? 'assignment.list.target_completed' | trans
+                                : assignment.targetProgress | number_format(0) ~ '%' }}
+                        </twig:List:EntityValueItem>
+                    {% endif %}
+                </div>
             </twig:block>
         </twig:List:Item>
     </twig:Overlay:TriggerLongPress>
